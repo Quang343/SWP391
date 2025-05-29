@@ -16,7 +16,7 @@
         <div class="logo-icon-wrapper">
             <a th:href="@{/admin}">
                 <img class="img-fluid main-logo main-white" th:src="@{/Backend/assets/images/logo/logo.png}" alt="logo">
-                <img class="img-fluid main-logo main-dark" th:src="@{/Backend/assets/images/logo/logo-white.}"
+                <img class="img-fluid main-logo main-dark" th:src="@{/Backend/assets/images/logo/logo-white.png}"
                      alt="logo">
             </a>
         </div>
@@ -43,11 +43,11 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a th:href="@{/admin/product}">Prodcts</a>
+                                <a th:href="@{/admin/product}">Products</a>
                             </li>
 
                             <li>
-                                <a href="@{/admin/product}">Add New Products</a>
+                                <a th:href="@{/admin/add_product}">Add New Products</a>
                             </li>
                         </ul>
                     </li>
@@ -63,7 +63,7 @@
                             </li>
 
                             <li>
-                                <a href="/admin/category">Add New Category</a>
+                                <a th:href="@{/admin/addcategory}">Add New Category</a>
                             </li>
                         </ul>
                     </li>
@@ -94,7 +94,7 @@
                                 <a th:href="@{/admin/user}">All users</a>
                             </li>
                             <li>
-                                <a href="@{/admin/user}">Add new user</a>
+                                <a th:href="@{/admin/adduser}">Add new user</a>
                             </li>
                         </ul>
                     </li>
@@ -128,13 +128,13 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a href="order-list.html">Order List</a>
+                                <a th:href="@{/admin/orderlist}">Order List</a>
                             </li>
                             <li>
-                                <a href="order-detail.html">Order Detail</a>
+                                <a th:href="@{/admin/orderdetail}">Order Detail</a>
                             </li>
                             <li>
-                                <a href="order-tracking.html">Order Tracking</a>
+                                <a th:href="@{/admin/ordertracking}">Order Tracking</a>
                             </li>
                         </ul>
                     </li>
@@ -162,11 +162,11 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a href="coupon-list.html">Coupon List</a>
+                                <a th:href="@{/admin/coupon}">Coupon List</a>
                             </li>
 
                             <li>
-                                <a href="create-coupon.html">Create Coupon</a>
+                                <a th:href="@{/admin/createcoupon}">Create Coupon</a>
                             </li>
                         </ul>
                     </li>

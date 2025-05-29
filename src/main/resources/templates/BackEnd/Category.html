@@ -587,7 +587,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     <div class="button-box">
                         <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-                        <button type="button" class="btn  btn--yes btn-primary">Yes</button>
+                        <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
                     </div>
                 </div>
             </div>
@@ -650,39 +650,39 @@
 <!-- Delete Modal Box End -->
 
 <!-- latest js -->
-<script th:src="@{Backend/assets/js/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
 
 <!-- Bootstrap js -->
-<script th:src="@{Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
 
 <!-- feather icon js -->
-<script th:src="@{Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
-<script th:src="@{Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
 
 <!-- scrollbar simplebar js -->
-<script th:src="@{Backend/assets/js/scrollbar/simplebar.js}"></script>
-<script th:src="@{Backend/assets/js/scrollbar/custom.js}"></script>
-
-<!-- customizer js -->
-<script th:src="@{Backend/assets/js/customizer.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
 
 <!-- Sidebar js -->
-<script th:src="@{Backend/assets/js/config.js}"></script>
+<script th:src="@{/Backend/assets/js/config.js}"></script>
 
-<!-- Plugins JS -->
-<script th:src="@{Backend/assets/js/sidebar-menu.js}"></script>
-<script th:src="@{Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
-<script th:src="@{Backend/assets/js/notify/index.js}"></script>
+<!-- customizer js -->
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+
+<!-- Plugins js -->
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
 
 <!-- Data table js -->
-<script th:src="@{Backend/assets/js/jquery.dataTables.js}"></script>
-<script th:src="@{Backend/assets/js/custom-data-table.js}"></script>
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
 
 <!-- sidebar effect -->
-<script th:src="@{Backend/assets/js/sidebareffect.js}"></script>
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
 
 <!-- Theme js -->
-<script th:src="@{Backend/assets/js/script.js}"></script>
+<script th:src="@{/Backend/assets/js/script.js}"></script>
 </body>
 
 </html>

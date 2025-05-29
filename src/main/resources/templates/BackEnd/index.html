@@ -884,8 +884,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="button-box">
                     <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-                    <button type="button" onclick="location.href = 'login.html';"
-                            class="btn  btn--yes btn-primary">Yes</button>
+                    <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
                 </div>
             </div>
         </div>

@@ -31,11 +31,40 @@ public class BackEndController {
     public String adminUser() {
         return "BackEnd/All_user";
     }
-    @RequestMapping("/admin/product")
+    @RequestMapping("/admin/products")
     public String adminProduct() {
         return "BackEnd/All_Product";
     }
 
+    @RequestMapping("/admin/add_product")
+    public String addProduct() {
+        return "BackEnd/Add_Product";
+    }
 
+    @RequestMapping("/admin/adduser")
+    public String adminAddUser() {
+        return "BackEnd/Add_User";
+    }
+    @RequestMapping("backend/login")
+    public String login() {
+        return "BackEnd/login";
+    }
+    @RequestMapping("/admin/addcategory")
+    public String addCategory() {
+        return "BackEnd/Add_Category";
+    }
+
+    @RequestMapping("/admin/orderlist")
+    public String orderList() {
+        return "BackEnd/OrderList";
+    }
+    @RequestMapping("/admin/orderdetail")
+    public String orderDetail() {
+        return "BackEnd/OrderDetail";
+    }
+    @RequestMapping("/admin/ordertracking")
+    public String orderTracking() {
+        return "BackEnd/OrderTracking";
+    }
 }
 
