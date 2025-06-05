@@ -64,6 +64,20 @@ public class BackEndController {
     public String orderTracking() {
         return "BackEnd/Admin/OrderTracking";
     }
+    @RequestMapping("/warehouse")
+    public String warehouse() {return "BackEnd/WareHouse/index";}
+    @RequestMapping("/warehouse/stockin")
+    public String stockin() {return "BackEnd/WareHouse/stockin";}
+    @RequestMapping("/warehouse/stockout")
+    public String stockout() {return "BackEnd/WareHouse/stockout";}
+    @RequestMapping("/warehouse/stockindetail")
+    public String stockindetail() {return "BackEnd/WareHouse/stockin_detail";}
+    @RequestMapping("/warehouse/stockoutdetail")
+    public String stockoutdetail() {return "BackEnd/WareHouse/stockout_detail";}
+    @RequestMapping("/warehouse/pruductbatch")
+    public String pruductbatch() {return "BackEnd/WareHouse/productbatch";}
+    @RequestMapping("/warehouse/supplier")
+    public String supplier() {return "BackEnd/WareHouse/supplier";}
 
 }
 
