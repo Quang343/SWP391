@@ -1,4 +1,4 @@
-package com.example.AgriculturalWarehouseManagement.Backend;
+package com.example.AgriculturalWarehouseManagement.Backend.exceptions.warehousestaff;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
