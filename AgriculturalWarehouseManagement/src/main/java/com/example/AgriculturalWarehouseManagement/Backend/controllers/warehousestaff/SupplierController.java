@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/suppliers")
@@ -30,6 +31,10 @@ public class SupplierController {
     public List<Suppliers> getAllSuppliers() {
         return supplierService.getAllSuppliers(); // Trả về danh sách tất cả các Suppliers
     }
+
+    private static final Logger LOGGER = Logger.getLogger(SupplierController.class.getName());
+
+    private static final String UPLOAD_DIR = "src/main/resources/static/BackEnd/assets/imgproject/";
 
     // Đường dẫn thư mục lưu trữ ảnh
     private final String uploadPath = "/BackEnd/assets/imgproject/";
@@ -59,32 +64,84 @@ public class SupplierController {
             @RequestPart("contactInfo") String contactInfo,
             @RequestPart(value = "logo", required = false) MultipartFile logo) {
 
+        // Validate input
+        if (supplierName == null || supplierName.trim().isEmpty() || contactInfo == null || contactInfo.trim().isEmpty()) {
+            LOGGER.warning("Invalid input: supplierName or contactInfo is empty");
+            return ResponseEntity.badRequest().build();
+        }
+
         SupplierDTO supplierDTO = new SupplierDTO();
+        supplierDTO.setSupplierID(supplierID);
         supplierDTO.setSupplierName(supplierName);
         supplierDTO.setContactInfo(contactInfo);
+
         if (logo != null && !logo.isEmpty()) {
-            // Xử lý tải lên tệp, ví dụ: lưu vào đĩa hoặc đám mây và đặt tên tệp trong DTO
-            String logoFileName = saveLogoFile(logo); // Triển khai phương thức này
-            supplierDTO.setLogo(logoFileName);
+            try {
+                // Validate file type
+                if (!logo.getContentType().startsWith("image/")) {
+                    LOGGER.warning("Invalid file type: " + logo.getContentType());
+                    return ResponseEntity.badRequest().body(new SupplierDTO("Only image files are allowed."));
+                }
+
+                String fileName = saveLogoFile(logo);
+                supplierDTO.setLogo(fileName);
+            } catch (Exception e) {
+                LOGGER.severe("Failed to save logo file for updateSupplier: " + e.getMessage());
+                throw new RuntimeException("Failed to save logo file: " + e.getMessage(), e);
+            }
+        } else {
+            LOGGER.info("No logo file provided for supplier ID: " + supplierID);
         }
 
         SupplierDTO updatedSupplier = supplierService.updateSupplier(supplierID, supplierDTO);
-        return updatedSupplier != null ? ResponseEntity.ok(updatedSupplier) : ResponseEntity.notFound().build();
+        if (updatedSupplier == null) {
+            LOGGER.warning("Supplier not found for ID: " + supplierID);
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedSupplier);
     }
 
-    // Phương thức ví dụ để lưu tệp logo
     private String saveLogoFile(MultipartFile file) {
         try {
-            String fileName = file.getOriginalFilename();
-            String uploadDir = "/BackEnd/assets/imgproject/";
-            java.nio.file.Files.copy(
-                    file.getInputStream(),
-                    java.nio.file.Paths.get(uploadDir + fileName),
-                    java.nio.file.StandardCopyOption.REPLACE_EXISTING
-            );
+            // Define upload directory
+            Path uploadDir = Paths.get(UPLOAD_DIR).toAbsolutePath().normalize();
+            LOGGER.info("Upload directory: " + uploadDir.toString());
+
+            // Create directory if it doesn't exist
+            Files.createDirectories(uploadDir);
+
+            // Handle file naming to avoid overwrite
+            String originalFileName = file.getOriginalFilename();
+            if (originalFileName == null) {
+                originalFileName = "default.jpg";
+            }
+            String fileName = originalFileName;
+            Path filePath = uploadDir.resolve(fileName);
+            int counter = 1;
+            while (Files.exists(filePath)) {
+                String baseName = originalFileName.substring(0, originalFileName.lastIndexOf('.'));
+                String extension = originalFileName.substring(originalFileName.lastIndexOf('.'));
+                fileName = baseName + "_" + counter + extension;
+                filePath = uploadDir.resolve(fileName);
+                counter++;
+            }
+
+            // Save the file
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            LOGGER.info("File saved successfully: " + filePath.toString());
+
+            // Verify file exists
+            if (Files.exists(filePath)) {
+                LOGGER.info("File verified: " + filePath.toString() + " exists");
+            } else {
+                LOGGER.severe("File not found after saving: " + filePath.toString());
+                throw new RuntimeException("File was not saved to " + filePath.toString());
+            }
+
             return fileName;
         } catch (Exception e) {
-            throw new RuntimeException("Không thể lưu tệp logo", e);
+            LOGGER.severe("Failed to save logo file: " + e.getMessage());
+            throw new RuntimeException("Không thể lưu tệp logo: " + e.getMessage(), e);
         }
     }
 

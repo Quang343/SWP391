@@ -17,6 +17,9 @@ public class SupplierDTO {
         this.logo = logo;
     }
 
+    public SupplierDTO(String s) {
+    }
+
 
     public Integer getSupplierID() {
         return supplierID;
