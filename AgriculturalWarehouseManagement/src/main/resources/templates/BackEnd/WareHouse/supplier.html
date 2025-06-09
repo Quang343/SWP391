@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="BackEnd/fragments/WareHouse/head::head"></head>
+<head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
 <body>
 <!-- tap on top start -->
 <div class="tap-top">
@@ -13,13 +13,13 @@
 <!-- page-wrapper Start-->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
     <!-- Page Header Start-->
-    <div th:replace="BackEnd/fragments/WareHouse/header::header"></div>
+    <div th:replace="~{BackEnd/fragments/WareHouse/header::header}"></div>
     <!-- Page Header Ends-->
 
     <!-- Page Body Start -->
     <div class="page-body-wrapper">
         <!-- Page Sidebar Start-->
-        <div th:replace="BackEnd/fragments/WareHouse/sidebar::sidebar"></div>
+        <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
         <!-- Page Sidebar Ends-->
 
         <!-- Container-fluid starts-->
@@ -31,9 +31,9 @@
                         <div class="card card-table">
                             <div class="card-body">
                                 <div class="title-header option-title">
-                                    <h5>All Users</h5>
+                                    <h5>All Supplier</h5>
                                     <form class="d-inline-flex">
-                                        <a th:href="@{/admin/adduser}" class="align-items-center btn btn-theme d-flex">
+                                        <a th:href="@{/admin/addsupplier}" class="align-items-center btn btn-theme d-flex">
                                             <i data-feather="plus"></i>Add New
                                         </a>
                                     </form>
@@ -43,185 +43,17 @@
                                     <table class="table all-package theme-table" id="table_id">
                                         <thead>
                                         <tr>
-                                            <th>User</th>
+                                            <th>Logo</th>
                                             <th>Name</th>
-                                            <th>Phone</th>
-                                            <th>Email</th>
+                                            <th>ContactInformation</th>
+                                            <th>Product</th>
                                             <th>Option</th>
                                         </tr>
                                         </thead>
 
-                                        <tbody>
-                                        <tr>
-                                            <td>
-                                                <div class="table-image">
-                                                    <img th:src="@{Backend/assets/images/users/1.jpg}" class="img-fluid"
-                                                         alt="">
-                                                </div>
-                                            </td>
-
-                                            <td>
-                                                <div class="user-name">
-                                                    <span>Everett C. Green</span>
-                                                    <span>Essex Court</span>
-                                                </div>
-                                            </td>
-
-                                            <td>+ 802 - 370 - 2430</td>
-
-                                            <td>EverettCGreen@rhyta.com</td>
-
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="order-detail.html">
-                                                            <i class="ri-eye-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)">
-                                                            <i class="ri-pencil-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                           data-bs-target="#exampleModalToggle">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-                                                <div class="table-image">
-                                                    <img src="assets/images/users/4.jpg" class="img-fluid"
-                                                         alt="">
-                                                </div>
-                                            </td>
-
-                                            <td>
-                                                <div class="user-name">
-                                                    <span>Lorna M. Bonner</span>
-                                                    <span>Broadway Street</span>
-                                                </div>
-                                            </td>
-
-                                            <td>+ 843 - 765 - 6166</td>
-
-                                            <td>LornaMBonner@teleworm.us</td>
-
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="order-detail.html">
-                                                            <i class="ri-eye-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)">
-                                                            <i class="ri-pencil-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                           data-bs-target="#exampleModalToggle">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-                                                <div class="table-image">
-                                                    <img src="assets/images/users/5.jpg" class="img-fluid"
-                                                         alt="">
-                                                </div>
-                                            </td>
-
-                                            <td>
-                                                <div class="user-name">
-                                                    <span>Everett C. Green</span>
-                                                    <span>Essex Court</span>
-                                                </div>
-                                            </td>
-
-                                            <td>+ 802 - 370 - 2430</td>
-
-                                            <td>EverettCGreen@rhyta.com</td>
-
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="order-detail.html">
-                                                            <i class="ri-eye-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)">
-                                                            <i class="ri-pencil-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                           data-bs-target="#exampleModalToggle">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-                                                <div class="table-image">
-                                                    <img src="assets/images/users/1.jpg" class="img-fluid"
-                                                         alt="">
-                                                </div>
-                                            </td>
-
-                                            <td>
-                                                <div class="user-name">
-                                                    <span>Lorraine D. McDowell</span>
-                                                    <span>Woodland Terrace</span>
-                                                </div>
-                                            </td>
-
-                                            <td>+ 916 - 942 - 7555</td>
-
-                                            <td>LorraineDMcDowell@dayrep.com</td>
-
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="order-detail.html">
-                                                            <i class="ri-eye-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)">
-                                                            <i class="ri-pencil-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                           data-bs-target="#exampleModalToggle">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </td>
+                                        <tbody id="supplier-table-body">
+                                        <tr id="no-data-row">
+                                            <td colspan="5" class="text-center">No data available in table</td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -319,6 +151,276 @@
         </div>
     </div>
 </div>
+
+<!-- Modal for Product details -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel">Product Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="product-info">
+                    <p><strong>Product Name:</strong> <span id="product-name">Example Product</span></p>
+                    <p><strong>Product Price:</strong> <span id="product-price">$100.00</span></p>
+                    <p><strong>Product Description:</strong> <span id="product-description">This is a sample description.</span></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Supplier Modal -->
+<div class="modal fade" id="updateSupplierModal" tabindex="-1" aria-labelledby="updateSupplierModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateSupplierModalLabel">Update Supplier</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form để cập nhật thông tin nhà cung cấp -->
+                <form id="updateSupplierForm">
+                    <input type="hidden" id="supplierID">
+                    <div class="mb-3">
+                        <label for="supplierName" class="form-label">Supplier Name</label>
+                        <input type="text" class="form-control" id="supplierName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contactInfo" class="form-label">Contact Information</label>
+                        <input type="text" class="form-control" id="contactInfo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="logo" class="form-label">Logo</label>
+                        <input type="file" class="form-control" id="logo" accept="image/*">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveSupplierBtn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Gọi API và thêm dữ liệu vào bảng
+    fetch('/api/suppliers')
+        .then(response => response.json())
+        .then(suppliers => {
+            const tableBody = document.querySelector('#supplier-table-body');
+            const noDataRow = document.querySelector('#no-data-row');
+
+            // Nếu có dữ liệu, xóa dòng "No data available in table"
+            if (suppliers.length > 0) {
+                noDataRow.style.display = 'none';
+                suppliers.forEach(supplier => {
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-id', supplier.supplierID);
+
+                    // Tạo dòng cho ảnh
+                    const imageCell = document.createElement('td');
+                    const imageDiv = document.createElement('div');
+                    imageDiv.classList.add('table-image');
+                    const img = document.createElement('img');
+                    const imagePath = "/BackEnd/assets/imgproject/" + supplier.logo;
+
+                    img.src = imagePath;
+                    img.classList.add('img-fluid');
+                    img.alt = "Supplier Logo";
+                    imageDiv.appendChild(img);
+                    imageCell.appendChild(imageDiv);
+                    row.appendChild(imageCell);
+
+                    // Tạo dòng cho tên nhà cung cấp
+                    const nameCell = document.createElement('td');
+                    const nameDiv = document.createElement('div');
+                    nameDiv.classList.add('user-name');
+                    nameDiv.innerHTML = `<span>${supplier.supplierName}</span>`;
+                    nameCell.appendChild(nameDiv);
+                    row.appendChild(nameCell);
+
+                    // Tạo dòng cho email
+                    const emailCell = document.createElement('td');
+                    emailCell.innerText = supplier.contactInfo || 'Chưa có email';
+                    row.appendChild(emailCell);
+
+                    // Tạo dòng cho Product
+                    const productCell = document.createElement('td');
+                    const productIcon = document.createElement('i');
+                    productIcon.classList.add('ri-product-hunt-line');
+                    productIcon.style.cursor = 'pointer';
+                    productIcon.addEventListener('click', function () {
+                        document.getElementById('product-name').innerText = 'Example Product';
+                        document.getElementById('product-price').innerText = '$100.00';
+                        document.getElementById('product-description').innerText = 'This is a sample description.';
+                        new bootstrap.Modal(document.getElementById('productModal')).show();
+                    });
+                    productCell.appendChild(productIcon);
+                    row.appendChild(productCell);
+
+                    // Tạo dòng cho các hành động
+                    const actionsCell = document.createElement('td');
+                    actionsCell.innerHTML = `
+                        <ul>
+                            <li><a href="order-detail.html"><i class="ri-eye-line"></i></a></li>
+                            <li><a href="javascript:void(0)" class="edit-btn" data-id="${supplier.supplierID}" data-name="${supplier.supplierName}" data-contact="${supplier.contactInfo}" data-logo="${supplier.logo}"><i class="ri-pencil-line"></i></a></li>
+                            <li><a href="javascript:void(0)" class="delete-btn" data-id="${supplier.supplierID}" data-bs-toggle="modal" data-bs-target="#exampleModalToggle"><i class="ri-delete-bin-line"></i></a></li>
+                        </ul>
+                    `;
+                    row.appendChild(actionsCell);
+
+                    // Thêm dòng vào bảng
+                    tableBody.appendChild(row);
+                });
+            }
+        })
+        .catch(error => console.error('Error fetching suppliers:', error));
+
+    // Remove duplicate event listener by ensuring only one listener is attached
+    document.addEventListener('click', function (event) {
+        // Handle delete button click
+        if (event.target.closest('.delete-btn')) {
+            const deleteBtn = event.target.closest('.delete-btn');
+            const supplierID = deleteBtn.getAttribute('data-id');
+
+            // Lưu supplierID vào modal để sử dụng khi xác nhận xóa
+            const modal = document.getElementById('exampleModalToggle');
+            modal.setAttribute('data-supplier-id', supplierID);
+        }
+
+        // Handle edit button click
+        if (event.target.closest('.edit-btn')) {
+            const editBtn = event.target.closest('.edit-btn');
+            const supplierID = editBtn.getAttribute('data-id');
+            const supplierName = editBtn.getAttribute('data-name');
+            const contactInfo = editBtn.getAttribute('data-contact');
+            const logo = editBtn.getAttribute('data-logo');
+
+            // Populate the update modal with supplier data
+            document.getElementById('supplierID').value = supplierID;
+            document.getElementById('supplierName').value = supplierName;
+            document.getElementById('contactInfo').value = contactInfo || '';
+            document.getElementById('logo').value = ''; // Reset file input
+
+            // Show the update modal
+            new bootstrap.Modal(document.getElementById('updateSupplierModal')).show();
+        }
+    }, { once: false });
+
+    // Xử lý xóa khi nhấn nút xác nhận trong modal
+    document.querySelector('#exampleModalToggle .btn.btn-animation.btn-md.fw-bold[data-bs-toggle="modal"]').addEventListener('click', function () {
+        const modal = document.getElementById('exampleModalToggle');
+        const supplierID = modal.getAttribute('data-supplier-id');
+
+        if (!supplierID) return;
+
+        // Gọi API DELETE để xóa supplier
+        fetch(`/api/suppliers/${supplierID}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Xóa dòng tương ứng trong bảng
+                    const rowToDelete = document.querySelector(`tr[data-id="${supplierID}"]`);
+                    if (rowToDelete) rowToDelete.remove();
+
+                    // Hiện modal xác nhận đã xóa
+                    const secondModal = new bootstrap.Modal(document.getElementById('exampleModalToggle2'));
+                    secondModal.show();
+
+                    // If no rows remain, show "No data available in table"
+                    const tableBody = document.getElementById('supplier-table-body');
+                    if (tableBody.querySelectorAll('tr').length === 0) {
+                        document.getElementById('no-data-row').style.display = '';
+                    }
+
+                    // Explicitly remove the backdrop after the second modal is closed
+                    document.getElementById('exampleModalToggle2').addEventListener('hidden.bs.modal', function () {
+                        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                        document.body.classList.remove('modal-open');
+                        document.body.style.overflow = ''; // Restore scrolling
+                    }, { once: true });
+                } else {
+                    alert('Failed to delete supplier.');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting supplier:', error);
+            });
+    });
+
+    document.getElementById('saveSupplierBtn').addEventListener('click', function () {
+        const supplierID = document.getElementById('supplierID').value;
+        const supplierName = document.getElementById('supplierName').value;
+        const contactInfo = document.getElementById('contactInfo').value;
+        const logoFile = document.getElementById('logo').files[0];
+
+        // Xác thực các trường bắt buộc
+        if (!supplierName || !contactInfo) {
+            alert('Tên nhà cung cấp và thông tin liên hệ là bắt buộc.');
+            return;
+        }
+
+        // Chuẩn bị FormData cho cuộc gọi API
+        const formData = new FormData();
+        formData.append('supplierName', supplierName);
+        formData.append('contactInfo', contactInfo);
+        if (logoFile) {
+            formData.append('logo', logoFile);
+        }
+
+        // Gọi API để cập nhật nhà cung cấp
+        fetch(`/api/suppliers/${supplierID}`, {
+            method: 'PUT',
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else if (response.status === 404) {
+                    throw new Error('Không tìm thấy nhà cung cấp.');
+                } else {
+                    throw new Error('Không thể cập nhật nhà cung cấp.');
+                }
+            })
+            .then(updatedSupplier => {
+                // Cập nhật dòng bảng với dữ liệu mới
+                const row = document.querySelector(`tr[data-id="${supplierID}"]`);
+                if (row) {
+                    const cells = row.querySelectorAll('td');
+                    cells[0].querySelector('img').src = updatedSupplier.logo
+                        ? `/BackEnd/assets/imgproject/${updatedSupplier.logo}`
+                        : '/BackEnd/assets/imgproject/default-logo.png';
+                    cells[1].querySelector('.user-name span').innerText = updatedSupplier.supplierName;
+                    cells[2].innerText = updatedSupplier.contactInfo || 'Chưa có email';
+                    cells[4].querySelector('.edit-btn').setAttribute('data-name', updatedSupplier.supplierName);
+                    cells[4].querySelector('.edit-btn').setAttribute('data-contact', updatedSupplier.contactInfo);
+                    cells[4].querySelector('.edit-btn').setAttribute('data-logo', updatedSupplier.logo || '');
+                }
+
+                // Đóng modal
+                bootstrap.Modal.getInstance(document.getElementById('updateSupplierModal')).hide();
+
+                // Hiển thị thông báo thành công
+                alert('Cập nhật nhà cung cấp thành công!');
+            })
+            .catch(error => {
+                console.error('Lỗi khi cập nhật nhà cung cấp:', error);
+                alert(error.message || 'Không thể cập nhật nhà cung cấp.');
+            });
+    });
+</script>
+
+
+
+
+
 <!-- Delete Modal Box End -->
 <!-- latest js -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>

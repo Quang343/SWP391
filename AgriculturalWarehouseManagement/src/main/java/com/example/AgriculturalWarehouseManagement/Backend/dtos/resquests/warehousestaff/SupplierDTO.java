@@ -5,15 +5,16 @@ public class SupplierDTO {
     private Integer supplierID;
     private String supplierName;
     private String contactInfo;
-
+    private String logo;
 
     public SupplierDTO() {
     }
 
-    public SupplierDTO(Integer supplierID, String supplierName, String contactInfo) {
+    public SupplierDTO(Integer supplierID, String supplierName, String contactInfo, String logo) {
         this.supplierID = supplierID;
         this.supplierName = supplierName;
         this.contactInfo = contactInfo;
+        this.logo = logo;
     }
 
 
@@ -40,4 +41,8 @@ public class SupplierDTO {
     public void setContactInfo(String contactInfo) {
         this.contactInfo = contactInfo;
     }
+
+    public String getLogo() {return logo;}
+
+    public void setLogo(String logo) {this.logo = logo;}
 }

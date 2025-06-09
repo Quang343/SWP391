@@ -9,11 +9,15 @@ public class Suppliers {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer supplierID;
 
+
     @Column(name = "suppliername", nullable = false, length = 255)
     private String supplierName;
 
-    @Column(name = "contactinfo", length = 500)
+    @Column(name = "contactinfo", length = 100)
     private String contactInfo;
+
+    @Column(name = "logo", length = 100)
+    private String logo;
 
     // Getters and Setters
 
@@ -40,4 +44,9 @@ public class Suppliers {
     public void setContactInfo(String contactInfo) {
         this.contactInfo = contactInfo;
     }
+
+    public String getLogo() {return logo;}
+
+    public void setLogo(String logo) {this.logo = logo;}
+
 }

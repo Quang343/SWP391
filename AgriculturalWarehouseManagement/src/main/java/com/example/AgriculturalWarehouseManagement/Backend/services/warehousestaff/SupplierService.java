@@ -28,11 +28,14 @@ public class SupplierService {
     // Get Suppliers by ID
     public SupplierDTO getSupplierById(Integer supplierID) {
         Optional<Suppliers> supplier = supplierRepository.findById(supplierID);
-        return supplier.map(supplierMapper::supplierToSupplierDTO).orElse(null);
+        return supplier.map(supplierMapper::supplierToSupplierDTO).orElseThrow(() -> new RuntimeException("Supplier not found"));
     }
 
     // Create Suppliers
     public SupplierDTO createSupplier(SupplierDTO supplierDTO) {
+        if(supplierRepository.existsBySupplierName(supplierDTO.getSupplierName())) {
+            throw new RuntimeException("Supplier already exists");
+        }
         Suppliers supplier = supplierMapper.supplierDTOToSupplier(supplierDTO);
         supplier = supplierRepository.save(supplier);
         return supplierMapper.supplierToSupplierDTO(supplier);

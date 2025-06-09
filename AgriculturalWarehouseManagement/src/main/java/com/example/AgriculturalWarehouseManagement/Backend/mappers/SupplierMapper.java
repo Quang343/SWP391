@@ -13,6 +13,7 @@ public class SupplierMapper {
         dto.setSupplierID(supplier.getSupplierID());
         dto.setSupplierName(supplier.getSupplierName());
         dto.setContactInfo(supplier.getContactInfo());
+        dto.setLogo(supplier.getLogo());
         return dto;
     }
 
@@ -21,6 +22,7 @@ public class SupplierMapper {
         supplier.setSupplierID(dto.getSupplierID());
         supplier.setSupplierName(dto.getSupplierName());
         supplier.setContactInfo(dto.getContactInfo());
+        supplier.setLogo(dto.getLogo());
         return supplier;
     }
 }

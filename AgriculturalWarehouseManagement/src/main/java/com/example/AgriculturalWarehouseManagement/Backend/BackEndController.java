@@ -78,6 +78,8 @@ public class BackEndController {
     public String pruductbatch() {return "BackEnd/WareHouse/productbatch";}
     @RequestMapping("/warehouse/supplier")
     public String supplier() {return "BackEnd/WareHouse/supplier";}
+    @RequestMapping("/warehouse/addsupplier")
+    public String addsupplier() {return "BackEnd/WareHouse/addsupplier";}
 
 }
 
