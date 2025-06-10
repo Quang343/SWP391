@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
+
+<body>
+<!-- tap on top start -->
+<div class="tap-top">
+    <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+
+<!-- page-wrapper start -->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <!-- Page Header Start-->
+    <div th:replace="~{BackEnd/fragments/WareHouse/header::header}"></div>
+    <!-- Page Header Ends-->
+
+    <!-- Page Body start -->
+    <div class="page-body-wrapper">
+        <!-- Page Sidebar Start-->
+        <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
+        <!-- Page Sidebar Ends-->
+
+        <div class="page-body">
+
+            <!-- New Product Add Start -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-sm-8 m-auto">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="card-header-2">
+                                            <h5>Add Supplier Information</h5>
+                                        </div>
+
+                                        <div class="theme-form theme-form-2 mega-form">
+                                            <!-- Supplier Name -->
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="form-label-title col-sm-3 mb-0">Supplier Name</label>
+                                                <div class="col-sm-9">
+                                                    <input id="supplierName" class="form-control" type="text" placeholder="Supplier Name">
+                                                </div>
+                                            </div>
+
+                                            <!-- Contact Information -->
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="form-label-title col-sm-3 mb-0">Contact Information</label>
+                                                <div class="col-sm-9">
+                                                    <input id="contactInfo" class="form-control" type="text" placeholder="Contact Information">
+                                                </div>
+                                            </div>
+
+                                            <!-- Supplier Logo (Image Upload) -->
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="col-sm-3 col-form-label form-label-title">Supplier Logo</label>
+                                                <div class="form-group col-sm-9">
+                                                    <form class="dropzone custom-dropzone" id="logoUpload">
+                                                        <div class="dropzone-wrapper">
+                                                            <div class="dz-message needsclick">
+                                                                <div>
+                                                                    <i class="icon-cloud-up"></i>
+                                                                    <h6>Drop files here or click to upload.</h6>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+
+                                    <div class="card-submit-button">
+                                        <button id="submitButton" class="btn btn-animation ms-auto" type="button">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- New Product Add End -->
+
+            <!-- footer Start -->
+            <div class="container-fluid">
+                <footer class="footer">
+                    <div class="row">
+                        <div class="col-md-12 footer-copyright text-center">
+                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+            <!-- footer En -->
+        </div>
+        <!-- Container-fluid End -->
+    </div>
+    <!-- Page Body End -->
+</div>
+<!-- page-wrapper End -->
+
+<!-- Modal Start -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                <p>Are you sure you want to log out?</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="button-box">
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                    <button type="button" onclick="location.href = 'login.html';"
+                            class="btn  btn--yes btn-primary">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal End -->
+
+<script>
+    // Đảm bảo DOM đã tải xong
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM đã tải xong, khởi tạo script...');
+
+        // Kiểm tra sự tồn tại của submitButton
+        const submitButton = document.getElementById('submitButton');
+        if (!submitButton) {
+            console.error('Không tìm thấy #submitButton trong DOM.');
+            return;
+        }
+        console.log('Tìm thấy #submitButton, gắn sự kiện click.');
+
+        // Kiểm tra sự tồn tại của logoUpload
+        const logoUpload = document.getElementById('logoUpload');
+        if (!logoUpload) {
+            console.error('Không tìm thấy #logoUpload trong DOM.');
+            return;
+        }
+
+        // Cấu hình Dropzone
+        try {
+            Dropzone.autoDiscover = false;
+            const dropzone = new Dropzone("#logoUpload", {
+                url: "/api/suppliers/createSupplier", // Sẽ được ghi đè
+                autoProcessQueue: false, // Không tự động gửi
+                maxFiles: 1, // Chỉ 1 file
+                acceptedFiles: "image/*", // Chỉ hình ảnh
+                addRemoveLinks: true, // Nút xóa
+                dictDefaultMessage: "Kéo thả file hoặc nhấn để tải lên logo.",
+                dictRemoveFile: "Xóa file",
+                dictInvalidFileType: "Chỉ chấp nhận file hình ảnh (jpg, png, ...).",
+                dictMaxFilesExceeded: "Chỉ được tải lên 1 file."
+            });
+            console.log('Dropzone khởi tạo thành công.');
+
+            // Xử lý sự kiện click
+            submitButton.addEventListener('click', function () {
+                console.log('Nút Submit được nhấn.');
+
+                // Lấy giá trị
+                const supplierName = document.getElementById('supplierName').value.trim();
+                const contactInfo = document.getElementById('contactInfo').value.trim();
+                const logoFile = dropzone.files[0];
+
+                // Kiểm tra đầu vào
+                if (!supplierName) {
+                    alert('Vui lòng nhập tên nhà cung cấp.');
+                    console.warn('Thiếu supplierName.');
+                    return;
+                }
+                if (!contactInfo) {
+                    alert('Vui lòng nhập thông tin liên hệ.');
+                    console.warn('Thiếu contactInfo.');
+                    return;
+                }
+                if (!logoFile) {
+                    alert('Vui lòng tải lên logo.');
+                    console.warn('Thiếu logoFile.');
+                    return;
+                }
+
+                // Tạo FormData
+                const formData = new FormData();
+                formData.append('supplierName', supplierName);
+                formData.append('contactInfo', contactInfo);
+                formData.append('logo', logoFile);
+
+                console.log('Gửi FormData tới /api/suppliers/createSupplier', {
+                    supplierName,
+                    contactInfo,
+                    logoFile: logoFile.name
+                });
+
+                // Gửi yêu cầu POST
+                fetch('/api/suppliers/createSupplier', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        console.log('Phản hồi từ server:', response.status);
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                throw new Error(err.message || `Lỗi ${response.status}: Không thể tạo nhà cung cấp.`);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(createdSupplier => {
+                        console.log('Nhà cung cấp được tạo:', createdSupplier);
+                        alert('Tạo nhà cung cấp thành công!');
+
+                        // Reset form
+                        document.getElementById('supplierName').value = '';
+                        document.getElementById('contactInfo').value = '';
+                        dropzone.removeAllFiles();
+
+                        // Kiểm tra logo
+                        if (createdSupplier.logo) {
+                            console.log('Logo URL:', `/BackEnd/assets/imgproject/${createdSupplier.logo}?t=${Date.now()}`);
+                            // Ví dụ: Chuyển hướng
+                            // window.location.href = '/suppliers';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi:', error);
+                        alert(error.message || 'Đã xảy ra lỗi khi tạo nhà cung cấp.');
+                    });
+            });
+        } catch (error) {
+            console.error('Lỗi khi khởi tạo Dropzone:', error);
+            alert('Không thể khởi tạo Dropzone. Vui lòng kiểm tra console.');
+        }
+    });
+</script>
+
+<!-- latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- Bootstrap js -->
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+
+<!-- feather icon js -->
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+
+<!-- scrollbar simplebar js -->
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+
+<!-- Sidebar js -->
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+
+<!-- customizer js -->
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+
+<!-- Plugins js -->
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+
+<!-- Data table js -->
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+
+<!-- sidebar effect -->
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+
+<!-- Theme js -->
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+
+<!--Dropzon js -->
+<script th:src="@{/Backend/assets/js/dropzone/dropzone.js}"></script>
+<script th:src="@{/Backend/assets/js/dropzone/dropzone-script.js}"></script>
+
+<!-- select2 js -->
+<script th:src="@{/Backend/assets/js/select2.min.js}"></script>
+<script th:src="@{/Backend/assets/js/select2-custom.js}"></script>
+
+</body>
+
+</html>

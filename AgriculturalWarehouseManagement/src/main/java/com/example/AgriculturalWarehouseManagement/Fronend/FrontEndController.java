@@ -50,5 +50,8 @@ public class FrontEndController {
         return "FrontEnd/Home/blog-grid" ;
     }
 
-
+    @RequestMapping("/seller-dashboard")
+    public String sellerdashboard(){
+        return "FrontEnd/Seller/seller-dashboard";
+    }
 }
