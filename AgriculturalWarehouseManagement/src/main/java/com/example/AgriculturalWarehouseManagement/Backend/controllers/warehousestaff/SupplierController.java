@@ -34,7 +34,7 @@ public class SupplierController {
 
     private static final Logger LOGGER = Logger.getLogger(SupplierController.class.getName());
 
-    private static final String UPLOAD_DIR = "src/main/resources/static/BackEnd/assets/imgproject/";
+    private static final String UPLOAD_DIR = "AgriculturalWarehouseManagement/src/main/resources/static/BackEnd/assets/imgproject/";
 
     // Đường dẫn thư mục lưu trữ ảnh
     private final String uploadPath = "/BackEnd/assets/imgproject/";
@@ -50,10 +50,43 @@ public class SupplierController {
         return ResponseEntity.ok(dto); // JSON
     }
 
-    // Create Suppliers
-    @PostMapping("/createSupplier")
-    public ResponseEntity<SupplierDTO> createSupplier(@RequestBody SupplierDTO supplierDTO) {
+    @PostMapping(value = "/createSupplier", consumes = {"multipart/form-data"})
+    public ResponseEntity<SupplierDTO> createSupplier(
+            @RequestPart("supplierName") String supplierName,
+            @RequestPart("contactInfo") String contactInfo,
+            @RequestPart(value = "logo", required = false) MultipartFile logo) {
+
+        // Validate input
+        if (supplierName == null || supplierName.trim().isEmpty() || contactInfo == null || contactInfo.trim().isEmpty()) {
+            LOGGER.warning("Invalid input: supplierName or contactInfo is empty");
+            return ResponseEntity.badRequest().build();
+        }
+
+        SupplierDTO supplierDTO = new SupplierDTO();
+        supplierDTO.setSupplierName(supplierName);
+        supplierDTO.setContactInfo(contactInfo);
+
+        if (logo != null && !logo.isEmpty()) {
+            try {
+                // Validate file type
+                if (!logo.getContentType().startsWith("image/")) {
+                    LOGGER.warning("Invalid file type: " + logo.getContentType());
+                    return ResponseEntity.badRequest().body(new SupplierDTO("Only image files are allowed."));
+                }
+
+                String fileName = saveLogoFile(logo);
+                supplierDTO.setLogo(fileName);
+                LOGGER.info("Logo file set for createSupplier: " + fileName);
+            } catch (Exception e) {
+                LOGGER.severe("Failed to save logo file for createSupplier: " + e.getMessage());
+                throw new RuntimeException("Failed to save logo file: " + e.getMessage(), e);
+            }
+        } else {
+            LOGGER.info("No logo file provided for createSupplier");
+        }
+
         SupplierDTO createdSupplier = supplierService.createSupplier(supplierDTO);
+        LOGGER.info("Created supplier with logo: " + createdSupplier.getLogo());
         return new ResponseEntity<>(createdSupplier, HttpStatus.CREATED);
     }
 

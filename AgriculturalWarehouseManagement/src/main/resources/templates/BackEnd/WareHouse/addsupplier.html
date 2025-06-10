@@ -58,7 +58,7 @@
                                             <div class="mb-4 row align-items-center">
                                                 <label class="col-sm-3 col-form-label form-label-title">Supplier Logo</label>
                                                 <div class="form-group col-sm-9">
-                                                    <form class="dropzone custom-dropzone" id="logoUpload" action="/api/suppliers/uploadLogo" method="POST" enctype="multipart/form-data">
+                                                    <form class="dropzone custom-dropzone" id="logoUpload">
                                                         <div class="dropzone-wrapper">
                                                             <div class="dz-message needsclick">
                                                                 <div>
@@ -70,6 +70,7 @@
                                                     </form>
                                                 </div>
                                             </div>
+
 
                                         </div>
                                     </div>
@@ -123,65 +124,120 @@
 <!-- Modal End -->
 
 <script>
-    document.getElementById('submitButton').addEventListener('click', function () {
-        // Lấy các giá trị từ các trường nhập liệu
-        const supplierName = document.getElementById('supplierName').value;
-        const contactInfo = document.getElementById('contactInfo').value;
+    // Đảm bảo DOM đã tải xong
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM đã tải xong, khởi tạo script...');
 
-        // Lấy logo (sử dụng Dropzone để lấy file)
-        const logoFile = document.querySelector('.dropzone .dz-preview .dz-image img');
+        // Kiểm tra sự tồn tại của submitButton
+        const submitButton = document.getElementById('submitButton');
+        if (!submitButton) {
+            console.error('Không tìm thấy #submitButton trong DOM.');
+            return;
+        }
+        console.log('Tìm thấy #submitButton, gắn sự kiện click.');
 
-        // Kiểm tra nếu tất cả thông tin đều hợp lệ
-        if (!supplierName || !contactInfo || !logoFile) {
-            alert('Please fill in all fields and upload a logo.');
+        // Kiểm tra sự tồn tại của logoUpload
+        const logoUpload = document.getElementById('logoUpload');
+        if (!logoUpload) {
+            console.error('Không tìm thấy #logoUpload trong DOM.');
             return;
         }
 
-        // Tạo đối tượng FormData
-        const formData = new FormData();
-        formData.append('file', logoFile.src);  // Đảm bảo là trường 'file' tương ứng với tham số trong controller
-
-        // Tạo một đối tượng SupplierDTO (chứa tên và thông tin nhà cung cấp)
-        const supplierDTO = {
-            supplierName: supplierName,
-            contactInfo: contactInfo,
-        };
-
-        // Gửi yêu cầu POST tới API upload logo
-        fetch('/api/suppliers/uploadLogo', {
-            method: 'POST',
-            body: formData  // Gửi formData chứa file
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('File uploaded successfully:', data);
-
-                // Sau khi upload thành công, gửi dữ liệu nhà cung cấp
-                return fetch('/api/suppliers/createSupplier', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(supplierDTO)
-                });
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert('Supplier created successfully!');
-                // Reset form sau khi thành công
-                document.getElementById('supplierName').value = '';
-                document.getElementById('contactInfo').value = '';
-                Dropzone.forElement("#logoUpload").removeAllFiles();  // Reset Dropzone
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while uploading the logo or creating the supplier.');
+        // Cấu hình Dropzone
+        try {
+            Dropzone.autoDiscover = false;
+            const dropzone = new Dropzone("#logoUpload", {
+                url: "/api/suppliers/createSupplier", // Sẽ được ghi đè
+                autoProcessQueue: false, // Không tự động gửi
+                maxFiles: 1, // Chỉ 1 file
+                acceptedFiles: "image/*", // Chỉ hình ảnh
+                addRemoveLinks: true, // Nút xóa
+                dictDefaultMessage: "Kéo thả file hoặc nhấn để tải lên logo.",
+                dictRemoveFile: "Xóa file",
+                dictInvalidFileType: "Chỉ chấp nhận file hình ảnh (jpg, png, ...).",
+                dictMaxFilesExceeded: "Chỉ được tải lên 1 file."
             });
+            console.log('Dropzone khởi tạo thành công.');
+
+            // Xử lý sự kiện click
+            submitButton.addEventListener('click', function () {
+                console.log('Nút Submit được nhấn.');
+
+                // Lấy giá trị
+                const supplierName = document.getElementById('supplierName').value.trim();
+                const contactInfo = document.getElementById('contactInfo').value.trim();
+                const logoFile = dropzone.files[0];
+
+                // Kiểm tra đầu vào
+                if (!supplierName) {
+                    alert('Vui lòng nhập tên nhà cung cấp.');
+                    console.warn('Thiếu supplierName.');
+                    return;
+                }
+                if (!contactInfo) {
+                    alert('Vui lòng nhập thông tin liên hệ.');
+                    console.warn('Thiếu contactInfo.');
+                    return;
+                }
+                if (!logoFile) {
+                    alert('Vui lòng tải lên logo.');
+                    console.warn('Thiếu logoFile.');
+                    return;
+                }
+
+                // Tạo FormData
+                const formData = new FormData();
+                formData.append('supplierName', supplierName);
+                formData.append('contactInfo', contactInfo);
+                formData.append('logo', logoFile);
+
+                console.log('Gửi FormData tới /api/suppliers/createSupplier', {
+                    supplierName,
+                    contactInfo,
+                    logoFile: logoFile.name
+                });
+
+                // Gửi yêu cầu POST
+                fetch('/api/suppliers/createSupplier', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        console.log('Phản hồi từ server:', response.status);
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                throw new Error(err.message || `Lỗi ${response.status}: Không thể tạo nhà cung cấp.`);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(createdSupplier => {
+                        console.log('Nhà cung cấp được tạo:', createdSupplier);
+                        alert('Tạo nhà cung cấp thành công!');
+
+                        // Reset form
+                        document.getElementById('supplierName').value = '';
+                        document.getElementById('contactInfo').value = '';
+                        dropzone.removeAllFiles();
+
+                        // Kiểm tra logo
+                        if (createdSupplier.logo) {
+                            console.log('Logo URL:', `/BackEnd/assets/imgproject/${createdSupplier.logo}?t=${Date.now()}`);
+                            // Ví dụ: Chuyển hướng
+                            // window.location.href = '/suppliers';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi:', error);
+                        alert(error.message || 'Đã xảy ra lỗi khi tạo nhà cung cấp.');
+                    });
+            });
+        } catch (error) {
+            console.error('Lỗi khi khởi tạo Dropzone:', error);
+            alert('Không thể khởi tạo Dropzone. Vui lòng kiểm tra console.');
+        }
     });
-
 </script>
-
-
 
 <!-- latest js -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
@@ -222,12 +278,9 @@
 <script th:src="@{/Backend/assets/js/dropzone/dropzone.js}"></script>
 <script th:src="@{/Backend/assets/js/dropzone/dropzone-script.js}"></script>
 
-
-
 <!-- select2 js -->
 <script th:src="@{/Backend/assets/js/select2.min.js}"></script>
 <script th:src="@{/Backend/assets/js/select2-custom.js}"></script>
-
 
 </body>
 
