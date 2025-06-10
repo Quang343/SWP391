@@ -1,12 +1,18 @@
 package com.example.AgriculturalWarehouseManagement.dtos;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 @Data
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryDTO {
-    private String categoryName;
-    private String categoryDescription;
+
+    @NotBlank(message = "Category name is required!")
+    private String name;
+
+    private String description;
+
+    @NotBlank
+    private String status;
 }
