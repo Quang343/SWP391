@@ -209,211 +209,236 @@
 </div>
 
 <script>
-    // Gọi API và thêm dữ liệu vào bảng
-    fetch('/api/suppliers')
-        .then(response => response.json())
-        .then(suppliers => {
-            const tableBody = document.querySelector('#supplier-table-body');
-            const noDataRow = document.querySelector('#no-data-row');
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM đã tải xong, khởi tạo script danh sách...');
 
-            // Nếu có dữ liệu, xóa dòng "No data available in table"
-            if (suppliers.length > 0) {
-                noDataRow.style.display = 'none';
-                suppliers.forEach(supplier => {
-                    const row = document.createElement('tr');
-                    row.setAttribute('data-id', supplier.supplierID);
+        fetch('/api/suppliers')
+            .then(response => response.json())
+            .then(suppliers => {
+                const tableBody = document.querySelector('#supplier-table-body');
+                const noDataRow = document.querySelector('#no-data-row');
 
-                    // Tạo dòng cho ảnh
-                    const imageCell = document.createElement('td');
-                    const imageDiv = document.createElement('div');
-                    imageDiv.classList.add('table-image');
-                    const img = document.createElement('img');
-                    const imagePath = "/BackEnd/assets/imgproject/" + supplier.logo;
+                if (suppliers.length > 0) {
+                    noDataRow.style.display = 'none';
+                    suppliers.forEach(supplier => {
+                        const row = document.createElement('tr');
+                        row.setAttribute('data-id', supplier.supplierID);
 
-                    img.src = imagePath;
-                    img.classList.add('img-fluid');
-                    img.alt = "Supplier Logo";
-                    imageDiv.appendChild(img);
-                    imageCell.appendChild(imageDiv);
-                    row.appendChild(imageCell);
+                        const imageCell = document.createElement('td');
+                        const imageDiv = document.createElement('div');
+                        imageDiv.classList.add('table-image');
+                        const img = document.createElement('img');
+                        img.src = supplier.logo ? `/BackEnd/assets/imgproject/${supplier.logo}?t=${Date.now()}` : '/BackEnd/assets/imgproject/default-logo.png';
+                        img.classList.add('img-fluid');
+                        img.alt = 'Supplier Logo';
+                        imageDiv.appendChild(img);
+                        imageCell.appendChild(imageDiv);
+                        row.appendChild(imageCell);
 
-                    // Tạo dòng cho tên nhà cung cấp
-                    const nameCell = document.createElement('td');
-                    const nameDiv = document.createElement('div');
-                    nameDiv.classList.add('user-name');
-                    nameDiv.innerHTML = `<span>${supplier.supplierName}</span>`;
-                    nameCell.appendChild(nameDiv);
-                    row.appendChild(nameCell);
+                        const nameCell = document.createElement('td');
+                        const nameDiv = document.createElement('div');
+                        nameDiv.classList.add('user-name');
+                        nameDiv.innerHTML = `<span>${supplier.supplierName}</span>`;
+                        nameCell.appendChild(nameDiv);
+                        row.appendChild(nameCell);
 
-                    // Tạo dòng cho email
-                    const emailCell = document.createElement('td');
-                    emailCell.innerText = supplier.contactInfo || 'Chưa có email';
-                    row.appendChild(emailCell);
+                        const emailCell = document.createElement('td');
+                        emailCell.innerText = supplier.contactInfo || 'Chưa có email';
+                        row.appendChild(emailCell);
 
-                    // Tạo dòng cho Product
-                    const productCell = document.createElement('td');
-                    const productIcon = document.createElement('i');
-                    productIcon.classList.add('ri-product-hunt-line');
-                    productIcon.style.cursor = 'pointer';
-                    productIcon.addEventListener('click', function () {
-                        document.getElementById('product-name').innerText = 'Example Product';
-                        document.getElementById('product-price').innerText = '$100.00';
-                        document.getElementById('product-description').innerText = 'This is a sample description.';
-                        new bootstrap.Modal(document.getElementById('productModal')).show();
-                    });
-                    productCell.appendChild(productIcon);
-                    row.appendChild(productCell);
+                        const productCell = document.createElement('td');
+                        const productIcon = document.createElement('i');
+                        productIcon.classList.add('ri-product-hunt-line');
+                        productIcon.style.cursor = 'pointer';
+                        productIcon.addEventListener('click', function () {
+                            document.getElementById('product-name').innerText = 'Example Product';
+                            document.getElementById('product-price').innerText = '$100.00';
+                            document.getElementById('product-description').innerText = 'This is a sample description.';
+                            new bootstrap.Modal(document.getElementById('productModal')).show();
+                        });
+                        productCell.appendChild(productIcon);
+                        row.appendChild(productCell);
 
-                    // Tạo dòng cho các hành động
-                    const actionsCell = document.createElement('td');
-                    actionsCell.innerHTML = `
+                        const actionsCell = document.createElement('td');
+                        actionsCell.innerHTML = `
                         <ul>
                             <li><a href="order-detail.html"><i class="ri-eye-line"></i></a></li>
-                            <li><a href="javascript:void(0)" class="edit-btn" data-id="${supplier.supplierID}" data-name="${supplier.supplierName}" data-contact="${supplier.contactInfo}" data-logo="${supplier.logo}"><i class="ri-pencil-line"></i></a></li>
+                            <li><a href="javascript:void(0)" class="edit-btn" data-id="${supplier.supplierID}" data-name="${supplier.supplierName}" data-contact="${supplier.contactInfo || ''}" data-logo="${supplier.logo || ''}"><i class="ri-pencil-line"></i></a></li>
                             <li><a href="javascript:void(0)" class="delete-btn" data-id="${supplier.supplierID}" data-bs-toggle="modal" data-bs-target="#exampleModalToggle"><i class="ri-delete-bin-line"></i></a></li>
                         </ul>
                     `;
-                    row.appendChild(actionsCell);
+                        row.appendChild(actionsCell);
 
-                    // Thêm dòng vào bảng
-                    tableBody.appendChild(row);
-                });
-            }
-        })
-        .catch(error => console.error('Error fetching suppliers:', error));
+                        tableBody.appendChild(row);
+                    });
+                }
+            })
+            .catch(error => console.error('Error fetching suppliers:', error));
 
-    // Remove duplicate event listener by ensuring only one listener is attached
-    document.addEventListener('click', function (event) {
-        // Handle delete button click
-        if (event.target.closest('.delete-btn')) {
+        document.addEventListener('click', function (event) {
             const deleteBtn = event.target.closest('.delete-btn');
-            const supplierID = deleteBtn.getAttribute('data-id');
-
-            // Lưu supplierID vào modal để sử dụng khi xác nhận xóa
-            const modal = document.getElementById('exampleModalToggle');
-            modal.setAttribute('data-supplier-id', supplierID);
-        }
-
-        // Handle edit button click
-        if (event.target.closest('.edit-btn')) {
             const editBtn = event.target.closest('.edit-btn');
-            const supplierID = editBtn.getAttribute('data-id');
-            const supplierName = editBtn.getAttribute('data-name');
-            const contactInfo = editBtn.getAttribute('data-contact');
-            const logo = editBtn.getAttribute('data-logo');
 
-            // Populate the update modal with supplier data
-            document.getElementById('supplierID').value = supplierID;
-            document.getElementById('supplierName').value = supplierName;
-            document.getElementById('contactInfo').value = contactInfo || '';
-            document.getElementById('logo').value = ''; // Reset file input
+            if (deleteBtn) {
+                const supplierID = deleteBtn.getAttribute('data-id');
+                const modal = document.getElementById('exampleModalToggle');
+                if (modal) {
+                    modal.setAttribute('data-supplier-id', supplierID);
+                }
+            }
 
-            // Show the update modal
-            new bootstrap.Modal(document.getElementById('updateSupplierModal')).show();
+            if (editBtn) {
+                const supplierID = editBtn.getAttribute('data-id');
+                const supplierName = editBtn.getAttribute('data-name');
+                const contactInfo = editBtn.getAttribute('data-contact');
+                const logo = editBtn.getAttribute('data-logo');
+
+                const supplierIdInput = document.getElementById('supplierID');
+                const supplierNameInput = document.getElementById('supplierName');
+                const contactInfoInput = document.getElementById('contactInfo');
+                const logoInput = document.getElementById('logo');
+
+                if (supplierIdInput && supplierNameInput && contactInfoInput && logoInput) {
+                    supplierIdInput.value = supplierID;
+                    supplierNameInput.value = supplierName;
+                    contactInfoInput.value = contactInfo || '';
+                    logoInput.value = '';
+                } else {
+                    console.error('One or more form inputs not found');
+                    alert('Không thể mở modal cập nhật.');
+                    return;
+                }
+
+                try {
+                    const modal = new bootstrap.Modal(document.getElementById('updateSupplierModal'));
+                    modal.show();
+                } catch (error) {
+                    console.error('Error opening update modal:', error);
+                    alert('Không thể mở modal cập nhật.');
+                }
+            }
+        });
+
+        const confirmDeleteBtn = document.querySelector('#exampleModalToggle .btn.btn-animation.btn-md.fw-bold[data-bs-toggle="modal"]');
+        if (confirmDeleteBtn) {
+            confirmDeleteBtn.addEventListener('click', function () {
+                const modal = document.getElementById('exampleModalToggle');
+                const supplierID = modal.getAttribute('data-supplier-id');
+
+                if (!supplierID) return;
+
+                fetch(`/api/suppliers/${supplierID}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            const rowToDelete = document.querySelector(`tr[data-id="${supplierID}"]`);
+                            if (rowToDelete) rowToDelete.remove();
+
+                            const secondModal = new bootstrap.Modal(document.getElementById('exampleModalToggle2'));
+                            secondModal.show();
+
+                            const tableBody = document.getElementById('supplier-table-body');
+                            if (tableBody.querySelectorAll('tr').length === 0) {
+                                document.getElementById('no-data-row').style.display = '';
+                            }
+
+                            document.getElementById('exampleModalToggle2').addEventListener('hidden.bs.modal', function () {
+                                document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                                document.body.classList.remove('modal-open');
+                                document.body.style.overflow = '';
+                            }, { once: true });
+                        } else {
+                            alert('Không thể xóa nhà cung cấp.');
+                        }
+                    })
+                    .catch(error => console.error('Error deleting supplier:', error));
+            });
         }
-    }, { once: false });
 
-    // Xử lý xóa khi nhấn nút xác nhận trong modal
-    document.querySelector('#exampleModalToggle .btn.btn-animation.btn-md.fw-bold[data-bs-toggle="modal"]').addEventListener('click', function () {
-        const modal = document.getElementById('exampleModalToggle');
-        const supplierID = modal.getAttribute('data-supplier-id');
+        function updateSupplier(supplierID, supplierName, contactInfo, logoFile) {
+            const formData = new FormData();
+            formData.append('supplierName', supplierName);
+            formData.append('contactInfo', contactInfo);
+            if (logoFile) {
+                formData.append('logo', logoFile);
+            }
 
-        if (!supplierID) return;
+            console.log('Gửi FormData tới /api/suppliers/' + supplierID, {
+                supplierName,
+                contactInfo,
+                logoFile: logoFile ? logoFile.name : 'Không có file'
+            });
 
-        // Gọi API DELETE để xóa supplier
-        fetch(`/api/suppliers/${supplierID}`, {
-            method: 'DELETE'
-        })
-            .then(response => {
-                if (response.ok) {
-                    // Xóa dòng tương ứng trong bảng
-                    const rowToDelete = document.querySelector(`tr[data-id="${supplierID}"]`);
-                    if (rowToDelete) rowToDelete.remove();
-
-                    // Hiện modal xác nhận đã xóa
-                    const secondModal = new bootstrap.Modal(document.getElementById('exampleModalToggle2'));
-                    secondModal.show();
-
-                    // If no rows remain, show "No data available in table"
-                    const tableBody = document.getElementById('supplier-table-body');
-                    if (tableBody.querySelectorAll('tr').length === 0) {
-                        document.getElementById('no-data-row').style.display = '';
+            fetch(`/api/suppliers/${supplierID}`, {
+                method: 'PUT',
+                body: formData
+            })
+                .then(response => {
+                    console.log('Phản hồi từ server:', response.status);
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw { status: response.status, error: err.error || 'Lỗi không xác định.' };
+                        });
+                    }
+                    return response.json();
+                })
+                .then(updatedSupplier => {
+                    console.log('Supplier updated:', updatedSupplier);
+                    const row = document.querySelector(`tr[data-id="${supplierID}"]`);
+                    if (row) {
+                        const cells = row.querySelectorAll('td');
+                        cells[0].querySelector('img').src = updatedSupplier.logo
+                            ? `/BackEnd/assets/imgproject/${updatedSupplier.logo}?t=${Date.now()}`
+                            : '/BackEnd/assets/imgproject/default-logo.png';
+                        cells[1].querySelector('.user-name span').innerText = updatedSupplier.supplierName;
+                        cells[2].innerText = updatedSupplier.contactInfo || 'Chưa có email';
+                        cells[4].querySelector('.edit-btn').setAttribute('data-name', updatedSupplier.supplierName);
+                        cells[4].querySelector('.edit-btn').setAttribute('data-contact', updatedSupplier.contactInfo || '');
+                        cells[4].querySelector('.edit-btn').setAttribute('data-logo', updatedSupplier.logo || '');
                     }
 
-                    // Explicitly remove the backdrop after the second modal is closed
-                    document.getElementById('exampleModalToggle2').addEventListener('hidden.bs.modal', function () {
-                        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-                        document.body.classList.remove('modal-open');
-                        document.body.style.overflow = ''; // Restore scrolling
-                    }, { once: true });
-                } else {
-                    alert('Failed to delete supplier.');
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting supplier:', error);
-            });
-    });
-
-    document.getElementById('saveSupplierBtn').addEventListener('click', function () {
-        const supplierID = document.getElementById('supplierID').value;
-        const supplierName = document.getElementById('supplierName').value;
-        const contactInfo = document.getElementById('contactInfo').value;
-        const logoFile = document.getElementById('logo').files[0];
-
-        // Xác thực các trường bắt buộc
-        if (!supplierName || !contactInfo) {
-            alert('Tên nhà cung cấp và thông tin liên hệ là bắt buộc.');
-            return;
+                    bootstrap.Modal.getInstance(document.getElementById('updateSupplierModal')).hide();
+                    document.getElementById('logo').value = '';
+                    alert('Cập nhật nhà cung cấp thành công!');
+                })
+                .catch(error => {
+                    console.error('Update error:', error);
+                    if (error.status === 409) {
+                        alert(error.error || 'Tên nhà cung cấp hoặc thông tin liên hệ đã tồn tại.');
+                    } else if (error.status === 404) {
+                        alert('Không tìm thấy nhà cung cấp.');
+                    } else if (error.status === 400) {
+                        alert(error.error || 'Dữ liệu không hợp lệ, vui lòng kiểm tra lại.');
+                    } else {
+                        alert('Đã xảy ra lỗi khi cập nhật nhà cung cấp: ' + error.error);
+                    }
+                });
         }
 
-        // Chuẩn bị FormData cho cuộc gọi API
-        const formData = new FormData();
-        formData.append('supplierName', supplierName);
-        formData.append('contactInfo', contactInfo);
-        if (logoFile) {
-            formData.append('logo', logoFile);
-        }
+        const saveSupplierBtn = document.getElementById('saveSupplierBtn');
+        if (saveSupplierBtn) {
+            saveSupplierBtn.addEventListener('click', function () {
+                console.log('Save supplier button clicked');
+                const supplierID = document.getElementById('supplierID').value;
+                const supplierName = document.getElementById('supplierName').value.trim();
+                const contactInfo = document.getElementById('contactInfo').value.trim();
+                const logoFile = document.getElementById('logo').files[0];
 
-        // Gọi API để cập nhật nhà cung cấp
-        fetch(`/api/suppliers/${supplierID}`, {
-            method: 'PUT',
-            body: formData
-        })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else if (response.status === 404) {
-                    throw new Error('Không tìm thấy nhà cung cấp.');
-                } else {
-                    throw new Error('Không thể cập nhật nhà cung cấp.');
+                if (!supplierName) {
+                    alert('Vui lòng nhập tên nhà cung cấp.');
+                    return;
                 }
-            })
-            .then(updatedSupplier => {
-                // Cập nhật dòng bảng với dữ liệu mới
-                const row = document.querySelector(`tr[data-id="${supplierID}"]`);
-                if (row) {
-                    const cells = row.querySelectorAll('td');
-                    cells[0].querySelector('img').src = updatedSupplier.logo
-                        ? `/BackEnd/assets/imgproject/${updatedSupplier.logo}`
-                        : '/BackEnd/assets/imgproject/default-logo.png';
-                    cells[1].querySelector('.user-name span').innerText = updatedSupplier.supplierName;
-                    cells[2].innerText = updatedSupplier.contactInfo || 'Chưa có email';
-                    cells[4].querySelector('.edit-btn').setAttribute('data-name', updatedSupplier.supplierName);
-                    cells[4].querySelector('.edit-btn').setAttribute('data-contact', updatedSupplier.contactInfo);
-                    cells[4].querySelector('.edit-btn').setAttribute('data-logo', updatedSupplier.logo || '');
+                if (!contactInfo) {
+                    alert('Vui lòng nhập thông tin liên hệ.');
+                    return;
                 }
 
-                // Đóng modal
-                bootstrap.Modal.getInstance(document.getElementById('updateSupplierModal')).hide();
-
-                // Hiển thị thông báo thành công
-                alert('Cập nhật nhà cung cấp thành công!');
-            })
-            .catch(error => {
-                console.error('Lỗi khi cập nhật nhà cung cấp:', error);
-                alert(error.message || 'Không thể cập nhật nhà cung cấp.');
+                updateSupplier(supplierID, supplierName, contactInfo, logoFile);
             });
+        } else {
+            console.error('Save supplier button not found.');
+        }
     });
 </script>
 

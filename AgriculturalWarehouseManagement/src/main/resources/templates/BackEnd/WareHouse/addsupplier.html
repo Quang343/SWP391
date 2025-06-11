@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
@@ -124,51 +123,53 @@
 <!-- Modal End -->
 
 <script>
-    // Đảm bảo DOM đã tải xong
     document.addEventListener('DOMContentLoaded', function () {
         console.log('DOM đã tải xong, khởi tạo script...');
 
-        // Kiểm tra sự tồn tại của submitButton
         const submitButton = document.getElementById('submitButton');
-        if (!submitButton) {
-            console.error('Không tìm thấy #submitButton trong DOM.');
-            return;
-        }
-        console.log('Tìm thấy #submitButton, gắn sự kiện click.');
-
-        // Kiểm tra sự tồn tại của logoUpload
         const logoUpload = document.getElementById('logoUpload');
-        if (!logoUpload) {
-            console.error('Không tìm thấy #logoUpload trong DOM.');
+        const supplierNameInput = document.getElementById('supplierName');
+        const contactInfoInput = document.getElementById('contactInfo');
+
+        if (!submitButton || !logoUpload || !supplierNameInput || !contactInfoInput) {
+            console.error('Thiếu các phần tử DOM:', {
+                submitButton: !!submitButton,
+                logoUpload: !!logoUpload,
+                supplierName: !!supplierNameInput,
+                contactInfo: !!contactInfoInput
+            });
+            alert('Lỗi giao diện, vui lòng kiểm tra console.');
             return;
         }
 
-        // Cấu hình Dropzone
         try {
             Dropzone.autoDiscover = false;
             const dropzone = new Dropzone("#logoUpload", {
-                url: "/api/suppliers/createSupplier", // Sẽ được ghi đè
-                autoProcessQueue: false, // Không tự động gửi
-                maxFiles: 1, // Chỉ 1 file
-                acceptedFiles: "image/*", // Chỉ hình ảnh
-                addRemoveLinks: true, // Nút xóa
+                url: "/api/suppliers/createSupplier",
+                autoProcessQueue: false,
+                maxFiles: 1,
+                acceptedFiles: "image/*",
+                addRemoveLinks: true,
                 dictDefaultMessage: "Kéo thả file hoặc nhấn để tải lên logo.",
                 dictRemoveFile: "Xóa file",
                 dictInvalidFileType: "Chỉ chấp nhận file hình ảnh (jpg, png, ...).",
-                dictMaxFilesExceeded: "Chỉ được tải lên 1 file."
+                dictMaxFilesExceeded: "Chỉ được tải lên 1 file.",
+                init: function () {
+                    this.on("maxfilesexceeded", function (file) {
+                        this.removeFile(file);
+                        alert("Chỉ được tải lên 1 file.");
+                    });
+                }
             });
             console.log('Dropzone khởi tạo thành công.');
 
-            // Xử lý sự kiện click
             submitButton.addEventListener('click', function () {
                 console.log('Nút Submit được nhấn.');
 
-                // Lấy giá trị
-                const supplierName = document.getElementById('supplierName').value.trim();
-                const contactInfo = document.getElementById('contactInfo').value.trim();
+                const supplierName = supplierNameInput.value.trim();
+                const contactInfo = contactInfoInput.value.trim();
                 const logoFile = dropzone.files[0];
 
-                // Kiểm tra đầu vào
                 if (!supplierName) {
                     alert('Vui lòng nhập tên nhà cung cấp.');
                     console.warn('Thiếu supplierName.');
@@ -185,7 +186,6 @@
                     return;
                 }
 
-                // Tạo FormData
                 const formData = new FormData();
                 formData.append('supplierName', supplierName);
                 formData.append('contactInfo', contactInfo);
@@ -197,7 +197,6 @@
                     logoFile: logoFile.name
                 });
 
-                // Gửi yêu cầu POST
                 fetch('/api/suppliers/createSupplier', {
                     method: 'POST',
                     body: formData
@@ -206,7 +205,7 @@
                         console.log('Phản hồi từ server:', response.status);
                         if (!response.ok) {
                             return response.json().then(err => {
-                                throw new Error(err.message || `Lỗi ${response.status}: Không thể tạo nhà cung cấp.`);
+                                throw { status: response.status, error: err.error || 'Lỗi không xác định.' };
                             });
                         }
                         return response.json();
@@ -215,21 +214,26 @@
                         console.log('Nhà cung cấp được tạo:', createdSupplier);
                         alert('Tạo nhà cung cấp thành công!');
 
-                        // Reset form
-                        document.getElementById('supplierName').value = '';
-                        document.getElementById('contactInfo').value = '';
+                        supplierNameInput.value = '';
+                        contactInfoInput.value = '';
                         dropzone.removeAllFiles();
 
-                        // Kiểm tra logo
                         if (createdSupplier.logo) {
                             console.log('Logo URL:', `/BackEnd/assets/imgproject/${createdSupplier.logo}?t=${Date.now()}`);
-                            // Ví dụ: Chuyển hướng
-                            // window.location.href = '/suppliers';
                         }
+
+                        // Tùy chọn: Chuyển hướng hoặc cập nhật bảng
+                        // window.location.href = '/suppliers';
                     })
                     .catch(error => {
                         console.error('Lỗi:', error);
-                        alert(error.message || 'Đã xảy ra lỗi khi tạo nhà cung cấp.');
+                        if (error.status === 409) {
+                            alert(error.error || 'Tên nhà cung cấp hoặc thông tin liên hệ đã tồn tại.');
+                        } else if (error.status === 400) {
+                            alert(error.error || 'Dữ liệu không hợp lệ, vui lòng kiểm tra lại.');
+                        } else {
+                            alert('Đã xảy ra lỗi khi tạo nhà cung cấp: ' + error.error);
+                        }
                     });
             });
         } catch (error) {
@@ -283,5 +287,4 @@
 <script th:src="@{/Backend/assets/js/select2-custom.js}"></script>
 
 </body>
-
 </html>

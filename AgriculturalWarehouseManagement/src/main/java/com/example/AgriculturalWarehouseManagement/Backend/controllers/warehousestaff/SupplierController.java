@@ -9,14 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 @RestController
@@ -36,11 +34,25 @@ public class SupplierController {
 
     private static final String UPLOAD_DIR = "AgriculturalWarehouseManagement/src/main/resources/static/BackEnd/assets/imgproject/";
 
-    // Đường dẫn thư mục lưu trữ ảnh
-    private final String uploadPath = "/BackEnd/assets/imgproject/";
+    private String validateContactInfo(String contactInfo) {
+        // Kiểm tra số điện thoại: 10 chữ số, bắt đầu bằng 0
+        if (contactInfo.matches("^0\\d{9}$")) {
+            return null; // Hợp lệ
+        }
+
+        // Kiểm tra email: chứa 1 @, không chứa ký tự đặc biệt ngoài @, ., _, -
+        if (contactInfo.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+            if (contactInfo.indexOf('@') != contactInfo.lastIndexOf('@')) {
+                return "Email chỉ được chứa một ký tự @.";
+            }
+            return null; // Hợp lệ
+        }
+
+        return "Thông tin liên hệ phải là số điện thoại (10 chữ số, bắt đầu bằng 0) hoặc email hợp lệ.";
+    }
+
 
     // Get Suppliers by ID
-
     @GetMapping("/{supplierID}")
     public ResponseEntity<SupplierDTO> getSupplierById(@PathVariable Integer supplierID) {
         SupplierDTO dto = supplierService.getSupplierById(supplierID);
@@ -51,7 +63,7 @@ public class SupplierController {
     }
 
     @PostMapping(value = "/createSupplier", consumes = {"multipart/form-data"})
-    public ResponseEntity<SupplierDTO> createSupplier(
+    public ResponseEntity<?> createSupplier(
             @RequestPart("supplierName") String supplierName,
             @RequestPart("contactInfo") String contactInfo,
             @RequestPart(value = "logo", required = false) MultipartFile logo) {
@@ -59,8 +71,29 @@ public class SupplierController {
         // Validate input
         if (supplierName == null || supplierName.trim().isEmpty() || contactInfo == null || contactInfo.trim().isEmpty()) {
             LOGGER.warning("Invalid input: supplierName or contactInfo is empty");
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(Map.of("error", "Tên nhà cung cấp và thông tin liên hệ là bắt buộc."));
         }
+
+        // Kiểm tra trùng tên
+        if (supplierService.isSupplierNameExists(supplierName.trim(), null)) {
+            LOGGER.warning("Supplier name '{}' already exists");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Tên nhà cung cấp đã tồn tại."));
+        }
+
+        // Validate contactInfo format
+        String contactValidationError = validateContactInfo(contactInfo.trim());
+        if (contactValidationError != null) {
+            LOGGER.warning("Invalid contactInfo format: " + contactValidationError);
+            return ResponseEntity.badRequest().body(Map.of("error", contactValidationError));
+        }
+
+        // Kiểm tra trùng contactInfo
+        if (supplierService.isContactInfoExists(contactInfo.trim(), null)) {
+            LOGGER.warning("Contact info '{}' already exists");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Số điện thoại hoặc email đã được sử dụng."));
+        }
+
+
 
         SupplierDTO supplierDTO = new SupplierDTO();
         supplierDTO.setSupplierName(supplierName);
@@ -71,7 +104,7 @@ public class SupplierController {
                 // Validate file type
                 if (!logo.getContentType().startsWith("image/")) {
                     LOGGER.warning("Invalid file type: " + logo.getContentType());
-                    return ResponseEntity.badRequest().body(new SupplierDTO("Only image files are allowed."));
+                    return ResponseEntity.badRequest().body(Map.of("error", "Chỉ chấp nhận file hình ảnh."));
                 }
 
                 String fileName = saveLogoFile(logo);
@@ -79,7 +112,7 @@ public class SupplierController {
                 LOGGER.info("Logo file set for createSupplier: " + fileName);
             } catch (Exception e) {
                 LOGGER.severe("Failed to save logo file for createSupplier: " + e.getMessage());
-                throw new RuntimeException("Failed to save logo file: " + e.getMessage(), e);
+                return ResponseEntity.badRequest().body(Map.of("error", "Không thể lưu logo: " + e.getMessage()));
             }
         } else {
             LOGGER.info("No logo file provided for createSupplier");
@@ -91,7 +124,7 @@ public class SupplierController {
     }
 
     @PutMapping(value = "/{supplierID}", consumes = {"multipart/form-data"})
-    public ResponseEntity<SupplierDTO> updateSupplier(
+    public ResponseEntity<?> updateSupplier(
             @PathVariable Integer supplierID,
             @RequestPart("supplierName") String supplierName,
             @RequestPart("contactInfo") String contactInfo,
@@ -100,7 +133,26 @@ public class SupplierController {
         // Validate input
         if (supplierName == null || supplierName.trim().isEmpty() || contactInfo == null || contactInfo.trim().isEmpty()) {
             LOGGER.warning("Invalid input: supplierName or contactInfo is empty");
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(Map.of("error", "Tên nhà cung cấp và thông tin liên hệ là bắt buộc."));
+        }
+
+        // Kiểm tra trùng tên
+        if (supplierService.isSupplierNameExists(supplierName.trim(), supplierID)) {
+            LOGGER.warning("Supplier name '{}' already exists for supplier ID: {}");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Tên nhà cung cấp đã tồn tại."));
+        }
+
+        // Validate contactInfo format
+        String contactValidationError = validateContactInfo(contactInfo.trim());
+        if (contactValidationError != null) {
+            LOGGER.warning("Invalid contactInfo format: " + contactValidationError);
+            return ResponseEntity.badRequest().body(Map.of("error", contactValidationError));
+        }
+
+        // Kiểm tra trùng contactInfo
+        if (supplierService.isContactInfoExists(contactInfo.trim(), supplierID)) {
+            LOGGER.warning("Contact info '{}' already exists for supplier ID: {}");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Số điện thoại hoặc email đã được sử dụng."));
         }
 
         SupplierDTO supplierDTO = new SupplierDTO();
@@ -113,14 +165,15 @@ public class SupplierController {
                 // Validate file type
                 if (!logo.getContentType().startsWith("image/")) {
                     LOGGER.warning("Invalid file type: " + logo.getContentType());
-                    return ResponseEntity.badRequest().body(new SupplierDTO("Only image files are allowed."));
+                    return ResponseEntity.badRequest().body(Map.of("error", "Chỉ chấp nhận file hình ảnh."));
                 }
 
                 String fileName = saveLogoFile(logo);
                 supplierDTO.setLogo(fileName);
+                LOGGER.info("Logo file set for updateSupplier: " + fileName);
             } catch (Exception e) {
                 LOGGER.severe("Failed to save logo file for updateSupplier: " + e.getMessage());
-                throw new RuntimeException("Failed to save logo file: " + e.getMessage(), e);
+                return ResponseEntity.badRequest().body(Map.of("error", "Không thể lưu logo: " + e.getMessage()));
             }
         } else {
             LOGGER.info("No logo file provided for supplier ID: " + supplierID);
@@ -129,8 +182,9 @@ public class SupplierController {
         SupplierDTO updatedSupplier = supplierService.updateSupplier(supplierID, supplierDTO);
         if (updatedSupplier == null) {
             LOGGER.warning("Supplier not found for ID: " + supplierID);
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Không tìm thấy nhà cung cấp với ID: " + supplierID));
         }
+        LOGGER.info("Updated supplier with logo: " + updatedSupplier.getLogo());
         return ResponseEntity.ok(updatedSupplier);
     }
 
@@ -178,37 +232,13 @@ public class SupplierController {
         }
     }
 
+
+
     // Delete Suppliers
     @DeleteMapping("/{supplierID}")
     public ResponseEntity<Void> deleteSupplier(@PathVariable Integer supplierID) {
         supplierService.deleteSupplier(supplierID);
         return ResponseEntity.noContent().build();
-    }
-
-    // API xử lý upload logo
-    @PostMapping("/uploadLogo")
-    public ResponseEntity<String> uploadLogo(@RequestParam("file") MultipartFile file) {
-        // Kiểm tra nếu file có tồn tại
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("No file uploaded");
-        }
-
-        try {
-            // Đảm bảo thư mục lưu trữ tồn tại
-            File directory = new File(uploadPath);
-            if (!directory.exists()) {
-                directory.mkdirs();  // Tạo thư mục nếu chưa tồn tại
-            }
-
-            // Lưu file vào thư mục
-            String fileName = file.getOriginalFilename();
-            Path path = Paths.get(uploadPath + "/" + fileName);
-            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
-            return ResponseEntity.ok("File uploaded successfully: " + fileName);
-        } catch (IOException e) {
-            return ResponseEntity.status(500).body("Error uploading file");
-        }
     }
 
 
