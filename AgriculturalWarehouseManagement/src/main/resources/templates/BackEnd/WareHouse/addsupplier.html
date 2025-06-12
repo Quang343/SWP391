@@ -166,13 +166,19 @@
             submitButton.addEventListener('click', function () {
                 console.log('Nút Submit được nhấn.');
 
-                const supplierName = supplierNameInput.value.trim();
+                const supplierName = supplierNameInput.value.trim().replace(/\s+/g, ' ');
                 const contactInfo = contactInfoInput.value.trim();
                 const logoFile = dropzone.files[0];
 
+                // Client-side validation
                 if (!supplierName) {
                     alert('Vui lòng nhập tên nhà cung cấp.');
                     console.warn('Thiếu supplierName.');
+                    return;
+                }
+                if (!supplierName.match(/^[a-zA-Z\s\u00C0-\u00FF\u1EA0-\u1EFF]+$/)) {
+                    alert('Tên nhà cung cấp chỉ chứa chữ cái (tiếng Việt), khoảng trắng');
+                    console.warn('Invalid supplierName format.');
                     return;
                 }
                 if (!contactInfo) {
@@ -221,9 +227,6 @@
                         if (createdSupplier.logo) {
                             console.log('Logo URL:', `/BackEnd/assets/imgproject/${createdSupplier.logo}?t=${Date.now()}`);
                         }
-
-                        // Tùy chọn: Chuyển hướng hoặc cập nhật bảng
-                        // window.location.href = '/suppliers';
                     })
                     .catch(error => {
                         console.error('Lỗi:', error);

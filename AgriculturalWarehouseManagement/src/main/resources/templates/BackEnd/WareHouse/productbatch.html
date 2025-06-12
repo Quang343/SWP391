@@ -1,10 +1,306 @@
+
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" >
+
+<head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
+
 <body>
+<!-- tap on top start-->
+<div class="tap-top">
+    <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end-->
+
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <!-- Page Header Start-->
+    <div th:replace="~{BackEnd/fragments/WareHouse/header::header}"></div>
+    <!-- Page Header Ends-->
+
+    <!-- Page Body Start-->
+    <div class="page-body-wrapper">
+        <!-- Page Sidebar Start-->
+        <div th:replace="BackEnd/fragments/WareHouse/sidebar::sidebar"></div>
+        <!-- Page Sidebar Ends-->
+
+        <!-- Container-fluid starts-->
+        <div class="page-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card card-table">
+                            <div class="card-body">
+                                <div class="title-header option-title d-sm-flex d-block">
+                                    <h5>Products List</h5>
+                                    <div class="right-options">
+                                        <ul>
+                                            <li>
+                                                <a href="javascript:void(0)">import</a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:void(0)">Export</a>
+                                            </li>
+                                            <li>
+                                                <a class="btn btn-solid" th:href="@{/admin/addproductbatch}">Add Product Batch</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="table-responsive">
+                                        <table class="table all-package theme-table table-product" id="table_id">
+                                            <thead>
+                                            <tr>
+                                                <th>Batch ID</th>
+                                                <th>Product Detail ID</th>
+                                                <th>Manufacture Date</th>
+                                                <th>Current Qty</th>
+                                                <th>Status</th>
+                                                <th>Option</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="productBatchTableBody">
+                                            <!-- Dữ liệu sẽ được thêm động bởi JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+
+            <div class="container-fluid">
+                <!-- footer start-->
+                <footer class="footer">
+                    <div class="row">
+                        <div class="col-md-12 footer-copyright text-center">
+                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- page-wrapper End-->
+<!-- Custom JS for API call -->
+<!-- Custom JS for API call with enhanced debug -->
+<!-- Custom JS cho API call -->
+
+
+<!-- Modal Start -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                <p>Are you sure you want to log out?</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="button-box">
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                    <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal End -->
+
+<!-- Delete Modal Box Start -->
+<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-block text-center">
+                <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure ?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="remove-box">
+                    <p>The permission for the use/group, preview is inherited from the object, object will create a
+                        new permission for this object</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-target="#exampleModalToggle2"
+                        data-bs-toggle="modal" data-bs-dismiss="modal">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle2" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="exampleModalLabel12">Done!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="remove-box text-center">
+                    <div class="wrapper">
+                        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                        </svg>
+                    </div>
+                    <h4 class="text-content">It's Removed.</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Modal Box End -->
+
+
+<!-- Modal cho Product Detail -->
+<div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productDetailModalLabel">Product Detail Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Product Detail ID:</strong> <span id="modalProductDetailId"></span></p>
+                <p><strong>Product Name:</strong> <span id="modalDetailName"></span></p>
+                <p><strong>Category:</strong> <span id="modalCategory"></span></p>
+                <p><strong>Price:</strong> <span id="modalPrice"></span></p>
+                <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- Bootstrap js -->
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+
+<!-- feather icon js -->
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+
+<!-- scrollbar simplebar js -->
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+
+<!-- Sidebar js -->
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+
+<!-- customizer js -->
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+
+<!-- Plugins js -->
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+
+<!-- Data table js -->
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+
+<!-- sidebar effect -->
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+
+<!-- Theme js -->
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+
+<!-- Custom JS cho API call với debug chi tiết -->
+<!-- Custom JS cho API call với debug và thử nghiệm -->
+<script>
+    if (typeof $ === 'undefined') {
+        console.error('jQuery không được tải. Kiểm tra đường dẫn: /Backend/assets/js/jquery-3.6.0.min.js');
+        alert('jQuery không hoạt động. Vui lòng kiểm tra console.');
+    } else {
+        $(document).ready(function() {
+            // Gọi API để lấy danh sách ProductBatch
+            $.ajax({
+                url: '/api/product-batches',
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    console.log('Dữ liệu từ API: ', data);
+                    var tbody = $('#productBatchTableBody');
+                    tbody.empty();
+
+                    if (!data || data.length === 0) {
+                        console.warn('Không có dữ liệu từ API.');
+                        tbody.append('<tr><td colspan="6">Không có dữ liệu</td></tr>');
+                        return;
+                    }
+
+                    $.each(data, function(index, batch) {
+                        console.log('Xử lý batch chi tiết: ', JSON.stringify(batch));
+                        var productDetailName = batch.productDetail ? batch.productDetail : 'N/A'; // productDetail is ID due to @JsonIdentityReference
+                        var row = '<tr>' +
+                            '<td>' + (batch.batchId || 'N/A') + '</td>' +
+                            '<td><a href="javascript:void(0)" class="detail-link" data-id="' + (batch.productDetail || 'N/A') + '">' + (batch.productDetail || 'N/A') + '</a></td>' +
+                            '<td>' + productDetailName + '</td>' +
+                            '<td>' + (batch.manufactureDate || 'N/A') + '</td>' +
+                            '<td>' + (batch.quantity || 'N/A') + '</td>' +
+                            '<td>' +
+                            '<ul class="action-list">' +
+                            '<li><a href="javascript:void(0)"><i class="ri-eye-line"></i></a></li>' +
+                            '<li><a href="javascript:void(0)"><i class="ri-pencil-line"></i></a></li>' +
+                            '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle"><i class="ri-delete-bin-line"></i></a></li>' +
+                            '</ul>' +
+                            '</td>' +
+                            '</tr>';
+                        tbody.append(row);
+                    });
+
+                    // Xử lý click vào Product Detail ID
+                    $('.detail-link').on('click', function() {
+                        var productDetailId = $(this).data('id');
+                        if (productDetailId === 'N/A') {
+                            alert('Không có ProductDetail để hiển thị.');
+                            return;
+                        }
+                        $.ajax({
+                            url: '/api/product-details/' + productDetailId,
+                            method: 'GET',
+                            dataType: 'json',
+                            success: function(detail) {
+                                console.log('Dữ liệu ProductDetail: ', detail);
+                                $('#modalProductDetailId').text(detail.productDetailId || 'N/A');
+                                $('#modalDetailName').text(detail.detailName || 'N/A');
+                                $('#modalProductId').text(detail.productID || 'N/A');
+                                $('#modalPrice').text(detail.price ? detail.price.toFixed(2) : 'N/A');
+                                $('#modalWeight').text(detail.weight ? detail.weight.toFixed(2) : 'N/A');
+                                $('#modalExpiry').text(detail.expiry || 'N/A');
+                                $('#productDetailModal').modal('show');
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Lỗi khi lấy ProductDetail: ', status, error, xhr.responseText);
+                                alert('Không thể tải chi tiết sản phẩm. Kiểm tra console.');
+                            }
+                        });
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi khi gọi API: ', status, error, xhr.responseText);
+                    alert('Lỗi khi tải dữ liệu: ' + error + '. Kiểm tra console.');
+                }
+            });
+        });
+    }
+</script>
 
 </body>
+
 </html>

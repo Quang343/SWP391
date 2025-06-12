@@ -40,6 +40,7 @@ public class FrontEndController {
     public String bloglist() {
         return "FrontEnd/Home/blog-list";
     }
+
    @RequestMapping("/blog-detail")
     public String blogdetail(){
         return "FrontEnd/Home/blog-detail";
@@ -49,6 +50,7 @@ public class FrontEndController {
     public String bloggrid(){
         return "FrontEnd/Home/blog-grid" ;
     }
+
 
 
 }

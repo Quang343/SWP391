@@ -1,0 +1,51 @@
+package com.example.AgriculturalWarehouseManagement.Backend.services.admin;
+
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductDetailDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.mappers.ProductDetailMapper;
+import com.example.AgriculturalWarehouseManagement.Backend.models.ProductDetail;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductDetailRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+
+@Service
+public class ProductDetailService {
+    @Autowired
+    private ProductDetailRepository repository;
+
+    @Autowired
+    private ProductDetailMapper mapper;
+
+    public ProductDetailDTO create(ProductDetailDTO dto) {
+        ProductDetail entity = mapper.productDetailDTOToProductDetail(dto);
+        ProductDetail savedEntity = repository.save(entity);
+        return mapper.productDetailToProductDetailDTO(savedEntity);
+    }
+
+    public ProductDetailDTO update(Integer id, ProductDetailDTO dto) {
+        ProductDetail entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("ProductDetail not found"));
+        mapper.updateProductDetailFromDTO(dto, entity); // Update entity with DTO values
+        ProductDetail updatedEntity = repository.save(entity);
+        return mapper.productDetailToProductDetailDTO(updatedEntity);
+    }
+
+    public void delete(Integer id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("ProductDetail not found");
+        }
+        repository.deleteById(id);
+    }
+
+    public ProductDetailDTO findById(Integer id) {
+        return repository.findById(id)
+                .map(mapper::productDetailToProductDetailDTO)
+                .orElseThrow(() -> new RuntimeException("ProductDetail not found"));
+    }
+
+    public List<ProductDetail> findAll() {
+        return (List<ProductDetail>) repository.findAll();
+
+    }
+}

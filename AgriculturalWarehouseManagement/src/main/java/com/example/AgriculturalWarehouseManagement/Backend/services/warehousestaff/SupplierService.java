@@ -42,12 +42,28 @@ public class SupplierService {
         return supplierRepository.existsBySupplierName(supplierName);
     }
 
-    // Update Suppliers
     public SupplierDTO updateSupplier(Integer supplierID, SupplierDTO supplierDTO) {
-        Suppliers supplier = supplierMapper.supplierDTOToSupplier(supplierDTO);
-        supplier.setSupplierID(supplierID);
-        supplier = supplierRepository.save(supplier);
-        return supplierMapper.supplierToSupplierDTO(supplier);
+        Optional<Suppliers> existingSupplier = supplierRepository.findById(supplierID);
+        if (!existingSupplier.isPresent()) {
+            return null;
+        }
+
+        Suppliers supplier = existingSupplier.get();
+        supplier.setSupplierName(supplierDTO.getSupplierName());
+        supplier.setContactInfo(supplierDTO.getContactInfo());
+        // Chỉ cập nhật logo nếu supplierDTO có logo
+        if (supplierDTO.getLogo() != null) {
+            supplier.setLogo(supplierDTO.getLogo());
+        }
+
+        Suppliers updatedSupplier = supplierRepository.save(supplier);
+
+        SupplierDTO result = new SupplierDTO();
+        result.setSupplierID(updatedSupplier.getSupplierID());
+        result.setSupplierName(updatedSupplier.getSupplierName());
+        result.setContactInfo(updatedSupplier.getContactInfo());
+        result.setLogo(updatedSupplier.getLogo());
+        return result;
     }
 
     public boolean isSupplierNameExists(String name, Integer excludeSupplierId) {

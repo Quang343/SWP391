@@ -1,5 +1,10 @@
 package com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class SupplierDTO {
 
     private Integer supplierID;
@@ -21,31 +26,4 @@ public class SupplierDTO {
     }
 
 
-    public Integer getSupplierID() {
-        return supplierID;
-    }
-
-    public void setSupplierID(Integer supplierID) {
-        this.supplierID = supplierID;
-    }
-
-    public String getSupplierName() {
-        return supplierName;
-    }
-
-    public void setSupplierName(String supplierName) {
-        this.supplierName = supplierName;
-    }
-
-    public String getContactInfo() {
-        return contactInfo;
-    }
-
-    public void setContactInfo(String contactInfo) {
-        this.contactInfo = contactInfo;
-    }
-
-    public String getLogo() {return logo;}
-
-    public void setLogo(String logo) {this.logo = logo;}
 }

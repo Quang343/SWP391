@@ -357,16 +357,33 @@
         }
 
         function updateSupplier(supplierID, supplierName, contactInfo, logoFile) {
+            const normalizedName = supplierName.trim().replace(/\s+/g, ' ');
+            const normalizedContact = contactInfo.trim();
+
+            // Client-side validation
+            if (!normalizedName) {
+                alert('Vui lòng nhập tên nhà cung cấp.');
+                return;
+            }
+            if (!normalizedName.match(/^[a-zA-Z\s\u00C0-\u00FF\u1EA0-\u1EFF]+$/)) {
+                alert('Tên nhà cung cấp chỉ chứa chữ cái (tiếng Việt), khoảng trắng');
+                return;
+            }
+            if (!normalizedContact) {
+                alert('Vui lòng nhập thông tin liên hệ.');
+                return;
+            }
+
             const formData = new FormData();
-            formData.append('supplierName', supplierName);
-            formData.append('contactInfo', contactInfo);
+            formData.append('supplierName', normalizedName);
+            formData.append('contactInfo', normalizedContact);
             if (logoFile) {
                 formData.append('logo', logoFile);
             }
 
             console.log('Gửi FormData tới /api/suppliers/' + supplierID, {
-                supplierName,
-                contactInfo,
+                supplierName: normalizedName,
+                contactInfo: normalizedContact,
                 logoFile: logoFile ? logoFile.name : 'Không có file'
             });
 
@@ -421,18 +438,9 @@
             saveSupplierBtn.addEventListener('click', function () {
                 console.log('Save supplier button clicked');
                 const supplierID = document.getElementById('supplierID').value;
-                const supplierName = document.getElementById('supplierName').value.trim();
-                const contactInfo = document.getElementById('contactInfo').value.trim();
+                const supplierName = document.getElementById('supplierName').value;
+                const contactInfo = document.getElementById('contactInfo').value;
                 const logoFile = document.getElementById('logo').files[0];
-
-                if (!supplierName) {
-                    alert('Vui lòng nhập tên nhà cung cấp.');
-                    return;
-                }
-                if (!contactInfo) {
-                    alert('Vui lòng nhập thông tin liên hệ.');
-                    return;
-                }
 
                 updateSupplier(supplierID, supplierName, contactInfo, logoFile);
             });
