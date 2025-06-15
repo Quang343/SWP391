@@ -3,11 +3,14 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.warehous
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.ProductBatchDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductBatch;
 import com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff.ProductBatchService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/product-batches")
@@ -16,19 +19,35 @@ public class ProductBatchController {
     private ProductBatchService service;
 
     @PostMapping
-    public ResponseEntity<ProductBatchDTO> create(@RequestBody ProductBatchDTO dto) {
-        return ResponseEntity.ok(service.create(dto));
+    public ResponseEntity<ProductBatchDTO> create(@Valid @RequestBody ProductBatchDTO dto) {
+        try {
+            return new ResponseEntity<>(service.create(dto), HttpStatus.CREATED);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductBatchDTO> update(@PathVariable Integer id, @RequestBody ProductBatchDTO dto) {
-        return ResponseEntity.ok(service.update(id, dto));
+    @PutMapping("/{batchId}")
+    public ResponseEntity<ProductBatchDTO> update(@PathVariable Integer batchId, @Valid @RequestBody ProductBatchDTO dto) {
+        try {
+            return ResponseEntity.ok(service.update(batchId, dto));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        service.delete(id);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/{batchId}")
+    public ResponseEntity<Void> delete(@PathVariable Integer batchId) {
+        try {
+            service.delete(batchId);
+            return ResponseEntity.noContent().build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/{id}")

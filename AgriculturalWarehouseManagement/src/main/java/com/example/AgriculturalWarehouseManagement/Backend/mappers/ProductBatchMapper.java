@@ -16,13 +16,14 @@ public class ProductBatchMapper {
     public ProductBatchDTO productBatchToProductBatchDTO(ProductBatch productBatch) {
         ProductBatchDTO dto = new ProductBatchDTO();
         dto.setBatchID(productBatch.getBatchId());
-        // Khởi tạo ProductDetail được tải lười nếu không null
+        // Khởi tạo ProductDetail nếu không null
         if (productBatch.getProductDetail() != null) {
             Hibernate.initialize(productBatch.getProductDetail());
             dto.setProductDetailID(productBatch.getProductDetail().getProductDetailId());
         }
         dto.setManufactureDate(productBatch.getManufactureDate());
-        dto.setQuantity(productBatch.getQuantity());
+        dto.setImportedQuantity(productBatch.getImportedQuantity());
+        dto.setSoldQuantity(productBatch.getSoldQuantity());
         return dto;
     }
 
@@ -35,7 +36,8 @@ public class ProductBatchMapper {
             productBatch.setProductDetail(productDetail);
         }
         productBatch.setManufactureDate(dto.getManufactureDate());
-        productBatch.setQuantity(dto.getQuantity());
+        productBatch.setImportedQuantity(dto.getImportedQuantity());
+        productBatch.setSoldQuantity(dto.getSoldQuantity() != null ? dto.getSoldQuantity() : 0); // Đảm bảo soldQuantity không null
         return productBatch;
     }
 }

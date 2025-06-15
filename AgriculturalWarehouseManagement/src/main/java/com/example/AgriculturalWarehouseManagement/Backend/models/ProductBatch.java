@@ -26,6 +26,11 @@ public class ProductBatch {
     @Column(name = "manufacturedate")
     private LocalDate manufactureDate;
 
-    @Column(name = "quantity")
-    private Integer quantity;
+    @Column(name = "importedquantity")
+    private Integer importedQuantity;
+
+    @Column(name = "soldquantity")
+    private Integer soldQuantity;
+
+
 }

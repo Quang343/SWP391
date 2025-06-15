@@ -31,17 +31,11 @@
                         <div class="card card-table">
                             <div class="card-body">
                                 <div class="title-header option-title d-sm-flex d-block">
-                                    <h5>Products List</h5>
+                                    <h5>ProductBatchs List</h5>
                                     <div class="right-options">
                                         <ul>
                                             <li>
-                                                <a href="javascript:void(0)">import</a>
-                                            </li>
-                                            <li>
-                                                <a href="javascript:void(0)">Export</a>
-                                            </li>
-                                            <li>
-                                                <a class="btn btn-solid" th:href="@{/admin/addproductbatch}">Add Product Batch</a>
+                                                <a class="btn btn-solid" th:href="@{/warehouse/addproductbatch}">Add Product Batch</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -51,12 +45,13 @@
                                         <table class="table all-package theme-table table-product" id="table_id">
                                             <thead>
                                             <tr>
-                                                <th>Batch ID</th>
-                                                <th>Product Detail ID</th>
+                                                <th>Batch Id</th>
+                                                <th>ProductDetail Id</th>
                                                 <th>Manufacture Date</th>
-                                                <th>Current Qty</th>
-                                                <th>Status</th>
-                                                <th>Option</th>
+                                                <th>Imported Quantity</th>
+                                                <th>Sold Quantity</th>
+                                                <th>Remaining Quantity</th>
+                                                <th>Action</th>
                                             </tr>
                                             </thead>
                                             <tbody id="productBatchTableBody">
@@ -109,6 +104,39 @@
 </div>
 <!-- Modal End -->
 
+<div class="modal fade" id="editProductBatchModal" tabindex="-1" aria-labelledby="editProductBatchModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProductBatchModalLabel">Edit Product Batch</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProductBatchForm">
+                    <input type="hidden" id="editBatchId">
+                    <div class="mb-3">
+                        <label for="editProductDetailId" class="form-label">Product Detail</label>
+                        <select class="form-select" id="editProductDetailId" required></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editManufactureDate" class="form-label">Manufacture Date</label>
+                        <input type="date" class="form-control" id="editManufactureDate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editImportedQuantity" class="form-label">Imported Quantity</label>
+                        <input type="number" class="form-control" id="editImportedQuantity" min="1" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveEditProductBatch">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal Box Start -->
 <!-- Delete Modal Box Start -->
 <div class="modal fade theme-modal remove-coupon" id="exampleModalToggle" aria-hidden="true" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -121,14 +149,12 @@
             </div>
             <div class="modal-body">
                 <div class="remove-box">
-                    <p>The permission for the use/group, preview is inherited from the object, object will create a
-                        new permission for this object</p>
+                    <p>Bạn có chắc chắn muốn xóa Product Batch này?</p>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
-                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-target="#exampleModalToggle2"
-                        data-bs-toggle="modal" data-bs-dismiss="modal">Yes</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold confirm-delete">Yes</button>
             </div>
         </div>
     </div>
@@ -147,15 +173,15 @@
                 <div class="remove-box text-center">
                     <div class="wrapper">
                         <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
-                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
                         </svg>
                     </div>
                     <h4 class="text-content">It's Removed.</h4>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -165,21 +191,21 @@
 
 <!-- Modal cho Product Detail -->
 <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="productDetailModalLabel">Product Detail Information</h5>
+                <h5 class="modal-title" id="productDetailModalLabel">Chi tiết ProductDetail</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p><strong>Product Detail ID:</strong> <span id="modalProductDetailId"></span></p>
-                <p><strong>Product Name:</strong> <span id="modalDetailName"></span></p>
-                <p><strong>Category:</strong> <span id="modalCategory"></span></p>
-                <p><strong>Price:</strong> <span id="modalPrice"></span></p>
-                <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+                <p><strong>Tên chi tiết:</strong> <span id="modalDetailName">N/A</span></p>
+                <p><strong>Product ID:</strong> <span id="modalProductId">N/A</span></p>
+                <p><strong>Giá:</strong> <span id="modalPrice">N/A</span></p>
+                <p><strong>Khối lượng:</strong> <span id="modalWeight">N/A</span></p>
+                <p><strong>Thời hạn sử dụng (tháng):</strong> <span id="modalExpiry">N/A</span></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
@@ -220,53 +246,124 @@
 <!-- Theme js -->
 <script th:src="@{/Backend/assets/js/script.js}"></script>
 
-<!-- Custom JS cho API call với debug chi tiết -->
-<!-- Custom JS cho API call với debug và thử nghiệm -->
+<!-- Custom JS cho API call -->
 <script>
-    if (typeof $ === 'undefined') {
-        console.error('jQuery không được tải. Kiểm tra đường dẫn: /Backend/assets/js/jquery-3.6.0.min.js');
-        alert('jQuery không hoạt động. Vui lòng kiểm tra console.');
-    } else {
-        $(document).ready(function() {
-            // Gọi API để lấy danh sách ProductBatch
+    $(document).ready(function() {
+        // Hàm populate dropdown ProductDetail cho modal sửa
+        function populateProductDetailDropdown(selectElement, selectedId) {
+            $.ajax({
+                url: '/api/product-details',
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    console.log('Dữ liệu ProductDetails cho dropdown: ', data);
+                    selectElement.empty();
+                    selectElement.append('<option value="" disabled selected>Chọn Product Detail</option>');
+
+                    if (!data || data.length === 0) {
+                        console.warn('Không có ProductDetails.');
+                        selectElement.append('<option value="" disabled>Không có Product Detail</option>');
+                        selectElement.prop('disabled', true);
+                        return;
+                    }
+
+                    $.each(data, function(index, detail) {
+                        var id = detail.productDetailId || detail.id;
+                        if (id) {
+                            var selected = id == selectedId ? 'selected' : '';
+                            selectElement.append(`<option value="${id}" ${selected}>${detail.detailName || 'Không có tên'} (ID: ${id})</option>`);
+                        }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi khi lấy ProductDetails: ', status, error, xhr.responseText);
+                    alert('Không thể tải danh sách Product Detail. Kiểm tra console.');
+                }
+            });
+        }
+
+        // Gọi API để lấy danh sách ProductBatch
+        function loadProductBatches() {
             $.ajax({
                 url: '/api/product-batches',
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    console.log('Dữ liệu từ API: ', data);
+                    console.log('Dữ liệu từ API /api/product-batches: ', data);
                     var tbody = $('#productBatchTableBody');
                     tbody.empty();
 
                     if (!data || data.length === 0) {
                         console.warn('Không có dữ liệu từ API.');
-                        tbody.append('<tr><td colspan="6">Không có dữ liệu</td></tr>');
+                        tbody.append('<tr><td colspan="8">Không có dữ liệu</td></tr>');
                         return;
                     }
 
                     $.each(data, function(index, batch) {
                         console.log('Xử lý batch chi tiết: ', JSON.stringify(batch));
-                        var productDetailName = batch.productDetail ? batch.productDetail : 'N/A'; // productDetail is ID due to @JsonIdentityReference
+                        var productDetailId = batch.productDetailID || batch.productDetail || 'N/A';
+                        var remainingQuantity = batch.importedQuantity - (batch.soldQuantity || 0);
+                        // Lấy expiry từ API product-details
+                        $.ajax({
+                            url: '/api/product-details/' + productDetailId,
+                            method: 'GET',
+                            async: false, // Đảm bảo lấy expiry trước khi render
+                            success: function(detail) {
+                                batch.expiry = detail.expiry || 'N/A';
+                            },
+                            error: function() {
+                                batch.expiry = 'N/A';
+                            }
+                        });
+
+                        // Tính phần trăm thời gian đã sử dụng
+                        var percentageUsed = null;
+                        if (batch.manufactureDate && batch.expiry && !isNaN(batch.expiry)) {
+                            var manufactureDate = new Date(batch.manufactureDate);
+                            var expiryDate = new Date(manufactureDate.getTime());
+                            expiryDate.setMonth(expiryDate.getMonth() + parseInt(batch.expiry));
+                            var today = new Date();
+
+                            var totalTime = expiryDate - manufactureDate;
+                            var usedTime = today - manufactureDate;
+                            percentageUsed = (usedTime / totalTime) * 100;
+                        }
+
                         var row = '<tr>' +
                             '<td>' + (batch.batchId || 'N/A') + '</td>' +
-                            '<td><a href="javascript:void(0)" class="detail-link" data-id="' + (batch.productDetail || 'N/A') + '">' + (batch.productDetail || 'N/A') + '</a></td>' +
-                            '<td>' + productDetailName + '</td>' +
+                            '<td><a href="javascript:void(0)" class="detail-link" data-id="' + productDetailId + '">' + productDetailId + '</a></td>' +
                             '<td>' + (batch.manufactureDate || 'N/A') + '</td>' +
-                            '<td>' + (batch.quantity || 'N/A') + '</td>' +
+                            '<td>' + (batch.importedQuantity || 'N/A') + '</td>' +
+                            '<td>' + (batch.soldQuantity || 0) + '</td>' +
+                            '<td>' + remainingQuantity + '</td>' +
                             '<td>' +
                             '<ul class="action-list">' +
-                            '<li><a href="javascript:void(0)"><i class="ri-eye-line"></i></a></li>' +
-                            '<li><a href="javascript:void(0)"><i class="ri-pencil-line"></i></a></li>' +
-                            '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle"><i class="ri-delete-bin-line"></i></a></li>' +
+                            '<li><a href="javascript:void(0)" class="view-detail" data-id="' + productDetailId + '"><i class="ri-eye-line"></i></a></li>' +
+                            '<li><a href="javascript:void(0)" class="edit-batch" data-batch-id="' + (batch.batchId || '') + '" data-product-detail-id="' + productDetailId + '" data-manufacture-date="' + (batch.manufactureDate || '') + '" data-imported-quantity="' + (batch.importedQuantity || '') + '"><i class="ri-pencil-line"></i></a></li>' +
+                            '<li><a href="javascript:void(0)" class="delete-batch" data-batch-id="' + (batch.batchId || '') + '"><i class="ri-delete-bin-line"></i></a></li>' +
                             '</ul>' +
                             '</td>' +
                             '</tr>';
+
+                        // Highlight dựa trên phần trăm thời gian
+                        if (percentageUsed !== null) {
+                            if (percentageUsed >= 100) {
+                                row = row.replace('<tr>', '<tr class="table-danger">'); // Đỏ (quá hạn)
+                            } else if (percentageUsed >= 70 && percentageUsed < 100) {
+                                console.log(`Batch ${batch.batchId}: Applying inline style yellow-dark`);
+                                row = row.replace('<tr>', '<tr style="background-color: #ffca2c;">'); // Vàng đậm
+                            } else if (percentageUsed >= 50) {
+                                row = row.replace('<tr>', '<tr class="table-warning">'); // Vàng nhạt
+                            }
+                        }
+
                         tbody.append(row);
                     });
 
-                    // Xử lý click vào Product Detail ID
-                    $('.detail-link').on('click', function() {
+                    // Xử lý click vào View Product Detail
+                    $('.view-detail').on('click', function() {
                         var productDetailId = $(this).data('id');
+                        console.log('Click view-detail, productDetailId: ', productDetailId);
                         if (productDetailId === 'N/A') {
                             alert('Không có ProductDetail để hiển thị.');
                             return;
@@ -283,7 +380,17 @@
                                 $('#modalPrice').text(detail.price ? detail.price.toFixed(2) : 'N/A');
                                 $('#modalWeight').text(detail.weight ? detail.weight.toFixed(2) : 'N/A');
                                 $('#modalExpiry').text(detail.expiry || 'N/A');
-                                $('#productDetailModal').modal('show');
+                                try {
+                                    if ($('#productDetailModal').length > 0) {
+                                        $('#productDetailModal').modal('show');
+                                    } else {
+                                        console.error('Modal #productDetailModal không tồn tại trong DOM.');
+                                        alert('Không thể mở modal chi tiết sản phẩm.');
+                                    }
+                                } catch (e) {
+                                    console.error('Lỗi khi mở modal productDetailModal: ', e);
+                                    alert('Không thể mở modal chi tiết sản phẩm.');
+                                }
                             },
                             error: function(xhr, status, error) {
                                 console.error('Lỗi khi lấy ProductDetail: ', status, error, xhr.responseText);
@@ -291,14 +398,181 @@
                             }
                         });
                     });
+
+                    // Xử lý click vào Edit ProductBatch
+                    $('.edit-batch').on('click', function() {
+                        var batchId = $(this).data('batch-id');
+                        var productDetailId = $(this).data('product-detail-id');
+                        var manufactureDate = $(this).data('manufacture-date');
+                        var importedQuantity = $(this).data('imported-quantity');
+                        console.log('Click edit-batch, batchId: ', batchId);
+
+                        if (!batchId) {
+                            alert('Batch ID không hợp lệ.');
+                            return;
+                        }
+
+                        $('#editBatchId').val(batchId);
+                        $('#editManufactureDate').val(manufactureDate);
+                        $('#editImportedQuantity').val(importedQuantity);
+                        populateProductDetailDropdown($('#editProductDetailId'), productDetailId);
+                        try {
+                            if ($('#editProductBatchModal').length > 0) {
+                                $('#editProductBatchModal').modal('show');
+                            } else {
+                                console.error('Modal #editProductBatchModal không tồn tại trong DOM.');
+                                alert('Không thể mở modal sửa ProductBatch.');
+                            }
+                        } catch (e) {
+                            console.error('Lỗi khi mở modal editProductBatchModal: ', e);
+                            alert('Không thể mở modal sửa ProductBatch.');
+                        }
+                    });
+
+                    // Xử lý click vào Delete ProductBatch
+                    $('.delete-batch').on('click', function(e) {
+                        e.preventDefault(); // Ngăn hành vi mặc định
+                        var batchId = $(this).data('batch-id');
+                        console.log('Click delete-batch, batchId: ', batchId);
+                        if (!batchId) {
+                            alert('Batch ID không hợp lệ.');
+                            return;
+                        }
+                        if ($('#exampleModalToggle').length === 0) {
+                            console.error('Modal #exampleModalToggle không tồn tại trong DOM.');
+                            alert('Không tìm thấy modal xác nhận xóa. Vui lòng kiểm tra HTML.');
+                            return;
+                        }
+                        $('.confirm-delete').data('batch-id', batchId);
+                        console.log('Đã gán batchId cho nút Yes: ', batchId);
+                        try {
+                            $('#exampleModalToggle').modal('show');
+                        } catch (e) {
+                            console.error('Lỗi khi mở modal exampleModalToggle: ', e);
+                            alert('Không thể mở modal xác nhận xóa.');
+                        }
+                    });
                 },
                 error: function(xhr, status, error) {
-                    console.error('Lỗi khi gọi API: ', status, error, xhr.responseText);
+                    console.error('Lỗi khi gọi API /api/product-batches: ', status, error, xhr.responseText);
                     alert('Lỗi khi tải dữ liệu: ' + error + '. Kiểm tra console.');
                 }
             });
+        }
+
+        // Load danh sách ban đầu
+        loadProductBatches();
+
+        $(document).on('click', '#saveEditProductBatch', function() {
+            var batchId = $('#editBatchId').val();
+            var productDetailId = $('#editProductDetailId').val();
+            var manufactureDate = $('#editManufactureDate').val();
+            var importedQuantity = $('#editImportedQuantity').val();
+
+            console.log('Payload trước khi gửi: ', {
+                productDetailId: productDetailId,
+                manufactureDate: manufactureDate,
+                importedQuantity: importedQuantity
+            });
+
+            if (!productDetailId || isNaN(parseInt(productDetailId))) {
+                alert('Vui lòng chọn một Product Detail hợp lệ.');
+                return;
+            }
+            if (!manufactureDate) {
+                alert('Vui lòng chọn ngày sản xuất.');
+                return;
+            }
+            if (!importedQuantity || isNaN(parseInt(importedQuantity)) || parseInt(importedQuantity) < 1) {
+                alert('Vui lòng nhập số lượng nhập hợp lệ (tối thiểu 1).');
+                return;
+            }
+
+            var formData = {
+                productDetailID: parseInt(productDetailId),
+                manufactureDate: manufactureDate,
+                importedQuantity: parseInt(importedQuantity)
+            };
+
+            console.log('Gửi payload sửa ProductBatch: ', formData);
+
+            $.ajax({
+                url: '/api/product-batches/' + batchId,
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                dataType: 'json',
+                success: function(response) {
+                    console.log('ProductBatch đã được cập nhật: ', response);
+                    alert('Cập nhật ProductBatch thành công!');
+                    $('#editProductBatchModal').modal('hide');
+                    loadProductBatches();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi khi sửa ProductBatch: ', status, error, xhr.responseText);
+                    alert('Lỗi khi sửa ProductBatch: ' + (xhr.responseText || 'Kiểm tra console.'));
+                }
+            });
         });
-    }
+
+        // Xử lý xác nhận xóa ProductBatch
+        $(document).on('click', '.confirm-delete', function(e) {
+            e.preventDefault(); // Ngăn hành vi mặc định
+            var batchId = $(this).data('batch-id');
+            console.log('Click nút Yes (confirm-delete), batchId: ', batchId);
+
+            if (!batchId) {
+                console.error('Batch ID không hợp lệ khi xác nhận xóa.');
+                alert('Batch ID không hợp lệ.');
+                return;
+            }
+
+            $.ajax({
+                url: '/api/product-batches/' + batchId,
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content') // Thêm CSRF nếu cần
+                },
+                beforeSend: function(xhr) {
+                    console.log('Gửi yêu cầu DELETE cho batchId: ', batchId);
+                },
+                success: function(response, textStatus, xhr) {
+                    console.log('Xóa ProductBatch thành công, status: ', xhr.status, 'response: ', response);
+                    try {
+                        $('#exampleModalToggle').modal('hide');
+                        if ($('#exampleModalToggle2').length > 0) {
+                            $('#exampleModalToggle2').modal('show');
+                        } else {
+                            console.warn('Modal #exampleModalToggle2 không tồn tại.');
+                            alert('Xóa ProductBatch thành công!');
+                        }
+                        loadProductBatches();
+                    } catch (e) {
+                        console.error('Lỗi khi thao tác modal sau xóa: ', e);
+                        alert('Xóa thành công nhưng lỗi modal. Vui lòng kiểm tra console.');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi khi xóa ProductBatch: ', {
+                        status: status,
+                        error: error,
+                        statusCode: xhr.status,
+                        response: xhr.responseText,
+                        headers: xhr.getAllResponseHeaders()
+                    });
+                    alert('Lỗi khi xóa ProductBatch: ' + (xhr.responseText || 'Không có phản hồi từ server (Status: ' + xhr.status + ')'));
+                    try {
+                        $('#exampleModalToggle').modal('hide');
+                    } catch (e) {
+                        console.error('Lỗi khi đóng modal exampleModalToggle: ', e);
+                    }
+                },
+                complete: function(xhr, status) {
+                    console.log('Yêu cầu DELETE hoàn tất, status: ', status, 'statusCode: ', xhr.status);
+                }
+            });
+        });
+    });
 </script>
 
 </body>
