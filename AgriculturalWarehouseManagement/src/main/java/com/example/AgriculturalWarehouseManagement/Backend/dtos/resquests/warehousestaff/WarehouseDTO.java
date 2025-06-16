@@ -1,4 +1,4 @@
-package com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin;
+package com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class WarehouseDTO {
     @NotBlank(message = "Warehouse name is required!")
-    private String name;
+    private Integer warehouseId;
+
+    private String warehouseName;
 
     private String location;
 
