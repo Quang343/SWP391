@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -58,5 +59,14 @@ public class ProductBatchController {
     @GetMapping
     public ResponseEntity<List<ProductBatch>> findAll() {
         return ResponseEntity.ok(service.findAll());
+    }
+
+    @GetMapping("/adjustments")
+    public ResponseEntity<Map<String, Object>> getAdjustmentsByBatchId(@RequestParam Integer batchId) {
+        if (batchId == null ) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Map<String, Object> result = service.getAdjustmentsByBatchId(batchId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

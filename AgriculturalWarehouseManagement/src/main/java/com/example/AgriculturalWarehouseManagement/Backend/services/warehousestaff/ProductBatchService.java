@@ -2,14 +2,18 @@ package com.example.AgriculturalWarehouseManagement.Backend.services.warehousest
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.ProductBatchDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.mappers.ProductBatchMapper;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Adjustment;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductBatch;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductDetail;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.AdjustmentRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductBatchRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -23,6 +27,9 @@ public class ProductBatchService {
 
     @Autowired
     private ProductBatchMapper mapper;
+
+    @Autowired
+    private AdjustmentRepository adjustmentRepository;
 
     // Tạo mới ProductBatch
     public ProductBatchDTO create(ProductBatchDTO dto) {
@@ -63,6 +70,20 @@ public class ProductBatchService {
             throw new NoSuchElementException("ProductBatch not found with ID: " + id);
         }
         repository.deleteById(id);
+    }
+
+    public Map<String, Object> getAdjustmentsByBatchId(Integer batchId) {
+        List<Adjustment> adjustments = adjustmentRepository.findByBatchBatchId(batchId);
+        int totalAdjustment = adjustments.stream()
+                .mapToInt(adj -> adj.getQuantity() != null ? adj.getQuantity() : 0)
+                .sum();
+        int adjustmentCount = adjustments.size();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("adjustments", adjustments);
+        result.put("totalAdjustment", totalAdjustment);
+        result.put("adjustmentCount", adjustmentCount);
+        return result;
     }
 
     public ProductBatchDTO findById(Integer id) {
