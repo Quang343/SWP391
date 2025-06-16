@@ -1,0 +1,2447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fastkart">
+    <meta name="keywords" content="Fastkart">
+    <meta name="author" content="Fastkart">
+    <link rel="icon" th:href="@{FrontEnd/assets/images/favicon/1.png}" type="image/x-icon">
+    <title>On-demand last-mile delivery</title>
+
+    <!-- Google font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap">
+
+    <!-- bootstrap css -->
+    <link id="rtl-link" rel="stylesheet" type="text/css" th:href="@{FrontEnd/assets/css/vendors/bootstrap.css}">
+
+    <!-- Iconly css -->
+    <link rel="stylesheet" type="text/css" th:href="@{FrontEnd/assets/css/bulk-style.css}">
+
+    <!-- Template css -->
+    <link id="color-link" rel="stylesheet" type="text/css" th:href="@{FrontEnd/assets/css/style.css}">
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        @keyframes shake {
+            0% {
+                transform: translateX(0);
+            }
+            20% {
+                transform: translateX(-5px);
+            }
+            40% {
+                transform: translateX(5px);
+            }
+            60% {
+                transform: translateX(-5px);
+            }
+            80% {
+                transform: translateX(5px);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+            animation-iteration-count: infinite; /*Và lặp đi lặp lại mãi */
+        }
+
+        .shake-10s {                 /* class mới */
+            animation: shake 0.5s ease-in-out;
+            animation-iteration-count: 20;  /* 0.5 s × 20 = 10 s */
+        }
+
+        /* ---- CSS ---- */
+
+        .glow-btn {
+            position: relative;
+            isolation: isolate;
+            border-radius: 10px;
+            z-index: 1;
+            padding: 10px 12px;
+            color: white;
+            background-color: #3b82f6;
+            border: none;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Lớp nền mờ bên dưới */
+        .glow-btn::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-color: #3b82f6; /* giống nền gốc */
+            border-radius: inherit;
+            z-index: -2;
+        }
+
+        /* Viền phát sáng mở rộng rõ ràng */
+        .glow-btn::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            background: linear-gradient(
+                    45deg,
+                    #FF0000, #FF7300, #FFFB00, #48FF00,
+                    #00FFD5, #002BFF, #FF00C8, #FF0000
+            );
+            background-size: 600%;
+            filter: blur(8px); /* tăng độ lan */
+            border-radius: inherit;
+            z-index: -3;
+            opacity: 1;
+            animation: glowing 20s linear infinite, pulseGlow 4s ease-in-out infinite;
+        }
+
+        /* Gradient di chuyển liên tục */
+        @keyframes glowing {
+            0%   { background-position: 0 0; }
+            50%  { background-position: 400% 0; }
+            100% { background-position: 0 0; }
+        }
+
+        /* Nhịp sáng giãn–thu */
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.05); }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- Loader Start -->
+<div class="fullpage-loader">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+<!-- Loader End -->
+
+<!-- Header Start -->
+<head th:replace="FrontEnd/fragments/header::header"></head>
+<!-- Header End -->
+
+<!-- mobile fix menu start -->
+<div class="mobile-menu d-md-none d-block mobile-cart">
+    <ul>
+        <li class="active">
+            <a href="index.html">
+                <i class="iconly-Home icli"></i>
+                <span>Home</span>
+            </a>
+        </li>
+
+        <li class="mobile-category">
+            <a href="javascript:void(0)">
+                <i class="iconly-Category icli js-link"></i>
+                <span>Category</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="search.html" class="search-box">
+                <i class="iconly-Search icli"></i>
+                <span>Search</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="wishlist.html" class="notifi-wishlist">
+                <i class="iconly-Heart icli"></i>
+                <span>My Wish</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="cart.html">
+                <i class="iconly-Bag-2 icli fly-cate"></i>
+                <span>Cart</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- mobile fix menu end -->
+
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-0">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-contain">
+                    <h2>User Dashboard</h2>
+                    <nav>
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item">
+                                <a href="index.html">
+                                    <i class="fa-solid fa-house"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active">User Dashboard</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- User Dashboard Section Start -->
+<section class="user-dashboard-section section-b-space">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-xxl-3 col-lg-4">
+                <div class="dashboard-left-sidebar">
+                    <div class="close-button d-flex d-lg-none">
+                        <button class="close-sidebar">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="profile-box">
+                        <div class="cover-image">
+                            <img th:src="@{FrontEnd/assets/images/inner-page/cover-img.jpg}"
+                                 class="img-fluid blur-up lazyload"
+                                 alt="">
+                        </div>
+
+                        <div class="profile-contain">
+                            <form th:action="@{/profileUserEdit/image}"
+                                  method="post"
+                                  enctype="multipart/form-data"
+                                  class="profile-image">
+                                <div class="position-relative">
+                                    <img th:src="${session.account.getImageUrl}"
+                                         class="blur-up lazyload update_img" alt="more image"
+                                         accept=".jpg,.jpeg,.png,.gif,.webp,image/*">
+<!--                                    th:if="${session.account.getImageUrl != null && session.account.getImageUrl !=''}"-->
+                                    <div class="cover-icon">
+                                        <i class="fa-solid fa-pen">
+                                            <input type="file" name="image" onchange="readURL(this,0)">
+                                        </i>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-outline-primary btn-sm glow-btn">Save</button>
+                                </div>
+                            </form>
+
+                            <div class="profile-name">
+                                <h3 th:text="${session.account.getUserName}">Your username</h3>
+                                <h6 class="text-content" th:text="${session.account.getEmail}">Your email</h6>
+                            </div>
+
+                            <div class="alert alert-danger shake-10s"
+                                 th:if="${errorUpdateImage != null}"
+                                 th:text="${errorUpdateImage}">
+                            </div>
+
+                            <div class="alert alert-danger shake-10s"
+                                 th:if="${errorUpdateProfile != null}"
+                                 th:text="${errorUpdateProfile}">
+                            </div>
+
+                            <div class="alert alert-danger shake-10s"
+                                 th:if="${errorChangePassword != null}"
+                                 th:text="${errorChangePassword}">
+                            </div>
+
+                            <div class="alert alert-success shake-10s"
+                                 th:if="${successChangePassword != null}"
+                                 th:text="${successChangePassword}">
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <ul class="nav nav-pills user-nav-pills" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-dashboard-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-dashboard" type="button"><i data-feather="home"></i>
+                                DashBoard
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-order-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-order" type="button"><i
+                                    data-feather="shopping-bag"></i>Order
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-wishlist-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-wishlist" type="button"><i data-feather="heart"></i>
+                                Wishlist
+                            </button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-address-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-address" type="button" role="tab"><i
+                                    data-feather="map-pin"></i>Address
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-profile" type="button" role="tab"><i data-feather="user"></i>
+                                Profile
+                            </button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-security-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-security" type="button" role="tab"><i
+                                    data-feather="shield"></i>
+                                Privacy
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-xxl-9 col-lg-8">
+                <button class="btn left-dashboard-show btn-animation btn-md fw-bold d-block mb-4 d-lg-none">Show
+                    Menu
+                </button>
+                <div class="dashboard-right-sidebar">
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-dashboard" role="tabpanel">
+                            <div class="dashboard-home">
+                                <div class="title">
+                                    <h2>My Dashboard</h2>
+                                    <span class="title-leaf">
+                                            <svg class="icon-width bg-gray">
+                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                                            </svg>
+                                        </span>
+                                </div>
+
+                                <div class="dashboard-user-name">
+                                    <h6 class="text-content">Hello, <b class="text-title"
+                                                                       th:text="${session.account.getUserName}">Your
+                                        username</b></h6>
+                                    <p class="text-content">From your Account Dashboard,
+                                        you can view your recent activity and update your account information.</p>
+                                </div>
+
+                                <div class="total-box">
+                                    <div class="row g-sm-4 g-3">
+                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
+                                            <div class="total-contain">
+                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}"
+                                                     class="img-1 blur-up lazyload" alt="">
+                                                <img src="../assets/images/svg/order.svg" class="blur-up lazyload"
+                                                     alt="">
+                                                <div class="total-detail">
+                                                    <h5>Total Order</h5>
+                                                    <h3>3658</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
+                                            <div class="total-contain">
+                                                <img th:src="@{FrontEnd/assets/images/svg/pending.svg}"
+                                                     class="img-1 blur-up lazyload" alt="">
+                                                <img th:src="@{FrontEnd/assets/images/svg/pending.svg}"
+                                                     class="blur-up lazyload"
+                                                     alt="">
+                                                <div class="total-detail">
+                                                    <h5>Total Pending Order</h5>
+                                                    <h3>254</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
+                                            <div class="total-contain">
+                                                <img src="../assets/images/svg/wishlist.svg"
+                                                     class="img-1 blur-up lazyload" alt="">
+                                                <img src="../assets/images/svg/wishlist.svg"
+                                                     class="blur-up lazyload" alt="">
+                                                <div class="total-detail">
+                                                    <h5>Total Wishlist</h5>
+                                                    <h3>32158</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="dashboard-title">
+                                    <h3>Account Information</h3>
+                                </div>
+
+                                <div class="row g-4">
+                                    <div class="col-xxl-6">
+                                        <div class="dashboard-content-title">
+                                            <h4>Contact Information
+                                            </h4>
+                                        </div>
+                                        <div class="dashboard-detail">
+                                            <h6 class="text-content" th:text="${session.account.getFullName}">Your
+                                                fullname</h6>
+                                            <h6 class="text-content" th:text="${session.account.getEmail}">Your
+                                                email</h6>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-wishlist" role="tabpanel">
+                            <div class="dashboard-wishlist">
+                                <div class="title">
+                                    <h2>My Wishlist History</h2>
+                                    <span class="title-leaf title-leaf-gray">
+                                            <svg class="icon-width bg-gray">
+                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                                            </svg>
+                                        </span>
+                                </div>
+                                <div class="row g-sm-4 g-3">
+                                    <div class="col-xxl-3 col-lg-6 col-md-4 col-sm-6">
+                                        <div class="product-box-3 theme-bg-white h-100">
+                                            <div class="product-header">
+                                                <div class="product-image">
+                                                    <a href="product-left-thumbnail.html">
+                                                        <img src="../assets/images/cake/product/2.png"
+                                                             class="img-fluid blur-up lazyload" alt="">
+                                                    </a>
+
+                                                    <div class="product-header-top">
+                                                        <button class="btn wishlist-button close_button">
+                                                            <i data-feather="x"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="product-footer">
+                                                <div class="product-detail">
+                                                    <span class="span-name">Vegetable</span>
+                                                    <a href="product-left-thumbnail.html">
+                                                        <h5 class="name">Fresh Bread and Pastry Flour 200 g</h5>
+                                                    </a>
+                                                    <p class="text-content mt-1 mb-2 product-content">Cheesy feet
+                                                        cheesy grin brie. Mascarpone cheese and wine hard cheese the
+                                                        big cheese everyone loves smelly cheese macaroni cheese
+                                                        croque monsieur.</p>
+                                                    <h6 class="unit mt-1">250 ml</h6>
+                                                    <h5 class="price">
+                                                        <span class="theme-color">$08.02</span>
+                                                        <del>$15.15</del>
+                                                    </h5>
+                                                    <div class="add-to-cart-box mt-2">
+                                                        <button class="btn btn-add-cart addcart-button"
+                                                                tabindex="0">Add
+                                                            <span class="add-icon">
+                                                                    <i class="fa-solid fa-plus"></i>
+                                                                </span>
+                                                        </button>
+                                                        <div class="cart_qty qty-box">
+                                                            <div class="input-group">
+                                                                <button type="button" class="qty-left-minus"
+                                                                        data-type="minus" data-field="">
+                                                                    <i class="fa fa-minus"></i>
+                                                                </button>
+                                                                <input class="form-control input-number qty-input"
+                                                                       type="text" name="quantity" value="0">
+                                                                <button type="button" class="qty-right-plus"
+                                                                        data-type="plus" data-field="">
+                                                                    <i class="fa fa-plus"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xxl-3 col-lg-6 col-md-4 col-sm-6">
+                                        <div class="product-box-3 theme-bg-white h-100">
+                                            <div class="product-header">
+                                                <div class="product-image">
+                                                    <a href="product-left-thumbnail.html">
+                                                        <img src="../assets/images/cake/product/3.png"
+                                                             class="img-fluid blur-up lazyload" alt="">
+                                                    </a>
+
+                                                    <div class="product-header-top">
+                                                        <button class="btn wishlist-button close_button">
+                                                            <i data-feather="x"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="product-footer">
+                                                <div class="product-detail">
+                                                    <span class="span-name">Vegetable</span>
+                                                    <a href="product-left-thumbnail.html">
+                                                        <h5 class="name">Peanut Butter Bite Premium Butter Cookies
+                                                            600 g</h5>
+                                                    </a>
+                                                    <p class="text-content mt-1 mb-2 product-content">Feta taleggio
+                                                        croque monsieur swiss manchego cheesecake dolcelatte
+                                                        jarlsberg. Hard cheese danish fontina boursin melted cheese
+                                                        fondue.</p>
+                                                    <h6 class="unit mt-1">350 G</h6>
+                                                    <h5 class="price">
+                                                        <span class="theme-color">$04.33</span>
+                                                        <del>$10.36</del>
+                                                    </h5>
+                                                    <div class="add-to-cart-box mt-2">
+                                                        <button class="btn btn-add-cart addcart-button"
+                                                                tabindex="0">Add
+                                                            <span class="add-icon">
+                                                                    <i class="fa-solid fa-plus"></i>
+                                                                </span>
+                                                        </button>
+                                                        <div class="cart_qty qty-box">
+                                                            <div class="input-group">
+                                                                <button type="button" class="qty-left-minus"
+                                                                        data-type="minus" data-field="">
+                                                                    <i class="fa fa-minus"></i>
+                                                                </button>
+                                                                <input class="form-control input-number qty-input"
+                                                                       type="text" name="quantity" value="0">
+                                                                <button type="button" class="qty-right-plus"
+                                                                        data-type="plus" data-field="">
+                                                                    <i class="fa fa-plus"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xxl-3 col-lg-6 col-md-4 col-sm-6">
+                                        <div class="product-box-3 theme-bg-white h-100">
+                                            <div class="product-header">
+                                                <div class="product-image">
+                                                    <a href="product-left-thumbnail.html">
+                                                        <img src="../assets/images/cake/product/4.png"
+                                                             class="img-fluid blur-up lazyload" alt="">
+                                                    </a>
+
+                                                    <div class="product-header-top">
+                                                        <button class="btn wishlist-button close_button">
+                                                            <i data-feather="x"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="product-footer">
+                                                <div class="product-detail">
+                                                    <span class="span-name">Snacks</span>
+                                                    <a href="product-left-thumbnail.html">
+                                                        <h5 class="name">SnackAmor Combo Pack of Jowar Stick and
+                                                            Jowar Chips</h5>
+                                                    </a>
+                                                    <p class="text-content mt-1 mb-2 product-content">Lancashire
+                                                        hard cheese parmesan. Danish fontina mozzarella cream cheese
+                                                        smelly cheese cheese and wine cheesecake dolcelatte stilton.
+                                                        Cream cheese parmesan who moved my cheese when the cheese
+                                                        comes out everybody's happy cream cheese red leicester
+                                                        ricotta edam.</p>
+                                                    <h6 class="unit mt-1">570 G</h6>
+                                                    <h5 class="price">
+                                                        <span class="theme-color">$12.52</span>
+                                                        <del>$13.62</del>
+                                                    </h5>
+                                                    <div class="add-to-cart-box mt-2">
+                                                        <button class="btn btn-add-cart addcart-button"
+                                                                tabindex="0">Add
+                                                            <span class="add-icon">
+                                                                    <i class="fa-solid fa-plus"></i>
+                                                                </span>
+                                                        </button>
+                                                        <div class="cart_qty qty-box">
+                                                            <div class="input-group">
+                                                                <button type="button" class="qty-left-minus"
+                                                                        data-type="minus" data-field="">
+                                                                    <i class="fa fa-minus"></i>
+                                                                </button>
+                                                                <input class="form-control input-number qty-input"
+                                                                       type="text" name="quantity" value="0">
+                                                                <button type="button" class="qty-right-plus"
+                                                                        data-type="plus" data-field="">
+                                                                    <i class="fa fa-plus"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xxl-3 col-lg-6 col-md-4 col-sm-6">
+                                        <div class="product-box-3 theme-bg-white h-100">
+                                            <div class="product-header">
+                                                <div class="product-image">
+                                                    <a href="product-left-thumbnail.html">
+                                                        <img src="../assets/images/cake/product/5.png"
+                                                             class="img-fluid blur-up lazyload" alt="">
+                                                    </a>
+
+                                                    <div class="product-header-top">
+                                                        <button class="btn wishlist-button close_button">
+                                                            <i data-feather="x"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="product-footer">
+                                                <div class="product-detail">
+                                                    <span class="span-name">Snacks</span>
+                                                    <a href="product-left-thumbnail.html">
+                                                        <h5 class="name">Yumitos Chilli Sprinkled Potato Chips 100 g
+                                                        </h5>
+                                                    </a>
+                                                    <p class="text-content mt-1 mb-2 product-content">Cheddar
+                                                        cheddar pecorino hard cheese hard cheese cheese and biscuits
+                                                        bocconcini babybel. Cow goat paneer cream cheese fromage
+                                                        cottage cheese cauliflower cheese jarlsberg.</p>
+                                                    <h6 class="unit mt-1">100 G</h6>
+                                                    <h5 class="price">
+                                                        <span class="theme-color">$10.25</span>
+                                                        <del>$12.36</del>
+                                                    </h5>
+                                                    <div class="add-to-cart-box mt-2">
+                                                        <button class="btn btn-add-cart addcart-button"
+                                                                tabindex="0">Add
+                                                            <span class="add-icon">
+                                                                    <i class="fa-solid fa-plus"></i>
+                                                                </span>
+                                                        </button>
+                                                        <div class="cart_qty qty-box">
+                                                            <div class="input-group">
+                                                                <button type="button" class="qty-left-minus"
+                                                                        data-type="minus" data-field="">
+                                                                    <i class="fa fa-minus"></i>
+                                                                </button>
+                                                                <input class="form-control input-number qty-input"
+                                                                       type="text" name="quantity" value="0">
+                                                                <button type="button" class="qty-right-plus"
+                                                                        data-type="plus" data-field="">
+                                                                    <i class="fa fa-plus"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xxl-3 col-lg-6 col-md-4 col-sm-6">
+                                        <div class="product-box-3 theme-bg-white h-100">
+                                            <div class="product-header">
+                                                <div class="product-image">
+                                                    <a href="product-left-thumbnail.html">
+                                                        <img src="../assets/images/cake/product/6.png"
+                                                             class="img-fluid blur-up lazyload" alt="">
+                                                    </a>
+
+                                                    <div class="product-header-top">
+                                                        <button class="btn wishlist-button close_button">
+                                                            <i data-feather="x"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="product-footer">
+                                                <div class="product-detail">
+                                                    <span class="span-name">Vegetable</span>
+                                                    <a href="product-left-thumbnail.html">
+                                                        <h5 class="name">Fantasy Crunchy Choco Chip Cookies</h5>
+                                                    </a>
+                                                    <p class="text-content mt-1 mb-2 product-content">Bavarian
+                                                        bergkase smelly cheese swiss cut the cheese lancashire who
+                                                        moved my cheese manchego melted cheese. Red leicester paneer
+                                                        cow when the cheese comes out everybody's happy croque
+                                                        monsieur goat melted cheese port-salut.</p>
+                                                    <h6 class="unit mt-1">550 G</h6>
+                                                    <h5 class="price">
+                                                        <span class="theme-color">$14.25</span>
+                                                        <del>$16.57</del>
+                                                    </h5>
+                                                    <div class="add-to-cart-box mt-2">
+                                                        <button class="btn btn-add-cart addcart-button"
+                                                                tabindex="0">Add
+                                                            <span class="add-icon">
+                                                                    <i class="fa-solid fa-plus"></i>
+                                                                </span>
+                                                        </button>
+                                                        <div class="cart_qty qty-box">
+                                                            <div class="input-group">
+                                                                <button type="button" class="qty-left-minus"
+                                                                        data-type="minus" data-field="">
+                                                                    <i class="fa fa-minus"></i>
+                                                                </button>
+                                                                <input class="form-control input-number qty-input"
+                                                                       type="text" name="quantity" value="0">
+                                                                <button type="button" class="qty-right-plus"
+                                                                        data-type="plus" data-field="">
+                                                                    <i class="fa fa-plus"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xxl-3 col-lg-6 col-md-4 col-sm-6">
+                                        <div class="product-box-3 theme-bg-white h-100">
+                                            <div class="product-header">
+                                                <div class="product-image">
+                                                    <a href="product-left-thumbnail.html">
+                                                        <img src="../assets/images/cake/product/7.png"
+                                                             class="img-fluid blur-up lazyload" alt="">
+                                                    </a>
+
+                                                    <div class="product-header-top">
+                                                        <button class="btn wishlist-button close_button">
+                                                            <i data-feather="x"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="product-footer">
+                                                <div class="product-detail">
+                                                    <span class="span-name">Vegetable</span>
+                                                    <a href="product-left-thumbnail.html">
+                                                        <h5 class="name">Fresh Bread and Pastry Flour 200 g</h5>
+                                                    </a>
+                                                    <p class="text-content mt-1 mb-2 product-content">Melted cheese
+                                                        babybel chalk and cheese. Port-salut port-salut cream cheese
+                                                        when the cheese comes out everybody's happy cream cheese
+                                                        hard cheese cream cheese red leicester.</p>
+                                                    <h6 class="unit mt-1">1 Kg</h6>
+                                                    <h5 class="price">
+                                                        <span class="theme-color">$12.68</span>
+                                                        <del>$14.69</del>
+                                                    </h5>
+                                                    <div class="add-to-cart-box mt-2">
+                                                        <button class="btn btn-add-cart addcart-button"
+                                                                tabindex="0">Add
+                                                            <span class="add-icon">
+                                                                    <i class="fa-solid fa-plus"></i>
+                                                                </span>
+                                                        </button>
+                                                        <div class="cart_qty qty-box">
+                                                            <div class="input-group">
+                                                                <button type="button" class="qty-left-minus"
+                                                                        data-type="minus" data-field="">
+                                                                    <i class="fa fa-minus"></i>
+                                                                </button>
+                                                                <input class="form-control input-number qty-input"
+                                                                       type="text" name="quantity" value="0">
+                                                                <button type="button" class="qty-right-plus"
+                                                                        data-type="plus" data-field="">
+                                                                    <i class="fa fa-plus"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xxl-3 col-lg-6 col-md-4 col-sm-6">
+                                        <div class="product-box-3 theme-bg-white h-100">
+                                            <div class="product-header">
+                                                <div class="product-image">
+                                                    <a href="product-left-thumbnail.html">
+                                                        <img src="../assets/images/cake/product/2.png"
+                                                             class="img-fluid blur-up lazyload" alt="">
+                                                    </a>
+
+                                                    <div class="product-header-top">
+                                                        <button class="btn wishlist-button close_button">
+                                                            <i data-feather="x"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="product-footer">
+                                                <div class="product-detail">
+                                                    <span class="span-name">Vegetable</span>
+                                                    <a href="product-left-thumbnail.html">
+                                                        <h5 class="name">Fresh Bread and Pastry Flour 200 g</h5>
+                                                    </a>
+                                                    <p class="text-content mt-1 mb-2 product-content">Squirty cheese
+                                                        cottage cheese cheese strings. Red leicester paneer danish
+                                                        fontina queso lancashire when the cheese comes out
+                                                        everybody's happy cottage cheese paneer.</p>
+                                                    <h6 class="unit mt-1">250 ml</h6>
+                                                    <h5 class="price">
+                                                        <span class="theme-color">$08.02</span>
+                                                        <del>$15.15</del>
+                                                    </h5>
+                                                    <div class="add-to-cart-box mt-2">
+                                                        <button class="btn btn-add-cart addcart-button"
+                                                                tabindex="0">Add
+                                                            <span class="add-icon">
+                                                                    <i class="fa-solid fa-plus"></i>
+                                                                </span>
+                                                        </button>
+                                                        <div class="cart_qty qty-box">
+                                                            <div class="input-group">
+                                                                <button type="button" class="qty-left-minus"
+                                                                        data-type="minus" data-field="">
+                                                                    <i class="fa fa-minus"></i>
+                                                                </button>
+                                                                <input class="form-control input-number qty-input"
+                                                                       type="text" name="quantity" value="0">
+                                                                <button type="button" class="qty-right-plus"
+                                                                        data-type="plus" data-field="">
+                                                                    <i class="fa fa-plus"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-order" role="tabpanel">
+                            <div class="dashboard-order">
+                                <div class="title">
+                                    <h2>My Orders History</h2>
+                                    <span class="title-leaf title-leaf-gray">
+                                            <svg class="icon-width bg-gray">
+                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                                            </svg>
+                                        </span>
+                                </div>
+
+                                <div class="order-contain">
+                                    <div class="order-box dashboard-bg-box">
+                                        <div class="order-container">
+                                            <div class="order-icon">
+                                                <i data-feather="box"></i>
+                                            </div>
+
+                                            <div class="order-detail">
+                                                <h4>Delivers <span>Pending</span></h4>
+                                                <h6 class="text-content">Gouda parmesan caerphilly mozzarella
+                                                    cottage cheese cauliflower cheese taleggio gouda.</h6>
+                                            </div>
+                                        </div>
+
+                                        <div class="product-order-detail">
+                                            <a href="product-left-thumbnail.html" class="order-image">
+                                                <img src="../assets/images/vegetable/product/1.png"
+                                                     class="blur-up lazyload" alt="">
+                                            </a>
+
+                                            <div class="order-wrap">
+                                                <a href="product-left-thumbnail.html">
+                                                    <h3>Fantasy Crunchy Choco Chip Cookies</h3>
+                                                </a>
+                                                <p class="text-content">Cheddar dolcelatte gouda. Macaroni cheese
+                                                    cheese strings feta halloumi cottage cheese jarlsberg cheese
+                                                    triangles say cheese.</p>
+                                                <ul class="product-size">
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Price : </h6>
+                                                            <h5>$20.68</h5>
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Rate : </h6>
+                                                            <div class="product-rating ms-2">
+                                                                <ul class="rating">
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star"></i>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Sold By : </h6>
+                                                            <h5>Fresho</h5>
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Quantity : </h6>
+                                                            <h5>250 G</h5>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="order-box dashboard-bg-box">
+                                        <div class="order-container">
+                                            <div class="order-icon">
+                                                <i data-feather="box"></i>
+                                            </div>
+
+                                            <div class="order-detail">
+                                                <h4>Delivered <span class="success-bg">Success</span></h4>
+                                                <h6 class="text-content">Cheese on toast cheesy grin cheesy grin
+                                                    cottage cheese caerphilly everyone loves cottage cheese the big
+                                                    cheese.</h6>
+                                            </div>
+                                        </div>
+
+                                        <div class="product-order-detail">
+                                            <a href="product-left-thumbnail.html" class="order-image">
+                                                <img src="../assets/images/vegetable/product/2.png" alt=""
+                                                     class="blur-up lazyload">
+                                            </a>
+
+                                            <div class="order-wrap">
+                                                <a href="product-left-thumbnail.html">
+                                                    <h3>Cold Brew Coffee Instant Coffee 50 g</h3>
+                                                </a>
+                                                <p class="text-content">Pecorino paneer port-salut when the cheese
+                                                    comes out everybody's happy red leicester mascarpone blue
+                                                    castello cauliflower cheese.</p>
+                                                <ul class="product-size">
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Price : </h6>
+                                                            <h5>$20.68</h5>
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Rate : </h6>
+                                                            <div class="product-rating ms-2">
+                                                                <ul class="rating">
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star"></i>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Sold By : </h6>
+                                                            <h5>Fresho</h5>
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Quantity : </h6>
+                                                            <h5>250 G</h5>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="order-box dashboard-bg-box">
+                                        <div class="order-container">
+                                            <div class="order-icon">
+                                                <i data-feather="box"></i>
+                                            </div>
+
+                                            <div class="order-detail">
+                                                <h4>Delivere <span>Pending</span></h4>
+                                                <h6 class="text-content">Cheesy grin boursin cheesy grin cheesecake
+                                                    blue castello cream cheese lancashire melted cheese.</h6>
+                                            </div>
+                                        </div>
+
+                                        <div class="product-order-detail">
+                                            <a href="product-left-thumbnail.html" class="order-image">
+                                                <img src="../assets/images/vegetable/product/3.png" alt=""
+                                                     class="blur-up lazyload">
+                                            </a>
+
+                                            <div class="order-wrap">
+                                                <a href="product-left-thumbnail.html">
+                                                    <h3>Peanut Butter Bite Premium Butter Cookies 600 g</h3>
+                                                </a>
+                                                <p class="text-content">Cow bavarian bergkase mascarpone paneer
+                                                    squirty cheese fromage frais cheese slices when the cheese comes
+                                                    out everybody's happy.</p>
+                                                <ul class="product-size">
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Price : </h6>
+                                                            <h5>$20.68</h5>
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Rate : </h6>
+                                                            <div class="product-rating ms-2">
+                                                                <ul class="rating">
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star"></i>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Sold By : </h6>
+                                                            <h5>Fresho</h5>
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Quantity : </h6>
+                                                            <h5>250 G</h5>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="order-box dashboard-bg-box">
+                                        <div class="order-container">
+                                            <div class="order-icon">
+                                                <i data-feather="box"></i>
+                                            </div>
+
+                                            <div class="order-detail">
+                                                <h4>Delivered <span class="success-bg">Success</span></h4>
+                                                <h6 class="text-content">Caerphilly port-salut parmesan pecorino
+                                                    croque monsieur dolcelatte melted cheese cheese and wine.</h6>
+                                            </div>
+                                        </div>
+
+                                        <div class="product-order-detail">
+                                            <a href="product-left-thumbnail.html" class="order-image">
+                                                <img src="../assets/images/vegetable/product/4.png"
+                                                     class="blur-up lazyload" alt="">
+                                            </a>
+
+                                            <div class="order-wrap">
+                                                <a href="product-left-thumbnail.html">
+                                                    <h3>SnackAmor Combo Pack of Jowar Stick and Jowar Chips</h3>
+                                                </a>
+                                                <p class="text-content">The big cheese cream cheese pepper jack
+                                                    cheese slices danish fontina everyone loves cheese on toast
+                                                    bavarian bergkase.</p>
+                                                <ul class="product-size">
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Price : </h6>
+                                                            <h5>$20.68</h5>
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Rate : </h6>
+                                                            <div class="product-rating ms-2">
+                                                                <ul class="rating">
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star" class="fill"></i>
+                                                                    </li>
+                                                                    <li>
+                                                                        <i data-feather="star"></i>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Sold By : </h6>
+                                                            <h5>Fresho</h5>
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Quantity : </h6>
+                                                            <h5>250 G</h5>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="alert-message" class="alert alert-danger" style="display: none;">
+                        </div>
+
+                        <div id="alert-message-success" class="alert alert-success" style="display: none;">
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-address" role="tabpanel">
+                            <div class="dashboard-address">
+                                <div class="title title-flex">
+                                    <div>
+                                        <h2>My Address Book</h2>
+                                        <span class="title-leaf">
+                                                <svg class="icon-width bg-gray">
+                                                    <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                                                </svg>
+                                            </span>
+                                    </div>
+
+                                    <button class="btn theme-bg-color text-white btn-sm fw-bold mt-lg-0 mt-3"
+                                            data-bs-toggle="modal" data-bs-target="#add-address"><i data-feather="plus"
+                                                                                                    class="me-2"></i>
+                                        Add New Address
+                                    </button>
+                                </div>
+
+                                <div class="row g-sm-4 g-3" id="addressBookContainer">
+
+                                    <script>
+                                        async function fetchGetAddressBook() {
+                                            try {
+                                                const userId = "[[${session.accountId}]]";
+                                                console.log("hello--------" + userId)
+                                                // console.log("Account ID from session: [[${session.accountId}]]");
+                                                const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/addressBook/${userId}`);
+
+                                                const addressBooks = response.data;
+                                                const container = document.getElementById("addressBookContainer");
+
+                                                if (addressBooks.length > 0) {
+                                                    let htmlContent = '';
+                                                    addressBooks.forEach(address => {
+                                                        htmlContent += `
+                                                                <div class="col-xxl-4 col-xl-6 col-lg-12 col-md-6">
+                                                                    <div class="address-box">
+                                                                        <div>
+                                                                            <div class="form-check">
+                                                                                <input class="form-check-input" type="radio" name="jack" id="flexRadioDefault${address.userId}" checked>
+
+                                                                            </div>
+
+                                                                            <div class="label">
+                                                                                <label id="userFullName" contenteditable="false">${address.setToAddress}</label>
+                                                                            </div>
+
+
+                                                                            <div class="table-responsive address-table">
+                                                                                <table class="table">
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                            <td id="addressName" colspan="2" >${address.fullName}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td>Address :</td>
+                                                                                            <td id="userAddress">${address.address}
+                                                                                            </td>
+                                                                                        </tr>
+
+                                                                                        <tr>
+                                                                                            <td>Phone :</td>
+                                                                                            <td id="userPhone" >${address.phone || 'N/A'}</td>
+                                                                                        </tr>
+
+                                                                                        <tr>
+                                                                                            <td>Note :</td>
+                                                                                            <td id="userNote">${address.note || 'N/A'}</td>
+                                                                                        </tr>
+
+                                                                                        <tr>
+                                                                                            <td>Email :</td>
+                                                                                            <td id="userEmail" >${address.email || 'N/A'}</td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="button-group">
+                                                                           <button class="btn btn-sm add-button w-100"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target="#editAddressBook"
+                                                                                data-id="${address.userId}"
+                                                                                data-fullname="${address.fullName}"
+                                                                                data-address="${address.address}"
+                                                                                data-phone="${address.phone || ''}"
+                                                                                data-settoaddress="${address.setToAddress}"
+                                                                                data-email="${address.email}"
+                                                                                data-note="${address.note}"
+                                                                                data-addressbookid="${address.addressBookId}">
+                                                                            <i data-feather="edit"></i> Edit
+                                                                        </button>
+
+
+                                                                            <button class="btn btn-sm add-button w-100" data-bs-toggle="modal"
+                                                                                    data-bs-target="#removeProfile"
+                                                                                    data-bs-target="removeAddress"
+                                                                                    data-addressbookid="${address.addressBookId}"
+                                                                                    data-id="${address.userId}">
+                                                                                    <i data-feather="trash-2"></i>
+                                                                                Remove
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            `;
+                                                    });
+                                                    container.innerHTML = htmlContent;
+                                                } else {
+                                                    container.innerHTML = "No address books found.";
+                                                }
+                                            } catch (error) {
+                                                console.error('Error fetching the address book:', error);
+                                                document.getElementById("addressBookContainer").innerText = "Failed to load address book.";
+                                            }
+                                        }
+
+                                        // Gọi hàm bất đồng bộ khi trang được tải
+                                        fetchGetAddressBook();
+                                    </script>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-profile" role="tabpanel">
+                            <div class="dashboard-profile">
+                                <div class="title">
+                                    <h2>My Profile</h2>
+                                    <span class="title-leaf">
+                                            <svg class="icon-width bg-gray">
+                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                                            </svg>
+                                        </span>
+                                </div>
+
+                                <div class="profile-detail dashboard-bg-box">
+                                    <div class="dashboard-title">
+                                        <h3>Profile Name</h3>
+                                    </div>
+                                    <div class="profile-name-detail">
+                                        <div class="d-sm-flex align-items-center d-block">
+                                            <h3 th:text="${session.account.getUserName}">Your username</h3>
+                                            <div class="product-rating profile-rating">
+                                                <ul class="rating">
+                                                    <li>
+                                                        <i data-feather="star" class="fill"></i>
+                                                    </li>
+                                                    <li>
+                                                        <i data-feather="star" class="fill"></i>
+                                                    </li>
+                                                    <li>
+                                                        <i data-feather="star" class="fill"></i>
+                                                    </li>
+                                                    <li>
+                                                        <i data-feather="star"></i>
+                                                    </li>
+                                                    <li>
+                                                        <i data-feather="star"></i>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <a href="javascript:void(0)" data-bs-toggle="modal"
+                                           data-bs-target="#editProfile">Edit</a>
+                                    </div>
+
+                                    <div class="location-profile">
+                                        <ul>
+                                            <li>
+                                                <div class="location-box">
+                                                    <i data-feather="map-pin"></i>
+                                                    <h6 th:text="${session.account.getAddress}">Your address</h6>
+                                                </div>
+                                            </li>
+
+                                            <li>
+                                                <div class="location-box">
+                                                    <i data-feather="mail"></i>
+                                                    <h6 th:text="${session.account.getEmail}">Your email</h6>
+                                                </div>
+                                            </li>
+
+                                            <li>
+                                                <div class="location-box">
+                                                    <i data-feather="check-square"></i>
+                                                    <h6>Create At</h6>
+                                                    <h6 th:text="${session.account.getCreateAt}">Your create at</h6>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+
+                                <div class="profile-about dashboard-bg-box">
+                                    <div class="row">
+                                        <div class="col-xxl-7">
+                                            <div class="dashboard-title mb-3">
+                                                <h3>Profile About</h3>
+                                            </div>
+
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>Username:</td>
+                                                        <td th:text="${session.account.getUserName}">Your username</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Fullname:</td>
+                                                        <td th:text="${session.account.getFullName}">Your Fullname</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Gender :</td>
+                                                        <td th:text="${session.account.getGender}">Your gender</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Birthday :</td>
+                                                        <td th:text="${session.account.getDob}">Your dob</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Phone Number :</td>
+                                                        <td>
+                                                            <a href="javascript:void(0)"
+                                                               th:text="${session.account.getPhone}">Your phone</a>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Address :</td>
+                                                        <td th:text="${session.account.getAddress}">549 Sulphur Springs
+                                                            Road, Downers, IL
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <div class="dashboard-title mb-3">
+                                                <h3>Login Details</h3>
+                                            </div>
+
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>Email :</td>
+                                                        <td>
+                                                            <a href="javascript:void(0)"
+                                                               th:text="${session.account.getEmail}">Your email</a>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Password :</td>
+                                                        <td>
+                                                            <a href="javascript:void(0)">●●●●●●
+                                                                <span data-bs-toggle="modal"
+                                                                      data-bs-target="#editProfilePassword">Edit</span></a>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xxl-5">
+                                            <div class="profile-image">
+                                                <img src="../assets/images/inner-page/dashboard-profile.png"
+                                                     class="img-fluid blur-up lazyload" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="tab-pane fade" id="pills-security" role="tabpanel">
+                            <form th:action="@{/deleteAccount}" method="post" class="dashboard-privacy">
+
+
+                                <div class="dashboard-bg-box mt-4">
+                                    <div class="dashboard-title mb-4">
+                                        <h3>Account settings</h3>
+                                    </div>
+
+
+                                    <div class="privacy-box">
+                                        <div class="d-flex align-items-start">
+                                            <h6>Deleting Your Account Will Temporary</h6>
+                                            <div class="form-check form-switch switch-radio ms-auto">
+                                                <input name="deleteAccount" class="form-check-input" type="checkbox" role="switch"
+                                                       id="redio4" required>
+                                                <label class="form-check-label" for="redio4"></label>
+                                            </div>
+                                        </div>
+
+                                        <p class="text-content">Once your account is deleted, you will be logged out
+                                            and you will be create new account. You can not register email deleted</p>
+                                    </div>
+
+                                    <button class="btn theme-bg-color btn-md fw-bold mt-4 text-white">Delete My
+                                        Account
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- User Dashboard Section End -->
+
+<!-- Footer Section Start -->
+<footer th:replace="FrontEnd/fragments/footer::footer"></footer>
+<!-- Footer Section End -->
+
+<!-- Deal Box Modal Start -->
+<div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title w-100" id="deal_today">Deal Today</h5>
+                    <p class="mt-1 text-content">Recommended deals for you.</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="deal-offer-box">
+                    <ul class="deal-offer-list">
+                        <li class="list-1">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/10.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-2">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/11.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-3">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/12.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-1">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/13.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Deal Box Modal End -->
+
+<!-- Tap to top and theme setting button start -->
+<div class="theme-option">
+    <div class="setting-box">
+        <button class="btn setting-button">
+            <i class="fa-solid fa-gear"></i>
+        </button>
+
+        <div class="theme-setting-2">
+            <div class="theme-box">
+                <ul>
+                    <li>
+                        <div class="setting-name">
+                            <h4>Color</h4>
+                        </div>
+                        <div class="theme-setting-button color-picker">
+                            <form class="form-control">
+                                <label for="colorPick" class="form-label mb-0">Theme Color</label>
+                                <input type="color" class="form-control form-control-color" id="colorPick"
+                                       value="#0da487" title="Choose your color">
+                            </form>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>Dark</h4>
+                        </div>
+                        <div class="theme-setting-button">
+                            <button class="btn btn-2 outline" id="darkButton">Dark</button>
+                            <button class="btn btn-2 unline" id="lightButton">Light</button>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>RTL</h4>
+                        </div>
+                        <div class="theme-setting-button rtl">
+                            <button class="btn btn-2 rtl-unline">LTR</button>
+                            <button class="btn btn-2 rtl-outline">RTL</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-to-top">
+        <a id="back-to-top" href="#">
+            <i class="fas fa-chevron-up"></i>
+        </a>
+    </div>
+</div>
+<!-- Tap to top and theme setting button end -->
+
+<!-- Bg overlay Start -->
+<div class="bg-overlay"></div>
+<!-- Bg overlay End -->
+
+<!-- Add address modal box start -->
+<div class="modal fade theme-modal" id="add-address" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add a new address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="form-floating mb-4 theme-form-floating">
+                    <input type="text" class="form-control" id="fullNameAdd" placeholder="Enter Full name" required>
+                    <label for="fullNameAdd">Full name</label>
+                </div>
+
+                <div class="form-floating mb-4 theme-form-floating">
+                    <input type="text" class="form-control" id="phone" placeholder="Phone" required>
+                    <label for="phone">Phone</label>
+                </div>
+
+                <div class="form-floating mb-4 theme-form-floating">
+                    <input type="email" class="form-control" id="address" placeholder="Enter Address" required>
+                    <label for="address">Address</label>
+                </div>
+
+                <div class="form-floating mb-4 theme-form-floating">
+                    <input type="email" class="form-control" id="note" placeholder="Enter note" required>
+                    <label for="note">Note</label>
+                </div>
+
+                <div class="form-floating mb-4 theme-form-floating">
+                            <textarea class="form-control" placeholder="Leave a comment here" id="settoaddress"
+                                      style="height: 100px" required></textarea>
+                    <label for="settoaddress">Set To Address</label>
+                </div>
+
+
+                <div class="form-floating mb-4 theme-form-floating">
+                    <input type="email" class="form-control" id="email" placeholder="Enter email" required>
+                    <label for="email">Email</label>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-md" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="add-address-submit btn theme-bg-color btn-md text-white"
+                        data-bs-dismiss="modal">Save
+                    changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /** Kiểm tra xem str đã viết hoa đúng chưa */
+    function isCapitalizedEachWord(str) {
+        if (str == null || str.trim().length === 0) return false;
+
+        const words = str.trim().split(/\s+/);
+
+        for (const word of words) {
+            if (word.length === 0) continue;           // an toàn, giống Java
+            const firstChar = word.charAt(0);
+            if (firstChar < 'A' || firstChar > 'Z') {  // Character.isUpperCase ASCII
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function showAlert(type, message) {
+        // Ẩn tất cả alert đang hiển thị
+        $('#alert-message, #alert-message-success')
+            .stop(true, true)
+            .hide()
+            .removeClass('shake');
+
+        // Chọn alert tương ứng
+        const $alert = type === 'success'
+            ? $('#alert-message-success')
+            : $('#alert-message');
+
+        // Gán nội dung và hiển thị
+        $alert.text(message).show().addClass('shake');
+
+        setTimeout(() => {
+            $alert.fadeOut(() => {
+                $alert.removeClass('shake');
+            });
+        }, 10000);
+    }
+
+
+
+    // Add event listener to the Save button
+    document.querySelector('.add-address-submit').addEventListener('click', async function () {
+
+        const userid = "[[${session.accountId}]]";
+        console.log("page22---------------" + userid)
+
+        const fullname = document.getElementById('fullNameAdd').value;
+        const phone = document.getElementById('phone').value;
+        const address = document.getElementById('address').value;
+        const note = document.getElementById('note').value;
+        const settoaddress = document.getElementById('settoaddress').value;
+        const email = document.getElementById('email').value;
+
+        console.log("email:---" + email)
+
+        if (!fullname || !email || !note || !settoaddress || !address || !phone) {
+            showAlert('error', 'Please fill in all the required fields.')
+            return;
+        }
+        console.log(fullname)
+        console.log(phone)
+        console.log(address)
+        console.log(note)
+        console.log(settoaddress)
+        console.log(email)
+
+        // if(fullname.length < 9){
+        //     showAlert('error','at least 9');
+        //     return;
+        // }
+
+        if(!isCapitalizedEachWord(fullname)){
+            showAlert('error','FullName cannot be capitalized Each Word');
+            return;
+        }
+
+        const phoneRegex = /^(03|05|07|08|09)\d{8}$/;
+        if (!phoneRegex.test(phone)) {
+            showAlert('error', 'Please enter a valid phone number (starting with 03, 05, 07, 08, or 09 and 10 digits).');
+            return;
+        }
+
+        if (email.indexOf('@') === -1 || email.indexOf('.') === -1 || email.indexOf('@') > email.indexOf('.')) {
+            showAlert('error', 'Please enter a valid email address.');
+            return;
+        } else {
+            $('#alert-message').hide();
+        }
+
+
+        // Tạo đối tượng dữ liệu gửi lên server
+        const addressBookRequest = {
+            userId: userid,
+            fullName: fullname,
+            phone: phone,
+            address: address,
+            note: note,
+            setToAddress: settoaddress,
+            email: email
+        };
+
+        try {
+            // Gửi PUT request đến server bằng axios
+            const response = await axios.post('http://localhost:8080/AgriculturalWarehouseManagement/addressBook', addressBookRequest);
+
+            showAlert('success', 'Add success !!!');
+
+            fetchGetAddressBook();
+
+            // Đóng modal sau khi lưu thành công
+            $('#add-address').modal('hide');
+
+        } catch (error) {
+            console.error('Error updating address book:', error);
+            alert('Failed to update address book.');
+        }
+    });
+
+</script>
+
+<!-- Add address modal box end -->
+
+<!-- Location Modal Start -->
+<div class="modal location-modal fade theme-modal" id="locationModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel1">Choose your Delivery Location</h5>
+                <p class="mt-1 text-content">Enter your address and we will specify the offer for your area.</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="location-list">
+                    <div class="search-input">
+                        <input type="search" class="form-control" placeholder="Search Your Area">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+
+                    <div class="disabled-box">
+                        <h6>Select a Location</h6>
+                    </div>
+
+                    <ul class="location-select custom-height">
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Alabama</h6>
+                                <span>Min: $130</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Arizona</h6>
+                                <span>Min: $150</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>California</h6>
+                                <span>Min: $110</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Colorado</h6>
+                                <span>Min: $140</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Florida</h6>
+                                <span>Min: $160</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Georgia</h6>
+                                <span>Min: $120</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Kansas</h6>
+                                <span>Min: $170</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Minnesota</h6>
+                                <span>Min: $120</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>New York</h6>
+                                <span>Min: $110</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Washington</h6>
+                                <span>Min: $130</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Location Modal End -->
+
+<!-- Edit Profile Start -->
+<div class="modal fade theme-modal" id="editAddressBook" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel2">Edit Address Book</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row g-4">
+                    <div class="col-xxl-12">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" class="form-control" id="editfullname" value="" required>
+                            <label for="editfullname">Full Name</label>
+                        </div>
+                    </div>
+                    <div class="col-xxl-6">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" class="form-control" id="editemail" value="" required>
+                            <label for="editemail">Email</label>
+                        </div>
+                    </div>
+                    <div class="col-xxl-6">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" class="form-control" id="editnote" value="" required>
+                            <label for="editnote">Note</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" class="form-control" id="editsettoaddress" value="" required>
+                            <label for="editsettoaddress">Setto Address</label>
+                        </div>
+                    </div>
+                    <div class="col-xxl-6">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" class="form-control" id="editphone" value="" required>
+                            <label for="editphone">Phone</label>
+                        </div>
+
+                    </div>
+                    <div class="col-xxl-6">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" class="form-control" id="editaddress" value="" required>
+                            <label for="editaddress">Address</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Close</button>
+                <button type="button" data-bs-dismiss="modal"
+                        class="save-change-edit btn theme-bg-color btn-md fw-bold text-light">Save changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Edit Profile End -->
+
+
+<script>
+
+    $(document).ready(function () {
+        // Đăng ký sự kiện click cho nút "Edit"
+        $(document).on('click', '.btn[data-bs-toggle="modal"]', function () {
+            const button = $(this); // Nút Edit
+            const userId = button.data('id');
+            const fullName = button.data('fullname');
+            const address = button.data('address');
+            const phone = button.data('phone');
+            const setToAddress = button.data('settoaddress');
+            const note = button.data('note');
+            const email = button.data('email');
+            const addressBookId = button.data('addressbookid');
+
+            // console.log('userId:', userId);
+            // console.log('fullName:', fullName);
+            // console.log('address:', address);
+            // console.log('phone:', phone);
+            // console.log('setToAddress:', setToAddress);
+            // console.log('note:', note);
+            // console.log('email:', email);
+            // console.log('addressBookId:', addressBookId);
+
+            // Gán giá trị vào các trường trong modal
+            $('#editfullname').val(fullName);
+            $('#editemail').val(email);
+            $('#editnote').val(note);
+            $('#editsettoaddress').val(setToAddress);
+            $('#editaddress').val(address);
+            $('#editphone').val(phone);
+
+            // Lưu trữ userId và addressBookId trong modal để sử dụng khi lưu thay đổi
+            $('#editAddressBook').data('userId', userId);
+            $('#editAddressBook').data('addressBookId', addressBookId);
+
+            // Lưu giá trị ban đầu để so sánh
+            // $('#editAddressBook').data('originalValues', {
+            //     fullName,
+            //     email,
+            //     note,
+            //     setToAddress,
+            //     address,
+            //     phone
+            // });
+        });
+
+        // Sự kiện khi nhấn save thay đổi
+        document.querySelector('.save-change-edit').addEventListener('click', async function () {
+            const fullName = document.getElementById('editfullname').value;
+            const setToAddress = document.getElementById('editsettoaddress').value;
+            const address = document.getElementById('editaddress').value;
+            const phone = document.getElementById('editphone').value;
+            const note = document.getElementById('editnote').value;
+            const email = document.getElementById('editemail').value;
+
+            const userId = $('#editAddressBook').data('userId');
+            const addressBookId = $('#editAddressBook').data('addressBookId');
+
+            // console.log(userId);
+            // console.log(addressBookId);
+            // console.log("--------------------------")
+
+
+            if (!fullName || !email || !note || !setToAddress || !address || !phone) {
+                showAlert('error', 'Please fill in all the required fields.');
+                return;
+            }
+
+            if(!isCapitalizedEachWord(fullName)){
+                console.log(fullName)
+                showAlert('error','FullName cannot be capitalized Each Word');
+                return;
+            }
+
+            const phoneRegex = /^(03|05|07|08|09)\d{8}$/;
+            if (!phoneRegex.test(phone)) {
+                showAlert('error', 'Please enter a valid phone number (starting with 03, 05, 07, 08, or 09 and 10 digits).');
+                return;
+            }
+
+            if (email.indexOf('@') === -1 || email.indexOf('.') === -1 || email.indexOf('@') > email.indexOf('.')) {
+                showAlert('error', 'Please enter a valid email address.').show();
+                return;
+            } else {
+                $('#alert-message').hide();
+            }
+
+
+            const addressBookRequest = {
+                userId: userId,
+                fullName: fullName,
+                phone: phone,
+                address: address,
+                note: note,
+                setToAddress: setToAddress,
+                email: email
+            };
+
+            try {
+                const response = await axios.put(`http://localhost:8080/AgriculturalWarehouseManagement/addressBook/${userId}/${addressBookId}`, addressBookRequest);
+
+                if (response.status === 200) {
+
+                    showAlert('success', 'Edit success');
+                    fetchGetAddressBook();
+                } else {
+                    alert("Error updating address");
+                }
+            } catch (error) {
+                console.error('Error updating address:', error);
+                alert('Failed to update address');
+            }
+        });
+
+        // Xóa dữ liệu của modal khi đóng
+        $('#editAddressBook').on('hidden.bs.modal', function () {
+            $('#editfullname').val('');
+            $('#editemail').val('');
+            $('#editnote').val('');
+            $('#editsettoaddress').val('');
+            $('#editaddress').val('');
+            $('#editphone').val('');
+        });
+    });
+
+
+</script>
+<!-- Edit Profile End -->
+
+<!-- Edit Card Start -->
+<div class="modal fade theme-modal" id="editCard" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel8">Edit Card</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-4">
+                    <div class="col-xxl-6">
+                        <form>
+                            <div class="form-floating theme-form-floating">
+                                <input type="text" class="form-control" id="finame" value="Mark">
+                                <label for="finame">First Name</label>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-xxl-6">
+                        <form>
+                            <div class="form-floating theme-form-floating">
+                                <input type="text" class="form-control" id="laname" value="Jecno">
+                                <label for="laname">Last Name</label>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-xxl-4">
+                        <form>
+                            <div class="form-floating theme-form-floating">
+                                <select class="form-select" id="floatingSelect12">
+                                    <option selected>Card Type</option>
+                                    <option value="kingdom">Visa Card</option>
+                                    <option value="states">MasterCard Card</option>
+                                    <option value="fra">RuPay Card</option>
+                                    <option value="china">Contactless Card</option>
+                                    <option value="spain">Maestro Card</option>
+                                </select>
+                                <label for="floatingSelect12">Card Type</label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-animation btn-md fw-bold"
+                        data-bs-dismiss="modal">Cancel
+                </button>
+                <button type="button" class="btn theme-bg-color btn-md fw-bold text-light">Update Card</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Edit Card End -->
+
+<!-- Remove Profile Modal Start -->
+<div class="modal fade theme-modal remove-profile" id="removeProfile" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header d-block text-center">
+                <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure ?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="remove-box">
+                    <p>The permission for the use/group, preview is inherited from the object, object will create a
+                        new permission for this object</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
+                <button type="button" data-bs-dismiss="modal"
+                        class="remove-address btn theme-bg-color btn-md fw-bold text-light"
+                >Yes
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade theme-modal remove-profile" id="removeAddress" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="exampleModalLabel12">Done!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="remove-box text-center">
+                    <h4 class="text-content">It's Removed.</h4>
+                </div>
+            </div>
+            <div class="modal-footer pt-0">
+                <button type="button" class="btn theme-bg-color btn-md fw-bold text-light"
+                        data-bs-dismiss="modal">Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        $(document).on('click', '.btn[data-bs-toggle="modal"]', function () {
+            const button = $(this);
+            const userId = button.data('id');
+            const addressBookId = button.data('addressbookid');
+
+            console.log(userId, addressBookId);
+            console.log("-------------")
+            $('#removeProfile').data('userId', userId);
+            $('#removeProfile').data('addressBookId', addressBookId);
+        });
+
+        $(document).on('click', '.remove-address', async function () {
+            const userId = $('#removeProfile').data('userId');
+            const addressBookId = $('#removeProfile').data('addressBookId');
+            console.log(userId, addressBookId);
+            console.log("-------------")
+            if (!userId || !addressBookId) {
+                showAlert('error', 'Please fill in all the required fields.')
+                return;
+            }
+
+            try {
+                const response = await axios.delete(`http://localhost:8080/AgriculturalWarehouseManagement/addressBook/${userId}/${addressBookId}`);
+                const active = response.data.active;
+
+                showAlert('success', response.data.message);
+
+                var modal = bootstrap.Modal.getInstance(document.getElementById('removeProfile'));
+                if (modal) modal.hide();
+
+                fetchGetAddressBook();
+
+            } catch (error) {
+                console.error('Error updating address:', error);
+                alert('Failed to update address');
+            }
+        });
+    });
+
+</script>
+<!-- Remove Profile Modal End -->
+
+<!--Edit profile-->
+<div class="modal fade theme-modal" id="editProfile" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="row g-4" th:action="@{/profileUserEdit}" method="POST">
+                    <div class="col-xxl-12">
+
+                        <input type="hidden" name="userID" th:value="${session.account.getUserID}"/>
+                        <input type="hidden" name="email" th:value="${session.account.getEmail}"/>
+
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" name="userName" class="form-control" id="userNameProfile"
+                                   th:value="${session.account.getUserName}" required>
+                            <label for="userNameProfile">User Name</label>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-12">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" name="fullName" class="form-control" id="fullNameProfile"
+                                   th:value="${session.account.getFullName}" required>
+                            <label for="fullNameProfile">Full Name</label>
+                        </div>
+                    </div>
+
+                    <div class="form-floating theme-form-floating">
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" name="gender" id="maleProfile" value="male"
+                                   th:checked="${session.account.gender} == 'male'" required>
+                            <label class="form-check-label" for="maleProfile">Male</label>
+                        </div>
+
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" name="gender" id="femaleProfile" value="female"
+                                   th:checked="${session.account.gender} == 'female'" required>
+                            <label class="form-check-label" for="femaleProfile">Female</label>
+                        </div>
+                    </div>
+
+
+                    <div class="col-xxl-6">
+                        <div class="form-floating theme-form-floating">
+                            <input type="date" name="dob" class="form-control" id="dobProfile"
+                                   th:value="${session.account.getDob}"
+                                   th:max="${#temporals.format(#temporals.createNow().minusYears(18), 'yyyy-MM-dd')}"
+                                   required>
+                            <label for="dobProfile">Birthday</label>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-6">
+                        <div class="form-floating theme-form-floating">
+                            <input type="tel" name="phone" class="form-control" id="phoneProfile"
+                                   th:value="${session.account.getPhone}"
+                                   pattern="^(03|05|07|08|09)[0-9]{8}$"
+                                   maxlength="10"
+                                   inputmode="numeric"
+                                   required>
+                            <label for="phoneProfile">Phone number</label>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" name="address" class="form-control" id="addressProfile"
+                                   th:value="${session.account.getAddress}" required>
+                            <label for="addressProfile">Address</label>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-animation btn-md fw-bold"
+                                data-bs-dismiss="modal">Close
+                        </button>
+                        <button type="submit"
+                                class="btn theme-bg-color btn-md fw-bold text-light">Save changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Edit Profile password-->
+<div class="modal fade theme-modal" id="editProfilePassword" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="row g-4" th:action="@{/profileUserEdit/password}" method="POST">
+                    <div class="col-xxl-12">
+
+                        <input type="hidden" name="userID" th:value="${session.account.getUserID}"/>
+                        <input type="hidden" name="email" th:value="${session.account.getEmail}"/>
+
+                        <div class="form-floating theme-form-floating">
+                            <input type="password" name="oldPassword" class="form-control" id="oldPasswordProfile" required>
+                            <label for="oldPasswordProfile">Old password</label>
+                        </div>
+                    </div>
+                    <div class="col-xxl-12">
+                        <div class="form-floating theme-form-floating">
+                            <input type="password" name="newPassword" class="form-control" id="changePasswordProfile" required>
+                            <label for="changePasswordProfile">New password</label>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-animation btn-md fw-bold"
+                                data-bs-dismiss="modal">Close
+                        </button>
+                        <button type="submit"
+                                class="btn theme-bg-color btn-md fw-bold text-light">Save changes
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- latest jquery-->
+<script th:src="@{FrontEnd/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- jquery ui-->
+<script th:src="@{FrontEnd/assets/js/jquery-ui.min.js}"></script>
+
+<!-- Bootstrap js-->
+<script th:src="@{FrontEnd/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/bootstrap/bootstrap-notify.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/bootstrap/popper.min.js}"></script>
+
+<!-- feather icon js-->
+<script th:src="@{FrontEnd/assets/js/feather/feather.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/feather/feather-icon.js}"></script>
+
+<!-- Lazyload Js -->
+<script th:src="@{FrontEnd/assets/js/lazysizes.min.js}"></script>
+
+<!-- Slick js-->
+<script th:src="@{FrontEnd/assets/js/slick/slick.js}"></script>
+<script th:src="@{FrontEnd/assets/js/slick/custom_slick.js}"></script>
+
+<!-- Quantity js -->
+<script th:src="@{FrontEnd/assets/js/quantity-2.js}"></script>
+
+<!-- Nav & tab upside js -->
+<script th:src="@{FrontEnd/assets/js/nav-tab.js}"></script>
+
+<!-- script js -->
+<script th:src="@{FrontEnd/assets/js/script.js}"></script>
+
+<!-- theme setting js -->
+<script th:src="@{FrontEnd/assets/js/theme-setting.js}"></script>
+
+
+</body>
+
+</html>

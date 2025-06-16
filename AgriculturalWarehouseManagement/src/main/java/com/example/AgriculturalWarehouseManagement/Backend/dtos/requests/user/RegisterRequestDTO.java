@@ -1,7 +1,4 @@
-package com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.user;
-
-import lombok.Getter;
-import lombok.Setter;
+package com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user;
 
 public class RegisterRequestDTO {
     private String username;

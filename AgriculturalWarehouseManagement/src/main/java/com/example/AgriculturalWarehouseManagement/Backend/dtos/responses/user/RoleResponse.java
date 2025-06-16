@@ -1,4 +1,4 @@
-package com.example.AgriculturalWarehouseManagement.Backend.dtos.response.user;
+package com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user;
 
 public class RoleResponse {
     private Long roleId;

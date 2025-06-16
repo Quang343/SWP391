@@ -1,7 +1,6 @@
-package com.example.AgriculturalWarehouseManagement.Backend.dtos.response.user;
+package com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user;
 
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.user.UserResponse;
-import com.example.AgriculturalWarehouseManagement.Backend.models.User;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.UserResponse;
 
 public class LoginResponse {
     private UserResponse user;

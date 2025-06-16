@@ -1,4 +1,4 @@
-package com.example.AgriculturalWarehouseManagement.Backend.dtos.response.user;
+package com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user;
 
 public class ResponseResult<T> {
 
@@ -12,6 +12,13 @@ public class ResponseResult<T> {
         this.status = status;
         this.message = message;
         this.active = active;
+    }
+
+    public ResponseResult(String status, String message, boolean active, T data) {
+        this.status = status;
+        this.message = message;
+        this.active = active;
+        this.data = data;
     }
 
     // Getter và Setter

@@ -1,4 +1,4 @@
-package com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.user;
+package com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user;
 
 public class GoogleAccountRequest {
     private String id;

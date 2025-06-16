@@ -1,11 +1,8 @@
 package com.example.AgriculturalWarehouseManagement.Backend.components;
 
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.user.GoogleAccountRequest;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.GoogleAccountRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.client.ClientProtocolException;
@@ -13,7 +10,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.net.URI;
+
 import org.apache.http.client.fluent.Request;
 
 public class GoogleLogin {

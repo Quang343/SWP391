@@ -1,7 +1,9 @@
 package com.example.AgriculturalWarehouseManagement.Backend.models;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ResponseResult;
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -25,7 +27,7 @@ public class User {
     @Column(name = "image", length = 255)
     private String image;
 
-    @Column(name = "passwordHash", length = 255)
+    @Column(name = "passwordhash", length = 255)
     private String passwordHash;
 
     @Column(name = "email", length = 100)
@@ -46,22 +48,46 @@ public class User {
     @Column(name = "dob")
     private Date dob;
 
-    @Column(name = "CreatedAt", nullable = false, updatable = false)
+    @Column(name = "createdat", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
     @Column(name = "otp", length = 10)
     private String otp;
 
-    @Column(name = "lastTimeUpdatePass")
+    @Column(name = "lasttimeupdatepass")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastTimeUpdatePass;
 
-    @Column(name = "googleID", length = 255)
+    @Column(name = "googleid", length = 255)
     private String googleID;
 
     @Column(name = "statusgg", length = 255)
     private String statusGG;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MyAddressBook> myAddressBooks;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UpdateProfileHistory> updateProfileHistories;
+
+    // Getter and Setter methods
+
+    public List<MyAddressBook> getMyAddressBooks() {
+        return myAddressBooks;
+    }
+
+    public void setMyAddressBooks(List<MyAddressBook> myAddressBooks) {
+        this.myAddressBooks = myAddressBooks;
+    }
+
+    public List<UpdateProfileHistory> getUpdateProfileHistories() {
+        return updateProfileHistories;
+    }
+
+    public void setUpdateProfileHistories(List<UpdateProfileHistory> updateProfileHistories) {
+        this.updateProfileHistories = updateProfileHistories;
+    }
 
     @PrePersist
     public void prePersist() {
@@ -205,4 +231,5 @@ public class User {
     public void setStatusGG(String statusGG) {
         this.statusGG = statusGG;
     }
+
 }

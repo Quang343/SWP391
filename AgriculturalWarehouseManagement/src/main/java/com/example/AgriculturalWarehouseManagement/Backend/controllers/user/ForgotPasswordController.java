@@ -2,7 +2,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 
 import com.example.AgriculturalWarehouseManagement.Backend.components.GenerateOTP;
 import com.example.AgriculturalWarehouseManagement.Backend.components.SendVerificationEmail;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.response.user.ResponseResult;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ResponseResult;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

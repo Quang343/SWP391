@@ -2,18 +2,14 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 
 import com.example.AgriculturalWarehouseManagement.Backend.components.GenerateOTP;
 import com.example.AgriculturalWarehouseManagement.Backend.components.SendVerificationEmail;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.response.user.ResponseResult;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.user.RegisterRequestDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ResponseResult;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.RegisterRequestDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
 
 @Controller
 public class RegisterController {

@@ -1,17 +1,12 @@
-package com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.user;
+package com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user;
 
-public class LoginRequest {
-
+public class UserResponse {
     private String email;
     private String password;
 
-    public LoginRequest() {
-    }
-
-    public LoginRequest(String email, String password) {
+    public UserResponse(String email, String password) {
         this.email = email;
         this.password = password;
-
     }
 
     public String getEmail() {
@@ -29,7 +24,4 @@ public class LoginRequest {
     public void setPassword(String password) {
         this.password = password;
     }
-
-
-
 }

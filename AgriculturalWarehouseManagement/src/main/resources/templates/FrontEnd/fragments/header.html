@@ -1,4 +1,56 @@
+
 <header class="pb-md-4 pb-0" th:fragment="header">
+    <style>
+        /* lớp nền tối phía dưới */
+        h5.glow::after {
+            content: "";
+            z-index: -1;
+            position: absolute;
+            inset: 0;
+            background-color: #f1ecec;
+            border-radius: 10px;
+        }
+
+        /* lớp viền phát sáng */
+        h5.glow::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            background: linear-gradient(
+                    45deg,
+                    #FF0000, #FF7300, #FFFB00, #48FF00,
+                    #00FFD5, #002BFF, #FF00C8, #FF0000
+            );
+            background-size: 600%;
+            filter: blur(8px);
+            z-index: -1;
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity .3s ease-in-out;
+            animation: glowing 20s linear infinite;
+        }
+
+        /* Animation di chuyển gradient */
+        @keyframes glowing {
+            0%   {background-position: 0 0;}
+            50%  {background-position: 400% 0;}
+            100% {background-position: 0 0;}
+        }
+
+        /* Hover: bật viền sáng */
+        h5.glow:hover::before {
+            opacity: 1;
+        }
+
+        /* Click: làm mờ nền tối & đổi màu chữ nếu muốn */
+        h5.glow:active::after { background: transparent; }
+        h5.glow:active        { color: #000; font-weight: bold; }
+
+    </style>
+
     <div class="header-top">
         <div class="container-fluid-lg">
             <div class="row">
@@ -40,28 +92,28 @@
                             <div class="dropdown theme-form-select">
                                 <button class="btn dropdown-toggle" type="button" id="select-language"
                                         data-bs-toggle="dropdown">
-                                    <img src="../assets/images/country/united-states.png"
+                                    <img th:src="@{FrontEnd/assets/images/country/united-states.png}"
                                          class="img-fluid blur-up lazyload" alt="">
                                     <span>English</span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
                                         <a class="dropdown-item" href="javascript:void(0)" id="english">
-                                            <img src="../assets/images/country/united-kingdom.png"
+                                            <img th:src="@{FrontEnd/assets/images/country/united-kingdom.png}"
                                                  class="img-fluid blur-up lazyload" alt="">
                                             <span>English</span>
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="javascript:void(0)" id="france">
-                                            <img src="../assets/images/country/germany.png"
+                                            <img th:src="@{FrontEnd/assets/images/country/germany.png}"
                                                  class="img-fluid blur-up lazyload" alt="">
                                             <span>Germany</span>
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="javascript:void(0)" id="chinese">
-                                            <img src="../assets/images/country/turkish.png"
+                                            <img th:src="@{FrontEnd/assets/images/country/turkish.png}"
                                                  class="img-fluid blur-up lazyload" alt="">
                                             <span>Turki</span>
                                         </a>
@@ -238,29 +290,35 @@
                                         <div class="delivery-icon">
                                             <i data-feather="user"></i>
                                         </div>
-                                        <div class="delivery-detail">
+<!--                                         class="delivery-detail"-->
+
+                                        <div th:if="${session.account!= null}">
                                             <h6>Hello,</h6>
-                                            <h5>My Account</h5>
+                                            <h5 th:text="${session.account.getUserName}" class="glow">My Account</h5>
                                         </div>
                                     </div>
 
                                     <div class="onhover-div onhover-div-login">
                                         <ul class="user-box-name">
-                                            <li class="product-box-contain">
+                                            <li class="product-box-contain" th:if="${session.account == null}">
                                                 <i></i>
                                                 <a href="login">Log In</a>
                                             </li>
 
-                                            <li class="product-box-contain">
+                                            <li class="product-box-contain" th:if="${session.account != null}">
                                                 <a href="logoutUser">Logout</a>
                                             </li>
 
-                                            <li class="product-box-contain">
+                                            <li class="product-box-contain" th:if="${session.account == null}">
                                                 <a href="register">Register</a>
                                             </li>
 
-                                            <li class="product-box-contain">
+                                            <li class="product-box-contain" th:if="${session.account == null}">
                                                 <a href="forgotPassword">Forgot Password</a>
+                                            </li>
+
+                                            <li class="product-box-contain" th:if="${session.account != null && session.account.getRole().getRoleID() == 2}">
+                                                <a href="profileUser">Profile</a>
                                             </li>
                                         </ul>
                                     </div>
