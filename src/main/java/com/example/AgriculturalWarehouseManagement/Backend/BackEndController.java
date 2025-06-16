@@ -22,16 +22,7 @@ public class BackEndController {
     }
 
 
-
-    @RequestMapping("/admin/orderlist")
-    public String orderList() {
-        return "BackEnd/Admin/OrderList";
-    }
-    @RequestMapping("/admin/orderdetail")
-    public String orderDetail() {
-        return "BackEnd/Admin/OrderDetail";
-    }
-    @RequestMapping("/admin/ordertracking")
+    @RequestMapping("/admin/order_tracking")
     public String orderTracking() {
         return "BackEnd/Admin/OrderTracking";
     }

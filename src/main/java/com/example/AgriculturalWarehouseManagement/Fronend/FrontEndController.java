@@ -24,7 +24,7 @@ public class FrontEndController {
     }
     @RequestMapping("/seller")
     public String seller() {
-        return "FrontEnd/Seller/seller";
+        return "FrontEnd/Seller/Seller_Dashboard";
     }
     @RequestMapping("/cart")
     public String cart() {

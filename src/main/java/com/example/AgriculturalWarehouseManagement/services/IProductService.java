@@ -1,9 +1,9 @@
 package com.example.AgriculturalWarehouseManagement.services;
 
-import com.example.AgriculturalWarehouseManagement.dtos.ProductDTO;
-import com.example.AgriculturalWarehouseManagement.models.Product;
+import com.example.AgriculturalWarehouseManagement.dtos.*;
+import com.example.AgriculturalWarehouseManagement.models.*;
 
-import java.util.List;
+import java.util.*;
 
 public interface IProductService {
     Product createProduct(ProductDTO productDTO);
@@ -12,4 +12,6 @@ public interface IProductService {
     List<Product> findAll();
     Product findById(Long id);
     boolean existsByName(String name);
+
+    ProductImage createProductImage(Long productId, ProductImageDTO productImageDTO) throws Exception;
 }
