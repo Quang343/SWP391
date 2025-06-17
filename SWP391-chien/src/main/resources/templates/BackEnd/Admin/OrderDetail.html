@@ -32,7 +32,7 @@
                             <div class="card-body">
                                 <div class="title-header title-header-block package-card">
                                     <div>
-                                        <h5 th:text="${order.buildOrderCode()}"></h5>
+                                        <h5 th:text="${order.getOrderCode()}"></h5>
                                     </div>
                                     <div class="card-order-section">
                                         <ul>
@@ -129,7 +129,7 @@
                                                 <div class="row g-4">
                                                     <h4>summary</h4>
                                                     <ul class="order-details">
-                                                        <li th:text="'Order ID: ' + ${order.buildOrderCode()}"></li>
+                                                        <li th:text="'Order ID: ' + ${order.getOrderCode()}"></li>
                                                         <li th:text="'Order Date: ' + ${order.getOrderDate()}"></li>
                                                         <li th:text="'Order Total: ' + ${order.getTotalAmount()}"></li>
                                                     </ul>

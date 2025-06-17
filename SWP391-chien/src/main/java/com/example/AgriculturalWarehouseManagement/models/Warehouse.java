@@ -25,5 +25,4 @@ public class Warehouse {
     private String location;
 
     private String description;
-
 }

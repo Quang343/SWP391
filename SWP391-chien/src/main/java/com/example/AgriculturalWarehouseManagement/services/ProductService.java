@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ProductService implements IProductService{
+public class ProductService implements IProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
@@ -35,7 +35,6 @@ public class ProductService implements IProductService{
                 .name(productDTO.getName())
                 .description(productDTO.getDescription())
                 .category(category)
-                .warehouse(warehouse)
                 .status(ProductStatus.valueOf(productDTO.getStatus()))
                 .build();
         return productRepository.save(product);
@@ -49,14 +48,13 @@ public class ProductService implements IProductService{
         product.setStatus(ProductStatus.valueOf(productDTO.getStatus()));
 
         Warehouse warehouse = warehouseRepository.findById(1L).orElse(null);
-        product.setWarehouse(warehouse);
         return productRepository.save(product);
     }
 
     @Override
     public boolean deleteProduct(Long id) {
         Optional<Product> optionalProduct = productRepository.findById(id);
-        if(optionalProduct.isPresent()){
+        if (optionalProduct.isPresent()) {
             Product product = optionalProduct.get();
             product.setStatus(ProductStatus.INACTIVE);
             productRepository.save(product);
@@ -85,14 +83,14 @@ public class ProductService implements IProductService{
     public ProductImage createProductImage(Long productId, ProductImageDTO productImageDTO) throws Exception {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new Exception
-                        ("Product not found with id: "  + productId));
+                        ("Product not found with id: " + productId));
         ProductImage productImage = ProductImage.builder()
                 .product(product)
                 .imageUrl(productImageDTO.getImageUrl())
                 .build();
         //không cho insert quá 5 ảnh cho 1 sản phẩm
         int size = productImageRepository.findByProductId(productId).size();
-        if(size >= ProductImage.MAXIMUM_IMAGES_PER_PRODUCT){
+        if (size >= ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
             throw new Exception("Number of images must be <= " + ProductImage.MAXIMUM_IMAGES_PER_PRODUCT);
         }
         return productImageRepository.save(productImage);
