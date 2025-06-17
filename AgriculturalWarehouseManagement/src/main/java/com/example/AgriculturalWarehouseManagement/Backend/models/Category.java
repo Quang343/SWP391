@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "category")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +29,4 @@ public class Category {
     @Column(length = 100)
     private String status;
 
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
-    @JsonManagedReference("category-products")
-    private List<Product> products;
 }

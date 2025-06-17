@@ -17,21 +17,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "Adjustment")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Adjustment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "adjustmentid")
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "warehouseid", nullable = false)
-    @JsonIdentityReference(alwaysAsId = true)
     private Warehouse warehouse;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "batchid")
-    @JsonIdentityReference(alwaysAsId = true)
     private ProductBatch batch;
 
     @Column(name = "adjustmentquantity", nullable = false)

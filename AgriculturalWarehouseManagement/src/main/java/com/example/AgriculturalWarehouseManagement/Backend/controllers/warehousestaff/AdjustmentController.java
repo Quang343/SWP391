@@ -2,11 +2,12 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.warehous
 
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.AdjustmentDTO;
-import com.example.AgriculturalWarehouseManagement.Backend.models.Adjustment;
 import com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff.AdjustmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/adjustments")
@@ -15,7 +16,7 @@ public class AdjustmentController  {
     private final AdjustmentService adjustmentService;
 
     @GetMapping
-    public ResponseEntity<Iterable<Adjustment>> getAllAdjustments() {
+    public ResponseEntity<List<AdjustmentDTO>> getAllAdjustments() {
         return ResponseEntity.ok(adjustmentService.getAllAdjustments());
     }
 

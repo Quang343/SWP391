@@ -9,6 +9,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.repositorys.Warehouse
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +22,6 @@ public class AdjustmentService {
     private final ProductBatchRepository productBatchRepository;
     private final AdjustmentMapper adjustmentMapper;
 
-    public Iterable<Adjustment> getAllAdjustments() {
-        return adjustmentRepository.findAll();
-    }
 
     public AdjustmentDTO getAdjustmentById(Integer id) {
         Adjustment adjustment = adjustmentRepository.findById(id)
@@ -54,4 +52,14 @@ public class AdjustmentService {
         }
         adjustmentRepository.deleteById(id);
     }
+
+    public List<AdjustmentDTO> getAllAdjustments() {
+        List<AdjustmentDTO> result = new ArrayList<>();
+        Iterable<Adjustment> entities = adjustmentRepository.findAll();
+        for (Adjustment adjustment : entities) {
+            result.add(adjustmentMapper.toDTO(adjustment));
+        }
+        return result;
+    }
+
 }

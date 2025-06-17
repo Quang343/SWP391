@@ -16,16 +16,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "Product")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "productid")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "categoryid", nullable = false)
-    @JsonIdentityReference(alwaysAsId = true) // Chỉ hiển thị ID của Category
     private Category category;
 
     @Column(name = "productname", length = 255, nullable = false, unique = true)
@@ -34,14 +32,9 @@ public class Product {
     @Column(length = 500)
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "warehouseid", nullable = false)
-    @JsonIdentityReference(alwaysAsId = true) // Chỉ hiển thị ID của Warehouse
     private Warehouse warehouse;
-
-    @OneToMany(mappedBy = "productID", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference("product-productdetails")
-    private List<ProductDetail> productDetails;
 
     @Column(length = 50)
     @Enumerated(EnumType.STRING)

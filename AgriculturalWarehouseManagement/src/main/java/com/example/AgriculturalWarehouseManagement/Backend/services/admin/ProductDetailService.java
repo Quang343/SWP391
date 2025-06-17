@@ -6,6 +6,8 @@ import com.example.AgriculturalWarehouseManagement.Backend.models.ProductDetail;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -44,8 +46,12 @@ public class ProductDetailService {
                 .orElseThrow(() -> new RuntimeException("ProductDetail not found"));
     }
 
-    public List<ProductDetail> findAll() {
-        return (List<ProductDetail>) repository.findAll();
-
+    public List<ProductDetailDTO> findAll() {
+        List<ProductDetailDTO> result = new ArrayList<>();
+        for (ProductDetail detail : repository.findAll()) {
+            result.add(mapper.productDetailToProductDetailDTO(detail));
+        }
+        return result;
     }
+
 }

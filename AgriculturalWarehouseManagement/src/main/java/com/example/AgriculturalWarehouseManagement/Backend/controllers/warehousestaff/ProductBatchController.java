@@ -1,8 +1,8 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.warehousestaff;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.ProductBatchDTO;
-import com.example.AgriculturalWarehouseManagement.Backend.models.ProductBatch;
 import com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff.ProductBatchService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/product-batches")
@@ -23,10 +22,8 @@ public class ProductBatchController {
     public ResponseEntity<ProductBatchDTO> create(@Valid @RequestBody ProductBatchDTO dto) {
         try {
             return new ResponseEntity<>(service.create(dto), HttpStatus.CREATED);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
+        } catch (EntityNotFoundException | IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -34,10 +31,8 @@ public class ProductBatchController {
     public ResponseEntity<ProductBatchDTO> update(@PathVariable Integer batchId, @Valid @RequestBody ProductBatchDTO dto) {
         try {
             return ResponseEntity.ok(service.update(batchId, dto));
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
+        } catch (EntityNotFoundException | IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -46,27 +41,34 @@ public class ProductBatchController {
         try {
             service.delete(batchId);
             return ResponseEntity.noContent().build();
-        } catch (NoSuchElementException e) {
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductBatchDTO> findById(@PathVariable Integer id) {
-        return ResponseEntity.ok(service.findById(id));
+        try {
+            return ResponseEntity.ok(service.findById(id));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductBatch>> findAll() {
+    public ResponseEntity<List<ProductBatchDTO>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/adjustments")
     public ResponseEntity<Map<String, Object>> getAdjustmentsByBatchId(@RequestParam Integer batchId) {
-        if (batchId == null ) {
+        if (batchId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Map<String, Object> result = service.getAdjustmentsByBatchId(batchId);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        try {
+            return ResponseEntity.ok(service.getAdjustmentsByBatchId(batchId));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

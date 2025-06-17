@@ -15,6 +15,6 @@ public class ProductDetailDTO {
     private BigDecimal weight;
     private Integer expiry;
     private String detailName;
-    private List<ProductBatchDTO> productBatch;
+
 
 }

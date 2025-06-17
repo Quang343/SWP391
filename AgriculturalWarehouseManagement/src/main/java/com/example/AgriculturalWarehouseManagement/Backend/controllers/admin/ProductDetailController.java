@@ -1,7 +1,6 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.admin;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductDetailDTO;
-import com.example.AgriculturalWarehouseManagement.Backend.models.ProductDetail;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.ProductDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +36,7 @@ public class ProductDetailController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDetail>> findAll() {
-        return ResponseEntity.ok((List<ProductDetail>) service.findAll());
+    public ResponseEntity<List<ProductDetailDTO>> findAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 }

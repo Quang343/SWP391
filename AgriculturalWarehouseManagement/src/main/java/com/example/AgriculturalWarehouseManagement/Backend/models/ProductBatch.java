@@ -11,16 +11,15 @@ import java.time.LocalDate;
 @Setter
 @Getter
 @Table(name = "productbatch")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "batchId")
+
 public class ProductBatch {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "batchid", nullable = false)
     private Integer batchId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "productdetailid")
-    @JsonIdentityReference(alwaysAsId = true) // Chỉ hiển thị ID của ProductDetail
     private ProductDetail productDetail;
 
     @Column(name = "manufacturedate")

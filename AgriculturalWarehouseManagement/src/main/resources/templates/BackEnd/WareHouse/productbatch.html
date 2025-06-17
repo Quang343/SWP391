@@ -82,10 +82,6 @@
     </div>
 </div>
 <!-- page-wrapper End-->
-<!-- Custom JS for API call -->
-<!-- Custom JS for API call with enhanced debug -->
-<!-- Custom JS cho API call -->
-
 
 <!-- Modal Start -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
@@ -236,6 +232,44 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Add Adjustment -->
+<div class="modal fade" id="addAdjustmentModal" tabindex="-1" aria-labelledby="addAdjustmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAdjustmentModalLabel">Thêm Điều Chỉnh</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addAdjustmentForm">
+                    <input type="hidden" id="addAdjustmentBatchId">
+                    <div class="mb-3">
+                        <label for="addQuantity" class="form-label">Số lượng</label>
+                        <input type="number" class="form-control" id="addQuantity" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addReason" class="form-label">Lý do</label>
+                        <input type="text" class="form-control" id="addReason">
+                    </div>
+                    <div class="mb-3">
+                        <label for="addAdjustmentType" class="form-label">Loại điều chỉnh</label>
+                        <select class="form-select" id="addAdjustmentType" required>
+                            <option value="">Chọn loại</option>
+                            <option value="Add">Thêm</option>
+                            <option value="Remove">Trừ</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="saveAddAdjustment">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- latest js -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
@@ -426,7 +460,7 @@
                         }
 
                         var row = '<tr' + (percentageUsed !== null ? (percentageUsed >= 100 ? ' class="table-danger"' : percentageUsed >= 70 ? ' style="background-color: #ffca2c;"' : percentageUsed >= 50 ? ' class="table-warning"' : '') : '') + '>' +
-                            '<td>' + (batch.batchId || 'N/A') + '</td>' +
+                            '<td>' + (batch.batchID || 'N/A') + '</td>' +
                             '<td><a href="javascript:void(0)" class="detail-link" data-id="' + productDetailId + '">' + productDetailId + '</a></td>' +
                             '<td>' + (batch.manufactureDate || 'N/A') + '</td>' +
                             '<td>' + (batch.importedQuantity || 'N/A') + '</td>' +
@@ -436,10 +470,9 @@
                             '<td>' +
                             '<ul class="action-list">' +
                             '<li><a href="javascript:void(0)" class="view-detail" data-id="' + productDetailId + '"><i class="ri-eye-line"></i></a></li>' +
-                            '<li><a href="javascript:void(0)" class="edit-batch" data-batch-id="' + (batch.batchId || '') + '" data-product-detail-id="' + productDetailId + '" data-manufacture-date="' + (batch.manufactureDate || '') + '" data-imported-quantity="' + (batch.importedQuantity || '') + '"><i class="ri-pencil-line"></i></a></li>' +
-                            '<li><a href="javascript:void(0)" class="delete-batch" data-batch-id="' + (batch.batchId || '') + '"><i class="ri-delete-bin-line"></i></a></li>' +
-                            '<li><a href="javascript:void(0)" class="add-adjustment" data-batch-id="' + (batch.batchId || '') + '"><i class="ri-add-line"></i></a></li>' +
-                            '<li><a href="javascript:void(0)" class="edit-adjustment" data-batch-id="' + (batch.batchId || '') + '"><i class="ri-edit-line"></i></a></li>' +
+                            '<li><a href="javascript:void(0)" class="edit-batch" data-batch-id="' + (batch.batchID || '') + '" data-product-detail-id="' + productDetailId + '" data-manufacture-date="' + (batch.manufactureDate || '') + '" data-imported-quantity="' + (batch.importedQuantity || '') + '"><i class="ri-pencil-line"></i></a></li>' +
+                            '<li><a href="javascript:void(0)" class="delete-batch" data-batch-id="' + (batch.batchID || '') + '"><i class="ri-delete-bin-line"></i></a></li>' +
+                            '<li><a href="javascript:void(0)" class="add-adjustment" data-batch-id="' + (batch.batchID || '') + '"><i class="ri-add-line"></i></a></li>' +
                             '</ul>' +
                             '</td>' +
                             '</tr>';
@@ -457,8 +490,7 @@
                         $.ajax({
                             url: '/api/product-details/' + productDetailId,
                             method: 'GET',
-                            dataType: 'json',
-                            success: function(detail) {
+                            dataType: 'json',                            success: function(detail) {
                                 $('#modalProductDetailId').text(detail.productDetailId || 'N/A');
                                 $('#modalDetailName').text(detail.detailName || 'N/A');
                                 $('#modalProductId').text(detail.productID || 'N/A');
@@ -510,30 +542,52 @@
                     // Xử lý click vào View Adjustment Detail từ cột Adjustment Total
                     $('.view-adjustment-detail').on('click', function() {
                         var batchId = $(this).data('batch-id');
+                        if (!batchId || batchId === 'N/A') {
+                            alert('Batch ID không hợp lệ hoặc không tồn tại.');
+                            return;
+                        }
+
                         $.ajax({
-                            url: '/api/adjustments?batchId=' + batchId,
+                            url: '/api/product-batches/adjustments?batchId=' + batchId,
                             method: 'GET',
                             dataType: 'json',
-                            success: function(adjustments) {
+                            success: function(response) {
                                 var tbody = $('#adjustmentDetailBody');
                                 tbody.empty();
-                                if (!adjustments || adjustments.length === 0) {
-                                    tbody.append('<tr><td colspan="4">Không có điều chỉnh</td></tr>');
+
+                                if (!response) {
+                                    tbody.append('<tr><td colspan="4">Không nhận được dữ liệu từ server.</td></tr>');
+                                    console.log('Phản hồi từ API là null hoặc undefined cho batchId: ' + batchId);
+                                } else if (!response.adjustments || response.adjustments.length === 0) {
+                                    tbody.append('<tr><td colspan="4">Không có điều chỉnh cho batchId: ' + batchId + '</td></tr>');
+                                    console.log('Không có adjustments trong phản hồi cho batchId: ' + batchId, response);
                                 } else {
+                                    var adjustments = response.adjustments;
                                     $.each(adjustments, function(index, adj) {
+                                        // Kiểm tra và hiển thị từng trường
+                                        var id = adj.id !== undefined && adj.id !== null ? adj.id : 'N/A';
+                                        var quantity = adj.quantity !== undefined && adj.quantity !== null ? adj.quantity : 'N/A';
+                                        var adjustDate = adj.adjustDate !== undefined && adj.adjustDate !== null ? adj.adjustDate : 'N/A';
+                                        var adjustmentType = adj.adjustmentType !== undefined && adj.adjustmentType !== null ? adj.adjustmentType : 'N/A';
+
                                         tbody.append('<tr>' +
-                                            '<td>' + (adj.id || 'N/A') + '</td>' +
-                                            '<td>' + (adj.quantity || 'N/A') + '</td>' +
-                                            '<td>' + (adj.adjustDate || 'N/A') + '</td>' +
-                                            '<td>' + (adj.adjustmentType || 'N/A') + '</td>' +
+                                            '<td>' + id + '</td>' +
+                                            '<td>' + quantity + '</td>' +
+                                            '<td>' + adjustDate + '</td>' +
+                                            '<td>' + adjustmentType + '</td>' +
                                             '</tr>');
+                                        console.log('Dữ liệu điều chỉnh cho batchId ' + batchId + ' tại index ' + index + ':', adj);
                                     });
                                 }
                                 $('#adjustmentDetailModal').modal('show');
                             },
                             error: function(xhr, status, error) {
-                                console.error('Lỗi khi lấy chi tiết điều chỉnh: ', status, error);
-                                alert('Không thể tải chi tiết điều chỉnh.');
+                                var tbody = $('#adjustmentDetailBody');
+                                tbody.empty();
+                                var errorMessage = 'Lỗi khi lấy chi tiết điều chỉnh: ' + (xhr.status + ' - ' + (xhr.responseText || status || error));
+                                tbody.append('<tr><td colspan="4">' + errorMessage + '</td></tr>');
+                                console.error('Lỗi chi tiết:', errorMessage, xhr.responseText);
+                                alert('Không thể tải chi tiết điều chỉnh. Kiểm tra console để xem lỗi cụ thể.');
                             }
                         });
                     });
@@ -541,23 +595,26 @@
                     // Xử lý click vào Add Adjustment
                     $('.add-adjustment').on('click', function() {
                         var batchId = $(this).data('batch-id');
-                        $('#adjustmentId').val('');
-                        $('#adjustmentQuantity').val('');
-                        $('#adjustmentReason').val('');
-                        populateBatchDropdown($('#adjustmentBatchId'), batchId);
-                        $('#adjustmentModal').modal('show');
+                        if (!batchId || batchId === 'N/A') {
+                            alert('Batch ID không hợp lệ.');
+                            return;
+                        }
+                        $('#addAdjustmentBatchId').val(batchId);
+                        $('#addQuantity').val('');
+                        $('#addReason').val('');
+                        $('#addAdjustmentType').val('');
+                        $('#addAdjustmentModal').modal('show');
                     });
 
-                    // Xử lý lưu điều chỉnh
-                    $('#saveAdjustment').on('click', function() {
-                        var adjustmentId = $('#adjustmentId').val();
-                        var batchId = $('#adjustmentBatchId').val();
-                        var quantity = $('#adjustmentQuantity').val();
-                        var adjustmentType = $('#adjustmentType').val();
-                        var reason = $('#adjustmentReason').val();
+                    // Xử lý lưu điều chỉnh (Add)
+                    $('#saveAddAdjustment').on('click', function() {
+                        var batchId = $('#addAdjustmentBatchId').val();
+                        var quantity = $('#addQuantity').val();
+                        var reason = $('#addReason').val();
+                        var adjustmentType = $('#addAdjustmentType').val();
 
                         if (!batchId || isNaN(parseInt(batchId))) {
-                            alert('Vui lòng chọn một Batch hợp lệ.');
+                            alert('Batch ID không hợp lệ.');
                             return;
                         }
                         if (!quantity || isNaN(parseInt(quantity))) {
@@ -576,50 +633,20 @@
                             reason: reason || null
                         };
 
-                        var url = adjustmentId ? '/api/adjustments/' + adjustmentId : '/api/adjustments';
-                        var method = adjustmentId ? 'PUT' : 'POST';
-
                         $.ajax({
-                            url: url,
-                            method: method,
+                            url: '/api/adjustments',
+                            method: 'POST',
                             contentType: 'application/json',
                             data: JSON.stringify(formData),
                             dataType: 'json',
                             success: function(response) {
-                                alert('Lưu điều chỉnh thành công!');
-                                $('#adjustmentModal').modal('hide');
+                                alert('Thêm điều chỉnh thành công!');
+                                $('#addAdjustmentModal').modal('hide');
                                 loadProductBatches();
                             },
                             error: function(xhr, status, error) {
-                                console.error('Lỗi khi lưu điều chỉnh: ', status, error);
-                                alert('Lỗi khi lưu điều chỉnh: ' + (xhr.responseText || 'Kiểm tra console.'));
-                            }
-                        });
-                    });
-
-                    // Xử lý edit adjustment
-                    $('.edit-adjustment').on('click', function() {
-                        var batchId = $(this).data('batch-id');
-                        $('#adjustmentId').val('');
-                        $('#adjustmentQuantity').val('');
-                        $('#adjustmentReason').val('');
-                        populateBatchDropdown($('#adjustmentBatchId'), batchId);
-                        // Lấy danh sách điều chỉnh để chọn chỉnh sửa
-                        $.ajax({
-                            url: '/api/adjustments?batchId=' + batchId,
-                            method: 'GET',
-                            dataType: 'json',
-                            success: function(adjustments) {
-                                if (adjustments && adjustments.length > 0) {
-                                    $('#adjustmentModal').modal('show');
-                                    // Logic chọn điều chỉnh cụ thể có thể được thêm vào đây (cần giao diện dropdown trong modal)
-                                } else {
-                                    alert('Không có điều chỉnh để chỉnh sửa.');
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('Lỗi khi lấy điều chỉnh: ', status, error);
-                                alert('Không thể tải điều chỉnh.');
+                                console.error('Lỗi khi thêm điều chỉnh: ', status, error);
+                                alert('Lỗi khi thêm điều chỉnh: ' + (xhr.responseText || 'Kiểm tra console.'));
                             }
                         });
                     });
