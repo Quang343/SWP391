@@ -448,7 +448,7 @@
                                     <table class="table product-table">
                                         <thead>
                                         <tr>
-                                            <th scope="col">STT</th>
+                                            <th scope="col">ID</th>
                                             <th scope="col">Product Name</th>
                                             <th scope="col">Category</th>
                                             <th scope="col">Description</th>
@@ -1743,7 +1743,7 @@
     // Load danh mục
     function loadCategories() {
         const select = document.getElementById('categoryId');
-        axios.get('/api/seller/categories')
+        axios.get('/AgriculturalWarehouseManagementApplication/api/seller/categories')
             .then(res => {
                 select.innerHTML = '<option value="" disabled selected>Choose a category</option>';
                 res.data.forEach(c => {
@@ -1756,7 +1756,7 @@
     // Load trạng thái sản phẩm
     function loadStatuses() {
         const select = document.getElementById('status');
-        axios.get('/api/seller/statuses')
+        axios.get('/AgriculturalWarehouseManagementApplication/api/seller/statuses')
             .then(res => {
                 select.innerHTML = '<option value="" disabled selected>Choose a status</option>';
                 res.data.forEach(status => {
@@ -1769,7 +1769,7 @@
 
     // Load danh sách sản phẩm
     function loadProducts() {
-        axios.get('/api/seller/products')
+        axios.get('/AgriculturalWarehouseManagementApplication/api/seller/products')
             .then(res => {
                 const tbody = document.getElementById("productTable");
                 tbody.innerHTML = "";
@@ -1807,7 +1807,7 @@
         document.querySelectorAll(".btn-edit").forEach(btn => {
             btn.addEventListener("click", function () {
                 const id = this.dataset.id;
-                axios.get('/api/seller/products')
+                axios.get('/AgriculturalWarehouseManagementApplication/api/seller/products')
                     .then(res => {
                         const product = res.data.find(p => p.id == id);
                         if (product) {
@@ -1830,7 +1830,7 @@
             btn.addEventListener("click", function () {
                 const id = this.dataset.id;
                 if (confirm("Bạn có chắc chắn muốn xoá sản phẩm này không?")) {
-                    axios.put(`/api/seller/products/${id}/hide`)
+                    axios.put(`/AgriculturalWarehouseManagementApplication/api/seller/products/${id}/hide`)
                         .then(() => {
                             const row = document.querySelector(`tr[data-id="${id}"]`);
                             if (row) row.remove();
@@ -1863,8 +1863,8 @@
 
             const productId = form.getAttribute("data-edit-id");
             const request = productId
-                ? axios.put(`/api/seller/products/${productId}`, product)
-                : axios.post('/api/seller/products', product);
+                ? axios.put(`/AgriculturalWarehouseManagementApplication/api/seller/products/${productId}`, product)
+                : axios.post('/AgriculturalWarehouseManagementApplication/api/seller/products', product);
 
             request
                 .then(() => {

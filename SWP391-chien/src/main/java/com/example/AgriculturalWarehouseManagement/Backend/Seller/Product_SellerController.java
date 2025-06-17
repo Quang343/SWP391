@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/seller")
 @RequiredArgsConstructor
 public class Product_SellerController {
 
@@ -24,19 +23,19 @@ public class Product_SellerController {
     private final ModelMapper modelMapper;
 
 
-    @GetMapping("/products")
+    @GetMapping("/api/seller/products")
     public ResponseEntity<?> getAllProducts() {
         List<Product> products = productService.findAll();
         return ResponseEntity.ok(products);
     }
 
-    @GetMapping("/categories")
+    @GetMapping("/api/seller/categories")
     public ResponseEntity<?> getAllCategories() {
         List<Category> categories = categoryService.findAll();
         return ResponseEntity.ok(categories);
     }
 
-    @GetMapping("/statuses")
+    @GetMapping("/api/seller/statuses")
     public ResponseEntity<?> getProductStatuses() {
         List<String> statuses = Arrays.stream(ProductStatus.values())
                 .map(Enum::name)

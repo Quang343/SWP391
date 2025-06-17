@@ -34,7 +34,6 @@ public class ProductService implements IProductService{
                 .name(productDTO.getName())
                 .description(productDTO.getDescription())
                 .category(category)
-                .warehouse(warehouse)
                 .status(ProductStatus.valueOf(productDTO.getStatus()))
                 .build();
         return productRepository.save(product);
@@ -48,7 +47,6 @@ public class ProductService implements IProductService{
         product.setStatus(ProductStatus.valueOf(productDTO.getStatus()));
 
         Warehouse warehouse = warehouseRepository.findById(1L).orElse(null);
-        product.setWarehouse(warehouse);
         return productRepository.save(product);
     }
 
