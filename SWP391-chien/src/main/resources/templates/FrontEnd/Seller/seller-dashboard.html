@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
@@ -457,40 +456,9 @@
                                             <th scope="col">Actions</th>
                                         </tr>
                                         </thead>
-                                        <tbody>
-                                        <tr th:each="product, init : ${products}">
-                                            <td th:text="${init.count}"></td>
-                                            <td th:text="${product.getName()}"></td>
-                                            <td th:text="${product.getCategory().getName()}"></td>
-                                            <td th:text="${product.getDescription()}"></td>
-                                            <td th:text="${product.getStatus()}"></td>
-                                            <td>
-                                                <ul>
-                                                    <li>
-                                                        <a href="order-detail.html">
-                                                            <i class="ri-eye-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a th:href="@{'/admin/edit_product/' + ${product.getId()}}">
-                                                            <i class="ri-pencil-line"></i>
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <form method="post" th:action="@{'/admin/delete_product/' + ${product.getId()}}"
-                                                              onsubmit="return confirm('Bạn có chắc chắn muốn xoá sản phẩm này ?')">
-                                                            <input type="hidden" name="_method" value="delete" />
-                                                            <button type="submit" style="outline: none; border: none; background: transparent">
-                                                                <i class="ri-delete-bin-line" style="color: red"></i>
-                                                            </button>
-                                                        </form>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-
+                                        <tbody id="productTable">
+                                        <!-- Bỏ th:each đi -->
+                                        <!-- JS sẽ tự add từng <tr> vào tbody -->
                                         </tbody>
                                     </table>
 
@@ -863,7 +831,6 @@
             </div>
         </div>
     </div>
-
 
 
     <style>
@@ -1705,11 +1672,11 @@
 <!-- Delete Product Modal End-->
 
 <!-- Add Product Modal -->
- Modal Add Product (Thymeleaf Version)
+
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form class="theme-form theme-form-2 mega-form" th:action="@{/seller-dashboard/saveProduct}" th:object="${productDTO}" method="post">
+            <form id="addProductForm" class="theme-form theme-form-2 mega-form">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addProductModalLabel">Add Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -1720,8 +1687,8 @@
                     <div class="mb-4 row align-items-center">
                         <label class="form-label-title col-sm-3 mb-0">Product Name</label>
                         <div class="col-sm-9">
-                            <input class="form-control" type="text" placeholder="Product Name" th:field="*{name}" required>
-                            <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger small mt-1" style="font-weight: bold; font-size: 13px;"></div>
+                            <input class="form-control" type="text" placeholder="Product Name" id="productName"
+                                   required>
                         </div>
                     </div>
 
@@ -1729,11 +1696,8 @@
                     <div class="mb-4 row align-items-center">
                         <label class="col-sm-3 col-form-label form-label-title">Category</label>
                         <div class="col-sm-9">
-                            <select class="form-select" th:field="*{categoryId}" required>
-                                <option value="" disabled selected>Category Menu</option>
-                                <option th:each="category : ${categories}"
-                                        th:value="${category.id}"
-                                        th:text="${category.name}"></option>
+                            <select class="form-select" id="categoryId" required>
+                                <option value="" disabled selected>Loading categories...</option>
                             </select>
                         </div>
                     </div>
@@ -1742,7 +1706,8 @@
                     <div class="mb-4 row">
                         <label class="form-label-title col-sm-3 mb-0">Product Description</label>
                         <div class="col-sm-9">
-                            <textarea class="form-control" placeholder="Enter product description here..." th:field="*{description}" rows="3"></textarea>
+                            <textarea class="form-control" placeholder="Enter product description here..."
+                                      id="description" rows="3"></textarea>
                         </div>
                     </div>
 
@@ -1750,8 +1715,8 @@
                     <div class="mb-4 row">
                         <label class="col-sm-3 col-form-label form-label-title">Stock Status</label>
                         <div class="col-sm-9">
-                            <select class="form-select" th:field="*{status}" required>
-                                <option th:each="status : ${statuses}" th:value="${status}" th:text="${status}"></option>
+                            <select id="status" class="form-select" required>
+                                <option value="" disabled selected>Loading statuses...</option>
                             </select>
                         </div>
                     </div>
@@ -1759,37 +1724,167 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button class="btn btn-success" type="submit">Add Product</button>
+                    <button class="btn btn-success" type="submit" id="submitBtn">Add Product</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('saveNewProduct').addEventListener('click', function () {
-            const name = document.getElementById('newProductName').value;
-            const price = document.getElementById('newProductPrice').value;
-            const stock = document.getElementById('newProductStock').value;
-            const category = document.getElementById('newProductCategory').value;
-            const active = document.getElementById('newProductActive').checked;
-
-            if (!name || !price || !stock || !category) {
-                alert("Vui lòng điền đầy đủ thông tin.");
-                return;
-            }
-
-            // TODO: Thêm vào bảng hoặc gửi dữ liệu về server
-
-            alert(`Đã thêm sản phẩm: ${name}`);
-
-            bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
-            document.getElementById('addProductForm').reset();
-        });
+    document.addEventListener("DOMContentLoaded", function () {
+        loadCategories();
+        loadStatuses();
+        loadProducts();
+        setupFormSubmit();
     });
-</script>
-<!-- Add Product Modal End-->
 
+    // Load danh mục
+    function loadCategories() {
+        const select = document.getElementById('categoryId');
+        axios.get('/api/seller/categories')
+            .then(res => {
+                select.innerHTML = '<option value="" disabled selected>Choose a category</option>';
+                res.data.forEach(c => {
+                    const option = new Option(c.name, c.id);
+                    select.add(option);
+                });
+            });
+    }
+
+    // Load trạng thái sản phẩm
+    function loadStatuses() {
+        const select = document.getElementById('status');
+        axios.get('/api/seller/statuses')
+            .then(res => {
+                select.innerHTML = '<option value="" disabled selected>Choose a status</option>';
+                res.data.forEach(status => {
+                    const text = status.replace(/_/g, ' ');
+                    const option = new Option(text, status);
+                    select.add(option);
+                });
+            });
+    }
+
+    // Load danh sách sản phẩm
+    function loadProducts() {
+        axios.get('/api/seller/products')
+            .then(res => {
+                const tbody = document.getElementById("productTable");
+                tbody.innerHTML = "";
+
+                res.data.forEach((product, index) => appendProductToTable(product, index));
+                addActionListeners(); // gắn lại sự kiện cho nút
+            });
+    }
+
+    // Render 1 sản phẩm vào bảng
+    function appendProductToTable(product, index) {
+        const tbody = document.getElementById("productTable");
+        const row = document.createElement('tr');
+        row.setAttribute('data-id', product.id);
+
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${product.name}</td>
+            <td>${product.category?.name || 'Unknown'}</td>
+            <td>${product.description || ''}</td>
+            <td>${product.status}</td>
+            <td>
+                <ul class="option-list d-flex gap-2 list-unstyled m-0">
+                    <li><button type="button" class="btn btn-sm btn-outline-info" title="View"><i class="ri-eye-line"></i></button></li>
+                    <li><button class="btn btn-sm btn-outline-primary btn-edit" data-id="${product.id}"><i class="ri-pencil-line"></i></button></li>
+                    <li><button class="btn btn-sm btn-outline-danger btn-delete" data-id="${product.id}"><i class="ri-delete-bin-line"></i></button></li>
+                </ul>
+            </td>
+        `;
+        tbody.appendChild(row);
+    }
+
+    // Gán sự kiện cho nút edit và delete
+    function addActionListeners() {
+        document.querySelectorAll(".btn-edit").forEach(btn => {
+            btn.addEventListener("click", function () {
+                const id = this.dataset.id;
+                axios.get('/api/seller/products')
+                    .then(res => {
+                        const product = res.data.find(p => p.id == id);
+                        if (product) {
+                            document.getElementById('productName').value = product.name;
+                            document.getElementById('description').value = product.description || '';
+                            document.getElementById('categoryId').value = product.category.id;
+                            document.getElementById('status').value = product.status;
+
+                            document.getElementById('submitBtn').innerText = "Update Product";
+                            document.getElementById('addProductForm').setAttribute("data-edit-id", id);
+
+                            const modal = new bootstrap.Modal(document.getElementById('addProductModal'));
+                            modal.show();
+                        }
+                    });
+            });
+        });
+
+        document.querySelectorAll(".btn-delete").forEach(btn => {
+            btn.addEventListener("click", function () {
+                const id = this.dataset.id;
+                if (confirm("Bạn có chắc chắn muốn xoá sản phẩm này không?")) {
+                    axios.put(`/api/seller/products/${id}/hide`)
+                        .then(() => {
+                            const row = document.querySelector(`tr[data-id="${id}"]`);
+                            if (row) row.remove();
+                        })
+                        .catch(err => {
+                            alert("Lỗi khi xoá: " + (err.response?.data?.message || "Không rõ lỗi"));
+                        });
+                }
+            });
+        });
+    }
+
+    // Submit form thêm / cập nhật sản phẩm
+    function setupFormSubmit() {
+        const form = document.getElementById('addProductForm');
+        const btn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            btn.disabled = true;
+            btn.innerText = "Saving...";
+
+            const product = {
+                name: document.getElementById('productName').value,
+                description: document.getElementById('description').value,
+                categoryId: document.getElementById('categoryId').value,
+                status: document.getElementById('status').value
+            };
+
+            const productId = form.getAttribute("data-edit-id");
+            const request = productId
+                ? axios.put(`/api/seller/products/${productId}`, product)
+                : axios.post('/api/seller/products', product);
+
+            request
+                .then(() => {
+                    bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
+                    form.reset();
+                    loadProducts(); // reload bảng
+                })
+                .catch(err => {
+                    alert("Lỗi: " + (err.response?.data?.message || "Không rõ lỗi"));
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerText = "Add Product";
+                    form.removeAttribute("data-edit-id");
+                });
+        });
+    }
+</script>
+
+<!-- Add Product Modal End-->
 
 <!-- latest jquery-->
 <script th:src="@{/Frontend/assets/js/jquery-3.6.0.min.js}"></script>

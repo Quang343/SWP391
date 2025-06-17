@@ -30,6 +30,8 @@ public class FrontEndController {
     public String cart() {
         return "FrontEnd/Home/cart";
     }
-
-
+    @RequestMapping("/seller-dashboard")
+    public String sellerDashboard() {
+        return "FrontEnd/Seller/seller-dashboard";
+    }
 }
