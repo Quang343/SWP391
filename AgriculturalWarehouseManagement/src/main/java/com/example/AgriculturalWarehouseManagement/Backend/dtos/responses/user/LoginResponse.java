@@ -1,21 +1,21 @@
 package com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user;
 
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.UserResponse;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.UserRequest;
 
 public class LoginResponse {
-    private UserResponse user;
+    private UserRequest user;
     private String token;
 
-    public LoginResponse(UserResponse user, String token) {
+    public LoginResponse(UserRequest user, String token) {
         this.user = user;
         this.token = token;
     }
 
-    public UserResponse getUser() {
+    public UserRequest getUser() {
         return user;
     }
 
-    public void setUser(UserResponse user) {
+    public void setUser(UserRequest user) {
         this.user = user;
     }
 

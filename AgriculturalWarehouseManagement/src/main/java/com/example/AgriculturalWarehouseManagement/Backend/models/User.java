@@ -68,11 +68,13 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MyAddressBook> myAddressBooks;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<UpdateProfileHistory> updateProfileHistories;
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<UpdateProfileHistory> updateProfileHistories;
+
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<ContactUsUser> contactUsUser;
 
     // Getter and Setter methods
-
     public List<MyAddressBook> getMyAddressBooks() {
         return myAddressBooks;
     }
@@ -81,13 +83,21 @@ public class User {
         this.myAddressBooks = myAddressBooks;
     }
 
-    public List<UpdateProfileHistory> getUpdateProfileHistories() {
-        return updateProfileHistories;
-    }
-
-    public void setUpdateProfileHistories(List<UpdateProfileHistory> updateProfileHistories) {
-        this.updateProfileHistories = updateProfileHistories;
-    }
+//    public List<UpdateProfileHistory> getUpdateProfileHistories() {
+//        return updateProfileHistories;
+//    }
+//
+//    public void setUpdateProfileHistories(List<UpdateProfileHistory> updateProfileHistories) {
+//        this.updateProfileHistories = updateProfileHistories;
+//    }
+//
+//    public List<ContactUsUser> getContactUsUser() {
+//        return contactUsUser;
+//    }
+//
+//    public void setContactUsUser(List<ContactUsUser> contactUsUser) {
+//        this.contactUsUser = contactUsUser;
+//    }
 
     @PrePersist
     public void prePersist() {

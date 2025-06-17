@@ -11,15 +11,10 @@ public class BackEndController {
         return "BackEnd/Admin/index";
     }
 
-    @RequestMapping("")
+    @RequestMapping("/")
     public String home() {
-        return "/home";
+        return "/FrontEnd/Home/home";
     }
-
-//    @RequestMapping("/signup")
-//    public String signup() {
-//        return "BackEnd/signup";
-//    }
 
     @RequestMapping("/admin/category")
     public String adminCategory() {
