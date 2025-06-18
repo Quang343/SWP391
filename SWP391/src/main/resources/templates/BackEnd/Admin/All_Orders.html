@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="BackEnd/fragments/head::head"></head>
+<style>
+
+    button#statusDropdown {
+        width: 33%;
+    }
+
+    .dropdown-menu {
+        width: 33%;
+    }
+
+    .dropdown-menu .dropdown-item {
+        color: #000;
+        opacity: 0.6;
+        font-size: 13px;
+        background: #b9b5b5;
+        border-top: 1px solid #efefef;
+        font-weight: bold;
+        width: calc(100% - 5px);
+        border-radius: 4px;
+        margin-top: -1px;
+        padding: 10px;
+        transition: background-color 0.2s;
+    }
+
+    .dropdown-menu .dropdown-item:hover {
+        background-color: #cbc7c7;
+    }
+
+    .all-package tbody tr td.order-success span.danger {
+        background-color: #f5c6cb !important;
+        color: #721c24 !important;
+    }
+
+    .all-package tbody tr td.order-success span.pending {
+        background-color: rgba(154, 154, 154, 0.2) !important;
+        color: #9a9a9a !important;
+    }
+
+    .all-package tbody tr td.order-success span.primary {
+        background-color: #cce5ff !important;
+        color: #004085 !important;
+    }
+
+    .all-package tbody tr td.order-success span.success {
+        background-color: rgba(66, 186, 150, 0.2);
+        color: #42ba96;
+    }
+
+</style>
+
+<body>
+<!-- tap on top start-->
+<div class="tap-top">
+    <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end-->
+
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <!-- Page Header Start-->
+    <div th:replace="BackEnd/fragments/header::header"></div>
+    <!-- Page Header Ends-->
+
+    <!-- Page Body Start-->
+    <div class="page-body-wrapper">
+        <!-- Page Sidebar Start-->
+        <div th:replace="BackEnd/fragments/sidebar::sidebar"></div>
+        <!-- Page Sidebar Ends-->
+
+        <!-- Order section Start -->
+        <div class="page-body">
+            <!-- Table Start -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card card-table">
+                            <div class="card-body">
+                                <div class="title-header option-title">
+                                    <h5>Order List</h5>
+                                    <a href="#" class="btn btn-solid">Download all orders</a>
+                                </div>
+                                <div>
+                                    <div class="table-responsive">
+                                        <table class="table all-package order-table theme-table" id="table_id">
+                                            <thead>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Order Code</th>
+                                                <th>Order Date</th>
+                                                <th>Phone</th>
+                                                <th>Address</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                            </thead>
+
+                                            <tbody>
+                                            <tr data-bs-toggle="offcanvas"
+                                                th:each="order, init : ${orders}">
+                                                <td th:text="${init.count}"></td>
+                                                <td th:text="${order.getOrderCode()}">
+                                                    <!--                                                    <a class="d-block">-->
+                                                    <!--                                                                <span class="order-image">-->
+                                                    <!--                                                                    <img src="assets/images/product/1.png"-->
+                                                    <!--                                                                         class="img-fluid" alt="users">-->
+                                                    <!--                                                                </span>-->
+                                                    <!--                                                    </a>-->
+                                                </td>
+
+                                                <td th:text="${order.getOrderDate()}"></td>
+
+                                                <td th:text="${order.getPhone()}"></td>
+
+                                                <td th:text="${order.getAddress()}">Paypal</td>
+
+                                                <td th:text="${order.getTotalAmount()}">$15</td>
+
+                                                <td class="order-success">
+                                                    <span th:class="${order.getStatusBadgeClass()}"
+                                                          th:text="${order.status}"></span>
+                                                </td>
+
+                                                <td>
+                                                    <ul>
+                                                        <li>
+                                                            <a th:href="@{/admin/orders/{orderId}/details(orderId=${order.getId()})}">
+                                                                <i class="ri-eye-line"></i>
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="javascript:void(0)"
+                                                               th:if="${order.status == 'PENDING' or order.status == 'CONFIRMED'}"
+                                                               th:attr="data-order-id=${order.getId()}, data-order-status=${order.getStatus()}"
+                                                               onclick="openEditModal(this)">
+                                                                <i class="ri-pencil-line text-warning"></i>
+                                                            </a>
+                                                            <a
+                                                                    th:if="${order.status == 'CANCELLED' or order.status == 'DELIVERED'}"
+                                                                    href="javascript:void(0)"
+                                                                    style="pointer-events: none; opacity: 0.5;">
+                                                                <i class="ri-pencil-line text-warning"></i>
+                                                            </a>
+                                                        </li>
+
+                                                        <li>
+                                                            <a href="javascript:void(0)"
+                                                               th:if="${order.status == 'CANCELLED'}"
+                                                               th:attr="data-order-id=${order.getId()}"
+                                                               onclick="confirmDelete(this)"
+                                                               data-bs-toggle="modal"
+                                                               data-bs-target="#exampleModalToggle">
+                                                                <i class="ri-delete-bin-line text-danger"></i>
+                                                            </a>
+
+                                                            <a th:if="${order.status != 'CANCELLED'}"
+                                                               href="javascript:void(0)"
+                                                               class="text-muted"
+                                                               title="Only cancelled orders can be deleted"
+                                                               style="pointer-events: none; opacity: 0.5;">
+                                                                <i class="ri-delete-bin-line"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="btn btn-sm btn-solid text-white"
+                                                               href="/admin/order_tracking">
+                                                                Tracking
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Table End -->
+
+            <!-- footer start-->
+            <div class="container-fluid">
+                <footer class="footer">
+                    <div class="row">
+                        <div class="col-md-12 footer-copyright text-center">
+                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        <!-- Order section End -->
+    </div>
+    <!-- Page Body End-->
+</div>
+<!-- page-wrapper End -->
+
+<!-- Modal start -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                <p>Are you sure you want to log out?</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="button-box">
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                    <button type="button" th:onclick="|window.location='@{backend/login}'|"
+                            class="btn btn--yes btn-primary">Yes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal end -->
+
+<!-- Delete Modal Box Start -->
+<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle" aria-hidden="true" tabindex="-1">
+    <input type="hidden" id="deleteOrderId">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-block text-center">
+                <h5 class="modal-title w-100" id="exampleModalLabel22">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="remove-box">
+                    <p> Are you sure you want to delete ?</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold"
+                        onclick="submitDeleteOrder()"
+                        data-bs-dismiss="modal">Yes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle2" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="exampleModalLabel12">Done!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="remove-box text-center">
+                    <div class="wrapper">
+                        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                        </svg>
+                    </div>
+                    <h4 id="model-result" class="text-content">It's Removed.</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Modal Box End -->
+
+<!-- Offcanvas Box Start -->
+<div class="offcanvas offcanvas-end order-offcanvas" tabindex="-1" id="order-details"
+     aria-labelledby="offcanvasExampleLabel" aria-expanded="false">
+    <div class="offcanvas-header">
+        <h4 class="offcanvas-title" id="offcanvasExampleLabel">#573-685572</h4>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="order-date">
+            <h6>September 17, 2022 <span class="ms-3">8:12 PM</span></h6>
+            <a href="javascript:void(0)" class="d-block mt-1">Cancel Order</a>
+        </div>
+
+        <div class="accordion accordion-flush custome-accordion" id="accordionFlushExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                        Status
+                    </button>
+                </h2>
+                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
+                     data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">
+                        <ul class="status-list">
+                            <li>
+                                <a href="javascript:void(0)">Shipped</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">Pending</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                        Accordion Item #2
+                    </button>
+                </h2>
+                <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo"
+                     data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">Placeholder content for this accordion, which is intended to
+                        demonstrate the <code>.accordion-flush</code> class. This is the second item's accordion
+                        body. Let's imagine this being filled with some actual content.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#flush-collapseThree" aria-expanded="false"
+                            aria-controls="flush-collapseThree">
+                        Accordion Item #3
+                    </button>
+                </h2>
+                <div id="flush-collapseThree" class="accordion-collapse collapse"
+                     aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">Placeholder content for this accordion, which is intended to
+                        demonstrate the <code>.accordion-flush</code> class. This is the third item's accordion
+                        body. Nothing more exciting happening here in terms of content, but just filling up the
+                        space to make it look, at least at first glance, a bit more representative of how this would
+                        look in a real-world application.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Offcanvas Box End -->
+
+<!-- -->
+<div class="modal fade" id="editOrderStatusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="updateStatusForm" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Order Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <!-- Dropdown -->
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdown"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                Chọn trạng thái
+                            </button>
+                            <ul class="dropdown-menu" id="statusDropdownMenu"></ul>
+                        </div>
+
+                        <input type="hidden" id="selectedStatus" name="status">
+                        <input type="hidden" id="editOrderId" name="orderId">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- -->
+
+
+<!-- deleteFailModal Start -->
+<div class="modal fade" id="deleteFailModal" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content bg-danger text-white">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Failed</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Could not delete the order. Try again later.
+            </div>
+        </div>
+    </div>
+</div>
+<!-- deleteFailModal End -->
+
+<!-- latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- Bootstrap js -->
+<!--<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>-->
+
+<!-- feather icon js -->
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+
+<!-- scrollbar simplebar js -->
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+
+<!-- Sidebar js -->
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+
+<!-- customizer js -->
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+
+<!-- Plugins js -->
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+
+<!-- Data table js -->
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+
+<!-- sidebar effect -->
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+
+<!-- Theme js -->
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+
+<!-- all checkbox select js -->
+<script th:src="@{/Backend/assets/js/checkbox-all-check.js}"></script>
+
+<script>
+    function openEditModal(element) {
+        const orderId = element.getAttribute("data-order-id");
+        const currentStatus = element.getAttribute("data-order-status");
+        const dropdownMenu = document.getElementById("statusDropdownMenu");
+        const dropdownButton = document.getElementById("statusDropdown");
+        const selectedStatusInput = document.getElementById("selectedStatus");
+        const orderIdInput = document.getElementById("editOrderId");
+
+        dropdownMenu.innerHTML = "";
+
+        // Trạng thái kế tiếp
+        const nextStatus = {
+            PENDING: "CONFIRMED",
+            CONFIRMED: "DELIVERED"
+        }[currentStatus] || null;
+
+        if (!nextStatus) {
+            dropdownButton.textContent = "Không khả dụng";
+            dropdownButton.className = "btn btn-secondary dropdown-toggle";
+            selectedStatusInput.value = "";
+        } else {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.className = "dropdown-item";
+            a.href = "#";
+            a.textContent = nextStatus.charAt(0) + nextStatus.slice(1).toLowerCase();
+            a.addEventListener("click", function (e) {
+                e.preventDefault();
+                dropdownButton.textContent = a.textContent;
+                selectedStatusInput.value = nextStatus;
+
+                // Tự đóng dropdown
+                bootstrap.Dropdown.getInstance(dropdownButton)?.hide();
+            });
+            li.appendChild(a);
+            dropdownMenu.appendChild(li);
+
+            dropdownButton.textContent = "Chọn trạng thái";
+            dropdownButton.className = "btn btn-primary dropdown-toggle";
+            selectedStatusInput.value = nextStatus;
+        }
+
+        orderIdInput.value = orderId;
+
+        new bootstrap.Modal(document.getElementById('editOrderStatusModal')).show();
+    }
+
+    function submitUpdateStatus(event) {
+        event.preventDefault();
+
+        const status = document.getElementById("selectedStatus").value;
+        const orderId = document.getElementById("editOrderId").value;
+
+        if (!status) {
+            alert("Trạng thái không hợp lệ.");
+            return;
+        }
+
+        fetch(`/admin/orders/${orderId}/status`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({status})
+        }).then(response => {
+            if (response.ok) {
+                const currentModalEl = document.getElementById('editOrderStatusModal');
+                const currentModal = bootstrap.Modal.getInstance(currentModalEl);
+                if (currentModal) {
+                    currentModal.hide();
+                }
+
+                const modal = new bootstrap.Modal(document.getElementById('exampleModalToggle2'));
+                const textContent = document.getElementById("model-result");
+                textContent.textContent = "Updated successfully";
+                modal.show();
+
+                // Optionally reload the page or remove the deleted row
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                alert("Cập nhật thất bại.");
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("updateStatusForm").addEventListener("submit", submitUpdateStatus);
+    });
+</script>
+
+<script>
+    function confirmDelete(el) {
+        const orderId = el.getAttribute('data-order-id');
+        document.getElementById('deleteOrderId').value = orderId;
+
+        document.querySelector("#exampleModalToggle .remove-box p").textContent =
+            "Are you sure you want to delete this order?";
+    }
+
+    function submitDeleteOrder() {
+        const orderId = document.getElementById('deleteOrderId').value;
+
+        fetch('/admin/delete_order/' + orderId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(res => {
+                if (res.ok) {
+                    // Nếu xoá thành công, hiển thị modal "Đã xoá"
+                    const modal = new bootstrap.Modal(document.getElementById('exampleModalToggle2'));
+                    modal.show();
+
+                    // Optionally reload the page or remove the deleted row
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    const modal = new bootstrap.Modal(document.getElementById('deleteFailModal'));
+                    modal.show();
+                }
+            });
+    }
+</script>
+
+<!-- Bootstrap Bundle with Popper (rất quan trọng cho dropdown) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
