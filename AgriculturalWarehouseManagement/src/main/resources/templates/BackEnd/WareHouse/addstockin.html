@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{BackEnd/fragments/WareHouse/head::head}">
+    <!-- Loại bỏ flatpickr CSS vì không dùng nữa -->
+</head>
+
+<body>
+<!-- tap on top start -->
+<div class="tap-top">
+    <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+
+<!-- page-wrapper start -->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <!-- Page Header Start-->
+    <div th:replace="~{BackEnd/fragments/WareHouse/header::header}"></div>
+    <!-- Page Header Ends-->
+
+    <!-- Page Body start -->
+    <div class="page-body-wrapper">
+        <!-- Page Sidebar Start-->
+        <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
+        <!-- Page Sidebar Ends-->
+
+        <div class="page-body">
+            <!-- New StockIn Add Start -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-sm-8 m-auto">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="card-header-2">
+                                            <h5>Add StockIn Information</h5>
+                                        </div>
+
+                                        <div class="theme-form theme-form-2 mega-form">
+                                            <!-- Supplier Dropdown -->
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="form-label-title col-sm-3 mb-0">Supplier</label>
+                                                <div class="col-sm-9">
+                                                    <select id="supplierId" class="form-control">
+                                                        <option value="">Select Supplier</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Warehouse Dropdown -->
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="form-label-title col-sm-3 mb-0">Warehouse</label>
+                                                <div class="col-sm-9">
+                                                    <select id="warehouseId" class="form-control">
+                                                        <option value="">Select Warehouse</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- StockIn Date (Native Date Picker) -->
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="col-sm-3 col-form-label form-label-title">StockIn Date</label>
+                                                <div class="col-sm-9">
+                                                    <input id="stockInDate" name="stockInDate" class="form-control" type="date" required>
+                                                </div>
+                                            </div>
+
+                                            <!-- Note -->
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="form-label-title col-sm-3 mb-0">Note</label>
+                                                <div class="col-sm-9">
+                                                    <input id="note" class="form-control" type="text" placeholder="Enter Note">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-submit-button">
+                                        <button id="submitButton" class="btn btn-animation ms-auto" type="button">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- New StockIn Add End -->
+
+            <!-- footer Start -->
+            <div class="container-fluid">
+                <footer class="footer">
+                    <div class="row">
+                        <div class="col-md-12 footer-copyright text-center">
+                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+            <!-- footer End -->
+        </div>
+        <!-- Container-fluid End -->
+    </div>
+    <!-- Page Body End -->
+</div>
+<!-- page-wrapper End -->
+
+<!-- Modal Start -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                <p>Are you sure you want to log out?</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="button-box">
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                    <button type="button" onclick="location.href = 'login.html';"
+                            class="btn btn--yes btn-primary">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal End -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM đã tải xong, khởi tạo script...');
+
+        // Khởi tạo các phần tử DOM
+        const supplierId = document.getElementById('supplierId');
+        const warehouseId = document.getElementById('warehouseId');
+        const stockInDate = document.getElementById('stockInDate');
+        const note = document.getElementById('note');
+        const submitButton = document.getElementById('submitButton');
+
+        if (!supplierId || !warehouseId || !stockInDate || !note || !submitButton) {
+            console.error('Thiếu các phần tử DOM:', {
+                supplierId: !!supplierId,
+                warehouseId: !!warehouseId,
+                stockInDate: !!stockInDate,
+                note: !!note,
+                submitButton: !!submitButton
+            });
+            alert('Lỗi giao diện, vui lòng kiểm tra console.');
+            return;
+        }
+        console.log('Các phần tử DOM được tìm thấy:', {
+            supplierId: supplierId,
+            warehouseId: warehouseId,
+            stockInDate: stockInDate,
+            note: note,
+            submitButton: submitButton
+        });
+
+        // Load Suppliers
+        console.log('Bắt đầu tải danh sách Suppliers...');
+        $.ajax({
+            url: 'http://localhost:8080/api/suppliers',
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                console.log('Danh sách Suppliers được tải thành công:', data);
+                supplierId.innerHTML = '<option value="">Select Supplier</option>'; // Reset dropdown
+                $.each(data, function(index, supplier) {
+                    const supplierIdValue = supplier.supplierID || supplier.id;
+                    const supplierNameValue = supplier.supplierName || supplier.name;
+                    if (supplierIdValue && supplierNameValue) {
+                        supplierId.innerHTML += `<option value="${supplierIdValue}">${supplierNameValue}</option>`;
+                        console.log(`Thêm Supplier: ID=${supplierIdValue}, Name=${supplierNameValue}`);
+                    } else {
+                        console.warn('Dữ liệu Supplier không hợp lệ:', supplier);
+                    }
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Lỗi khi tải Suppliers:', {
+                    status: status,
+                    error: error,
+                    response: xhr.responseText
+                });
+                supplierId.innerHTML = '<option value="">Error loading Suppliers</option>';
+            }
+        });
+
+        // Load Warehouses
+        console.log('Bắt đầu tải danh sách Warehouses...');
+        $.ajax({
+            url: 'http://localhost:8080/api/warehouses',
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                console.log('Danh sách Warehouses được tải thành công:', data);
+                warehouseId.innerHTML = '<option value="">Select Warehouse</option>'; // Reset dropdown
+                $.each(data, function(index, warehouse) {
+                    const warehouseIdValue = warehouse.warehouseId || warehouse.id;
+                    const warehouseNameValue = warehouse.warehouseName || warehouse.name;
+                    if (warehouseIdValue && warehouseNameValue) {
+                        warehouseId.innerHTML += `<option value="${warehouseIdValue}">${warehouseNameValue}</option>`;
+                        console.log(`Thêm Warehouse: ID=${warehouseIdValue}, Name=${warehouseNameValue}`);
+                    } else {
+                        console.warn('Dữ liệu Warehouse không hợp lệ:', warehouse);
+                    }
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Lỗi khi tải Warehouses:', {
+                    status: status,
+                    error: error,
+                    response: xhr.responseText
+                });
+                warehouseId.innerHTML = '<option value="">Error loading Warehouses</option>';
+            }
+        });
+
+        // Submit handler
+        submitButton.addEventListener('click', function () {
+            console.log('Nút Submit được nhấn.');
+
+            const supplierIdValue = supplierId.value;
+            const warehouseIdValue = warehouseId.value;
+            const stockInDateValue = stockInDate.value;
+            const noteValue = note.value.trim();
+
+            console.log('Giá trị nhập vào:', {
+                supplierIdValue: supplierIdValue,
+                warehouseIdValue: warehouseIdValue,
+                stockInDateValue: stockInDateValue,
+                noteValue: noteValue
+            });
+
+            // Client-side validation
+            if (!supplierIdValue) {
+                alert('Vui lòng chọn nhà cung cấp.');
+                console.warn('Thiếu supplierId.');
+                return;
+            }
+            if (!warehouseIdValue) {
+                alert('Vui lòng chọn kho hàng.');
+                console.warn('Thiếu warehouseId.');
+                return;
+            }
+            if (!stockInDateValue) {
+                alert('Vui lòng chọn ngày nhập kho.');
+                console.warn('Thiếu stockInDate.');
+                return;
+            }
+            if (!noteValue) {
+                alert('Vui lòng nhập ghi chú.');
+                console.warn('Thiếu note.');
+                return;
+            }
+
+            const stockInData = {
+                supplierID: parseInt(supplierIdValue),
+                warehouseID: parseInt(warehouseIdValue),
+                stockInDate: stockInDateValue + 'T00:00:00Z', // Thêm giờ mặc định cho type=date
+                note: noteValue
+            };
+
+            console.log('Dữ liệu StockIn chuẩn bị gửi:', stockInData);
+
+            fetch('/api/stockins', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(stockInData)
+            })
+                .then(response => {
+                    console.log('Phản hồi từ server:', {
+                        status: response.status,
+                        ok: response.ok
+                    });
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw { status: response.status, error: err.error || 'Lỗi không xác định.' };
+                        });
+                    }
+                    return response.json();
+                })
+                .then(createdStockIn => {
+                    console.log('StockIn được tạo thành công:', createdStockIn);
+                    alert('Tạo StockIn thành công!');
+                    supplierId.value = '';
+                    warehouseId.value = '';
+                    stockInDate.value = '';
+                    note.value = '';
+                    console.log('Form đã được reset.');
+                })
+                .catch(error => {
+                    console.error('Lỗi khi tạo StockIn:', {
+                        status: error.status,
+                        error: error.error
+                    });
+                    if (error.status === 400) {
+                        alert(error.error || 'Dữ liệu không hợp lệ, vui lòng kiểm tra lại.');
+                    } else {
+                        alert('Đã xảy ra lỗi khi tạo StockIn: ' + error.error);
+                    }
+                });
+        });
+    });
+</script>
+
+<!-- latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+<!-- Loại bỏ flatpickr.min.js -->

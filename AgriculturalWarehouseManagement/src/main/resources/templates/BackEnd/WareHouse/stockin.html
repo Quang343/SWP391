@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
@@ -23,7 +22,7 @@
     <div th:replace="BackEnd/fragments/WareHouse/sidebar::sidebar"></div>
     <!-- Page Sidebar Ends-->
 
-    <!-- Order section Start -->
+    <!-- StockIn section Start -->
     <div class="page-body">
       <!-- Table Start -->
       <div class="container-fluid">
@@ -32,566 +31,24 @@
             <div class="card card-table">
               <div class="card-body">
                 <div class="title-header option-title">
-                  <h5>Order List</h5>
-                  <a href="#" class="btn btn-solid">Download all orders</a>
+                  <h5>StockIn List</h5>
+                  <a th:href="@{/warehouse/addstockin}" class="btn btn-solid">Add news StockIn</a>
                 </div>
                 <div>
                   <div class="table-responsive">
                     <table class="table all-package order-table theme-table" id="table_id">
                       <thead>
                       <tr>
-                        <th>Order Image</th>
-                        <th>Order Code</th>
+                        <th>StockIn ID</th>
+                        <th>Supplier ID</th>
+                        <th>Warehouse ID</th>
                         <th>Date</th>
-                        <th>Payment Method</th>
-                        <th>Delivery Status</th>
-                        <th>Amount</th>
+                        <th>Note</th>
                         <th>Option</th>
                       </tr>
                       </thead>
-
-                      <tbody>
-                      <tr data-bs-toggle="offcanvas" href="#order-details">
-                        <td>
-                          <a class="d-block">
-                                                                <span class="order-image">
-                                                                    <img src="assets/images/product/1.png"
-                                                                         class="img-fluid" alt="users">
-                                                                </span>
-                          </a>
-                        </td>
-
-                        <td> 406-4883635</td>
-
-                        <td>Jul 20, 2022</td>
-
-                        <td>Paypal</td>
-
-                        <td class="order-success">
-                          <span>Success</span>
-                        </td>
-
-                        <td>$15</td>
-
-                        <td>
-                          <ul>
-                            <li>
-                              <a href="order-detail.html">
-                                <i class="ri-eye-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)">
-                                <i class="ri-pencil-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)" data-bs-toggle="modal"
-                                 data-bs-target="#exampleModalToggle">
-                                <i class="ri-delete-bin-line"></i>
-                              </a>
-                            </li>
-                            <li>
-                              <a class="btn btn-sm btn-solid text-white"
-                                 href="order-tracking.html">
-                                Tracking
-                              </a>
-                            </li>
-                          </ul>
-                        </td>
-                      </tr>
-
-                      <tr data-bs-toggle="offcanvas" href="#order-details">
-                        <td>
-                                                            <span class="order-image">
-                                                                <img src="assets/images/product/2.png" alt="users">
-                                                            </span>
-                        </td>
-
-                        <td> 573-685572</td>
-
-                        <td>Jul 25, 2022</td>
-
-                        <td>Paypal</td>
-
-                        <td class="order-success">
-                          <span>Success</span>
-                        </td>
-
-                        <td>$15</td>
-
-                        <td>
-                          <ul>
-                            <li>
-                              <a href="order-detail.html">
-                                <i class="ri-eye-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)">
-                                <i class="ri-pencil-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)" data-bs-toggle="modal"
-                                 data-bs-target="#exampleModalToggle">
-                                <i class="ri-delete-bin-line"></i>
-                              </a>
-                            </li>
-                            <li>
-                              <a class="btn btn-sm btn-solid text-white"
-                                 href="order-tracking.html">
-                                Tracking
-                              </a>
-                            </li>
-                          </ul>
-                        </td>
-                      </tr>
-
-                      <tr data-bs-toggle="offcanvas" href="#order-details">
-                        <td>
-                                                            <span class="order-image">
-                                                                <img src="assets/images/product/3.png" alt="users">
-                                                            </span>
-                        </td>
-
-                        <td> 759-4568734</td>
-
-                        <td>Jul 29, 2022</td>
-
-                        <td>Stripe</td>
-
-                        <td class="order-pending">
-                          <span>Pending</span>
-                        </td>
-
-                        <td>$15</td>
-
-                        <td>
-                          <ul>
-                            <li>
-                              <a href="order-detail.html">
-                                <i class="ri-eye-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)">
-                                <i class="ri-pencil-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)" data-bs-toggle="modal"
-                                 data-bs-target="#exampleModalToggle">
-                                <i class="ri-delete-bin-line"></i>
-                              </a>
-                            </li>
-                            <li>
-                              <a class="btn btn-sm btn-solid text-white"
-                                 href="order-tracking.html">
-                                Tracking
-                              </a>
-                            </li>
-                          </ul>
-                        </td>
-                      </tr>
-
-                      <tr data-bs-toggle="offcanvas" href="#order-details">
-                        <td>
-                                                            <span class="order-image">
-                                                                <img src="assets/images/product/4.png" alt="users">
-                                                            </span>
-                        </td>
-
-                        <td> 546-7664537</td>
-
-                        <td>Jul 30, 2022</td>
-
-                        <td>Paypal</td>
-
-                        <td class="order-success">
-                          <span>Success</span>
-                        </td>
-
-                        <td>$15</td>
-
-                        <td>
-                          <ul>
-                            <li>
-                              <a href="order-detail.html">
-                                <i class="ri-eye-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)">
-                                <i class="ri-pencil-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)" data-bs-toggle="modal"
-                                 data-bs-target="#exampleModalToggle">
-                                <i class="ri-delete-bin-line"></i>
-                              </a>
-                            </li>
-                            <li>
-                              <a class="btn btn-sm btn-solid text-white"
-                                 href="order-tracking.html">
-                                Tracking
-                              </a>
-                            </li>
-                          </ul>
-                        </td>
-                      </tr>
-
-                      <tr data-bs-toggle="offcanvas" href="#order-details">
-                        <td>
-                                                            <span class="order-image">
-                                                                <img src="assets/images/product/5.png" alt="users">
-                                                            </span>
-                        </td>
-
-                        <td> 479-7533144</td>
-
-                        <td>Aug 01, 2022</td>
-
-                        <td>Stripe</td>
-
-                        <td class="order-success">
-                          <span>Success</span>
-                        </td>
-
-                        <td>$15</td>
-
-                        <td>
-                          <ul>
-                            <li>
-                              <a href="order-detail.html">
-                                <i class="ri-eye-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)">
-                                <i class="ri-pencil-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)" data-bs-toggle="modal"
-                                 data-bs-target="#exampleModalToggle">
-                                <i class="ri-delete-bin-line"></i>
-                              </a>
-                            </li>
-                            <li>
-                              <a class="btn btn-sm btn-solid text-white"
-                                 href="order-tracking.html">
-                                Tracking
-                              </a>
-                            </li>
-                          </ul>
-                        </td>
-                      </tr>
-
-                      <tr data-bs-toggle="offcanvas" href="#order-details">
-                        <td>
-                                                            <span class="order-image">
-                                                                <img src="assets/images/product/6.png" alt="users">
-                                                            </span>
-                        </td>
-
-                        <td> 456-1245789</td>
-
-                        <td>Aug 10, 2022</td>
-
-                        <td>Stripe</td>
-
-                        <td class="order-cancle">
-                          <span>Cancel</span>
-                        </td>
-
-                        <td>$15</td>
-
-                        <td>
-                          <ul>
-                            <li>
-                              <a href="order-detail.html">
-                                <i class="ri-eye-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)">
-                                <i class="ri-pencil-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)" data-bs-toggle="modal"
-                                 data-bs-target="#exampleModalToggle">
-                                <i class="ri-delete-bin-line"></i>
-                              </a>
-                            </li>
-                            <li>
-                              <a class="btn btn-sm btn-solid text-white"
-                                 href="order-tracking.html">
-                                Tracking
-                              </a>
-                            </li>
-                          </ul>
-                        </td>
-                      </tr>
-
-                      <tr data-bs-toggle="offcanvas" href="#order-details">
-                        <td>
-                                                            <span class="order-image">
-                                                                <img src="assets/images/product/7.png" alt="users">
-                                                            </span>
-                        </td>
-
-                        <td> 057-3657895</td>
-
-                        <td>Aug 18, 2022</td>
-
-                        <td>Paypal</td>
-
-                        <td class="order-cancle">
-                          <span>Cancel</span>
-                        </td>
-
-                        <td>$15</td>
-
-                        <td>
-                          <ul>
-                            <li>
-                              <a href="order-detail.html">
-                                <i class="ri-eye-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)">
-                                <i class="ri-pencil-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)" data-bs-toggle="modal"
-                                 data-bs-target="#exampleModalToggle">
-                                <i class="ri-delete-bin-line"></i>
-                              </a>
-                            </li>
-                            <li>
-                              <a class="btn btn-sm btn-solid text-white"
-                                 href="order-tracking.html">
-                                Tracking
-                              </a>
-                            </li>
-                          </ul>
-                        </td>
-                      </tr>
-
-                      <tr data-bs-toggle="offcanvas" href="#order-details">
-                        <td>
-                                                            <span class="order-image">
-                                                                <img src="assets/images/product/8.png" alt="users">
-                                                            </span>
-                        </td>
-
-                        <td> 123-1234567</td>
-
-                        <td>Aug 29, 2022</td>
-
-                        <td>Paypla</td>
-
-                        <td class="order-success">
-                          <span>Success</span>
-                        </td>
-
-                        <td>$15</td>
-
-                        <td>
-                          <ul>
-                            <li>
-                              <a href="order-detail.html">
-                                <i class="ri-eye-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)">
-                                <i class="ri-pencil-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)" data-bs-toggle="modal"
-                                 data-bs-target="#exampleModalToggle">
-                                <i class="ri-delete-bin-line"></i>
-                              </a>
-                            </li>
-                            <li>
-                              <a class="btn btn-sm btn-solid text-white"
-                                 href="order-tracking.html">
-                                Tracking
-                              </a>
-                            </li>
-                          </ul>
-                        </td>
-                      </tr>
-
-                      <tr data-bs-toggle="offcanvas" href="#order-details">
-                        <td>
-                                                            <span class="order-image">
-                                                                <img src="assets/images/product/9.png" alt="users">
-                                                            </span>
-                        </td>
-
-                        <td> 987-9876543</td>
-
-                        <td>Sep 09, 2022</td>
-
-                        <td>Paypal</td>
-
-                        <td class="order-success">
-                          <span>Success</span>
-                        </td>
-
-                        <td>$15</td>
-
-                        <td>
-                          <ul>
-                            <li>
-                              <a href="order-detail.html">
-                                <i class="ri-eye-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)">
-                                <i class="ri-pencil-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)" data-bs-toggle="modal"
-                                 data-bs-target="#exampleModalToggle">
-                                <i class="ri-delete-bin-line"></i>
-                              </a>
-                            </li>
-                            <li>
-                              <a class="btn btn-sm btn-solid text-white"
-                                 href="order-tracking.html">
-                                Tracking
-                              </a>
-                            </li>
-                          </ul>
-                        </td>
-                      </tr>
-
-                      <tr data-bs-toggle="offcanvas" href="#order-details">
-                        <td>
-                                                            <span class="order-image">
-                                                                <img src="assets/images/product/10.png" alt="users">
-                                                            </span>
-                        </td>
-
-                        <td> 147-3692584</td>
-
-                        <td>Sep 17, 2022</td>
-
-                        <td>Stripe</td>
-
-                        <td class="order-success">
-                          <span>Success</span>
-                        </td>
-
-                        <td>$15</td>
-
-                        <td>
-                          <ul>
-                            <li>
-                              <a href="order-detail.html">
-                                <i class="ri-eye-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)">
-                                <i class="ri-pencil-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)" data-bs-toggle="modal"
-                                 data-bs-target="#exampleModalToggle">
-                                <i class="ri-delete-bin-line"></i>
-                              </a>
-                            </li>
-                            <li>
-                              <a class="btn btn-sm btn-solid text-white"
-                                 href="order-tracking.html">
-                                Tracking
-                              </a>
-                            </li>
-                          </ul>
-                        </td>
-                      </tr>
-
-                      <tr data-bs-toggle="offcanvas" href="#order-details">
-                        <td>
-                                                            <span class="order-image">
-                                                                <img src="assets/images/product/11.png" alt="users">
-                                                            </span>
-                        </td>
-
-                        <td> 586-5865224</td>
-
-                        <td>Sep 20, 2022</td>
-
-                        <td>Stripe</td>
-
-                        <td class="order-pending">
-                          <span>Pending</span>
-                        </td>
-
-                        <td>$15</td>
-
-                        <td>
-                          <ul>
-                            <li>
-                              <a href="order-detail.html">
-                                <i class="ri-eye-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)">
-                                <i class="ri-pencil-line"></i>
-                              </a>
-                            </li>
-
-                            <li>
-                              <a href="javascript:void(0)" data-bs-toggle="modal"
-                                 data-bs-target="#exampleModalToggle">
-                                <i class="ri-delete-bin-line"></i>
-                              </a>
-                            </li>
-                            <li>
-                              <a class="btn btn-sm btn-solid text-white"
-                                 href="order-tracking.html">
-                                Tracking
-                              </a>
-                            </li>
-                          </ul>
-                        </td>
-                      </tr>
+                      <tbody id="stockInTableBody">
+                      <!-- Dữ liệu sẽ được tải động bằng JavaScript -->
                       </tbody>
                     </table>
                   </div>
@@ -602,19 +59,8 @@
         </div>
       </div>
       <!-- Table End -->
-
-      <!-- footer start-->
-      <div class="container-fluid">
-        <footer class="footer">
-          <div class="row">
-            <div class="col-md-12 footer-copyright text-center">
-              <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-            </div>
-          </div>
-        </footer>
-      </div>
     </div>
-    <!-- Order section End -->
+    <!-- StockIn section End -->
   </div>
   <!-- Page Body End-->
 </div>
@@ -622,7 +68,7 @@
 
 <!-- Modal start -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-  <div class="modal-dialog  modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-body">
         <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
@@ -650,14 +96,12 @@
       </div>
       <div class="modal-body">
         <div class="remove-box">
-          <p>The permission for the use/group, preview is inherited from the object, object will create a
-            new permission for this object</p>
+          <p>Are you sure you want to delete this StockIn?</p>
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
-        <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-target="#exampleModalToggle2"
-                data-bs-toggle="modal" data-bs-dismiss="modal">Yes</button>
+        <button type="button" class="btn btn-animation btn-md fw-bold" id="confirmDeleteBtn">Yes</button>
       </div>
     </div>
   </div>
@@ -676,11 +120,11 @@
         <div class="remove-box text-center">
           <div class="wrapper">
             <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
-              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
             </svg>
           </div>
-          <h4 class="text-content">It's Removed.</h4>
+          <h4 class="text-content">StockIn removed successfully.</h4>
         </div>
       </div>
       <div class="modal-footer">
@@ -695,15 +139,15 @@
 <div class="offcanvas offcanvas-end order-offcanvas" tabindex="-1" id="order-details"
      aria-labelledby="offcanvasExampleLabel" aria-expanded="false">
   <div class="offcanvas-header">
-    <h4 class="offcanvas-title" id="offcanvasExampleLabel">#573-685572</h4>
+    <h4 class="offcanvas-title" id="offcanvasExampleLabel">StockIn #<span id="offcanvasStockInId"></span></h4>
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
       <i class="fas fa-times"></i>
     </button>
   </div>
   <div class="offcanvas-body">
     <div class="order-date">
-      <h6>September 17, 2022 <span class="ms-3">8:12 PM</span></h6>
-      <a href="javascript:void(0)" class="d-block mt-1">Cancel Order</a>
+      <h6 id="offcanvasStockInDate"></h6>
+      <a href="javascript:void(0)" class="d-block mt-1">Cancel StockIn</a>
     </div>
 
     <div class="accordion accordion-flush custome-accordion" id="accordionFlushExample">
@@ -711,96 +155,173 @@
         <h2 class="accordion-header" id="flush-headingOne">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                   data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-            Status
+            Details
           </button>
         </h2>
         <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
              data-bs-parent="#accordionFlushExample">
           <div class="accordion-body">
-            <ul class="status-list">
-              <li>
-                <a href="javascript:void(0)">Shipped</a>
-              </li>
-              <li>
-                <a href="javascript:void(0)">Pending</a>
-              </li>
-            </ul>
+            <p><strong>Supplier ID:</strong> <span id="offcanvasSupplierId"></span></p>
+            <p><strong>Warehouse ID:</strong> <span id="offcanvasWarehouseId"></span></p>
+            <p><strong>Note:</strong> <span id="offcanvasNote"></span></p>
           </div>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="flush-headingTwo">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-            Accordion Item #2
-          </button>
-        </h2>
-        <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo"
-             data-bs-parent="#accordionFlushExample">
-          <div class="accordion-body">Placeholder content for this accordion, which is intended to
-            demonstrate the <code>.accordion-flush</code> class. This is the second item's accordion
-            body. Let's imagine this being filled with some actual content.</div>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="flush-headingThree">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#flush-collapseThree" aria-expanded="false"
-                  aria-controls="flush-collapseThree">
-            Accordion Item #3
-          </button>
-        </h2>
-        <div id="flush-collapseThree" class="accordion-collapse collapse"
-             aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
-          <div class="accordion-body">Placeholder content for this accordion, which is intended to
-            demonstrate the <code>.accordion-flush</code> class. This is the third item's accordion
-            body. Nothing more exciting happening here in terms of content, but just filling up the
-            space to make it look, at least at first glance, a bit more representative of how this would
-            look in a real-world application.</div>
         </div>
       </div>
     </div>
   </div>
 </div>
 <!-- Offcanvas Box End -->
-<!-- latest js -->
+
+<!-- Latest js -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
-
-<!-- Bootstrap js -->
 <script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
-
-<!-- feather icon js -->
 <script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
 <script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
-
-<!-- scrollbar simplebar js -->
 <script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
 <script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
-
-<!-- Sidebar js -->
 <script th:src="@{/Backend/assets/js/config.js}"></script>
-
-<!-- customizer js -->
 <script th:src="@{/Backend/assets/js/customizer.js}"></script>
-
-<!-- Plugins js -->
 <script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
 <script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
 <script th:src="@{/Backend/assets/js/notify/index.js}"></script>
-
-<!-- Data table js -->
 <script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
 <script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
-
-<!-- sidebar effect -->
 <script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
-
-<!-- Theme js -->
 <script th:src="@{/Backend/assets/js/script.js}"></script>
-
-<!-- all checkbox select js -->
 <script th:src="@{/Backend/assets/js/checkbox-all-check.js}"></script>
 
-</body>
+<!-- Custom JavaScript -->
+<script>
+  $(document).ready(function() {
+    // Load StockIn data
+    function loadStockIns() {
+      $.ajax({
+        url: 'http://localhost:8080/api/stockins',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          var tbody = $('#stockInTableBody');
+          tbody.empty();
+          $.each(data, function(index, stockIn) {
+            // Fetch Supplier and Warehouse names
+            $.when(
+                    $.ajax({ url: 'http://localhost:8080/api/suppliers/' + stockIn.supplierID, method: 'GET', dataType: 'json' }),
+                    $.ajax({ url: 'http://localhost:8080/api/warehouses/' + stockIn.warehouseID, method: 'GET', dataType: 'json' })
+            ).done(function(supplierResponse, warehouseResponse) {
+              var supplierName = supplierResponse[0].supplierName || 'N/A';
+              var warehouseName = warehouseResponse[0].warehouseName || 'N/A';
+              var row = '<tr data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="' + stockIn.id + '">' +
+                      '<td>' + stockIn.id + '</td>' +
+                      '<td>' + supplierName + '</td>' +
+                      '<td>' + warehouseName + '</td>' +
+                      '<td>' + (stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleDateString() : 'N/A') + '</td>' +
+                      '<td>' + (stockIn.note || 'N/A') + '</td>' +
+                      '<td>' +
+                      '<ul>' +
+                      '<li><a href="/stockindetail?stockInId=' + stockIn.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
+                      '<li><a href="javascript:void(0)"><i class="ri-pencil-line"></i></a></li>' +
+                      '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="' + stockIn.id + '"><i class="ri-delete-bin-line"></i></a></li>' +
+                      '</ul>' +
+                      '</td>' +
+                      '</tr>';
+              tbody.append(row);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+              console.error('Error fetching supplier or warehouse: ', textStatus, errorThrown);
+              var row = '<tr data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="' + stockIn.id + '">' +
+                      '<td>' + stockIn.id + '</td>' +
+                      '<td>N/A</td>' +
+                      '<td>N/A</td>' +
+                      '<td>' + (stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleDateString() : 'N/A') + '</td>' +
+                      '<td>' + (stockIn.note || 'N/A') + '</td>' +
+                      '<td>' +
+                      '<ul>' +
+                      '<li><a href="/stockindetail?stockInId=' + stockIn.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
+                      '<li><a href="javascript:void(0)"><i class="ri-pencil-line"></i></a></li>' +
+                      '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="' + stockIn.id + '"><i class="ri-delete-bin-line"></i></a></li>' +
+                      '<li><a class="btn btn-sm btn-solid text-white" href="order-tracking.html">Tracking</a></li>' +
+                      '</ul>' +
+                      '</td>' +
+                      '</tr>';
+              tbody.append(row);
+            });
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error('Error loading StockIns: ', status, error);
+          $('#stockInTableBody').html('<tr><td colspan="6">Failed to load data. Check console.</td></tr>');
+        }
+      });
+    }
 
+    // Load StockIn details and StockInDetails into offcanvas
+    $(document).on('show.bs.offcanvas', '#order-details', function(event) {
+      var stockInId = $(event.relatedTarget).data('stockin-id');
+      $('#offcanvasStockInId').text(stockInId);
+      $.when(
+              $.ajax({ url: 'http://localhost:8080/api/stockins/' + stockInId, method: 'GET', dataType: 'json' }),
+              $.ajax({ url: 'http://localhost:8080/api/stockindetails?stockInId=' + stockInId, method: 'GET', dataType: 'json' })
+      ).done(function(stockInResponse, stockInDetailsResponse) {
+        var stockIn = stockInResponse[0];
+        var stockInDetails = stockInDetailsResponse[0];
+        $('#offcanvasStockInDate').text(stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleString() : 'N/A');
+        $('#offcanvasSupplierName').text(stockIn.supplierID ? 'Loading...' : 'N/A');
+        $('#offcanvasWarehouseName').text(stockIn.warehouseID ? 'Loading...' : 'N/A');
+        $('#offcanvasNote').text(stockIn.note || 'N/A');
+
+        // Fetch Supplier and Warehouse names
+        $.when(
+                $.ajax({ url: 'http://localhost:8080/api/suppliers/' + stockIn.supplierID, method: 'GET', dataType: 'json' }),
+                $.ajax({ url: 'http://localhost:8080/api/warehouses/' + stockIn.warehouseID, method: 'GET', dataType: 'json' })
+        ).done(function(supplierResponse, warehouseResponse) {
+          $('#offcanvasSupplierName').text(supplierResponse[0].name || 'N/A');
+          $('#offcanvasWarehouseName').text(warehouseResponse[0].name || 'N/A');
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+          $('#offcanvasSupplierName').text('N/A');
+          $('#offcanvasWarehouseName').text('N/A');
+          console.error('Error fetching supplier or warehouse: ', textStatus, errorThrown);
+        });
+
+        // Load StockInDetails
+        var detailTbody = $('#stockInDetailTable');
+        detailTbody.empty();
+        $.each(stockInDetails, function(index, detail) {
+          var row = '<tr>' +
+                  '<td>' + (detail.productDetailID || 'N/A') + '</td>' +
+                  '<td>' + (detail.quantity || 'N/A') + '</td>' +
+                  '<td>' + (detail.unitPrice || 'N/A') + '</td>' +
+                  '<td>' + (detail.batchID || 'N/A') + '</td>' +
+                  '</tr>';
+          detailTbody.append(row);
+        });
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+        console.error('Error loading StockIn details: ', textStatus, errorThrown);
+      });
+    });
+
+    // Delete StockIn
+    $('#confirmDeleteBtn').on('click', function() {
+      var stockInId = $('#exampleModalToggle').data('stockin-id');
+      if (stockInId) {
+        $.ajax({
+          url: 'http://localhost:8080/api/stockins/' + stockInId,
+          method: 'DELETE',
+          success: function() {
+            $('#exampleModalToggle').modal('hide');
+            $('#exampleModalToggle2').modal('show');
+            loadStockIns(); // Reload table after deletion
+          },
+          error: function(xhr, status, error) {
+            console.error('Error deleting StockIn: ', status, error);
+            alert('Failed to delete StockIn. Check console.');
+          }
+        });
+      }
+    });
+
+    // Initialize table
+    loadStockIns();
+  });
+</script>
+
+</body>
 </html>
