@@ -186,20 +186,21 @@
 <!-- Delete Modal Box End -->
 
 <div class="modal fade" id="adjustmentDetailModal" tabindex="-1" aria-labelledby="adjustmentDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-scrollable" style="max-width: 90%; width: fit-content; min-width: 300px;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="adjustmentDetailModalLabel">Chi tiết điều chỉnh</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <table class="table">
+            <div class="modal-body" style="overflow-x: auto; overflow-y: auto; max-height: 70vh;">
+                <table class="table table-striped table-bordered">
                     <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Quantity</th>
-                        <th>Adjust Date</th>
-                        <th>Type</th>
+                        <th style="white-space: nowrap;">ID</th>
+                        <th style="white-space: nowrap;">Quantity</th>
+                        <th style="white-space: nowrap;">Reason</th>
+                        <th style="white-space: nowrap;">Adjust Date</th>
+                        <th style="white-space: nowrap;">Type</th>
                     </tr>
                     </thead>
                     <tbody id="adjustmentDetailBody"></tbody>
@@ -324,7 +325,7 @@
                         return;
                     }
                     $.each(data, function(index, detail) {
-                        var id = detail.productDetailId || detail.id;
+                        var id = detail.productDetailID || detail.id;
                         if (id) {
                             var selected = id == selectedId ? 'selected' : '';
                             selectElement.append(`<option value="${id}" ${selected}>${detail.detailName || 'Không có tên'} (ID: ${id})</option>`);
@@ -338,35 +339,6 @@
             });
         }
 
-        // Hàm populate dropdown Batch cho modal điều chỉnh
-        function populateBatchDropdown(selectElement, selectedId) {
-            $.ajax({
-                url: '/api/product-batches',
-                method: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    selectElement.empty();
-                    selectElement.append('<option value="" disabled selected>Chọn Batch</option>');
-                    if (!data || data.length === 0) {
-                        selectElement.append('<option value="" disabled>Không có Batch</option>');
-                        selectElement.prop('disabled', true);
-                        return;
-                    }
-                    $.each(data, function(index, batch) {
-                        var id = batch.batchId;
-                        if (id) {
-                            var selected = id == selectedId ? 'selected' : '';
-                            selectElement.append(`<option value="${id}" ${selected}>Batch ID: ${id}</option>`);
-                        }
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error('Lỗi khi lấy Batches: ', status, error);
-                    alert('Không thể tải danh sách Batch. Kiểm tra console.');
-                }
-            });
-        }
-
         // Gọi API để lấy danh sách ProductBatch
         function loadProductBatches() {
             $.ajax({
@@ -374,6 +346,7 @@
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
+                    console.log('Dữ liệu từ /api/product-batches:', data);
                     var tbody = $('#productBatchTableBody');
                     tbody.empty();
 
@@ -391,14 +364,20 @@
                         dataType: 'json',
                         async: false,
                         success: function(adjustments) {
+                            console.log('Dữ liệu từ /api/adjustments:', adjustments);
                             $.each(adjustments, function(index, adj) {
-                                var batchId = adj.batch || adj.batchId;
+                                var batchId = adj.batchId;
+                                console.log(`Adjustment ${index}: batchId=${batchId}, quantity=${adj.quantity}`);
                                 if (batchId) {
                                     adjustmentTotals[batchId] = (adjustmentTotals[batchId] || 0) + (adj.quantity || 0);
                                     if (!adjustmentDetails[batchId]) adjustmentDetails[batchId] = [];
                                     adjustmentDetails[batchId].push(adj);
+                                } else {
+                                    console.warn(`Adjustment ${index} không có batchId hợp lệ:`, adj);
                                 }
                             });
+                            console.log('adjustmentTotals:', adjustmentTotals);
+                            console.log('adjustmentDetails:', adjustmentDetails);
                         },
                         error: function(xhr, status, error) {
                             console.error('Lỗi khi lấy adjustments: ', status, error);
@@ -413,12 +392,15 @@
                         dataType: 'json',
                         async: false,
                         success: function(adjustments) {
+                            console.log('Dữ liệu từ /api/adjustments:', adjustments);
                             $.each(adjustments, function(index, adj) {
                                 var batchId = adj.batch || adj.batchId;
+                                console.log(`Adjustment ${index}: batchId=${batchId}`);
                                 if (batchId) {
                                     adjustmentCounts[batchId] = (adjustmentCounts[batchId] || 0) + 1;
                                 }
                             });
+                            console.log('adjustmentCounts:', adjustmentCounts);
                         },
                         error: function(xhr, status, error) {
                             console.error('Lỗi khi lấy adjustments: ', status, error);
@@ -426,11 +408,13 @@
                     });
 
                     $.each(data, function(index, batch) {
+                        console.log(`Batch ${index}:`, batch);
                         var productDetailId = batch.productDetailID || batch.productDetail || 'N/A';
                         var remainingQuantity = batch.importedQuantity - (batch.soldQuantity || 0);
-                        var totalAdjustment = adjustmentTotals[batch.batchId] || 0;
+                        var totalAdjustment = adjustmentTotals[batch.batchID] || 0; // Sử dụng batchID
                         remainingQuantity -= totalAdjustment;
-                        var adjustmentCount = adjustmentCounts[batch.batchId] || 0;
+                        var adjustmentCount = adjustmentCounts[batch.batchID] || 0; // Sử dụng batchID
+                        console.log(`Batch ${batch.batchID}: totalAdjustment=${totalAdjustment}, adjustmentCount=${adjustmentCount}, remainingQuantity=${remainingQuantity}`);
 
                         // Lấy expiry từ API product-details
                         var expiry = 'N/A';
@@ -439,6 +423,7 @@
                             method: 'GET',
                             async: false,
                             success: function(detail) {
+                                console.log(`Dữ liệu từ /api/product-details/${productDetailId}:`, detail);
                                 expiry = detail.expiry || 'N/A';
                             },
                             error: function() {
@@ -457,6 +442,7 @@
                             var totalTime = expiryDate - manufactureDate;
                             var usedTime = today - manufactureDate;
                             percentageUsed = (usedTime / totalTime) * 100;
+                            console.log(`Batch ${batch.batchID}: manufactureDate=${batch.manufactureDate}, expiry=${expiry}, percentageUsed=${percentageUsed}`);
                         }
 
                         var row = '<tr' + (percentageUsed !== null ? (percentageUsed >= 100 ? ' class="table-danger"' : percentageUsed >= 70 ? ' style="background-color: #ffca2c;"' : percentageUsed >= 50 ? ' class="table-warning"' : '') : '') + '>' +
@@ -466,7 +452,7 @@
                             '<td>' + (batch.importedQuantity || 'N/A') + '</td>' +
                             '<td>' + (batch.soldQuantity || 0) + '</td>' +
                             '<td>' + remainingQuantity + '</td>' +
-                            '<td>' + (adjustmentCount > 0 ? '<a href="javascript:void(0)" class="view-adjustment-detail" data-batch-id="' + (batch.batchId || '') + '">' + totalAdjustment + '</a>' : '<span style="pointer-events: none; opacity: 0.5;">' + totalAdjustment + '</span>') + '</td>' +
+                            '<td>' + (adjustmentCount > 0 ? '<a href="javascript:void(0)" class="view-adjustment-detail" data-batch-id="' + (batch.batchID || '') + '">' + totalAdjustment + '</a>' : '<span style="pointer-events: none; opacity: 0.5;">' + totalAdjustment + '</span>') + '</td>' +
                             '<td>' +
                             '<ul class="action-list">' +
                             '<li><a href="javascript:void(0)" class="view-detail" data-id="' + productDetailId + '"><i class="ri-eye-line"></i></a></li>' +
@@ -490,7 +476,8 @@
                         $.ajax({
                             url: '/api/product-details/' + productDetailId,
                             method: 'GET',
-                            dataType: 'json',                            success: function(detail) {
+                            dataType: 'json',
+                            success: function(detail) {
                                 $('#modalProductDetailId').text(detail.productDetailId || 'N/A');
                                 $('#modalDetailName').text(detail.detailName || 'N/A');
                                 $('#modalProductId').text(detail.productID || 'N/A');
@@ -539,7 +526,7 @@
                         $('#exampleModalToggle').modal('show');
                     });
 
-                    // Xử lý click vào View Adjustment Detail từ cột Adjustment Total
+                    // Xử lý click vào View Adjustment Detail
                     $('.view-adjustment-detail').on('click', function() {
                         var batchId = $(this).data('batch-id');
                         if (!batchId || batchId === 'N/A') {
@@ -556,25 +543,27 @@
                                 tbody.empty();
 
                                 if (!response) {
-                                    tbody.append('<tr><td colspan="4">Không nhận được dữ liệu từ server.</td></tr>');
+                                    tbody.append('<tr><td colspan="5">Không nhận được dữ liệu từ server.</td></tr>');
                                     console.log('Phản hồi từ API là null hoặc undefined cho batchId: ' + batchId);
                                 } else if (!response.adjustments || response.adjustments.length === 0) {
-                                    tbody.append('<tr><td colspan="4">Không có điều chỉnh cho batchId: ' + batchId + '</td></tr>');
+                                    tbody.append('<tr><td colspan="5">Không có điều chỉnh cho batchId: ' + batchId + '</td></tr>');
                                     console.log('Không có adjustments trong phản hồi cho batchId: ' + batchId, response);
                                 } else {
                                     var adjustments = response.adjustments;
                                     $.each(adjustments, function(index, adj) {
-                                        // Kiểm tra và hiển thị từng trường
                                         var id = adj.id !== undefined && adj.id !== null ? adj.id : 'N/A';
                                         var quantity = adj.quantity !== undefined && adj.quantity !== null ? adj.quantity : 'N/A';
                                         var adjustDate = adj.adjustDate !== undefined && adj.adjustDate !== null ? adj.adjustDate : 'N/A';
                                         var adjustmentType = adj.adjustmentType !== undefined && adj.adjustmentType !== null ? adj.adjustmentType : 'N/A';
+                                        var reason = adj.reason !== undefined && adj.reason !== null ? adj.reason : 'N/A'; // Thêm trường reason
 
                                         tbody.append('<tr>' +
                                             '<td>' + id + '</td>' +
                                             '<td>' + quantity + '</td>' +
+                                            '<td>' + reason + '</td>' + // Thêm cột reason
                                             '<td>' + adjustDate + '</td>' +
                                             '<td>' + adjustmentType + '</td>' +
+
                                             '</tr>');
                                         console.log('Dữ liệu điều chỉnh cho batchId ' + batchId + ' tại index ' + index + ':', adj);
                                     });
@@ -585,7 +574,7 @@
                                 var tbody = $('#adjustmentDetailBody');
                                 tbody.empty();
                                 var errorMessage = 'Lỗi khi lấy chi tiết điều chỉnh: ' + (xhr.status + ' - ' + (xhr.responseText || status || error));
-                                tbody.append('<tr><td colspan="4">' + errorMessage + '</td></tr>');
+                                tbody.append('<tr><td colspan="5">' + errorMessage + '</td></tr>');
                                 console.error('Lỗi chi tiết:', errorMessage, xhr.responseText);
                                 alert('Không thể tải chi tiết điều chỉnh. Kiểm tra console để xem lỗi cụ thể.');
                             }

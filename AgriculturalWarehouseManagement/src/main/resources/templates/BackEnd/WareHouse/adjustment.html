@@ -277,7 +277,7 @@
                         return;
                     }
                     $.each(data, function(index, batch) {
-                        var id = batch.batchId || batch.id;
+                        var id = batch.batchID || batch.id;
                         if (id) {
                             var selected = id == selectedId ? 'selected' : '';
                             selectElement.append(`<option value="${id}" ${selected}>Batch ID: ${id}</option>`);

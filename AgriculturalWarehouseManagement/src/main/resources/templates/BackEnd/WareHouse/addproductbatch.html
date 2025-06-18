@@ -172,7 +172,7 @@
 
                     console.log('Kiểm tra trường productDetailId trong dữ liệu:', data[0]);
                     $.each(data, function(index, detail) {
-                        var id = detail.productDetailId || detail.id;
+                        var id = detail.productDetailID || detail.id;
                         if (id) {
                             select.append(`<option value="${id}">${detail.detailName || 'Không có tên'} (ID: ${id})</option>`);
                             console.log(`Đã thêm option: ID=${id}, Name=${detail.detailName}`);

@@ -72,31 +72,48 @@ public class ProductBatchService {
         repository.deleteById(id);
     }
 
-    // Lấy danh sách điều chỉnh theo batchId
     public Map<String, Object> getAdjustmentsByBatchId(Integer batchId) {
+        // Kiểm tra batchId không null
+        if (batchId == null) {
+            throw new IllegalArgumentException("Batch ID cannot be null");
+        }
+
+        // Truy vấn danh sách adjustments dựa trên batchId
         List<Adjustment> adjustments = adjustmentRepository.findByBatchBatchId(batchId);
+        if (adjustments == null || adjustments.isEmpty()) {
+            return new HashMap<>(); // Trả về map rỗng nếu không có dữ liệu
+        }
+
+        // Chuyển đổi sang DTO
         List<AdjustmentDTO> adjustmentDTOs = adjustments.stream()
                 .map(this::adjustmentToAdjustmentDTO)
                 .collect(Collectors.toList());
+
+        // Tính tổng và đếm
         int totalAdjustment = adjustments.stream()
                 .mapToInt(adj -> adj.getQuantity() != null ? adj.getQuantity() : 0)
                 .sum();
         int adjustmentCount = adjustments.size();
 
+        // Tạo map kết quả
         Map<String, Object> result = new HashMap<>();
-        result.put("adjustments", adjustmentDTOs); // Trả về DTO thay vì entity
+        result.put("adjustments", adjustmentDTOs);
         result.put("totalAdjustment", totalAdjustment);
         result.put("adjustmentCount", adjustmentCount);
+
         return result;
     }
 
-    // Chuyển Adjustment sang AdjustmentDTO
+    // Phương thức ánh xạ từ Adjustment sang AdjustmentDTO (cần đảm bảo đầy đủ các trường)
     private AdjustmentDTO adjustmentToAdjustmentDTO(Adjustment adjustment) {
         AdjustmentDTO dto = new AdjustmentDTO();
         dto.setId(adjustment.getId());
-        dto.setBatchId(adjustment.getBatch() != null ? adjustment.getBatch().getBatchId() : null);
-        dto.setQuantity(adjustment.getQuantity() != null ? adjustment.getQuantity() : 0);
-        // Thêm các trường khác của Adjustment nếu cần
+        dto.setWarehouseId(adjustment.getWarehouse().getId()); // Đảm bảo không null nếu không có
+        dto.setBatchId(adjustment.getBatch() != null ? adjustment.getBatch().getBatchId() : null); // Lấy batchId từ Batch entity
+        dto.setQuantity(adjustment.getQuantity());
+        dto.setAdjustDate(adjustment.getAdjustDate()); // Đảm bảo không null
+        dto.setReason(adjustment.getReason()); // Đảm bảo không null
+        dto.setAdjustmentType(adjustment.getAdjustmentType().name()); // Đảm bảo không null
         return dto;
     }
 
