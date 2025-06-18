@@ -1,597 +1,215 @@
-<section class="top-selling-section" th:fragment="topsection">
-  <div class="container-fluid-lg">
-    <div class="slider-4-1">
-      <div>
-        <div class="row">
-          <div class="col-12">
-            <div class="top-selling-box">
-              <div class="top-selling-title">
-                <h3>Top Selling</h3>
-              </div>
+<!-- Product Section Start -->
+<section class="product-section-2" th:fragment="topsection">
+    <div class="container-fluid-lg">
+        <div class="row gy-sm-5 gy-4">
+            <div class="col-xxl-3 col-md-6">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="title title-border d-block">
+                            <h3>NEW PRODUCTS</h3>
+                        </div>
 
-              <div class="top-selling-contain wow fadeInUp">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/1.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
+                        <div class="product-category-1 arrow-slider-2">
+                            <div th:each="group : ${groupedProductsTop9}">
+                                <div th:each="product : ${group}" class="row gy-sm-4 gy-3">
+                                    <div class="col-12">
+                                        <div class="product-box-4 wow fadeInUp">
+                                            <a href="shop-left-sidebar.html" class="product-image">
+                                                <img th:src="@{${product.imageUrlGallery}}" class="img-fluid"
+                                                     alt="">
+                                            </a>
+                                            <div class="product-details">
+                                                <ul class="rating">
+                                                    <li th:each="i : ${#numbers.sequence(1, 5)}">
+                                                        <i data-feather="star"
+                                                           th:classappend="${i <= product.ratingProductDetail} ? 'fill' : ''">
+                                                        </i>
+                                                    </li>
+                                                </ul>
+                                                <span th:text="${ '(' + product.ratingCount + ')'}" >Rating count</span>
+                                                <a href="product-left-thumbnail.html">
+                                                    <h4 th:text="${product.productName}"  class="name">Product name</h4>
+                                                </a>
+                                                <h5 th:text="${ '$'+ product.productPrice}" class="price">
+                                                    Product price smallest in ProductDetail
+                                                </h5>
+                                                <ul class="option">
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Add to Cart">
+                                                        <a href="cart.html">
+                                                            <i class="iconly-Buy icli"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Quick View">
+                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                           data-bs-target="#exampleModal">
+                                                            <i class="iconly-Show icli"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Wishlist">
+                                                        <a href="wishlist.html">
+                                                            <i class="iconly-Heart icli"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Compare">
+                                                        <a href="compare.html">
+                                                            <i class="iconly-Swap icli"></i>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Tuffets Whole Wheat Bread</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 10.00</h6>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
-              </div>
-
-              <div class="top-selling-contain wow fadeIn" data-wow-delay="0.05s">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/2.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
-
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Potato</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 40.00</h6>
-                </div>
-              </div>
-
-              <div class="top-selling-contain wow fadeIn" data-wow-delay="0.1s">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/3.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
-
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Green Chilli</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 45.00</h6>
-                </div>
-              </div>
-
-              <div class="top-selling-contain wow fadeIn" data-wow-delay="0.15s">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/4.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
-
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Muffets Burger Bun</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 70.00</h6>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <div>
-        <div class="row">
-          <div class="col-12">
-            <div class="top-selling-box">
-              <div class="top-selling-title">
-                <h3>Trending Products</h3>
-              </div>
+            <div class="col-xxl-3 col-md-6">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="title title-border d-block">
+                            <h3>TOP PRICE PRODUCTS</h3>
+                        </div>
 
-              <div class="top-selling-contain wow fadeInUp">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/5.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
-
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Good Life Refined Sunflower Oil</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 10.00</h6>
+                        <div class="product-category-1 arrow-slider-2">
+                            <div th:each="group : ${groupedProductsPriceTop9}">
+                                <div  th:each="product : ${group}" class="row gy-sm-4 gy-3">
+                                    <div class="col-12">
+                                        <div class="product-box-4 wow fadeInUp">
+                                            <a href="shop-left-sidebar.html" class="product-image">
+                                                <img th:src="@{${product.imageUrlGallery}}" class="img-fluid"
+                                                     alt="">
+                                            </a>
+                                            <div class="product-details">
+                                                <ul class="rating">
+                                                    <li th:each="i : ${#numbers.sequence(1, 5)}">
+                                                        <i data-feather="star"
+                                                           th:classappend="${i <= product.ratingProductDetail} ? 'fill' : ''">
+                                                        </i>
+                                                    </li>
+                                                </ul>
+                                                <span th:text="${ '(' + product.ratingCount + ')'}" >Rating count</span>
+                                                <a href="product-left-thumbnail.html">
+                                                    <h4 th:text="${product.productName}"  class="name">Product name</h4>
+                                                </a>
+                                                <h5 th:text="${ '$'+ product.productPrice}" class="price">
+                                                    Product price smallest in ProductDetail
+                                                </h5>
+                                                <ul class="option">
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Add to Cart">
+                                                        <a href="cart.html">
+                                                            <i class="iconly-Buy icli"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Quick View">
+                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                           data-bs-target="#exampleModal">
+                                                            <i class="iconly-Show icli"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Wishlist">
+                                                        <a href="wishlist.html">
+                                                            <i class="iconly-Heart icli"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Compare">
+                                                        <a href="compare.html">
+                                                            <i class="iconly-Swap icli"></i>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-
-              <div class="top-selling-contain wow fadeIn" data-wow-delay="0.05s">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/6.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
-
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Good Life Raw Peanuts</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 40.00</h6>
-                </div>
-              </div>
-
-              <div class="top-selling-contain wow fadeIn" data-wow-delay="0.1s">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/7.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
-
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Good Life Raw Peanuts</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 85.00</h6>
-                </div>
-              </div>
-
-              <div class="top-selling-contain wow fadeIn" data-wow-delay="0.15s">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/8.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
-
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Frooti Mango Drink</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 10.00</h6>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <div>
-        <div class="row">
-          <div class="col-12">
-            <div class="top-selling-box">
-              <div class="top-selling-title">
-                <h3>Recently added</h3>
-              </div>
+            <div class="col-xxl-3 col-md-6">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="title title-border d-block">
+                            <h3>TOP RATING</h3>
+                        </div>
 
-              <div class="top-selling-contain wow fadeInUp">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/9.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
+                        <div class="product-category-1 arrow-slider-2">
+                            <div th:each="group : ${groupedProductsRatingTop9}">
+                                <div th:each="product : ${group}"  class="row gy-sm-4 gy-3">
+                                    <div class="col-12">
+                                        <div class="product-box-4 wow fadeInUp">
+                                            <a href="shop-left-sidebar.html" class="product-image">
+                                                <img th:src="@{${product.imageUrlGallery}}" class="img-fluid"
+                                                     alt="">
+                                            </a>
+                                            <div class="product-details">
+                                                <ul class="rating">
+                                                    <li th:each="i : ${#numbers.sequence(1, 5)}">
+                                                        <i data-feather="star"
+                                                           th:classappend="${i <= product.ratingProductDetail} ? 'fill' : ''">
+                                                        </i>
+                                                    </li>
+                                                </ul>
+                                                <span th:text="${ '(' + product.ratingCount + ')'}" >Rating count</span>
+                                                <a href="product-left-thumbnail.html">
+                                                    <h4 th:text="${product.productName}"  class="name">Product name</h4>
+                                                </a>
+                                                <h5 th:text="${ '$'+ product.productPrice}" class="price">
+                                                    Product price smallest in ProductDetail
+                                                </h5>
+                                                <ul class="option">
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Add to Cart">
+                                                        <a href="cart.html">
+                                                            <i class="iconly-Buy icli"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Quick View">
+                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                           data-bs-target="#exampleModal">
+                                                            <i class="iconly-Show icli"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Wishlist">
+                                                        <a href="wishlist.html">
+                                                            <i class="iconly-Heart icli"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Compare">
+                                                        <a href="compare.html">
+                                                            <i class="iconly-Swap icli"></i>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Tuffets Britannia Cheezza</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 10.00</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-
-              <div class="top-selling-contain wow fadeIn" data-wow-delay="0.05s">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/10.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
-
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Long Life Toned Milk</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 40.00</h6>
-                </div>
-              </div>
-
-              <div class="top-selling-contain wow fadeIn" data-wow-delay="0.1s">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/11.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
-
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Organic Tomato</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 45.00</h6>
-                </div>
-              </div>
-
-              <div class="top-selling-contain wow fadeIn" data-wow-delay="0.15s">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/12.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
-
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Organic Pure Honey</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 90.00</h6>
-                </div>
-              </div>
             </div>
-          </div>
+
         </div>
-      </div>
-
-      <div>
-        <div class="row">
-          <div class="col-12">
-            <div class="top-selling-box">
-              <div class="top-selling-title">
-                <h3>Top Rated</h3>
-              </div>
-
-              <div class="top-selling-contain wow fadeInUp">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/13.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
-
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Good Life Walnut Kernels</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 10.00</h6>
-                </div>
-              </div>
-
-              <div class="top-selling-contain wow fadeIn" data-wow-delay="0.05s">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/14.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
-
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Cherry Red Premium Imported</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 40.00</h6>
-                </div>
-              </div>
-
-              <div class="top-selling-contain wow fadeIn" data-wow-delay="0.1s">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/15.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
-
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Meatigo Premium Goat Curry</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 45.00</h6>
-                </div>
-              </div>
-
-              <div class="top-selling-contain wow fadeIn" data-wow-delay="0.15s">
-                <a href="product-left-thumbnail.html" class="top-selling-image">
-                  <img src="../assets/images/veg-2/top-selling/16.jpg"
-                       class="img-fluid blur-up lazyload" alt="">
-                </a>
-
-                <div class="top-selling-detail">
-                  <a href="product-left-thumbnail.html">
-                    <h5>Dates Medjoul Premium Imported</h5>
-                  </a>
-                  <div class="product-rating">
-                    <ul class="rating">
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star" class="fill"></i>
-                      </li>
-                      <li>
-                        <i data-feather="star"></i>
-                      </li>
-                    </ul>
-                    <span>(34)</span>
-                  </div>
-                  <h6>$ 70.00</h6>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 </section>
+<!-- Product Section End -->

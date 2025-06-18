@@ -6,10 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class FrontEndController {
-    @RequestMapping("/home")
-    public String home() {
-        return "FrontEnd/Home/home";
-    }
 
     @RequestMapping("/shop")
     public String shop() {
@@ -21,10 +17,6 @@ public class FrontEndController {
         return "FrontEnd/Home/productdetail";
     }
 
-//    @RequestMapping("/login")
-//    public String login() {
-//        return "FrontEnd/Home/login";
-//    }
 
     @RequestMapping("/seller")
     public String seller() {
