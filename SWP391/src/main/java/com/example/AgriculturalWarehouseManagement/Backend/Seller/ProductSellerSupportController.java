@@ -4,12 +4,17 @@ import com.example.AgriculturalWarehouseManagement.dtos.ProductDTO;
 import com.example.AgriculturalWarehouseManagement.dtos.Seller.ProductSellerResponseDTO;
 import com.example.AgriculturalWarehouseManagement.models.Category;
 import com.example.AgriculturalWarehouseManagement.models.Product;
+import com.example.AgriculturalWarehouseManagement.repositories.CategoryRepository;
+import com.example.AgriculturalWarehouseManagement.repositories.ProductRepository;
 import com.example.AgriculturalWarehouseManagement.services.ICategoryService;
 import com.example.AgriculturalWarehouseManagement.services.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+import java.util.Optional;
 
 
 @RestController
@@ -54,15 +59,6 @@ public class ProductSellerSupportController {
         }
     }
 
-    @PutMapping("/{id}/hide")
-    public ResponseEntity<?> hideProduct(@PathVariable Long id) {
-        boolean isDeleted = productService.deleteProduct(id); // gọi method có sẵn
-        if (isDeleted) {
-            return ResponseEntity.ok("Product has been hidden (soft deleted)");
-        } else {
-            return ResponseEntity.status(404).body("Product not found");
-        }
-    }
 
 }
 
