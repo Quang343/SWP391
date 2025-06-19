@@ -95,4 +95,10 @@ public class ProductService implements IProductService {
         }
         return productImageRepository.save(productImage);
     }
+
+    //    chiến_seller
+    public void save(Product product) {
+        productRepository.save(product);
+    }
+
 }
