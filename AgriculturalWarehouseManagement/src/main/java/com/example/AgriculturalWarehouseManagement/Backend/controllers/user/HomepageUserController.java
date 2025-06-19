@@ -1,7 +1,9 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.CategoryUsersResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ProductUserHomepageResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.CategoryUsersService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.ProductUsersHomepageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,9 @@ public class HomepageUserController {
     @Autowired
     private ProductUsersHomepageService productUsersService;
 
+    @Autowired
+    private CategoryUsersService categoryUsersService;
+
     @RequestMapping("/")
     public String homePage() {
         return "redirect:/home";
@@ -24,6 +29,13 @@ public class HomepageUserController {
 
     @RequestMapping("/home")
     public String home(Model model) {
+
+        // Homepage All category
+        List<CategoryUsersResponse> categoryUsersResponses = categoryUsersService.getAllListCategory();
+        for (CategoryUsersResponse categoryUsersResponse : categoryUsersResponses) {
+            System.out.printf("Category Name: %s\n", categoryUsersResponse.toString());
+        }
+        model.addAttribute("categoryUsersResponses", categoryUsersResponses);
 
         // HomePage Product user can view
         List<ProductUserHomepageResponse> productView = productUsersService.getProductUsersHomepages();
