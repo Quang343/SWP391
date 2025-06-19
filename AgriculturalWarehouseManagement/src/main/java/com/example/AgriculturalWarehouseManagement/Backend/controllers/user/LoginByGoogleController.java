@@ -9,6 +9,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserSer
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -45,7 +46,7 @@ public class LoginByGoogleController {
             String token = jwtTokenFilter.generateToken(googleAccountRequest.getEmail());
             session.setAttribute("auth_token", token);
             session.setMaxInactiveInterval(60 * 60);
-            return "redirect:/home";
+            return "redirect:/movePageRole";
         } else {
             if (user.getStatus().equals("Inactive")) {
                 redirectAttributes.addFlashAttribute("errorLoginGG", "Account inactive !!!");
@@ -60,7 +61,7 @@ public class LoginByGoogleController {
                 session.setAttribute("auth_token", token);
                 session.setMaxInactiveInterval(60 * 60);
 
-                return "redirect:/home";
+                return "redirect:/movePageRole";
             } else {
                 return "redirect:/login";
             }

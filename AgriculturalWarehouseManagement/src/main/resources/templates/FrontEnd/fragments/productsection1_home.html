@@ -104,7 +104,7 @@
 <!--    </div>-->
 <!--</section>-->
 
-<section class="product-section"  th:fragment="productsection1_home">
+<section class="product-section" th:fragment="productsection1_home">
     <div class="container-fluid-lg">
         <div class="title">
             <h2>Top Products</h2>
@@ -114,8 +114,10 @@
             <div th:each="group : ${groupedProducts}">
                 <div th:each="product : ${group}" class="product-box-4 wow fadeInUp">
                     <div class="product-image">
-                        <div class="label-flex">
-                            <button class="btn p-0 wishlist btn-wishlist notifi-wishlist">
+                        <div th:if="${session.account != null}" class="label-flex">
+                            <button class="btn p-0 wishlist notifi-wishlist"
+                                    th:data-productid="${product.productId}"
+                                    type="button">
                                 <i class="iconly-Heart icli"></i>
                             </button>
                         </div>
@@ -146,9 +148,9 @@
                                 </i>
                             </li>
                         </ul>
-                        <span th:text="${ '(' + product.ratingCount + ')'}" >Rating count</span>
+                        <span th:text="${ '(' + product.ratingCount + ')'}">Rating count</span>
                         <a href="product-left-thumbnail.html">
-                            <h5 th:text="${product.productName}"  class="name">Product name</h5>
+                            <h5 th:text="${product.productName}" class="name">Product name</h5>
                         </a>
                         <h5 th:text="${ '$'+ product.productPrice}" class="price">
                             Product price smallest in ProductDetail

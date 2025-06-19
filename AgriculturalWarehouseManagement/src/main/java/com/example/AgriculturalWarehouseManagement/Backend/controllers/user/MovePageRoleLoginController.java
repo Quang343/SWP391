@@ -23,7 +23,7 @@ public class MovePageRoleLoginController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/movePageRole")
+    @GetMapping("/movePageRole")
     public String MovePageRole() {
 
         String token = (String) session.getAttribute("auth_token");

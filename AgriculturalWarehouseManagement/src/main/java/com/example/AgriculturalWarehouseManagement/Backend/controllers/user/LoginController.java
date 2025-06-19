@@ -77,7 +77,7 @@ public class LoginController {
                         // Giả mã token
                         Claims claims = jwtTokenFilter.decodeToken((String) session.getAttribute("auth_token"));
                         if (claims != null) {
-                            return "forward:/movePageRole";
+                            return "redirect:/movePageRole";
                         } else {
                             return "redirect:/login";
                         }
@@ -111,7 +111,7 @@ public class LoginController {
                         response.addCookie(emailCookie);
                         response.addCookie(passwordFakeCookie);
 
-                        return "forward:/movePageRole";
+                        return "redirect:/movePageRole";
 
                     } else {
                         model.addAttribute("errorLogin", "Wrong password or email !!!");
@@ -151,7 +151,7 @@ public class LoginController {
                                 }
                             }
 
-                            return "forward:/movePageRole";
+                            return "redirect:/movePageRole";
                         } else {
                             return "redirect:/login";
                         }
@@ -181,7 +181,7 @@ public class LoginController {
                         session.setAttribute("auth_token", token);
                         session.setMaxInactiveInterval(60 * 60);
 
-                        return "forward:/movePageRole";
+                        return "redirect:/movePageRole";
                     } else {
                         model.addAttribute("errorLogin", "Wrong password or email !!!");
                         return "FrontEnd/Home/login";
