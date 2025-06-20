@@ -1,6 +1,6 @@
 package com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user;
 
-public class ProductUserHomepageResponse {
+public class ShopDetailResponse {
 
     private int productId;
     private int categoryId;
@@ -14,10 +14,10 @@ public class ProductUserHomepageResponse {
     private String productDescription;
 
 
-    public ProductUserHomepageResponse() {
+    public ShopDetailResponse() {
     }
 
-    public ProductUserHomepageResponse(int productId, int categoryId, String imageUrlGallery, String productName, int ratingProductDetail, int ratingCount, String productDetailName, double productPrice, String productWeight, String productDescription) {
+    public ShopDetailResponse(int productId, int categoryId, String imageUrlGallery, String productName, int ratingProductDetail, int ratingCount, String productDetailName, double productPrice, String productWeight, String productDescription) {
         this.productId = productId;
         this.categoryId = categoryId;
         this.imageUrlGallery = imageUrlGallery;
@@ -112,7 +112,7 @@ public class ProductUserHomepageResponse {
 
     @Override
     public String toString() {
-        return "ProductUserHomepageResponse{" +
+        return "ShopDetailResponse{" +
                 "productId=" + productId +
                 ", categoryId=" + categoryId +
                 ", imageUrlGallery='" + imageUrlGallery + '\'' +

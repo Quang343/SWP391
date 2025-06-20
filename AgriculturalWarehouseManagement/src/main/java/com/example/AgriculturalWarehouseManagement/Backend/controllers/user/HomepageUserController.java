@@ -8,6 +8,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.services.user.Product
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
@@ -22,12 +23,12 @@ public class HomepageUserController {
     @Autowired
     private CategoryUsersService categoryUsersService;
 
-    @RequestMapping("/")
+    @GetMapping("/")
     public String homePage() {
         return "redirect:/home";
     }
 
-    @RequestMapping("/home")
+    @GetMapping("/home")
     public String home(Model model) {
 
         // Homepage All category

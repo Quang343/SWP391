@@ -1,6 +1,8 @@
 package com.example.AgriculturalWarehouseManagement.Backend.services.user;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.CategoryShopDetailsResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.CategoryUsersResponse;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ProductUserHomepageResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Category;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +37,31 @@ public class CategoryUsersService {
         }
 
         return categoryUsersResponses;
+    }
+
+    public List<CategoryShopDetailsResponse> getAllCategoriesAndCountProduct() {
+        List<Object[]> raw = categoryRepository.rawAllCategoriesAndCountProducts();
+
+        return raw.stream().map(row -> new CategoryShopDetailsResponse(
+                ((Number) row[0]).intValue(),       // categoryId
+                (String) row[1],                    // categoryName
+                (String) row[2],                    // description
+                (String) row[3],                    // status
+                (String) row[4],                    // imageUrl
+                ((Number) row[5]).intValue()       // totalProducts
+        )).toList();
+    }
+
+    public List<CategoryShopDetailsResponse> getAllCategoriesAndCountProducts() {
+
+        if (getAllListCategory().isEmpty()){
+            return new ArrayList<>();
+        } else {
+            List<CategoryShopDetailsResponse> categoryShopDetailsResponses = getAllCategoriesAndCountProduct();
+
+            return categoryShopDetailsResponses;
+        }
+
+
     }
 }

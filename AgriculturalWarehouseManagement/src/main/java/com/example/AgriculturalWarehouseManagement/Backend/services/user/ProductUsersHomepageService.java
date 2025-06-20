@@ -20,15 +20,16 @@ public class ProductUsersHomepageService {
         List<Object[]> raw = productRepository.rawHomepageData();
 
         return raw.stream().map(row -> new ProductUserHomepageResponse(
-                ((Number) row[0]).intValue(),      // productId
-                (String) row[1],                   // imageUrlGallery
-                (String) row[2],                   // productName
-                ((Number) row[3]).intValue(),   // ratingProductDetail
-                ((Number) row[4]).intValue(),   // ratingCount
-                (String) row[5],                   // productDetailName
-                ((Number) row[6]).doubleValue(),   // productPrice
-                ((Number) row[7]).doubleValue(),   // productWeight
-                (String) row[8]                    // productDescription
+                ((Number) row[0]).intValue(),       // productId
+                ((Number) row[1]).intValue(),       // categoryId
+                (String) row[2],                   // imageUrlGallery
+                (String) row[3],                   // productName
+                ((Number) row[4]).intValue(),   // ratingProductDetail
+                ((Number) row[5]).intValue(),   // ratingCount
+                (String) row[6],                   // productDetailName
+                ((Number) row[7]).doubleValue(),   // productPrice
+                ((String) row[8]),            // productWeight (weight + unit)
+                (String) row[9]                 // productDescription
         )).toList();
     }
 
@@ -49,15 +50,16 @@ public class ProductUsersHomepageService {
         List<Object[]> raw = productRepository.top9NewOfProducts();
 
         return raw.stream().map(row -> new ProductUserHomepageResponse(
-                ((Number) row[0]).intValue(),      // productId
-                (String) row[1],                   // imageUrlGallery
-                (String) row[2],                   // productName
-                ((Number) row[3]).intValue(),   // ratingProductDetail
-                ((Number) row[4]).intValue(),   // ratingCount
-                (String) row[5],                   // productDetailName
-                ((Number) row[6]).doubleValue(),   // productPrice
-                ((Number) row[7]).doubleValue(),   // productWeight
-                (String) row[8]                    // productDescription
+                ((Number) row[0]).intValue(),       // productId
+                ((Number) row[1]).intValue(),       // categoryId
+                (String) row[2],                   // imageUrlGallery
+                (String) row[3],                   // productName
+                ((Number) row[4]).intValue(),   // ratingProductDetail
+                ((Number) row[5]).intValue(),   // ratingCount
+                (String) row[6],                   // productDetailName
+                ((Number) row[7]).doubleValue(),   // productPrice
+                ((String) row[8]),            // productWeight (weight + unit)
+                (String) row[9]                 // productDescription
         )).toList();
     }
 
@@ -76,15 +78,16 @@ public class ProductUsersHomepageService {
         List<Object[]> raw = productRepository.top9PriceOfProducts();
 
         return raw.stream().map(row -> new ProductUserHomepageResponse(
-                ((Number) row[0]).intValue(),      // productId
-                (String) row[1],                   // imageUrlGallery
-                (String) row[2],                   // productName
-                ((Number) row[3]).intValue(),   // ratingProductDetail
-                ((Number) row[4]).intValue(),   // ratingCount
-                (String) row[5],                   // productDetailName
-                ((Number) row[6]).doubleValue(),   // productPrice
-                ((Number) row[7]).doubleValue(),   // productWeight
-                (String) row[8]                    // productDescription
+                ((Number) row[0]).intValue(),       // productId
+                ((Number) row[1]).intValue(),       // categoryId
+                (String) row[2],                   // imageUrlGallery
+                (String) row[3],                   // productName
+                ((Number) row[4]).intValue(),   // ratingProductDetail
+                ((Number) row[5]).intValue(),   // ratingCount
+                (String) row[6],                   // productDetailName
+                ((Number) row[7]).doubleValue(),   // productPrice
+                ((String) row[8]),            // productWeight (weight + unit)
+                (String) row[9]                 // productDescription
         )).toList();
     }
 
@@ -103,15 +106,16 @@ public class ProductUsersHomepageService {
         List<Object[]> raw = productRepository.top9RatingOfProducts();
 
         return raw.stream().map(row -> new ProductUserHomepageResponse(
-                ((Number) row[0]).intValue(),      // productId
-                (String) row[1],                   // imageUrlGallery
-                (String) row[2],                   // productName
-                ((Number) row[3]).intValue(),   // ratingProductDetail
-                ((Number) row[4]).intValue(),   // ratingCount
-                (String) row[5],                   // productDetailName
-                ((Number) row[6]).doubleValue(),   // productPrice
-                ((Number) row[7]).doubleValue(),   // productWeight
-                (String) row[8]                    // productDescription
+                ((Number) row[0]).intValue(),       // productId
+                ((Number) row[1]).intValue(),       // categoryId
+                (String) row[2],                   // imageUrlGallery
+                (String) row[3],                   // productName
+                ((Number) row[4]).intValue(),   // ratingProductDetail
+                ((Number) row[5]).intValue(),   // ratingCount
+                (String) row[6],                   // productDetailName
+                ((Number) row[7]).doubleValue(),   // productPrice
+                ((String) row[8]),            // productWeight (weight + unit)
+                (String) row[9]                 // productDescription
         )).toList();
     }
 

@@ -26,8 +26,9 @@ public class ProductDetail {
     @Column(name = "price")
     private double price;
 
-    @Column(name="weight")
-    private double weight;
+    @ManyToOne
+    @JoinColumn(name = "categoryweightid", nullable = false)
+    private CategoryWeight categoryWeightID;
 
     @Column(name="expiry")
     private Integer expiry;
