@@ -1,18 +1,30 @@
 package com.example.AgriculturalWarehouseManagement.Backend.Seller;
 
 import com.example.AgriculturalWarehouseManagement.dtos.ProductDTO;
+import com.example.AgriculturalWarehouseManagement.dtos.ProductImageDTO;
 import com.example.AgriculturalWarehouseManagement.models.Category;
 import com.example.AgriculturalWarehouseManagement.models.Product;
+import com.example.AgriculturalWarehouseManagement.models.ProductImage;
 import com.example.AgriculturalWarehouseManagement.models.ProductStatus;
 import com.example.AgriculturalWarehouseManagement.services.CategoryService;
+import com.example.AgriculturalWarehouseManagement.services.ProductImageService;
 import com.example.AgriculturalWarehouseManagement.services.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -21,8 +33,9 @@ public class Product_SellerController {
 
     private final ProductService productService;
     private final CategoryService categoryService;
-    private final ModelMapper modelMapper;
 
+    @Autowired
+    private ProductImageService productImageService;
 
     @GetMapping("/api/seller/products")
     public ResponseEntity<?> getAllProducts() {
@@ -45,7 +58,7 @@ public class Product_SellerController {
     }
 
     @PutMapping("/api/seller/products/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody ProductDTO dto) throws Exception {
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody ProductDTO dto) {
         Product product = productService.findById(id);
         if (product == null) {
             return ResponseEntity.status(404).body("Product not found");
@@ -55,7 +68,7 @@ public class Product_SellerController {
         if (dto.getName() != null) product.setName(dto.getName());
         if (dto.getDescription() != null) product.setDescription(dto.getDescription());
         if (dto.getCategoryId() != null) {
-            Category category = null;
+            Category category;
             try {
                 category = categoryService.findById(dto.getCategoryId());
             } catch (Exception e) {
@@ -74,6 +87,85 @@ public class Product_SellerController {
 
         productService.save(product); // lưu lại
         return ResponseEntity.ok("Product updated successfully");
+    }
+
+    @GetMapping("/api/seller/{id}/images")
+    public ResponseEntity<?> getImagesByProduct(@PathVariable Long id) {
+        List<ProductImage> images = productImageService.findByProductId(id);
+
+        // Trả về danh sách DTO đơn giản chỉ gồm id và imageUrl
+        List<Map<String, Object>> result = images.stream().map(img -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", img.getId());
+            map.put("imageUrl", img.getImageUrl());
+            return map;
+        }).toList();
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping(value = "/api/seller/product/{productId}/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadImage(@PathVariable Long productId,
+                                         @RequestParam("file") MultipartFile file) {
+        try {
+            if (file == null || file.isEmpty()) return ResponseEntity.badRequest().body("File rỗng");
+            if (!file.getContentType().startsWith("image/")) return ResponseEntity.badRequest().body("Không phải ảnh");
+
+            String filename = storeFile(file); // giống hàm bạn đang dùng
+            ProductImageDTO dto = ProductImageDTO.builder().imageUrl(filename).build();
+            ProductImage savedImage = productService.createProductImage(productId, dto);
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", savedImage.getId());
+            response.put("imageUrl", savedImage.getImageUrl());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Lỗi server: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/api/seller/product/{productId}/images/{imageId}")
+    public ResponseEntity<?> deleteImage(@PathVariable Long productId, @PathVariable Long imageId) {
+        Optional<ProductImage> image = Optional.ofNullable(productImageService.findById(imageId));
+        if (image.isEmpty() || !image.get().getProduct().getId().equals(productId)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Xóa hẳn
+        productImageService.deleteById(imageId);
+
+        // (Optional) Nếu bạn muốn xóa cả file vật lý:
+        // Files.deleteIfExists(Paths.get("uploads", image.get().getImageUrl()));
+
+        return ResponseEntity.ok("Ảnh đã được xóa vĩnh viễn.");
+    }
+
+    private String storeFile(MultipartFile file) throws IOException {
+        if(file.getOriginalFilename() == null){
+            throw new IOException("Empty file name");
+        }
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        //Thêm UUID vào trước để đảm bảo fileName là duy nhất
+        String uniqueFileName = UUID.randomUUID().toString() + "." + fileName;
+        //Đường dẫn đến thư mục mà bạn muốn lưu file
+        java.nio.file.Path uploadDir = Paths.get("uploads");
+        //Kiểm tra và tạo nếu thư mục chưa tồn tại
+        if(!Files.exists(uploadDir)){
+            Files.createDirectories(uploadDir);
+        }
+        //Đường dẫn đầy đủ đến file
+        java.nio.file.Path destination = Paths.get(uploadDir.toString(), uniqueFileName);
+        //Sao chép file vào thư mục đích
+        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+        return uniqueFileName;
+    }
+
+    @Configuration
+    public class WebConfig implements WebMvcConfigurer {
+        @Override
+        public void addResourceHandlers(ResourceHandlerRegistry registry) {
+            registry.addResourceHandler("/AgriculturalWarehouseManagementApplication/uploads/**")
+                    .addResourceLocations("file:uploads/"); // lưu ảnh ở thư mục gốc uploads/
+        }
     }
 
 }

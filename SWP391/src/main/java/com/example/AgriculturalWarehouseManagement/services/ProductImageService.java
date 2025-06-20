@@ -24,4 +24,14 @@ public class ProductImageService implements  IProductImageService{
     public List<ProductImage> findAll() {
         return productImageRepository.findAll();
     }
+
+    public void deleteById(Long id){
+        productImageRepository.deleteById(id);
+    }
+
+    public ProductImage findById(Long id){
+        return productImageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product image not found"));
+    }
+
 }

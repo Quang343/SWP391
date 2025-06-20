@@ -31,4 +31,5 @@ public class Product {
     @Column(length = 50)
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
+
 }

@@ -4,17 +4,12 @@ import com.example.AgriculturalWarehouseManagement.dtos.ProductDTO;
 import com.example.AgriculturalWarehouseManagement.dtos.Seller.ProductSellerResponseDTO;
 import com.example.AgriculturalWarehouseManagement.models.Category;
 import com.example.AgriculturalWarehouseManagement.models.Product;
-import com.example.AgriculturalWarehouseManagement.repositories.CategoryRepository;
-import com.example.AgriculturalWarehouseManagement.repositories.ProductRepository;
 import com.example.AgriculturalWarehouseManagement.services.ICategoryService;
 import com.example.AgriculturalWarehouseManagement.services.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-import java.util.Optional;
 
 
 @RestController
@@ -58,6 +53,7 @@ public class ProductSellerSupportController {
             return ResponseEntity.status(500).body("Đã xảy ra lỗi khi thêm sản phẩm.");
         }
     }
+
 
 
 }

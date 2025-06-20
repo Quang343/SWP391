@@ -1,5 +1,6 @@
 package com.example.AgriculturalWarehouseManagement.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,7 @@ public class ProductImage {
 
     @ManyToOne()
     @JoinColumn(name = "productid", nullable = false)
+    @JsonIgnore
     private Product product;
 
     @Column(name = "imageurl")
