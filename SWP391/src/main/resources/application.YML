@@ -17,6 +17,9 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+app:
+  upload:
+    product-dir: D:/Uploads
 
 server:
   servlet:

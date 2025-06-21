@@ -10,28 +10,39 @@ public class FrontEndController {
     public String home() {
         return "FrontEnd/Home/home";
     }
+
     @RequestMapping("/shop")
     public String shop() {
         return "FrontEnd/Home/shop";
     }
+
     @RequestMapping("/shop/Home/productdetail")
     public String productdetail() {
         return "FrontEnd/Home/productdetail";
     }
+
     @RequestMapping("/login")
     public String login() {
         return "FrontEnd/Home/login";
     }
+
     @RequestMapping("/seller")
     public String seller() {
         return "FrontEnd/Seller/Seller_Dashboard";
     }
+
     @RequestMapping("/cart")
     public String cart() {
         return "FrontEnd/Home/cart";
     }
+
     @RequestMapping("/seller-dashboard")
     public String sellerDashboard() {
         return "FrontEnd/Seller/seller-dashboard";
+    }
+
+    @RequestMapping("/seller-become")
+    public String sellerBecome() {
+        return "FrontEnd/Seller/seller-become";
     }
 }

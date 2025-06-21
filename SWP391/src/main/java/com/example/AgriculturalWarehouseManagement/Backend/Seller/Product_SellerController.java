@@ -11,6 +11,7 @@ import com.example.AgriculturalWarehouseManagement.services.ProductImageService;
 import com.example.AgriculturalWarehouseManagement.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -135,11 +136,13 @@ public class Product_SellerController {
         productImageService.deleteById(imageId);
 
         // (Optional) Nếu bạn muốn xóa cả file vật lý:
-         Files.deleteIfExists(Paths.get("src/main/resources/static/Backend/assets/images", image.get().getImageUrl()));
+        Files.deleteIfExists(Paths.get(uploadDir, image.get().getImageUrl()));
 
         return ResponseEntity.ok("Ảnh đã được xóa vĩnh viễn.");
     }
 
+    @Value("${app.upload.product-dir}")
+    private String uploadDir;
     private String storeFile(MultipartFile file) throws IOException {
         if (file.getOriginalFilename() == null) {
             throw new IOException("Empty file name");
@@ -155,18 +158,15 @@ public class Product_SellerController {
 
         String uniqueFileName = UUID.randomUUID().toString() + extension;
 
-        // 👉 Đường dẫn lưu trong resources/static
-        Path uploadDir = Paths.get("src/main/resources/static/Backend/assets/images");
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectories(uploadDir);
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
         }
 
-        System.out.println("Uploading to: " + uploadDir.toAbsolutePath());
-
-        Path destination = uploadDir.resolve(uniqueFileName);
+        Path destination = uploadPath.resolve(uniqueFileName);
         Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
 
-        return uniqueFileName; // trả về đường dẫn tương đối để truy cập qua URL
+        return uniqueFileName; // trả về tên file
     }
 
 }

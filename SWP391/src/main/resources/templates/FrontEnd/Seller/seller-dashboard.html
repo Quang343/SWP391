@@ -133,6 +133,13 @@
                         </li>
 
                         <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-product-detail-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-product-detail" type="button" role="tab"><i
+                                    data-feather="shopping-bag"></i>Product Detail
+                            </button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-order-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-order" type="button" role="tab"><i
                                     data-feather="shopping-bag"></i>Order
@@ -143,14 +150,6 @@
                             <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-profile" type="button" role="tab"><i data-feather="user"></i>
                                 Profile
-                            </button>
-                        </li>
-
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pills-security-tab" data-bs-toggle="pill"
-                                    data-bs-target="#pills-security" type="button" role="tab"><i
-                                    data-feather="settings"></i>
-                                Setting
                             </button>
                         </li>
 
@@ -425,14 +424,14 @@
 
                         <div class="tab-pane fade" id="pills-product" role="tabpanel">
                             <div class="product-tab">
-                                <div class="title">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="title" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div >
                                         <h2>All Product</h2>
                                         <button class="btn btn-success"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#addProductModal"
-                                                style="background-color: #198754; color: white; border: none; padding: 8px 16px; font-weight: 500; border-radius: 4px; margin-left: 780px">
-                                            Add Product
+                                                style="background-color: #198754; color: white; border: none; padding: 8px 16px; font-weight: 500; border-radius: 4px; margin-left: 950px">
+                                            + Add Product
                                         </button>
                                     </div>
 
@@ -466,6 +465,54 @@
                                     <nav class="custom-pagination">
                                         <ul class="pagination justify-content-center" id="paginationContainer">
                                             <!-- Các li sẽ được thay đổi bằng JS -->
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-product-detail" role="tabpanel">
+                            <div class="product-detail-tab">
+                                <div class="title" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <h2>All Product Detail</h2>
+                                        <button class="btn btn-primary"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#addProductDetailModal"
+                                                style="background-color: #198754; color: white; border: none; padding: 8px 16px; font-weight: 500; border-radius: 4px; margin-left: 900px">
+                                            + Add Product Detail
+                                        </button>
+                                    </div>
+
+                                    <span class="title-leaf">
+                <svg class="icon-width bg-gray">
+                    <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                </svg>
+            </span>
+                                </div>
+
+                                <div class="table-responsive dashboard-bg-box">
+                                    <table class="table product-detail-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">STT</th>
+                                            <th scope="col">Product Name</th>
+                                            <th scope="col">Detail Name</th>
+                                            <th scope="col">Weight</th>
+                                            <th scope="col">Unit</th>
+                                            <th scope="col">Price</th>
+                                            <th scope="col">Expiry (months)</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="productDetailTable">
+                                        <!-- Sẽ được JS đổ dữ liệu vào -->
+                                        </tbody>
+                                    </table>
+
+                                    <nav class="custom-pagination mt-3">
+                                        <ul class="pagination justify-content-center" id="paginationProductDetail">
+                                            <!-- JS sẽ render phân trang -->
                                         </ul>
                                     </nav>
                                 </div>
@@ -681,134 +728,6 @@
                             </div>
                         </div>
 
-                        <div class="tab-pane fade" id="pills-security" role="tabpanel">
-                            <div class="dashboard-privacy">
-                                <div class="title">
-                                    <h2>My Setting</h2>
-                                    <span class="title-leaf">
-                                            <svg class="icon-width bg-gray">
-                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
-                                            </svg>
-                                        </span>
-                                </div>
-
-                                <div class="dashboard-bg-box">
-                                    <div class="dashboard-title mb-4">
-                                        <h3>Notifications</h3>
-                                    </div>
-
-                                    <div class="privacy-box">
-                                        <div
-                                                class="form-check custom-form-check custom-form-check-2 d-flex align-items-center">
-                                            <input class="form-check-input" type="radio" id="desktop" name="desktop"
-                                                   checked>
-                                            <label class="form-check-label ms-2" for="desktop">Show
-                                                Desktop Notifications</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="privacy-box">
-                                        <div
-                                                class="form-check custom-form-check custom-form-check-2 d-flex align-items-center">
-                                            <input class="form-check-input" type="radio" id="enable" name="desktop">
-                                            <label class="form-check-label ms-2" for="enable">Enable
-                                                Notifications</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="privacy-box">
-                                        <div
-                                                class="form-check custom-form-check custom-form-check-2 d-flex align-items-center">
-                                            <input class="form-check-input" type="radio" id="activity"
-                                                   name="desktop">
-                                            <label class="form-check-label ms-2" for="activity">Get
-                                                notification for my own activity</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="privacy-box">
-                                        <div
-                                                class="form-check custom-form-check custom-form-check-2 d-flex align-items-center">
-                                            <input class="form-check-input" type="radio" id="dnd" name="desktop">
-                                            <label class="form-check-label ms-2" for="dnd">DND</label>
-                                        </div>
-                                    </div>
-
-                                    <button class="btn theme-bg-color btn-md fw-bold mt-4 text-white">Save
-                                        Changes
-                                    </button>
-                                </div>
-
-                                <div class="dashboard-bg-box">
-                                    <div class="dashboard-title mb-4">
-                                        <h3>Deactivate Account</h3>
-                                    </div>
-                                    <div class="privacy-box">
-                                        <div
-                                                class="form-check custom-form-check custom-form-check-2 d-flex align-items-center">
-                                            <input class="form-check-input" type="radio" id="concern"
-                                                   name="concern">
-                                            <label class="form-check-label ms-2" for="concern">I have a privacy
-                                                concern</label>
-                                        </div>
-                                    </div>
-                                    <div class="privacy-box">
-                                        <div
-                                                class="form-check custom-form-check custom-form-check-2 d-flex align-items-center">
-                                            <input class="form-check-input" type="radio" id="temporary"
-                                                   name="concern">
-                                            <label class="form-check-label ms-2" for="temporary">This is
-                                                temporary</label>
-                                        </div>
-                                    </div>
-                                    <div class="privacy-box">
-                                        <div
-                                                class="form-check custom-form-check custom-form-check-2 d-flex align-items-center">
-                                            <input class="form-check-input" type="radio" id="other" name="concern">
-                                            <label class="form-check-label ms-2" for="other">other</label>
-                                        </div>
-                                    </div>
-
-                                    <button class="btn theme-bg-color btn-md fw-bold mt-4 text-white">Deactivate
-                                        Account
-                                    </button>
-                                </div>
-
-                                <div class="dashboard-bg-box">
-                                    <div class="dashboard-title mb-4">
-                                        <h3>Delete Account</h3>
-                                    </div>
-                                    <div class="privacy-box">
-                                        <div
-                                                class="form-check custom-form-check custom-form-check-2 d-flex align-items-center">
-                                            <input class="form-check-input" type="radio" id="usable" name="usable">
-                                            <label class="form-check-label ms-2" for="usable">No longer
-                                                usable</label>
-                                        </div>
-                                    </div>
-                                    <div class="privacy-box">
-                                        <div
-                                                class="form-check custom-form-check custom-form-check-2 d-flex align-items-center">
-                                            <input class="form-check-input" type="radio" id="account" name="usable">
-                                            <label class="form-check-label ms-2" for="account">Want to switch on
-                                                other
-                                                account</label>
-                                        </div>
-                                    </div>
-                                    <div class="privacy-box">
-                                        <div
-                                                class="form-check custom-form-check custom-form-check-2 d-flex align-items-center">
-                                            <input class="form-check-input" type="radio" id="other-2" name="usable">
-                                            <label class="form-check-label ms-2" for="other-2">Other</label>
-                                        </div>
-                                    </div>
-
-                                    <button class="btn theme-bg-color btn-md fw-bold mt-4 text-white">Delete My
-                                        Account
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -947,50 +866,50 @@
 
 <!-- Tap to top and theme setting button start -->
 <div class="theme-option">
-    <div class="setting-box">
-        <button class="btn setting-button">
-            <i class="fa-solid fa-gear"></i>
-        </button>
+<!--    <div class="setting-box">-->
+<!--        <button class="btn setting-button">-->
+<!--            <i class="fa-solid fa-gear"></i>-->
+<!--        </button>-->
 
-        <div class="theme-setting-2">
-            <div class="theme-box">
-                <ul>
-                    <li>
-                        <div class="setting-name">
-                            <h4>Color</h4>
-                        </div>
-                        <div class="theme-setting-button color-picker">
-                            <form class="form-control">
-                                <label for="colorPick" class="form-label mb-0">Theme Color</label>
-                                <input type="color" class="form-control form-control-color" id="colorPick"
-                                       value="#0da487" title="Choose your color">
-                            </form>
-                        </div>
-                    </li>
+<!--        <div class="theme-setting-2">-->
+<!--            <div class="theme-box">-->
+<!--                <ul>-->
+<!--                    <li>-->
+<!--                        <div class="setting-name">-->
+<!--                            <h4>Color</h4>-->
+<!--                        </div>-->
+<!--                        <div class="theme-setting-button color-picker">-->
+<!--                            <form class="form-control">-->
+<!--                                <label for="colorPick" class="form-label mb-0">Theme Color</label>-->
+<!--                                <input type="color" class="form-control form-control-color" id="colorPick"-->
+<!--                                       value="#0da487" title="Choose your color">-->
+<!--                            </form>-->
+<!--                        </div>-->
+<!--                    </li>-->
 
-                    <li>
-                        <div class="setting-name">
-                            <h4>Dark</h4>
-                        </div>
-                        <div class="theme-setting-button">
-                            <button class="btn btn-2 outline" id="darkButton">Dark</button>
-                            <button class="btn btn-2 unline" id="lightButton">Light</button>
-                        </div>
-                    </li>
+<!--                    <li>-->
+<!--                        <div class="setting-name">-->
+<!--                            <h4>Dark</h4>-->
+<!--                        </div>-->
+<!--                        <div class="theme-setting-button">-->
+<!--                            <button class="btn btn-2 outline" id="darkButton">Dark</button>-->
+<!--                            <button class="btn btn-2 unline" id="lightButton">Light</button>-->
+<!--                        </div>-->
+<!--                    </li>-->
 
-                    <li>
-                        <div class="setting-name">
-                            <h4>RTL</h4>
-                        </div>
-                        <div class="theme-setting-button rtl">
-                            <button class="btn btn-2 rtl-unline">LTR</button>
-                            <button class="btn btn-2 rtl-outline">RTL</button>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+<!--                    <li>-->
+<!--                        <div class="setting-name">-->
+<!--                            <h4>RTL</h4>-->
+<!--                        </div>-->
+<!--                        <div class="theme-setting-button rtl">-->
+<!--                            <button class="btn btn-2 rtl-unline">LTR</button>-->
+<!--                            <button class="btn btn-2 rtl-outline">RTL</button>-->
+<!--                        </div>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 
     <div class="back-to-top">
         <a id="back-to-top" href="#">
@@ -1516,18 +1435,20 @@
                             </select>
                         </div>
                     </div>
-                </div>
 
-                <!-- Upload Images -->
-                <div class="mb-4 row">
-                    <label class="form-label-title col-sm-3 mb-0">Upload Images</label>
-                    <div class="col-sm-9">
-                        <div class="custom-upload-box">
-                            <label for="productImages" class="upload-label">
-                                <i class="fa fa-upload me-2"></i>Chọn ảnh (tối đa 5)
-                            </label>
-                            <input type="file" class="form-control visually-hidden" id="productImages" name="images" accept="image/*" multiple>
-                            <p class="text-muted mt-2 mb-0" id="fileUploadNote">Chưa có tệp nào được chọn.</p>
+
+                    <!-- Upload Images -->
+                    <div class="mb-4 row">
+                        <label class="form-label-title col-sm-3 mb-0">Upload Images</label>
+                        <div class="col-sm-9">
+                            <div class="custom-upload-box">
+                                <label for="productImages" class="upload-label">
+                                    <i class="fa fa-upload me-2"></i>Chọn ảnh (tối đa 5)
+                                </label>
+                                <input type="file" id="productImages" class="form-control visually-hidden" accept="image/*" multiple>
+                                <p class="text-muted mt-2 mb-0" id="fileUploadNote">Chưa có tệp nào được chọn.</p>
+                                <div id="previewContainer" class="d-flex flex-wrap gap-2 mt-2"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1549,7 +1470,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">View Product Images</h5>
+                <h5 class="modal-title">Product Images</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -1636,6 +1557,35 @@
 
 <!--CSS-->
 <style>
+    .preview-image-box {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid #ccc;
+    }
+
+    .preview-image-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .preview-image-box button {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        background-color: rgba(255, 0, 0, 0.8);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        cursor: pointer;
+    }
     .wrap-text {
         white-space: normal !important;
         word-wrap: break-word;
@@ -1749,29 +1699,93 @@
 
     .image-box img {
         width: 100%;
-        height: auto;
+        height: 100%;
+        object-fit: cover;
         border-radius: 8px;
     }
 
 
+    button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
 </style>
 
-<!--Upload file-->
+<!--Upload file Add Modal-->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const input = document.getElementById("productImages");
         const note = document.getElementById("fileUploadNote");
+        const previewContainer = document.getElementById("previewContainer");
+        const modalEl = document.getElementById("addProductModal");
+
+        let selectedFiles = [];
+
+        // 🧹 Khi modal đóng → reset
+        modalEl.addEventListener("hidden.bs.modal", () => {
+            selectedFiles = [];
+            input.value = "";
+            previewContainer.innerHTML = "";
+            note.textContent = "Chưa có tệp nào được chọn.";
+        });
 
         input.addEventListener("change", function () {
-            if (this.files.length === 0) {
-                note.textContent = "Chưa có tệp nào được chọn.";
-            } else {
-                note.textContent = `Đã chọn ${this.files.length} tệp.`;
+            const newFiles = Array.from(this.files);
+            if (newFiles.length === 0) return;
+
+            const totalFiles = selectedFiles.length + newFiles.length;
+
+            if (totalFiles > 5) {
+                alert(`Bạn chỉ được chọn tối đa 5 ảnh. Hiện tại đã có ${selectedFiles.length} ảnh.`);
+                this.value = "";
+                return;
             }
+
+            // 👉 Thêm file mới vào danh sách cũ
+            selectedFiles = selectedFiles.concat(newFiles);
+            renderPreviews();
+            this.value = ""; // reset input để lần sau onchange hoạt động lại
         });
+
+        function renderPreviews() {
+            previewContainer.innerHTML = "";
+            note.textContent = selectedFiles.length > 0
+                ? `Đã chọn ${selectedFiles.length} tệp.`
+                : "Chưa có tệp nào được chọn.";
+
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const box = document.createElement("div");
+                    box.className = "preview-image-box";
+
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+
+                    const delBtn = document.createElement("button");
+                    delBtn.innerHTML = "×";
+                    delBtn.title = "Xoá ảnh này";
+
+                    delBtn.onclick = () => {
+                        selectedFiles.splice(index, 1);
+                        renderPreviews();
+                    };
+
+                    box.appendChild(img);
+                    box.appendChild(delBtn);
+                    previewContainer.appendChild(box);
+                };
+
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // 🧠 (Gợi ý): Nếu bạn dùng `selectedFiles` để submit → cần sửa phần upload ảnh lại để dùng selectedFiles
     });
 </script>
-
 
 <!--Phân trang-->
 <script>
@@ -1785,46 +1799,73 @@
         const paginationUl = document.querySelector(".custom-pagination ul");
         paginationUl.innerHTML = "";
 
-        // << Prev
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = startPage + maxVisiblePages - 1;
+
+        if (endPage > totalPages) {
+            endPage = totalPages;
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        // <<< Trang đầu
+        const firstLi = document.createElement("li");
+        firstLi.className = "page-item";
+        firstLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Về trang đầu"><i class="fa-solid fa-angles-left"></i></a>`;
+        firstLi.onclick = () => loadProducts(1);
+        paginationUl.appendChild(firstLi);
+
+        // << Lùi 1 trang
         const prevLi = document.createElement("li");
         prevLi.className = "page-item";
-        const prevLink = document.createElement("a");
-        prevLink.className = "page-link";
-        prevLink.href = "javascript:void(0)";
-        prevLink.innerHTML = '<i class="fa-solid fa-angles-left"></i>';
-        prevLink.onclick = () => {
-            const newPage = currentPage === 1 ? totalPages : currentPage - 1;
+        prevLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Trang trước"><i class="fa-solid fa-angle-left"></i></a>`;
+        prevLi.onclick = () => {
+            const newPage = currentPage === 1 ? 1 : currentPage - 1;
             loadProducts(newPage);
         };
-        prevLi.appendChild(prevLink);
         paginationUl.appendChild(prevLi);
 
+        // ... nếu cần
+        if (startPage > 1) {
+            const dots = document.createElement("li");
+            dots.className = "page-item disabled";
+            dots.innerHTML = `<span class="page-link">...</span>`;
+            paginationUl.appendChild(dots);
+        }
+
         // Các trang số
-        for (let i = 1; i <= totalPages; i++) {
+        for (let i = startPage; i <= endPage; i++) {
             const li = document.createElement("li");
             li.className = "page-item" + (i === currentPage ? " active" : "");
-            const link = document.createElement("a");
-            link.className = "page-link";
-            link.href = "javascript:void(0)";
-            link.textContent = i;
-            link.onclick = () => loadProducts(i);
-            li.appendChild(link);
+            li.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Trang ${i}">${i}</a>`;
+            li.onclick = () => loadProducts(i);
             paginationUl.appendChild(li);
         }
 
-        // >> Next
+        // ... nếu cần
+        if (endPage < totalPages) {
+            const dots = document.createElement("li");
+            dots.className = "page-item disabled";
+            dots.innerHTML = `<span class="page-link">...</span>`;
+            paginationUl.appendChild(dots);
+        }
+
+        // >> Tới 1 trang
         const nextLi = document.createElement("li");
         nextLi.className = "page-item";
-        const nextLink = document.createElement("a");
-        nextLink.className = "page-link";
-        nextLink.href = "javascript:void(0)";
-        nextLink.innerHTML = '<i class="fa-solid fa-angles-right"></i>';
-        nextLink.onclick = () => {
-            const newPage = currentPage === totalPages ? 1 : currentPage + 1;
+        nextLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Trang tiếp theo"><i class="fa-solid fa-angle-right"></i></a>`;
+        nextLi.onclick = () => {
+            const newPage = currentPage === totalPages ? totalPages : currentPage + 1;
             loadProducts(newPage);
         };
-        nextLi.appendChild(nextLink);
         paginationUl.appendChild(nextLi);
+
+        // >>> Trang cuối
+        const lastLi = document.createElement("li");
+        lastLi.className = "page-item";
+        lastLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Tới trang cuối"><i class="fa-solid fa-angles-right"></i></a>`;
+        lastLi.onclick = () => loadProducts(totalPages);
+        paginationUl.appendChild(lastLi);
     }
 </script>
 
@@ -1926,7 +1967,14 @@
             <ul class="option-list d-flex justify-content-center gap-2 list-unstyled m-0">
                 <li><button type="button" class="btn btn-sm btn-outline-info btn-view" title="View Detail" data-id="${product.id}"><i class="ri-eye-line"></i></button></li>
                 <li><button class="btn btn-sm btn-outline-primary btn-edit" title="Edit" data-id="${product.id}"><i class="ri-pencil-line"></i></button></li>
-                <li><button class="btn btn-sm btn-outline-danger btn-delete" title="Soft Delete" data-id="${product.id}"><i class="ri-delete-bin-line"></i></button></li>
+                <li>
+                    <button class="btn btn-sm btn-outline-danger btn-delete"
+                        title="${product.status === 'INACTIVE' ? 'Sản phẩm đã ngừng kinh doanh' : 'Soft Delete'}"
+                        data-id="${product.id}"
+                        ${product.status === 'INACTIVE' ? 'disabled' : ''}>
+                        <i class="ri-delete-bin-line"></i>
+                    </button>
+                </li>
             </ul>
         </td>
     `;
@@ -1971,7 +2019,7 @@
                             axios.put(`/AgriculturalWarehouseManagementApplication/api/seller/products/${id}`, {status: "INACTIVE"})
                                 .then(() => {
                                     alert("Đã chuyển sản phẩm sang trạng thái INACTIVE.");
-                                    loadProducts();
+                                    loadProducts(currentPage); // ✅ Giữ nguyên trang
                                 })
                                 .catch(err => {
                                     alert("Lỗi khi cập nhật trạng thái: " + (err.response?.data?.message || "Không rõ lỗi"));
@@ -2034,7 +2082,12 @@
                                     alert("Sản phẩm & ảnh đã được thêm thành công.");
                                     bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
                                     form.reset();
-                                    loadProducts();
+                                    axios.get('/AgriculturalWarehouseManagementApplication/api/seller/products')
+                                        .then(res => {
+                                            const totalItems = res.data.length;
+                                            const lastPage = Math.ceil(totalItems / pageSize);
+                                            loadProducts(lastPage); // ✅ Đến trang cuối
+                                        });
                                     // 👉 Nếu muốn quản lý ảnh tiếp, có thể mở modal View luôn:
                                     // openImageModal(productId);
                                 })
@@ -2082,7 +2135,7 @@
                         .then(() => {
                             alert("Cập nhật thành công!");
                             bootstrap.Modal.getInstance(document.getElementById('editProductModal')).hide();
-                            loadProducts();
+                            loadProducts(currentPage);
                         })
                         .catch(err => {
                             alert("Lỗi khi cập nhật sản phẩm: " + (err.response?.data?.message || "Không rõ lỗi"));
@@ -2102,7 +2155,7 @@
                 const productId = this.dataset.id;
                 const imageContainer = document.getElementById("imageContainer");
                 const fileInput = document.getElementById("imageUploader");
-                const uploadBtn = document.getElementById("deleteAllBtn");
+                const deleteAllBtn = document.getElementById("deleteAllBtn");
 
                 imageContainer.innerHTML = "";
                 deleteAllBtn.onclick = () => {
@@ -2167,21 +2220,19 @@
                                 axios.post(`/AgriculturalWarehouseManagementApplication/api/seller/product/${productId}/upload-image`, formData)
                                     .then(res => {
                                         const imageId = res.data.id;
-                                        const reader = new FileReader();
-                                        reader.onload = function (e) {
-                                            const newBox = createImageBox(e.target.result, imageId, productId);
-                                            const addBtn = imageContainer.querySelector(".add-btn");
+                                        const imageUrl = res.data.imageUrl;
+                                        const newBox = createImageBox(imageUrl, imageId, productId);
+                                        const addBtn = imageContainer.querySelector(".add-btn");
 
-                                            if (addBtn) {
-                                                imageContainer.replaceChild(newBox, addBtn);
-                                            } else {
-                                                imageContainer.appendChild(newBox);
-                                            }
+                                        if (addBtn) {
+                                            imageContainer.replaceChild(newBox, addBtn);
+                                        } else {
+                                            imageContainer.appendChild(newBox);
+                                        }
 
-                                            renderAddSlots(imageContainer, fileInput);
-                                        };
-                                        reader.readAsDataURL(file);
-                                    })                                    .catch(err => {
+                                        renderAddSlots(imageContainer, fileInput); // render lại slot "+"
+                                    })
+                                    .catch(err => {
                                         alert("Tải ảnh thất bại");
                                         console.error(err);
                                     });
@@ -2217,6 +2268,7 @@
             const delBtn = document.createElement("button");
             delBtn.className = "btn btn-sm btn-outline-danger";
             delBtn.innerHTML = "<i class='bi bi-x-lg'></i>"; // Bootstrap icon X
+            delBtn.title = "Delete Image";
 
             delBtn.addEventListener("click", () => {
                 if (confirm("Bạn có chắc chắn muốn xoá ảnh này?")) {
@@ -2247,6 +2299,7 @@
             const zoomBtn = document.createElement("button");
             zoomBtn.className = "btn btn-sm btn-outline-primary";
             zoomBtn.innerHTML = "<i class='bi bi-zoom-in'></i>"; // Bootstrap icon zoom
+            zoomBtn.title = "Zoom Image";
 
             zoomBtn.addEventListener("click", () => {
                 const zoomWindow = window.open(image.src, "_blank");
