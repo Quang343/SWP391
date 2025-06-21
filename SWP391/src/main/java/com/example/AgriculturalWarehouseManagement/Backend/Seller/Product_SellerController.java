@@ -11,17 +11,16 @@ import com.example.AgriculturalWarehouseManagement.services.ProductImageService;
 import com.example.AgriculturalWarehouseManagement.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
@@ -107,6 +106,8 @@ public class Product_SellerController {
     @PostMapping(value = "/api/seller/product/{productId}/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadImage(@PathVariable Long productId,
                                          @RequestParam("file") MultipartFile file) {
+        System.out.println(">>>>> uploadImage được gọi với productId = " + productId);
+
         try {
             if (file == null || file.isEmpty()) return ResponseEntity.badRequest().body("File rỗng");
             if (!file.getContentType().startsWith("image/")) return ResponseEntity.badRequest().body("Không phải ảnh");
@@ -124,7 +125,7 @@ public class Product_SellerController {
     }
 
     @DeleteMapping("/api/seller/product/{productId}/images/{imageId}")
-    public ResponseEntity<?> deleteImage(@PathVariable Long productId, @PathVariable Long imageId) {
+    public ResponseEntity<?> deleteImage(@PathVariable Long productId, @PathVariable Long imageId) throws IOException {
         Optional<ProductImage> image = Optional.ofNullable(productImageService.findById(imageId));
         if (image.isEmpty() || !image.get().getProduct().getId().equals(productId)) {
             return ResponseEntity.notFound().build();
@@ -134,38 +135,38 @@ public class Product_SellerController {
         productImageService.deleteById(imageId);
 
         // (Optional) Nếu bạn muốn xóa cả file vật lý:
-        // Files.deleteIfExists(Paths.get("uploads", image.get().getImageUrl()));
+         Files.deleteIfExists(Paths.get("src/main/resources/static/Backend/assets/images", image.get().getImageUrl()));
 
         return ResponseEntity.ok("Ảnh đã được xóa vĩnh viễn.");
     }
 
     private String storeFile(MultipartFile file) throws IOException {
-        if(file.getOriginalFilename() == null){
+        if (file.getOriginalFilename() == null) {
             throw new IOException("Empty file name");
         }
+
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        //Thêm UUID vào trước để đảm bảo fileName là duy nhất
-        String uniqueFileName = UUID.randomUUID().toString() + "." + fileName;
-        //Đường dẫn đến thư mục mà bạn muốn lưu file
-        java.nio.file.Path uploadDir = Paths.get("uploads");
-        //Kiểm tra và tạo nếu thư mục chưa tồn tại
-        if(!Files.exists(uploadDir)){
+        String extension = "";
+
+        int dotIndex = fileName.lastIndexOf(".");
+        if (dotIndex != -1) {
+            extension = fileName.substring(dotIndex);
+        }
+
+        String uniqueFileName = UUID.randomUUID().toString() + extension;
+
+        // 👉 Đường dẫn lưu trong resources/static
+        Path uploadDir = Paths.get("src/main/resources/static/Backend/assets/images");
+        if (!Files.exists(uploadDir)) {
             Files.createDirectories(uploadDir);
         }
-        //Đường dẫn đầy đủ đến file
-        java.nio.file.Path destination = Paths.get(uploadDir.toString(), uniqueFileName);
-        //Sao chép file vào thư mục đích
-        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-        return uniqueFileName;
-    }
 
-    @Configuration
-    public class WebConfig implements WebMvcConfigurer {
-        @Override
-        public void addResourceHandlers(ResourceHandlerRegistry registry) {
-            registry.addResourceHandler("/AgriculturalWarehouseManagementApplication/uploads/**")
-                    .addResourceLocations("file:uploads/"); // lưu ảnh ở thư mục gốc uploads/
-        }
+        System.out.println("Uploading to: " + uploadDir.toAbsolutePath());
+
+        Path destination = uploadDir.resolve(uniqueFileName);
+        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+
+        return uniqueFileName; // trả về đường dẫn tương đối để truy cập qua URL
     }
 
 }

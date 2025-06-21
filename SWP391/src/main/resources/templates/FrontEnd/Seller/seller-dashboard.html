@@ -448,7 +448,7 @@
                                     <table class="table product-table">
                                         <thead>
                                         <tr>
-                                            <th scope="col">ID</th>
+                                            <th scope="col">STT</th>
                                             <th scope="col">Images</th>
                                             <th scope="col">Product Name</th>
                                             <th scope="col">Category</th>
@@ -1465,6 +1465,7 @@
 <!--Thêm thư viện-->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <!--Thêm thư viện End-->
 
 <!-- Add Product Modal -->
@@ -1740,6 +1741,19 @@
         font-size: 18px;
     }
 
+    .image-wrapper {
+        position: relative;
+        display: inline-block;
+        margin: 10px;
+    }
+
+    .image-box img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+
 </style>
 
 <!--Upload file-->
@@ -1822,7 +1836,6 @@
         loadProducts();
         setupAddFormSubmit();
         setupEditFormSubmit();
-
     });
 
     function loadCategories() {
@@ -2149,56 +2162,23 @@
                             filesToUpload.forEach(file => {
                                 const formData = new FormData();
                                 formData.append("file", file);
+                                console.log("👉 Đang upload ảnh tới:", `/AgriculturalWarehouseManagementApplication/api/seller/product/${productId}/upload-image`);
 
                                 axios.post(`/AgriculturalWarehouseManagementApplication/api/seller/product/${productId}/upload-image`, formData)
                                     .then(res => {
                                         const imageId = res.data.id;
                                         const reader = new FileReader();
                                         reader.onload = function (e) {
-                                            const imageBox = createImageBox(e.target.result, imageId, productId);
+                                            const newBox = createImageBox(e.target.result, imageId, productId);
                                             const addBtn = imageContainer.querySelector(".add-btn");
+
                                             if (addBtn) {
-                                                const wrapper = document.createElement("div");
-                                                wrapper.className = "image-wrapper text-center from-slot"; // đánh dấu là từ slot
-
-                                                const imageBox = document.createElement("div");
-                                                imageBox.className = "image-box";
-
-                                                const image = document.createElement("img");
-                                                image.src = e.target.result;
-                                                image.alt = "Product Image";
-
-                                                const delBtn = document.createElement("button");
-                                                delBtn.className = "btn btn-sm btn-outline-danger mt-2";
-                                                delBtn.innerText = "Delete";
-
-                                                delBtn.addEventListener("click", () => {
-                                                    if (confirm("Bạn có chắc chắn muốn xoá ảnh này?")) {
-                                                        axios.delete(`/AgriculturalWarehouseManagementApplication/api/seller/product/${productId}/images/${imageId}`)
-                                                            .then(() => {
-                                                                imageBox.innerHTML = "+";
-                                                                imageBox.className = "image-box add-btn";
-                                                                imageBox.onclick = () => fileInput.click();
-
-                                                                wrapper.innerHTML = "";
-                                                                wrapper.classList.remove("from-slot");
-                                                                wrapper.appendChild(imageBox);
-
-                                                                renderAddSlots(imageContainer, fileInput);
-                                                            })
-                                                            .catch(() => alert("Xoá ảnh lỗi"));
-                                                    }
-                                                });
-
-                                                imageBox.appendChild(image);
-                                                imageBox.appendChild(delBtn);
-
-                                                wrapper.appendChild(imageBox);
-                                                imageContainer.replaceChild(wrapper, addBtn);
+                                                imageContainer.replaceChild(newBox, addBtn);
+                                            } else {
+                                                imageContainer.appendChild(newBox);
                                             }
 
-
-                                            renderAddSlots(imageContainer, fileInput); // 👉 cập nhật lại slot
+                                            renderAddSlots(imageContainer, fileInput);
                                         };
                                         reader.readAsDataURL(file);
                                     })                                    .catch(err => {
@@ -2224,74 +2204,64 @@
             box.className = "image-box";
 
             const image = document.createElement("img");
-            image.src = imageUrl;
+            image.src = "/AgriculturalWarehouseManagementApplication/Backend/assets/images/" + imageUrl;
             image.alt = "Product Image";
 
             box.appendChild(image);
 
+            // Tạo hộp chứa nút điều khiển (xóa + zoom)
+            const controlBox = document.createElement("div");
+            controlBox.className = "image-controls mt-2 d-flex justify-content-center gap-2";
+
+            // ❌ Nút xóa (icon X)
             const delBtn = document.createElement("button");
-            delBtn.className = "btn btn-sm btn-outline-danger mt-2";
-            delBtn.innerText = "Delete";
+            delBtn.className = "btn btn-sm btn-outline-danger";
+            delBtn.innerHTML = "<i class='bi bi-x-lg'></i>"; // Bootstrap icon X
 
             delBtn.addEventListener("click", () => {
                 if (confirm("Bạn có chắc chắn muốn xoá ảnh này?")) {
                     axios.delete(`/AgriculturalWarehouseManagementApplication/api/seller/product/${productId}/images/${imageId}`)
                         .then(() => {
-                            // Nếu đây là ảnh vừa chèn lên từ slot `+`
                             const box = delBtn.closest(".image-box");
                             const wrapper = delBtn.closest(".image-wrapper");
 
                             if (wrapper.classList.contains("from-slot")) {
-                                // Reset nội dung về dấu +
                                 box.innerHTML = "+";
                                 box.className = "image-box add-btn";
                                 box.onclick = () => document.getElementById("imageUploader").click();
 
                                 wrapper.classList.remove("from-slot");
-                                wrapper.innerHTML = ""; // Xoá toàn bộ trong wrapper
-                                wrapper.appendChild(box); // Thêm lại box đã reset
+                                wrapper.innerHTML = "";
+                                wrapper.appendChild(box);
                             } else {
-                                wrapper.remove(); // Xoá hoàn toàn nếu là ảnh thường
+                                wrapper.remove();
                             }
 
-                            // Sau xoá, render lại số slot nếu thiếu
                             renderAddSlots(document.getElementById("imageContainer"), document.getElementById("imageUploader"));
                         })
                         .catch(err => alert("Xoá ảnh lỗi"));
                 }
             });
 
-            wrapper.appendChild(box);
-            wrapper.appendChild(delBtn);
-            return wrapper;
-        }
+            // 🔍 Nút zoom (phóng ảnh to)
+            const zoomBtn = document.createElement("button");
+            zoomBtn.className = "btn btn-sm btn-outline-primary";
+            zoomBtn.innerHTML = "<i class='bi bi-zoom-in'></i>"; // Bootstrap icon zoom
 
-        // ✅ Tạo ảnh mới từ file upload local (FileReader)
-        function createImageBoxFromLocal(dataURL, imageId, productId) {
-            const box = document.createElement("div");
-            box.className = "image-box";
-
-            const image = document.createElement("img");
-            image.src = dataURL;
-            image.alt = "Product Image";
-
-            const delBtn = document.createElement("button");
-            delBtn.className = "delete-btn";
-            delBtn.innerHTML = "&times;";
-            delBtn.addEventListener("click", () => {
-                if (confirm("Bạn có chắc chắn muốn xoá ảnh vừa tải lên?")) {
-                    axios.delete(`/AgriculturalWarehouseManagementApplication/api/seller/product/${productId}/images/${imageId}`)
-                        .then(() => {
-                            box.remove();
-                            alert("Đã xoá ảnh.");
-                        })
-                        .catch(err => alert("Xoá ảnh lỗi"));
-                }
+            zoomBtn.addEventListener("click", () => {
+                const zoomWindow = window.open(image.src, "_blank");
+                zoomWindow.focus();
             });
 
-            box.appendChild(image);
-            box.appendChild(delBtn);
-            return box;
+            // Gắn nút vào controlBox
+            controlBox.appendChild(zoomBtn);
+            controlBox.appendChild(delBtn);
+
+            // Thêm vào wrapper
+            wrapper.appendChild(box);
+            wrapper.appendChild(controlBox);
+
+            return wrapper;
         }
 
         // ✅ render slot "+"
