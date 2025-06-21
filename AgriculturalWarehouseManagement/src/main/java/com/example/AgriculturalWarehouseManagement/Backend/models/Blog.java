@@ -40,6 +40,8 @@ public class Blog {
     @Column(name = "author")
     private String author;
 
+
+
     public Integer getBlogID() {
         return blogID;
     }
@@ -111,20 +113,16 @@ public class Blog {
     public void setAuthor(String author) {
         this.author = author;
     }
+    // Liên kết 1-1 với BlogDetail (mappedBy phía BlogDetail)
+    @OneToOne(mappedBy = "blog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private BlogDetail blogDetail;
 
-    @Override
-    public String toString() {
-        return "Blog{" +
-                "blogID=" + blogID +
-                ", userID=" + userID +
-                ", blogCategoryID=" + blogCategoryID +
-                ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", createdAt=" + createdAt +
-                ", blogDateUpdate=" + blogDateUpdate +
-                ", status='" + status + '\'' +
-                ", author='" + author + '\'' +
-                '}';
+    public BlogDetail getBlogDetail() {
+        return blogDetail;
+    }
+
+    public void setBlogDetail(BlogDetail blogDetail) {
+        this.blogDetail = blogDetail;
     }
 }
 

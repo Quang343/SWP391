@@ -2,13 +2,15 @@ package com.example.AgriculturalWarehouseManagement.Backend.services.blogs;
 
 import com.example.AgriculturalWarehouseManagement.Backend.models.Blog;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.BlogRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class BlogService implements  IBlogService{
+public class BlogService {
 
     private final BlogRepository blogRepository;
 
@@ -16,9 +18,15 @@ public class BlogService implements  IBlogService{
     public BlogService(BlogRepository blogRepository) {
         this.blogRepository = blogRepository;
     }
+//
+//    public List<Blog> getAllActiveBlogs() {
+//        return blogRepository.findAllByStatus("Active");
+//    }
 
+    // BlogService.java
     public List<Blog> getAllActiveBlogs() {
-        return blogRepository.findAllByStatus("Active");
+        // Cách 1: Viết lại query join fetch có điều kiện status
+        return blogRepository.findAllActiveWithDetail("Active");
     }
 
     public Blog getBlogById(Integer id) {
@@ -29,8 +37,14 @@ public class BlogService implements  IBlogService{
         return blogRepository.findTopNByStatusOrderByCreatedAtDesc("Active", count);
     }
 
-    @Override
-    public List<Blog> findAll() {
-        return blogRepository.findAll();
-    }
+//    public Page<Blog> getActiveBlogsPage(int page, int size) {
+//        Pageable pageable = PageRequest.of(page, size);
+//        return blogRepository.findAllByStatus("Active", pageable);
+//    }
+public Page<Blog> getActiveBlogsPage(int page, int size) {
+    Pageable pageable = PageRequest.of(page, size);
+    return blogRepository.findAllByStatusOrderByCreatedAtDesc("Active", pageable);
+}
+
+
 }

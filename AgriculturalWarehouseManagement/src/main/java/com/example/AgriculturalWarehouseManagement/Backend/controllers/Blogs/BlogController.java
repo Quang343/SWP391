@@ -1,5 +1,7 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.Blogs;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 
@@ -7,10 +9,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.models.Blog;
 import com.example.AgriculturalWarehouseManagement.Backend.services.blogs.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,33 +23,31 @@ public class BlogController {
         this.blogService = blogService;
     }
 
-    // Hiển thị danh sách blog động
     @RequestMapping("/blog-list")
-    public String bloglist(Model model) {
-        List<Blog> blogs = blogService.getAllActiveBlogs();  // Lấy danh sách blog (trạng thái Active)
-      model.addAttribute("blogs", blogs);
-      model.addAttribute("recentBlogs", blogService.getRecentBlogs(4)); // lấy 4 bài mới nhất
-
-        return "FrontEnd/Home/blog-list"; // Trả về giao diện blog-list
+    public String bloglist(@RequestParam(defaultValue = "0") int page, // Số trang hiện tại (bắt đầu từ 0)
+                           @RequestParam(defaultValue = "3") int size, // Số bài viết mỗi trang
+                           Model model) {
+        // Lấy Page<Blog> với phân trang và sắp xếp
+        Page<Blog> blogPage = blogService.getActiveBlogsPage(page, size);
+        // Lấy danh sách bài viết ở trang hiện tại
+        model.addAttribute("blogs", blogPage.getContent());
+        // Tổng số trang (phục vụ cho phân trang ở view)
+        model.addAttribute("totalPages", blogPage.getTotalPages());
+        // Số trang hiện tại
+        model.addAttribute("currentPage", page);
+        // Lấy 4 bài viết mới nhất cho sidebar/recent posts
+        model.addAttribute("recentBlogs", blogService.getRecentBlogs(4));
+        return "FrontEnd/Home/blog-list";
     }
 
-//    @GetMapping("/blog-list")
-//    public ResponseEntity<?> bloglist() {
-//        List<Blog> blogs = blogService.findAll();
-//
-//        for (Blog blog : blogs) {
-//            System.out.printf("hello 1"+blog.toString());
-//        }
-//        return ResponseEntity.ok(blogs);
-//    }
 
     @RequestMapping("/blog-detail")
     public String blogdetail() {
         return "FrontEnd/Home/blog-detail";
     }
-
-    @RequestMapping("/blog-grid")
-    public String bloggrid() {
-        return "FrontEnd/Home/blog-grid";
-    }
+//
+//    @RequestMapping("/blog-grid")
+//    public String bloggrid() {
+//        return "FrontEnd/Home/blog-grid";
+//    }
 }

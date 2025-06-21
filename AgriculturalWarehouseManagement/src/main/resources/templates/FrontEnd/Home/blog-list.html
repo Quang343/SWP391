@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
@@ -72,7 +71,7 @@
                     <nav>
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item">
-                                <a href="index.html">
+                                <a href="home">
                                     <i class="fa-solid fa-house"></i>
                                 </a>
                             </li>
@@ -95,23 +94,28 @@
                     <div class="col-12" th:each="blog : ${blogs}">
                         <div class="blog-box blog-list wow fadeInUp">
                             <div class="blog-image">
-                                <img th:src="@{../assets/images/inner-page/blog/1.jpg}" class="blur-up lazyload" alt="Blog Image">
-                            </div>
+                                <!-- <p th:text="'thumbnail: >' + ${blog.blogDetail.thumbnail} + '<'"></p>-->
+                                <img th:src="@{'/AgriculturalWarehouseManagement/assets/images/blog/' + ${blog.blogDetail.thumbnail}}"
+                                     class="blur-up lazyload"
+                                     style="width:309px; height:177px; object-fit:cover;"
+                                     alt="Blog Image">
 
+                            </div>
                             <div class="blog-contain blog-contain-2">
                                 <div class="blog-label">
                                     <span class="time"><i data-feather="clock"></i>
                                         <span th:text="${#dates.format(blog.createdAt, 'dd MMM, yyyy')}"></span>
                                     </span>
                                     <span class="super"><i data-feather="user"></i>
-                                        <span  th:text="${blog.author}"></span>
+                                        <span th:text="${blog.author}"></span>
                                     </span>
                                 </div>
                                 <a href="/blog-detail">
-                                    <h3  th:text="${blog.title}"></h3>
+                                    <h3 th:text="${blog.title}"></h3>
                                 </a>
                                 <p th:text="${blog.content}"></p>
-                                <button th:onclick="|location.href='/blog-detail?id=${blog.blogID}'|" class="blog-button">Read
+                                <button th:onclick="|location.href='/blog-detail?id=${blog.blogID}'|"
+                                        class="blog-button">Read
                                     More <i class="fa-solid fa-right-long"></i></button>
                             </div>
                         </div>
@@ -119,7 +123,9 @@
                     <div class="col-12">
                         <div class="blog-box blog-list wow fadeInUp">
                             <div class="blog-image">
-                                <img src="../assets/images/inner-page/blog/1.jpg" class="blur-up lazyload" alt="">
+                                <img src="/AgriculturalWarehouseManagement/Frontend/assets/images/blog/5.jpg"
+                                     class="blur-up lazyload" style="width:309px; height:177px; object-fit:cover;"
+                                     alt="">
                             </div>
 
                             <div class="blog-contain blog-contain-2">
@@ -129,9 +135,10 @@
                                                 </span></span>
                                 </div>
                                 <a href="blog-detail">
-                                    <h3>one pot creamy mediterranean chicken pasta cream.</h3>
+                                    <h3> Xuân Hạ Thu Đông rồi lại Xuân</h3>
                                 </a>
-                                <p>Thu viết tình thơ , Hạ vẽ lá , em đi trong mắt hoá chiều tà , gió đông hiu hắt xuân buồn bã , truân truất lun hồi hoá phong ba.</p>
+                                <p>Thu viết tình thơ , Hạ vẽ lá , em đi trong mắt hoá chiều tà , gió đông hiu hắt xuân
+                                    buồn bã , truân truất lun hồi hoá phong ba.</p>
                                 <button onclick="location.href = 'blog-detail';" class="blog-button">Read
                                     More <i class="fa-solid fa-right-long"></i></button>
                             </div>
@@ -139,29 +146,77 @@
                     </div>
                 </div>
 
+<!--                <nav class="custom-pagination">-->
+<!--&lt;!&ndash;                     Phân trang&ndash;&gt;-->
+<!--                    <ul class="pagination justify-content-center">-->
+<!--                        <li class="page-item disabled">-->
+<!--                            <a class="page-link" href="javascript:void(0)" tabindex="-1">-->
+<!--                                <i class="fa-solid fa-angles-left"></i>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li class="page-item active">-->
+<!--                            <a class="page-link" href="javascript:void(0)">1</a>-->
+<!--                        </li>-->
+<!--                        <li class="page-item">-->
+<!--                            <a class="page-link" href="javascript:void(0)">2</a>-->
+<!--                        </li>-->
+<!--                        <li class="page-item">-->
+<!--                            <a class="page-link" href="javascript:void(0)">3</a>-->
+<!--                        </li>-->
+<!--                        <li class="page-item">-->
+<!--                            <a class="page-link" href="javascript:void(0)">-->
+<!--                                <i class="fa-solid fa-angles-right"></i>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </nav>-->
+
+<!--                 Version 1: Chưa update theo Create At-->
+<!--                <nav class="custom-pagination">-->
+<!--                    <ul class="pagination justify-content-center">-->
+<!--                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">-->
+<!--                            <a class="page-link" th:href="@{/blog-list(page=${currentPage - 1})}">-->
+<!--                                <i class="fa-solid fa-angles-left"></i>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li th:each="i : ${#numbers.sequence(1, totalPages)}"-->
+<!--                            class="page-item"-->
+<!--                            th:classappend="${i == currentPage} ? 'active'">-->
+<!--                            <a class="page-link" th:href="@{/blog-list(page=${i})}" th:text="${i}"></a>-->
+<!--                        </li>-->
+<!--                        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">-->
+<!--                            <a class="page-link" th:href="@{/blog-list(page=${currentPage + 1})}">-->
+<!--                                <i class="fa-solid fa-angles-right"></i>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </nav>-->
                 <nav class="custom-pagination">
                     <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="javascript:void(0)" tabindex="-1">
+                        <!-- Nút quay về trang trước, disabled nếu ở trang 0 -->
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" th:href="@{/blog-list(page=${currentPage-1},size=3)}" tabindex="-1">
                                 <i class="fa-solid fa-angles-left"></i>
                             </a>
                         </li>
-                        <li class="page-item active">
-                            <a class="page-link" href="javascript:void(0)">1</a>
+                        <!-- Hiển thị số trang -->
+                        <li th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+                            class="page-item"
+                            th:classappend="${currentPage == i} ? 'active'">
+                            <a class="page-link" th:href="@{/blog-list(page=${i},size=3)}" th:text="${i+1}"></a>
                         </li>
-                        <li class="page-item">
-                            <a class="page-link" href="javascript:void(0)">2</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="javascript:void(0)">3</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="javascript:void(0)">
+                        <!-- Nút sang trang sau, disabled nếu ở trang cuối -->
+                        <li class="page-item" th:classappend="${currentPage == totalPages-1} ? 'disabled'">
+                            <a class="page-link" th:href="@{/blog-list(page=${currentPage+1},size=3)}">
                                 <i class="fa-solid fa-angles-right"></i>
                             </a>
                         </li>
                     </ul>
                 </nav>
+
+
+
+
             </div>
 
             <div class="col-xxl-3 col-xl-4 col-lg-5 order-lg-1">
@@ -186,60 +241,61 @@
                                     <div class="recent-post-box" th:each="recent : ${recentBlogs}">
                                         <div class="recent-box">
                                             <a th:href="@{|/blog-detail?id=${recent.blogID}|}" class="recent-image">
-                                                <img th:src="@{../assets/images/inner-page/blog/1.jpg}"
+                                                <img src="/AgriculturalWarehouseManagement/Frontend/assets/images/blog/1.jpg"
                                                      class="img-fluid blur-up lazyload" alt="">
                                             </a>
 
                                             <div class="recent-detail">
-                                                <a  th:href="@{|/blog-detail?id=${recent.blogID}|}">
-                                                    <h5 th:text="${recent.title}" class="recent-name">Green onion knife and salad placed</h5>
+                                                <a th:href="@{|/blog-detail?id=${recent.blogID}|}">
+                                                    <h5 th:text="${recent.title}" class="recent-name">Green onion knife
+                                                        and salad placed</h5>
                                                 </a>
-                                                <h6> <span th:text="${#dates.format(recent.createdAt, 'dd MMM, yyyy')}">25 Jan, 2022</span>
+                                                <h6><span th:text="${#dates.format(recent.createdAt, 'dd MMM, yyyy')}">25 Jan, 2022</span>
                                                     <i data-feather="thumbs-up"></i></h6>
                                             </div>
                                         </div>
 
-<!--                                        <div class="recent-box">-->
-<!--                                            <a href="blog-detail" class="recent-image">-->
-<!--                                                <img src="../assets/images/inner-page/blog/2.jpg"-->
-<!--                                                     class="img-fluid blur-up lazyload" alt="">-->
-<!--                                            </a>-->
+                                        <!--                                        <div class="recent-box">-->
+                                        <!--                                            <a href="blog-detail" class="recent-image">-->
+                                        <!--                                                <img src="../assets/images/inner-page/blog/2.jpg"-->
+                                        <!--                                                     class="img-fluid blur-up lazyload" alt="">-->
+                                        <!--                                            </a>-->
 
-<!--                                            <div class="recent-detail">-->
-<!--                                                <a href="blog-detail">-->
-<!--                                                    <h5 class="recent-name">Health and skin for your organic</h5>-->
-<!--                                                </a>-->
-<!--                                                <h6>25 Jan, 2022 <i data-feather="thumbs-up"></i></h6>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
+                                        <!--                                            <div class="recent-detail">-->
+                                        <!--                                                <a href="blog-detail">-->
+                                        <!--                                                    <h5 class="recent-name">Health and skin for your organic</h5>-->
+                                        <!--                                                </a>-->
+                                        <!--                                                <h6>25 Jan, 2022 <i data-feather="thumbs-up"></i></h6>-->
+                                        <!--                                            </div>-->
+                                        <!--                                        </div>-->
 
-<!--                                        <div class="recent-box">-->
-<!--                                            <a href="blog-detail" class="recent-image">-->
-<!--                                                <img src="../assets/images/inner-page/blog/3.jpg"-->
-<!--                                                     class="img-fluid blur-up lazyload" alt="">-->
-<!--                                            </a>-->
+                                        <!--                                        <div class="recent-box">-->
+                                        <!--                                            <a href="blog-detail" class="recent-image">-->
+                                        <!--                                                <img src="../assets/images/inner-page/blog/3.jpg"-->
+                                        <!--                                                     class="img-fluid blur-up lazyload" alt="">-->
+                                        <!--                                            </a>-->
 
-<!--                                            <div class="recent-detail">-->
-<!--                                                <a href="blog-detail">-->
-<!--                                                    <h5 class="recent-name">Organics mix masala fresh & soft</h5>-->
-<!--                                                </a>-->
-<!--                                                <h6>25 Jan, 2022 <i data-feather="thumbs-up"></i></h6>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
+                                        <!--                                            <div class="recent-detail">-->
+                                        <!--                                                <a href="blog-detail">-->
+                                        <!--                                                    <h5 class="recent-name">Organics mix masala fresh & soft</h5>-->
+                                        <!--                                                </a>-->
+                                        <!--                                                <h6>25 Jan, 2022 <i data-feather="thumbs-up"></i></h6>-->
+                                        <!--                                            </div>-->
+                                        <!--                                        </div>-->
 
-<!--                                        <div class="recent-box">-->
-<!--                                            <a href="blog-detail" class="recent-image">-->
-<!--                                                <img src="../assets/images/inner-page/blog/4.jpg"-->
-<!--                                                     class="img-fluid blur-up lazyload" alt="">-->
-<!--                                            </a>-->
+                                        <!--                                        <div class="recent-box">-->
+                                        <!--                                            <a href="blog-detail" class="recent-image">-->
+                                        <!--                                                <img src="../assets/images/inner-page/blog/4.jpg"-->
+                                        <!--                                                     class="img-fluid blur-up lazyload" alt="">-->
+                                        <!--                                            </a>-->
 
-<!--                                            <div class="recent-detail">-->
-<!--                                                <a href="blog-detail">-->
-<!--                                                    <h5 class="recent-name">Fresh organics brand and picnic</h5>-->
-<!--                                                </a>-->
-<!--                                                <h6>25 Jan, 2022 <i data-feather="thumbs-up"></i></h6>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
+                                        <!--                                            <div class="recent-detail">-->
+                                        <!--                                                <a href="blog-detail">-->
+                                        <!--                                                    <h5 class="recent-name">Fresh organics brand and picnic</h5>-->
+                                        <!--                                                </a>-->
+                                        <!--                                                <h6>25 Jan, 2022 <i data-feather="thumbs-up"></i></h6>-->
+                                        <!--                                            </div>-->
+                                        <!--                                        </div>-->
                                     </div>
                                 </div>
                             </div>
@@ -248,7 +304,8 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#panelsStayOpen-collapseTwo">Category</button>
+                                        data-bs-target="#panelsStayOpen-collapseTwo">Category
+                                </button>
                             </h2>
                             <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse collapse show">
                                 <div class="accordion-body p-0">
@@ -316,7 +373,8 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="panelsStayOpen-headingThree">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#panelsStayOpen-collapseThree">Product Tags</button>
+                                        data-bs-target="#panelsStayOpen-collapseThree">Product Tags
+                                </button>
                             </h2>
                             <div id="panelsStayOpen-collapseThree"
                                  class="accordion-collapse collapse collapse show">
@@ -364,7 +422,8 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="panelsStayOpen-headingFour">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#panelsStayOpen-collapseFour">Trending Products</button>
+                                        data-bs-target="#panelsStayOpen-collapseFour">Trending Products
+                                </button>
                             </h2>
                             <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse collapse show">
                                 <div class="accordion-body">
@@ -814,7 +873,9 @@
 
                                 <a href="shop-left-sidebar.html" class="deal-contain">
                                     <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
                                 </a>
                             </div>
                         </li>
@@ -828,7 +889,9 @@
 
                                 <a href="shop-left-sidebar.html" class="deal-contain">
                                     <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
                                 </a>
                             </div>
                         </li>
@@ -842,7 +905,9 @@
 
                                 <a href="shop-left-sidebar.html" class="deal-contain">
                                     <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
                                 </a>
                             </div>
                         </li>
@@ -856,7 +921,9 @@
 
                                 <a href="shop-left-sidebar.html" class="deal-contain">
                                     <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
                                 </a>
                             </div>
                         </li>

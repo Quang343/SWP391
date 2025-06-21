@@ -27,8 +27,10 @@ spring:
   web:
     resources:
       static-locations:
-        - file:D:/FU Learning/25-Summer/SWP391/QuanLyKhoNongSan/SWP391/AgriculturalWarehouseManagement/src/main/resources/static/
         - classpath:/static/
+      #  - classpath:/static/Frontend/
+        - file:D:/Project SWP391/SWP391/AgriculturalWarehouseManagement/src/main/resources/static/
+
       cache:
         period: 0 # Tắt bộ đệm tài nguyên tĩnh
 
