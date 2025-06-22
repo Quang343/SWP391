@@ -94,8 +94,8 @@
                     <div class="col-12" th:each="blog : ${blogs}">
                         <div class="blog-box blog-list wow fadeInUp">
                             <div class="blog-image">
-                                <!-- <p th:text="'thumbnail: >' + ${blog.blogDetail.thumbnail} + '<'"></p>-->
-                                <img th:src="@{'/AgriculturalWarehouseManagement/assets/images/blog/' + ${blog.blogDetail.thumbnail}}"
+                                 <p th:text="'thumbnail: >' + ${blog.blogDetail.thumbnail} + '<'"></p>
+                                <img th:src="@{'/AgriculturalWarehouseManagement/Frontend/assets/images/blog/' + ${blog.blogDetail.thumbnail}}"
                                      class="blur-up lazyload"
                                      style="width:309px; height:177px; object-fit:cover;"
                                      alt="Blog Image">
@@ -171,31 +171,17 @@
 <!--                    </ul>-->
 <!--                </nav>-->
 
-<!--                 Version 1: Chưa update theo Create At-->
-<!--                <nav class="custom-pagination">-->
-<!--                    <ul class="pagination justify-content-center">-->
-<!--                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">-->
-<!--                            <a class="page-link" th:href="@{/blog-list(page=${currentPage - 1})}">-->
-<!--                                <i class="fa-solid fa-angles-left"></i>-->
-<!--                            </a>-->
-<!--                        </li>-->
-<!--                        <li th:each="i : ${#numbers.sequence(1, totalPages)}"-->
-<!--                            class="page-item"-->
-<!--                            th:classappend="${i == currentPage} ? 'active'">-->
-<!--                            <a class="page-link" th:href="@{/blog-list(page=${i})}" th:text="${i}"></a>-->
-<!--                        </li>-->
-<!--                        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">-->
-<!--                            <a class="page-link" th:href="@{/blog-list(page=${currentPage + 1})}">-->
-<!--                                <i class="fa-solid fa-angles-right"></i>-->
-<!--                            </a>-->
-<!--                        </li>-->
-<!--                    </ul>-->
-<!--                </nav>-->
                 <nav class="custom-pagination">
                     <ul class="pagination justify-content-center">
+                        <!-- Nút về Đầu -->
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" th:href="@{/blog-list(page=0, size=${size})}" title="Trang đầu">
+                                <i class="fa-solid fa-angle-double-left"></i>
+                            </a>
+                        </li>
                         <!-- Nút quay về trang trước, disabled nếu ở trang 0 -->
                         <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                            <a class="page-link" th:href="@{/blog-list(page=${currentPage-1},size=3)}" tabindex="-1">
+                            <a class="page-link" th:href="@{/blog-list(page=${currentPage-1},size=${size})}" tabindex="-1">
                                 <i class="fa-solid fa-angles-left"></i>
                             </a>
                         </li>
@@ -203,12 +189,19 @@
                         <li th:each="i : ${#numbers.sequence(0, totalPages-1)}"
                             class="page-item"
                             th:classappend="${currentPage == i} ? 'active'">
-                            <a class="page-link" th:href="@{/blog-list(page=${i},size=3)}" th:text="${i+1}"></a>
+                            <a class="page-link" th:href="@{/blog-list(page=${i},size=${size})}" th:text="${i+1}"></a>
                         </li>
                         <!-- Nút sang trang sau, disabled nếu ở trang cuối -->
                         <li class="page-item" th:classappend="${currentPage == totalPages-1} ? 'disabled'">
-                            <a class="page-link" th:href="@{/blog-list(page=${currentPage+1},size=3)}">
+                            <a class="page-link" th:href="@{/blog-list(page=${currentPage+1},size=${size})}">
                                 <i class="fa-solid fa-angles-right"></i>
+                            </a>
+                        </li>
+
+                        <!-- Nút về Cuối -->
+                        <li class="page-item" th:classappend="${currentPage == totalPages-1} ? 'disabled'">
+                            <a class="page-link" th:href="@{/blog-list(page=${totalPages-1}, size=${size})}" title="Trang cuối">
+                                <i class="fa-solid fa-angle-double-right"></i>
                             </a>
                         </li>
                     </ul>
