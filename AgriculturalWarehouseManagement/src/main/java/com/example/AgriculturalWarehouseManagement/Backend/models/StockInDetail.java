@@ -18,12 +18,12 @@ public class StockInDetail {
     private Integer id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @JoinColumn(name = "stockinid", nullable = false)
     private StockIn stockInID;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @JoinColumn(name = "productdetailid", nullable = false)
     private ProductDetail productDetailID;
 
@@ -34,7 +34,7 @@ public class StockInDetail {
     @Column(name = "unitprice", precision = 10, scale = 2)
     private BigDecimal unitPrice;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "batchid")
     private ProductBatch batchID;
 

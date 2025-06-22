@@ -89,7 +89,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header d-block text-center">
-        <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure ?</h5>
+        <h4 class="modal-title w-100" id="exampleModalLabel22">Are You Sure ?</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
           <i class="fas fa-times"></i>
         </button>
@@ -111,7 +111,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title text-center" id="exampleModalLabel12">Done!</h5>
+        <h4 class="modal-title text-center" id="exampleModalLabel12">Done!</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
           <i class="fas fa-times"></i>
         </button>
@@ -147,27 +147,38 @@
   <div class="offcanvas-body">
     <div class="order-date">
       <h6 id="offcanvasStockInDate"></h6>
-      <a href="javascript:void(0)" class="d-block mt-1">Cancel StockIn</a>
     </div>
 
-    <div class="accordion accordion-flush custome-accordion" id="accordionFlushExample">
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="flush-headingOne">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-            Details
-          </button>
-        </h2>
-        <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
-             data-bs-parent="#accordionFlushExample">
-          <div class="accordion-body">
-            <p><strong>Supplier ID:</strong> <span id="offcanvasSupplierId"></span></p>
-            <p><strong>Warehouse ID:</strong> <span id="offcanvasWarehouseId"></span></p>
-            <p><strong>Note:</strong> <span id="offcanvasNote"></span></p>
-          </div>
-        </div>
+    <form id="updateStockInForm">
+      <input type="hidden" id="offcanvasStockInIdInput" />
+      <div class="mb-3">
+        <label for="offcanvasSupplierId">Supplier</label>
+        <select class="form-control" id="offcanvasSupplierId" name="supplierId">
+          <option value="">Select Supplier</option>
+          <!-- Options will be populated by JavaScript -->
+        </select>
       </div>
-    </div>
+      <div class="mb-3">
+        <label for="offcanvasWarehouseId">Warehouse</label>
+        <select class="form-control" id="offcanvasWarehouseId" name="warehouseId">
+          <option value="">Select Warehouse</option>
+          <!-- Options will be populated by JavaScript -->
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="offcanvasStockInDateInput">Date</label>
+        <input type="date" class="form-control" id="offcanvasStockInDateInput" />
+      </div>
+      <div class="mb-3">
+        <label for="offcanvasStockInTimeInput">Time</label>
+        <input type="time" class="form-control" id="offcanvasStockInTimeInput" />
+      </div>
+      <div class="mb-3">
+        <label for="offcanvasNote">Note</label>
+        <input type="text" class="form-control" id="offcanvasNote" />
+      </div>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
   </div>
 </div>
 <!-- Offcanvas Box End -->
@@ -193,6 +204,54 @@
 <!-- Custom JavaScript -->
 <script>
   $(document).ready(function() {
+    // Function to load Suppliers into dropdown
+    function loadSuppliersDropdown(selectElement, selectedId) {
+      $.ajax({
+        url: 'http://localhost:8080/api/suppliers',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          selectElement.empty().append('<option value="">Select Supplier</option>');
+          $.each(data, function(index, supplier) {
+            const supplierId = supplier.supplierID || supplier.id;
+            const supplierName = supplier.supplierName || supplier.name;
+            if (supplierId && supplierName) {
+              const selected = supplierId == selectedId ? 'selected' : '';
+              selectElement.append(`<option value="${supplierId}" ${selected}>${supplierName} (ID: ${supplierId})</option>`);
+            }
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error('Error loading Suppliers:', status, error);
+          selectElement.empty().append('<option value="">Error loading Suppliers</option>');
+        }
+      });
+    }
+
+    // Function to load Warehouses into dropdown
+    function loadWarehousesDropdown(selectElement, selectedId) {
+      $.ajax({
+        url: 'http://localhost:8080/api/warehouses',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          selectElement.empty().append('<option value="">Select Warehouse</option>');
+          $.each(data, function(index, warehouse) {
+            const warehouseId = warehouse.warehouseId || warehouse.id;
+            const warehouseName = warehouse.warehouseName || warehouse.name;
+            if (warehouseId && warehouseName) {
+              const selected = warehouseId == selectedId ? 'selected' : '';
+              selectElement.append(`<option value="${warehouseId}" ${selected}>${warehouseName} (ID: ${warehouseId})</option>`);
+            }
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error('Error loading Warehouses:', status, error);
+          selectElement.empty().append('<option value="">Error loading Warehouses</option>');
+        }
+      });
+    }
+
     // Load StockIn data
     function loadStockIns() {
       $.ajax({
@@ -214,29 +273,30 @@
                       '<td>' + stockIn.id + '</td>' +
                       '<td>' + supplierName + '</td>' +
                       '<td>' + warehouseName + '</td>' +
-                      '<td>' + (stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleDateString() : 'N/A') + '</td>' +
+                      '<td>' + (stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleString() : 'N/A') + '</td>' +
                       '<td>' + (stockIn.note || 'N/A') + '</td>' +
                       '<td>' +
                       '<ul>' +
-                      '<li><a href="/stockindetail?stockInId=' + stockIn.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
-                      '<li><a href="javascript:void(0)"><i class="ri-pencil-line"></i></a></li>' +
+                      '<li><a href="/warehouse/stockindetail?stockInId=' + stockIn.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
+                      '<li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="' + stockIn.id + '" class="edit-link"><i class="ri-pencil-line"></i></a></li>' +
                       '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="' + stockIn.id + '"><i class="ri-delete-bin-line"></i></a></li>' +
+
                       '</ul>' +
                       '</td>' +
                       '</tr>';
               tbody.append(row);
             }).fail(function(jqXHR, textStatus, errorThrown) {
-              console.error('Error fetching supplier or warehouse: ', textStatus, errorThrown);
+              console.error('Error fetching supplier or warehouse:', textStatus, errorThrown);
               var row = '<tr data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="' + stockIn.id + '">' +
                       '<td>' + stockIn.id + '</td>' +
                       '<td>N/A</td>' +
                       '<td>N/A</td>' +
-                      '<td>' + (stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleDateString() : 'N/A') + '</td>' +
+                      '<td>' + (stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleString() : 'N/A') + '</td>' +
                       '<td>' + (stockIn.note || 'N/A') + '</td>' +
                       '<td>' +
                       '<ul>' +
-                      '<li><a href="/stockindetail?stockInId=' + stockIn.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
-                      '<li><a href="javascript:void(0)"><i class="ri-pencil-line"></i></a></li>' +
+                      '<li><a href="/warehouse/stockindetail?stockInId=' + stockIn.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
+                      '<li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="' + stockIn.id + '" class="edit-link"><i class="ri-pencil-line"></i></a></li>' +
                       '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="' + stockIn.id + '"><i class="ri-delete-bin-line"></i></a></li>' +
                       '<li><a class="btn btn-sm btn-solid text-white" href="order-tracking.html">Tracking</a></li>' +
                       '</ul>' +
@@ -247,75 +307,103 @@
           });
         },
         error: function(xhr, status, error) {
-          console.error('Error loading StockIns: ', status, error);
+          console.error('Error loading StockIns:', status, error);
           $('#stockInTableBody').html('<tr><td colspan="6">Failed to load data. Check console.</td></tr>');
         }
       });
     }
 
-    // Load StockIn details and StockInDetails into offcanvas
+    // Load StockIn details into offcanvas
     $(document).on('show.bs.offcanvas', '#order-details', function(event) {
       var stockInId = $(event.relatedTarget).data('stockin-id');
       $('#offcanvasStockInId').text(stockInId);
-      $.when(
-              $.ajax({ url: 'http://localhost:8080/api/stockins/' + stockInId, method: 'GET', dataType: 'json' }),
-              $.ajax({ url: 'http://localhost:8080/api/stockindetails?stockInId=' + stockInId, method: 'GET', dataType: 'json' })
-      ).done(function(stockInResponse, stockInDetailsResponse) {
-        var stockIn = stockInResponse[0];
-        var stockInDetails = stockInDetailsResponse[0];
-        $('#offcanvasStockInDate').text(stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleString() : 'N/A');
-        $('#offcanvasSupplierName').text(stockIn.supplierID ? 'Loading...' : 'N/A');
-        $('#offcanvasWarehouseName').text(stockIn.warehouseID ? 'Loading...' : 'N/A');
-        $('#offcanvasNote').text(stockIn.note || 'N/A');
+      $('#offcanvasStockInIdInput').val(stockInId);
 
-        // Fetch Supplier and Warehouse names
-        $.when(
-                $.ajax({ url: 'http://localhost:8080/api/suppliers/' + stockIn.supplierID, method: 'GET', dataType: 'json' }),
-                $.ajax({ url: 'http://localhost:8080/api/warehouses/' + stockIn.warehouseID, method: 'GET', dataType: 'json' })
-        ).done(function(supplierResponse, warehouseResponse) {
-          $('#offcanvasSupplierName').text(supplierResponse[0].name || 'N/A');
-          $('#offcanvasWarehouseName').text(warehouseResponse[0].name || 'N/A');
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-          $('#offcanvasSupplierName').text('N/A');
-          $('#offcanvasWarehouseName').text('N/A');
-          console.error('Error fetching supplier or warehouse: ', textStatus, errorThrown);
-        });
+      $.ajax({
+        url: 'http://localhost:8080/api/stockins/' + stockInId,
+        method: 'GET',
+        dataType: 'json',
+        success: function(stockIn) {
+          var dateTime = stockIn.stockInDate ? new Date(stockIn.stockInDate) : null;
+          $('#offcanvasStockInDate').text(dateTime ? dateTime.toLocaleString() : 'N/A');
 
-        // Load StockInDetails
-        var detailTbody = $('#stockInDetailTable');
-        detailTbody.empty();
-        $.each(stockInDetails, function(index, detail) {
-          var row = '<tr>' +
-                  '<td>' + (detail.productDetailID || 'N/A') + '</td>' +
-                  '<td>' + (detail.quantity || 'N/A') + '</td>' +
-                  '<td>' + (detail.unitPrice || 'N/A') + '</td>' +
-                  '<td>' + (detail.batchID || 'N/A') + '</td>' +
-                  '</tr>';
-          detailTbody.append(row);
-        });
-      }).fail(function(jqXHR, textStatus, errorThrown) {
-        console.error('Error loading StockIn details: ', textStatus, errorThrown);
+          // Load suppliers and warehouses into dropdowns
+          loadSuppliersDropdown($('#offcanvasSupplierId'), stockIn.supplierID);
+          loadWarehousesDropdown($('#offcanvasWarehouseId'), stockIn.warehouseID);
+
+          $('#offcanvasStockInDateInput').val(dateTime ? dateTime.toISOString().split('T')[0] : '');
+          $('#offcanvasStockInTimeInput').val(dateTime ? dateTime.toTimeString().slice(0, 5) : '00:00');
+          $('#offcanvasNote').val(stockIn.note || '');
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.error('Error loading StockIn details:', textStatus, errorThrown);
+          alert('Failed to load StockIn details.');
+        }
       });
+    });
+
+    // Update StockIn
+    $('#updateStockInForm').on('submit', function(e) {
+      e.preventDefault();
+      var stockInId = $('#offcanvasStockInIdInput').val();
+      var date = $('#offcanvasStockInDateInput').val();
+      var time = $('#offcanvasStockInTimeInput').val();
+      var stockInDate = date + 'T' + (time || '00:00') + ':00'; // Combine date and time
+
+      var formData = {
+        id: stockInId,
+        supplierID: $('#offcanvasSupplierId').val(),
+        warehouseID: $('#offcanvasWarehouseId').val(),
+        stockInDate: stockInDate,
+        note: $('#offcanvasNote').val()
+      };
+
+      $.ajax({
+        url: 'http://localhost:8080/api/stockins/' + stockInId,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(formData),
+        success: function(response) {
+          alert('StockIn updated successfully!');
+          $('#order-details').offcanvas('hide');
+          loadStockIns(); // Reload table
+        },
+        error: function(xhr, status, error) {
+          console.error('Error updating StockIn:', status, error);
+          alert('Error updating StockIn: ' + (xhr.responseText || 'Unknown error'));
+        }
+      });
+    });
+
+    // Store StockIn ID for deletion
+    $(document).on('click', '[data-bs-target="#exampleModalToggle"]', function() {
+      var stockInId = $(this).data('stockin-id');
+      $('#exampleModalToggle').data('stockin-id', stockInId);
     });
 
     // Delete StockIn
     $('#confirmDeleteBtn').on('click', function() {
       var stockInId = $('#exampleModalToggle').data('stockin-id');
-      if (stockInId) {
-        $.ajax({
-          url: 'http://localhost:8080/api/stockins/' + stockInId,
-          method: 'DELETE',
-          success: function() {
-            $('#exampleModalToggle').modal('hide');
-            $('#exampleModalToggle2').modal('show');
-            loadStockIns(); // Reload table after deletion
-          },
-          error: function(xhr, status, error) {
-            console.error('Error deleting StockIn: ', status, error);
-            alert('Failed to delete StockIn. Check console.');
-          }
-        });
+      if (!stockInId) {
+        console.error('No StockIn ID found for deletion.');
+        alert('Error: No StockIn selected for deletion.');
+        return;
       }
+
+      $.ajax({
+        url: 'http://localhost:8080/api/stockins/' + stockInId,
+        method: 'DELETE',
+        success: function() {
+          $('#exampleModalToggle').modal('hide');
+          $('#exampleModalToggle2').modal('show');
+          loadStockIns(); // Reload table
+        },
+        error: function(xhr, status, error) {
+          console.error('Error deleting StockIn:', status, error);
+          alert('Failed to delete StockIn: ' + (xhr.responseText || 'Unknown error'));
+          $('#exampleModalToggle').modal('hide');
+        }
+      });
     });
 
     // Initialize table

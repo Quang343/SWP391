@@ -28,8 +28,9 @@ public class ProductDetail {
     @Column(name = "price", precision = 15, scale = 2)
     private BigDecimal price;
 
-    @Column(name = "weight", precision = 10, scale = 2)
-    private BigDecimal weight;
+    @ManyToOne
+    @JoinColumn(name = "categoryweightid")
+    private CategoryWeight categoryWeight;
 
     @Column(name = "expiry")
     private Integer expiry;

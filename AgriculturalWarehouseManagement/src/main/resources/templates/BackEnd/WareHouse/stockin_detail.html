@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
@@ -33,13 +32,13 @@
                             <div class="card-body">
                                 <div class="title-header title-header-block package-card">
                                     <div>
-                                        <h5>Order #36648</h5>
+                                        <h5>StockIn #<span id="stockInId"></span></h5>
                                     </div>
                                     <div class="card-order-section">
                                         <ul>
-                                            <li>October 21, 2021 at 9:08 pm</li>
-                                            <li>6 items</li>
-                                            <li>Total $5,882.00</li>
+                                            <li id="stockInDate"></li>
+                                            <li id="itemCount"></li>
+                                            <li id="totalAmount"></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -59,69 +58,8 @@
                                                     </tr>
                                                     </thead>
 
-                                                    <tbody>
-                                                    <tr class="table-order">
-                                                        <td>
-                                                            <a href="javascript:void(0)">
-                                                                <img src="assets/images/profile/1.jpg"
-                                                                     class="img-fluid blur-up lazyload" alt="">
-                                                            </a>
-                                                        </td>
-                                                        <td>
-                                                            <p>Product Name</p>
-                                                            <h5>Outwear & Coats</h5>
-                                                        </td>
-                                                        <td>
-                                                            <p>Quantity</p>
-                                                            <h5>1</h5>
-                                                        </td>
-                                                        <td>
-                                                            <p>Price</p>
-                                                            <h5>$63.54</h5>
-                                                        </td>
-                                                    </tr>
-
-                                                    <tr class="table-order">
-                                                        <td>
-                                                            <a href="javascript:void(0)">
-                                                                <img src="assets/images/profile/2.jpg"
-                                                                     class="img-fluid blur-up lazyload" alt="">
-                                                            </a>
-                                                        </td>
-                                                        <td>
-                                                            <p>Product Name</p>
-                                                            <h5>Slim Fit Plastic Coat</h5>
-                                                        </td>
-                                                        <td>
-                                                            <p>Quantity</p>
-                                                            <h5>5</h5>
-                                                        </td>
-                                                        <td>
-                                                            <p>Price</p>
-                                                            <h5>$63.54</h5>
-                                                        </td>
-                                                    </tr>
-
-                                                    <tr class="table-order">
-                                                        <td>
-                                                            <a href="javascript:void(0)">
-                                                                <img src="assets/images/profile/3.jpg"
-                                                                     class="img-fluid blur-up lazyload" alt="">
-                                                            </a>
-                                                        </td>
-                                                        <td>
-                                                            <p>Product Name</p>
-                                                            <h5>Men's Sweatshirt</h5>
-                                                        </td>
-                                                        <td>
-                                                            <p>Quantity</p>
-                                                            <h5>1</h5>
-                                                        </td>
-                                                        <td>
-                                                            <p>Price</p>
-                                                            <h5>$63.54</h5>
-                                                        </td>
-                                                    </tr>
+                                                    <tbody id="stockInDetailTable">
+                                                    <!-- Dữ liệu sẽ được tải động bằng JavaScript -->
                                                     </tbody>
 
                                                     <tfoot>
@@ -130,7 +68,7 @@
                                                             <h5>Subtotal :</h5>
                                                         </td>
                                                         <td>
-                                                            <h4>$55.00</h4>
+                                                            <h4 id="subtotal">$0.00</h4>
                                                         </td>
                                                     </tr>
 
@@ -157,7 +95,7 @@
                                                             <h4 class="theme-color fw-bold">Total Price :</h4>
                                                         </td>
                                                         <td>
-                                                            <h4 class="theme-color fw-bold">$6935.00</h4>
+                                                            <h4 class="theme-color fw-bold" id="totalPrice">$0.00</h4>
                                                         </td>
                                                     </tr>
                                                     </tfoot>
@@ -168,31 +106,31 @@
                                         <div class="col-xl-4">
                                             <div class="order-success">
                                                 <div class="row g-4">
-                                                    <h4>summery</h4>
+                                                    <h4>Summery</h4>
                                                     <ul class="order-details">
-                                                        <li>Order ID: 5563853658932</li>
-                                                        <li>Order Date: October 22, 2018</li>
-                                                        <li>Order Total: $907.28</li>
+                                                        <li>StockIn ID: <span id="stockInIdSummary"></span></li>
+                                                        <li>StockIn Date: <span id="stockInDateSummary"></span></li>
+                                                        <li>Order Total: $<span id="totalAmountSummary"></span></li>
                                                     </ul>
 
-                                                    <h4>shipping address</h4>
+                                                    <h4>Shipping Address</h4>
                                                     <ul class="order-details">
-                                                        <li>Gerg Harvell</li>
+                                                        <li id="warehouseName">Warehouse Name</li>
                                                         <li>568, Suite Ave.</li>
-                                                        <li>Austrlia, 235153 Contact No. 48465465465</li>
+                                                        <li>Australia, 235153 Contact No. 48465465465</li>
                                                     </ul>
 
                                                     <div class="payment-mode">
-                                                        <h4>payment method</h4>
+                                                        <h4>Payment Method</h4>
                                                         <p>Pay on Delivery (Cash/Card). Cash on delivery (COD)
                                                             available. Card/Net banking acceptance subject to device
                                                             availability.</p>
                                                     </div>
 
                                                     <div class="delivery-sec">
-                                                        <h3>expected date of delivery: <span>october 22, 2018</span>
+                                                        <h3>Expected Date of Delivery: <span id="expectedDeliveryDate"></span>
                                                         </h3>
-                                                        <a href="order-tracking.html">track order</a>
+                                                        <a href="order-tracking.html">Track Order</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -225,7 +163,7 @@
 
 <!-- Modal start -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-    <div class="modal-dialog  modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
                 <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
@@ -243,40 +181,114 @@
 
 <!-- latest js -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
-
-<!-- Bootstrap js -->
 <script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
-
-<!-- feather icon js -->
 <script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
 <script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
-
-<!-- scrollbar simplebar js -->
 <script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
 <script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
-
-<!-- Sidebar js -->
 <script th:src="@{/Backend/assets/js/config.js}"></script>
-
-<!-- customizer js -->
 <script th:src="@{/Backend/assets/js/customizer.js}"></script>
-
-<!-- Plugins js -->
 <script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
 <script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
 <script th:src="@{/Backend/assets/js/notify/index.js}"></script>
-
-<!-- Data table js -->
 <script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
 <script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
-
-<!-- sidebar effect -->
 <script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
-
-<!-- Theme js -->
 <script th:src="@{/Backend/assets/js/script.js}"></script>
 
+<!-- Custom JavaScript -->
+<script>
+    $(document).ready(function() {
+        // Kiểm tra stockInId từ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const stockInId = urlParams.get('stockInId');
+        if (!stockInId) {
+            alert('Please select a StockIn ID from the StockIn list first.');
+            window.location.href = '/warehouse/stockin'; // Chuyển hướng về trang stockin-list
+            return;
+        }
+        console.log('StockIn ID từ URL:', stockInId);
+
+        // Hiển thị StockIn ID
+        $('#stockInId').text(stockInId);
+        $('#stockInIdSummary').text(stockInId);
+
+        // Tải dữ liệu StockInDetail
+        $.ajax({
+            url: `http://localhost:8080/api/stockins/${stockInId}/details`,
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                console.log('Danh sách StockInDetail được tải thành công:', data);
+                const tbody = $('#stockInDetailTable');
+                tbody.empty();
+                let totalAmount = 0;
+                let itemCount = data.length;
+
+                $.each(data, function(index, detail) {
+                    const unitPrice = parseFloat(detail.unitPrice) || 0;
+                    const quantity = parseInt(detail.quantity) || 0;
+                    const subTotal = unitPrice * quantity;
+                    totalAmount += subTotal;
+
+                    const row = `
+                        <tr class="table-order">
+                            <td>
+                                <a href="javascript:void(0)">
+                                    <img src="assets/images/profile/${index + 1}.jpg" class="img-fluid blur-up lazyload" alt="">
+                                </a>
+                            </td>
+                            <td>
+                                <p>Product Name</p>
+                                <h5>${detail.productDetailID || 'N/A'}</h5>
+                            </td>
+                            <td>
+                                <p>Quantity</p>
+                                <h5>${quantity}</h5>
+                            </td>
+                            <td>
+                                <p>Price</p>
+                                <h5>$${unitPrice.toFixed(2)}</h5>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.append(row);
+                });
+
+                // Cập nhật thông tin (thêm cột batchID vào bảng chi tiết)
+                const stockInDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                $('#stockInDate').text(stockInDate);
+                $('#stockInDateSummary').text(stockInDate);
+                $('#itemCount').text(`${itemCount} items`);
+                $('#totalAmount').text(`$${totalAmount.toFixed(2)}`);
+                $('#totalAmountSummary').text(totalAmount.toFixed(2));
+                $('#subtotal').text(`$${totalAmount.toFixed(2)}`);
+                $('#totalPrice').text(`$${((totalAmount + 12 + 10).toFixed(2))}`); // Subtotal + Shipping + Tax
+                $('#expectedDeliveryDate').text(new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+                $('#warehouseName').text(`Warehouse ${stockInId}`);
+
+                // Thêm cột batchID vào bảng chi tiết
+                $.each(data, function(index, detail) {
+                    const batchId = detail.batchID || 'N/A';
+                    $('#stockInDetailTable tr:nth-child(' + (index + 1) + ')').append(`
+                        <td>
+                            <p>Batch ID</p>
+                            <h5>${batchId}</h5>
+                        </td>
+                    `);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Lỗi khi tải StockInDetail:', {
+                    status: status,
+                    error: error,
+                    response: xhr.responseText
+                });
+                $('#stockInDetailTable').html('<tr><td colspan="4">Failed to load details. Check console.</td></tr>');
+            }
+        });
+    });
+</script>
 
 </body>
-
 </html>

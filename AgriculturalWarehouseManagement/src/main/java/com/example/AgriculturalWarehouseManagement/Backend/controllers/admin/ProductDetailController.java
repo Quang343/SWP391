@@ -1,6 +1,6 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.admin;
 
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductDetailDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.ProductDetailDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.ProductDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

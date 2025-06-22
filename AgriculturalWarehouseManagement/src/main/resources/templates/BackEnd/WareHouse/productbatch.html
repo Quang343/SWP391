@@ -482,9 +482,26 @@
                                 $('#modalDetailName').text(detail.detailName || 'N/A');
                                 $('#modalProductId').text(detail.productID || 'N/A');
                                 $('#modalPrice').text(detail.price ? detail.price.toFixed(2) : 'N/A');
-                                $('#modalWeight').text(detail.weight ? detail.weight.toFixed(2) : 'N/A');
                                 $('#modalExpiry').text(detail.expiry || 'N/A');
+                                $('#modalWeight').text(detail.categoryWeight || 'N/A'); // Mặc định hiển thị categoryWeight
                                 $('#productDetailModal').modal('show');
+
+                                // Lấy unit từ CategoryWeight nếu categoryWeight tồn tại
+                                if (detail.categoryWeight) {
+                                    $.ajax({
+                                        url: '/api/categoryweights/' + detail.categoryWeight,
+                                        method: 'GET',
+                                        dataType: 'json',
+                                        success: function(categoryWeight) {
+                                            // Kết hợp categoryWeight và unit, ví dụ: "1000 kg"
+                                            $('#modalWeight').text(categoryWeight.unit ? detail.categoryWeight + ' ' + categoryWeight.unit : detail.categoryWeight);
+                                        },
+                                        error: function(xhr, status, error) {
+                                            console.error('Lỗi khi lấy CategoryWeight: ', status, error);
+                                            $('#modalWeight').text(detail.categoryWeight || 'N/A');
+                                        }
+                                    });
+                                }
                             },
                             error: function(xhr, status, error) {
                                 console.error('Lỗi khi lấy ProductDetail: ', status, error);

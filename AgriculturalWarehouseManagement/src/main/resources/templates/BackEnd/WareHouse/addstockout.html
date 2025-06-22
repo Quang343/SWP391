@@ -1,9 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{BackEnd/fragments/WareHouse/head::head}">
-    <!-- Loại bỏ flatpickr CSS vì không dùng nữa -->
-</head>
+<head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
 
 <body>
 <!-- tap on top start -->
@@ -25,7 +23,7 @@
         <!-- Page Sidebar Ends-->
 
         <div class="page-body">
-            <!-- New StockIn Add Start -->
+            <!-- New StockOut Add Start -->
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
@@ -34,58 +32,79 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="card-header-2">
-                                            <h5>Add StockIn Information</h5>
+                                            <h5>Thêm Thông tin Xuất kho</h5>
                                         </div>
 
                                         <div class="theme-form theme-form-2 mega-form">
-                                            <!-- Supplier Dropdown -->
-                                            <div class="mb-4 row align-items-center">
-                                                <label class="form-label-title col-sm-3 mb-0">Supplier</label>
-                                                <div class="col-sm-9">
-                                                    <select id="supplierId" class="form-control">
-                                                        <option value="">Select Supplier</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
                                             <!-- Warehouse Dropdown -->
                                             <div class="mb-4 row align-items-center">
-                                                <label class="form-label-title col-sm-3 mb-0">Warehouse</label>
+                                                <label class="form-label-title col-sm-3 mb-0">Kho hàng</label>
                                                 <div class="col-sm-9">
-                                                    <select id="warehouseId" class="form-control">
-                                                        <option value="">Select Warehouse</option>
+                                                    <select id="warehouseId" class="form-control" required>
+                                                        <option value="">Chọn Kho hàng</option>
                                                     </select>
                                                 </div>
                                             </div>
 
-                                            <!-- StockIn Date -->
-                                            <div class="mb-4 row align-items-center">
-                                                <label class="col-sm-3 col-form-label form-label-title">StockIn Date</label>
-                                                <div class="col-sm-9">
-                                                    <input id="stockInDate" name="stockInDate" class="form-control" type="date" required>
-                                                </div>
-                                            </div>
+                                            <!-- Order ID (Hidden) -->
+                                            <input type="hidden" id="orderId">
 
-                                            <!-- StockIn Time -->
+                                            <!-- StockOut Date (Native Date Picker) -->
                                             <div class="mb-4 row align-items-center">
-                                                <label class="col-sm-3 col-form-label form-label-title">StockIn Time</label>
+                                                <label class="col-sm-3 col-form-label form-label-title">Ngày Xuất kho</label>
                                                 <div class="col-sm-9">
-                                                    <input id="stockInTime" name="stockInTime" class="form-control" type="time" required>
+                                                    <input id="stockOutDate" name="stockOutDate" class="form-control" type="date" required>
                                                 </div>
                                             </div>
 
                                             <!-- Note -->
                                             <div class="mb-4 row align-items-center">
-                                                <label class="form-label-title col-sm-3 mb-0">Note</label>
+                                                <label class="form-label-title col-sm-3 mb-0">Ghi chú</label>
                                                 <div class="col-sm-9">
-                                                    <input id="note" class="form-control" type="text" placeholder="Enter Note">
+                                                    <input id="note" class="form-control" type="text" placeholder="Nhập Ghi chú">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="card-submit-button">
-                                        <button id="submitButton" class="btn btn-animation ms-auto" type="button">Submit</button>
+                                        <button id="submitButton" class="btn btn-animation ms-auto" type="button">Gửi</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order List Table -->
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="card-header-2">
+                                            <h5>Danh sách Đơn hàng Chờ Xuất kho</h5>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-borderless">
+                                                <thead>
+                                                <tr>
+                                                    <th>ID Đơn hàng</th>
+                                                    <th>Tên Đơn hàng</th>
+                                                    <th>Hành động</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody id="orderTableBody">
+                                                <tr th:each="order : ${orders}">
+                                                    <td th:text="${order.id}"></td>
+                                                    <td th:text="${order.orderName ?: 'Đơn hàng #' + order.id}"></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-primary create-stockout-btn" th:attr="data-order-id=${order.id}">Tạo Xuất kho</button>
+                                                    </td>
+                                                </tr>
+                                                <tr th:unless="${orders}">
+                                                    <td colspan="3">Không có đơn hàng nào chờ xuất kho.</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -93,14 +112,14 @@
                     </div>
                 </div>
             </div>
-            <!-- New StockIn Add End -->
+            <!-- New StockOut Add End -->
 
             <!-- footer Start -->
             <div class="container-fluid">
                 <footer class="footer">
                     <div class="row">
                         <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+                            <p class="mb-0">Bản quyền 2022 © Chủ đề Fastkart bởi pixelstrap</p>
                         </div>
                     </div>
                 </footer>
@@ -118,13 +137,12 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
-                <p>Are you sure you want to log out?</p>
+                <h5 class="modal-title" id="staticBackdropLabel">Đăng xuất</h5>
+                <p>Bạn có chắc chắn muốn đăng xuất?</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="button-box">
-                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-                    <button type="button" onclick="location.href = 'login.html';"
-                            class="btn btn--yes btn-primary">Yes</button>
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">Không</button>
+                    <button type="button" th:onclick="|window.location='@{/backend/login}'|" class="btn btn--yes btn-primary">Có</button>
                 </div>
             </div>
         </div>
@@ -149,24 +167,23 @@
 <script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
 <script th:src="@{/Backend/assets/js/script.js}"></script>
 
+<!-- Custom JavaScript -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         console.log('DOM đã tải xong, khởi tạo script...');
 
         // Khởi tạo các phần tử DOM
-        const supplierId = document.getElementById('supplierId');
         const warehouseId = document.getElementById('warehouseId');
-        const stockInDate = document.getElementById('stockInDate');
-        const stockInTime = document.getElementById('stockInTime');
+        const orderId = document.getElementById('orderId');
+        const stockOutDate = document.getElementById('stockOutDate');
         const note = document.getElementById('note');
         const submitButton = document.getElementById('submitButton');
 
-        if (!supplierId || !warehouseId || !stockInDate || !stockInTime || !note || !submitButton) {
+        if (!warehouseId || !orderId || !stockOutDate || !note || !submitButton) {
             console.error('Thiếu các phần tử DOM:', {
-                supplierId: !!supplierId,
                 warehouseId: !!warehouseId,
-                stockInDate: !!stockInDate,
-                stockInTime: !!stockInTime,
+                orderId: !!orderId,
+                stockOutDate: !!stockOutDate,
                 note: !!note,
                 submitButton: !!submitButton
             });
@@ -174,45 +191,14 @@
             return;
         }
         console.log('Các phần tử DOM được tìm thấy:', {
-            supplierId: supplierId,
             warehouseId: warehouseId,
-            stockInDate: stockInDate,
-            stockInTime: stockInTime,
+            orderId: orderId,
+            stockOutDate: stockOutDate,
             note: note,
             submitButton: submitButton
         });
 
-        // Load Suppliers
-        console.log('Bắt đầu tải danh sách Suppliers...');
-        $.ajax({
-            url: 'http://localhost:8080/api/suppliers',
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                console.log('Danh sách Suppliers được tải thành công:', data);
-                supplierId.innerHTML = '<option value="">Select Supplier</option>';
-                $.each(data, function(index, supplier) {
-                    const supplierIdValue = supplier.supplierID || supplier.id;
-                    const supplierNameValue = supplier.supplierName || supplier.name;
-                    if (supplierIdValue && supplierNameValue) {
-                        supplierId.innerHTML += `<option value="${supplierIdValue}">${supplierNameValue} (ID: ${supplierIdValue})</option>`;
-                        console.log(`Thêm Supplier: ID=${supplierIdValue}, Name=${supplierNameValue}`);
-                    } else {
-                        console.warn('Dữ liệu Supplier không hợp lệ:', supplier);
-                    }
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Lỗi khi tải Suppliers:', {
-                    status: status,
-                    error: error,
-                    response: xhr.responseText
-                });
-                supplierId.innerHTML = '<option value="">Error loading Suppliers</option>';
-            }
-        });
-
-        // Load Warehouses
+        // Tải danh sách Warehouses
         console.log('Bắt đầu tải danh sách Warehouses...');
         $.ajax({
             url: 'http://localhost:8080/api/warehouses',
@@ -220,12 +206,12 @@
             dataType: 'json',
             success: function(data) {
                 console.log('Danh sách Warehouses được tải thành công:', data);
-                warehouseId.innerHTML = '<option value="">Select Warehouse</option>';
+                warehouseId.innerHTML = '<option value="">Chọn Kho hàng</option>';
                 $.each(data, function(index, warehouse) {
                     const warehouseIdValue = warehouse.warehouseId || warehouse.id;
                     const warehouseNameValue = warehouse.warehouseName || warehouse.name;
                     if (warehouseIdValue && warehouseNameValue) {
-                        warehouseId.innerHTML += `<option value="${warehouseIdValue}">${warehouseNameValue} (ID: ${warehouseIdValue})</option>`;
+                        warehouseId.innerHTML += `<option value="${warehouseIdValue}">${warehouseNameValue}</option>`;
                         console.log(`Thêm Warehouse: ID=${warehouseIdValue}, Name=${warehouseNameValue}`);
                     } else {
                         console.warn('Dữ liệu Warehouse không hợp lệ:', warehouse);
@@ -238,73 +224,63 @@
                     error: error,
                     response: xhr.responseText
                 });
-                warehouseId.innerHTML = '<option value="">Error loading Warehouses</option>';
+                warehouseId.innerHTML = '<option value="">Lỗi tải Warehouses</option>';
             }
         });
 
-        // Submit handler
-        submitButton.addEventListener('click', function () {
-            console.log('Nút Submit được nhấn.');
+        // Xử lý nút "Tạo Xuất kho" trong bảng đơn hàng
+        $('.create-stockout-btn').on('click', function() {
+            const selectedOrderId = $(this).data('order-id');
+            console.log('Đã chọn đơn hàng ID:', selectedOrderId);
+            orderId.value = selectedOrderId;
+            stockOutDate.value = new Date().toISOString().split('T')[0]; // Đặt ngày hiện tại
+            note.value = `Xuất kho cho đơn hàng #${selectedOrderId}`;
+            alert(`Đã chọn đơn hàng #${selectedOrderId}. Vui lòng chọn kho và gửi form.`);
+        });
 
-            const supplierIdValue = supplierId.value;
+        // Xử lý gửi form
+        submitButton.addEventListener('click', function () {
+            console.log('Nút Gửi được nhấn.');
+
             const warehouseIdValue = warehouseId.value;
-            const stockInDateValue = stockInDate.value;
-            const stockInTimeValue = stockInTime.value;
+            const orderIdValue = orderId.value;
+            const stockOutDateValue = stockOutDate.value;
             const noteValue = note.value.trim();
 
             console.log('Giá trị nhập vào:', {
-                supplierIdValue: supplierIdValue,
                 warehouseIdValue: warehouseIdValue,
-                stockInDateValue: stockInDateValue,
-                stockInTimeValue: stockInTimeValue,
+                orderIdValue: orderIdValue,
+                stockOutDateValue: stockOutDateValue,
                 noteValue: noteValue
             });
 
-            // Client-side validation
-            if (!supplierIdValue) {
-                alert('Vui lòng chọn nhà cung cấp.');
-                console.warn('Thiếu supplierId.');
-                return;
-            }
+            // Kiểm tra dữ liệu
             if (!warehouseIdValue) {
                 alert('Vui lòng chọn kho hàng.');
                 console.warn('Thiếu warehouseId.');
                 return;
             }
-            if (!stockInDateValue) {
-                alert('Vui lòng chọn ngày nhập kho.');
-                console.warn('Thiếu stockInDate.');
-                return;
-            }
-            if (!stockInTimeValue) {
-                alert('Vui lòng chọn giờ nhập kho.');
-                console.warn('Thiếu stockInTime.');
-                return;
-            }
-            if (!noteValue) {
-                alert('Vui lòng nhập ghi chú.');
-                console.warn('Thiếu note.');
+            if (!stockOutDateValue) {
+                alert('Vui lòng chọn ngày xuất kho.');
+                console.warn('Thiếu stockOutDate.');
                 return;
             }
 
-            // Combine date and time
-            const stockInDateTime = `${stockInDateValue}T${stockInTimeValue}:00Z`;
-
-            const stockInData = {
-                supplierID: parseInt(supplierIdValue),
+            const stockOutData = {
                 warehouseID: parseInt(warehouseIdValue),
-                stockInDate: stockInDateTime,
-                note: noteValue
+                orderID: orderIdValue ? parseInt(orderIdValue) : null,
+                stockOutDate: stockOutDateValue,
+                note: noteValue || null
             };
 
-            console.log('Dữ liệu StockIn chuẩn bị gửi:', stockInData);
+            console.log('Dữ liệu StockOut chuẩn bị gửi:', stockOutData);
 
-            fetch('/api/stockins', {
+            fetch('/api/stockouts', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(stockInData)
+                body: JSON.stringify(stockOutData)
             })
                 .then(response => {
                     console.log('Phản hồi từ server:', {
@@ -318,29 +294,29 @@
                     }
                     return response.json();
                 })
-                .then(createdStockIn => {
-                    console.log('StockIn được tạo thành công:', createdStockIn);
-                    alert('Tạo StockIn thành công!');
-                    supplierId.value = '';
+                .then(createdStockOut => {
+                    console.log('StockOut được tạo thành công:', createdStockOut);
+                    alert('Tạo StockOut thành công!');
                     warehouseId.value = '';
-                    stockInDate.value = '';
-                    stockInTime.value = '';
+                    orderId.value = '';
+                    stockOutDate.value = '';
                     note.value = '';
                     console.log('Form đã được reset.');
                 })
                 .catch(error => {
-                    console.error('Lỗi khi tạo StockIn:', {
+                    console.error('Lỗi khi tạo StockOut:', {
                         status: error.status,
                         error: error.error
                     });
                     if (error.status === 400) {
                         alert(error.error || 'Dữ liệu không hợp lệ, vui lòng kiểm tra lại.');
                     } else {
-                        alert('Đã xảy ra lỗi khi tạo StockIn: ' + error.error);
+                        alert('Lỗi khi tạo StockOut: ' + error.error);
                     }
                 });
         });
     });
 </script>
+
 </body>
 </html>

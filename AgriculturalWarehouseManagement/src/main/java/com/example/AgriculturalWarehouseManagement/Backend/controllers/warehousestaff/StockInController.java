@@ -50,4 +50,16 @@ public class StockInController {
         stockInService.deleteStockIn(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<StockInDTO> updateStockIn(@PathVariable Integer id, @RequestBody StockInDTO stockInDTO) {
+        try {
+            StockInDTO updatedStockIn = stockInService.updateStockIn(id, stockInDTO);
+            return updatedStockIn != null ? ResponseEntity.ok(updatedStockIn) : ResponseEntity.notFound().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(null); // Xử lý ngoại lệ từ service
+        }
+    }
+
+
 }

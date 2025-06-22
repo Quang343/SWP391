@@ -40,4 +40,17 @@ public class StockInService {
     public void deleteStockIn(Integer id) {
         stockInRepository.deleteById(id);
     }
+
+    public StockInDTO updateStockIn(Integer id, StockInDTO stockInDTO) {
+        StockIn existingStockIn = stockInRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("StockIn not found with id: " + id));
+
+        // Sử dụng mapper để cập nhật entity từ DTO
+        StockIn updatedStockIn = StockInMapper.toEntity(stockInDTO);
+        updatedStockIn.setId(existingStockIn.getId()); // Giữ nguyên ID để tránh tạo mới
+
+        // Lưu và chuyển đổi lại thành DTO
+        updatedStockIn = stockInRepository.save(updatedStockIn);
+        return StockInMapper.toDTO(updatedStockIn);
+    }
 }

@@ -1,6 +1,6 @@
 package com.example.AgriculturalWarehouseManagement.Backend.services.admin;
 
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductDetailDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.ProductDetailDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.mappers.ProductDetailMapper;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductDetail;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductDetailRepository;
