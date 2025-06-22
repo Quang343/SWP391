@@ -1,4 +1,3 @@
-
 <header class="pb-md-4 pb-0" th:fragment="header">
     <style>
         /* lớp nền tối phía dưới */
@@ -35,9 +34,15 @@
 
         /* Animation di chuyển gradient */
         @keyframes glowing {
-            0%   {background-position: 0 0;}
-            50%  {background-position: 400% 0;}
-            100% {background-position: 0 0;}
+            0% {
+                background-position: 0 0;
+            }
+            50% {
+                background-position: 400% 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
         }
 
         /* Hover: bật viền sáng */
@@ -46,8 +51,14 @@
         }
 
         /* Click: làm mờ nền tối & đổi màu chữ nếu muốn */
-        h5.glow:active::after { background: transparent; }
-        h5.glow:active        { color: #000; font-weight: bold; }
+        h5.glow:active::after {
+            background: transparent;
+        }
+
+        h5.glow:active {
+            color: #000;
+            font-weight: bold;
+        }
 
 
     </style>
@@ -159,13 +170,14 @@
                                 </span>
                         </button>
                         <a th:href="@{/home}" class="web-logo nav-logo">
-                            <img th:src="@{/FrontEnd/assets/images/logo/1.png}" class="img-fluid blur-up lazyload" alt="">
+                            <img th:src="@{/FrontEnd/assets/images/logo/1.png}" class="img-fluid blur-up lazyload"
+                                 alt="">
                         </a>
 
                         <div class="middle-box">
                             <div class="location-box">
                                 <button class="btn location-button" data-bs-toggle="modal"
-                                        >
+                                >
                                     <div class="order-tracking-icon">
                                         <i data-feather="package" class="text-content"></i>
                                     </div>
@@ -176,14 +188,17 @@
                                 </button>
                             </div>
 
-                            <div class="search-box">
-                                <div class="input-group">
-                                    <input type="search" class="form-control" placeholder="I'm searching for...">
-                                    <button class="btn" type="button" id="button-addon2">
-                                        <i data-feather="search"></i>
-                                    </button>
+                            <form th:action="@{/filterProduct}" method="get">
+                                <div class="search-box">
+                                    <div class="input-group">
+                                        <input type="search" name="keyword" id="keywordHidden" class="form-control" th:value="${session.keyword}" placeholder="I'm searching for...">
+                                        <button class="btn" type="submit" id="button-addon2">
+                                            <i data-feather="search"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
+
                         </div>
 
                         <div class="rightside-box">
@@ -293,7 +308,7 @@
                                         <div class="delivery-icon">
                                             <i data-feather="user"></i>
                                         </div>
-<!--                                         class="delivery-detail"-->
+                                        <!--                                         class="delivery-detail"-->
 
                                         <div th:if="${session.account!= null}">
                                             <h6>Hello,</h6>
@@ -320,7 +335,8 @@
                                                 <a href="forgotPassword">Forgot Password</a>
                                             </li>
 
-                                            <li class="product-box-contain" th:if="${session.account != null && session.account.getRole().getRoleID() == 2}">
+                                            <li class="product-box-contain"
+                                                th:if="${session.account != null && session.account.getRole().getRoleID() == 2}">
                                                 <a href="profileUser">Profile</a>
                                             </li>
                                         </ul>
@@ -356,7 +372,7 @@
                                 <li th:each="category : ${categoryUsersResponses}" class="onhover-category-list">
                                     <a href="javascript:void(0)" class="category-name">
                                         <img th:src="@{${category.imageUrl}}" alt="">
-                                        <h6  th:text="${category.categoryName}">Category name</h6>
+                                        <h6 th:text="${category.categoryName}">Category name</h6>
                                         <i class="fa-solid fa-angle-right"></i>
                                     </a>
 
@@ -376,7 +392,7 @@
                                 <div class="offcanvas-body">
                                     <ul class="navbar-nav">
                                         <li class="nav-item">
-                                            <a class="nav-link" href="home" >Home</a>
+                                            <a class="nav-link" href="home">Home</a>
                                         </li>
 
                                         <li class="nav-item dropdown">
@@ -413,7 +429,7 @@
 
                                                 <li class="sub-dropdown-hover">
                                                     <a class="dropdown-item" href="javascript:void(0)">Order
-                                                         <span class="new-text"><i
+                                                        <span class="new-text"><i
                                                                 class="fa-solid fa-bolt-lightning"></i></span></a>
                                                 </li>
                                                 <li>
@@ -436,7 +452,6 @@
                                                 <li>
                                                     <a class="dropdown-item" href="faq.html">Faq</a>
                                                 </li>
-
 
 
                                             </ul>

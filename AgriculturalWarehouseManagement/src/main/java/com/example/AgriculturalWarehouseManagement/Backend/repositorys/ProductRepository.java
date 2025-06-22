@@ -253,4 +253,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             """, nativeQuery = true)
     List<Object[]> rawShopDetailsOfProducts();
 
+
 }

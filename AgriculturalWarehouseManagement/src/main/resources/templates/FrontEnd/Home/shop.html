@@ -95,6 +95,7 @@
             </div>
         </div>
     </div>
+    </div>
 </section>
 <!-- Poster Section End -->
 
@@ -104,267 +105,222 @@
     <div class="container-fluid-lg">
         <div class="row">
             <div class="col-12">
-                <div class="show-button">
-                    <div class="top-filter-menu-2">
-                        <div class="sidebar-filter-menu" data-bs-toggle="collapse"
-                             data-bs-target="#collapseExample">
-                            <a href="javascript:void(0)"><i class="fa-solid fa-filter"></i> Filter Menu</a>
-                        </div>
 
-                        <div class="ms-auto d-flex align-items-center">
-                            <div class="category-dropdown me-md-3">
-                                <h5 class="text-content">Sort By :</h5>
-                                <div class="dropdown">
-                                    <button class="dropdown-toggle" type="button" id="dropdownMenuButton1"
-                                            data-bs-toggle="dropdown">
-                                        <span>Most Popular</span> <i class="fa-solid fa-angle-down"></i>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a class="dropdown-item" id="pop"
-                                               href="javascript:void(0)">Popularity</a>
+                <form th:action="@{/deleteFilterProduct}" method="post">
+                    <button type="submit"
+                            style="background: #0da487; color: aliceblue; margin-left: 19px; border: none; padding: 8px">
+                        Delete Filter
+                    </button>
+                </form>
+
+                <form id="filterForm" th:action="@{/filterProduct}" method="get">
+                    <input type="hidden" id="keywordHidden" name="keyword"
+                           th:if="${session.keyword != null}"
+                           th:value="${session.keyword}"/>
+                    <div class="show-button">
+                        <div class="top-filter-menu-2">
+                            <div class="sidebar-filter-menu" data-bs-toggle="collapse"
+                                 data-bs-target="#collapseExample">
+                                <a href="javascript:void(0)"><i class="fa-solid fa-filter"></i> Filter Menu</a>
+                            </div>
+
+                            <div class="ms-auto d-flex align-items-center">
+                                <div class="category-dropdown me-md-3">
+                                    <h5 class="text-content">Sort By :</h5>
+                                    <div class="dropdown">
+                                        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            <span th:text="${selectedSort ?: 'Default'}">Default</span>
+                                            <!--                                           “Elvis operator”  (A = null hoặc chuỗi rỗng) ⇒ kết quả là B.-->
+                                            <i class="fa-solid fa-angle-down"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="popularity">Popularity</a>
+                                            </li>
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="priceLowHigh">Low
+                                                - High Price</a></li>
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="priceHighLow">High
+                                                - Low Price</a></li>
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="rating">Average
+                                                Rating</a></li>
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="aToZ">A - Z
+                                                Order</a></li>
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="zToA">Z - A
+                                                Order</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", () => {
+                                            // 1. Khởi tạo slider
+                                            const $range = $(".js-range-slider").ionRangeSlider({
+                                                type: "double",
+                                                min: 0,
+                                                max: 1_000_000,
+                                                from: window.APP?.minPrice ?? 0, // ở session
+                                                to: window.APP?.maxPrice ?? 1_000_000,  // ở session
+                                                step: 50_000,
+                                                prefix: "$ ",
+                                                prettify_enabled: true,
+                                                prettify_separator: ".",
+                                                values_separator: " - ",
+                                                force_edges: true,
+                                                onStart: syncHidden,
+                                                onFinish: syncHidden          // chỉ khi người dùng buông chuột mới cập nhật
+                                            }).data("ionRangeSlider");
+
+                                            function syncHidden(data) {
+                                                $("#minPrice").val(data.from);
+                                                $("#maxPrice").val(data.to);
+                                            }
+
+
+                                            // 2. Handler cho filter-checkbox
+                                            $('.filter-checkbox').on('change', function () {
+
+                                                // luôn lấy giá trị thực tế từ slider
+                                                const {from, to} = $range.result;
+                                                $("#minPrice").val(from);
+                                                $("#maxPrice").val(to);
+
+                                                document.getElementById('filterForm').submit();
+
+                                            });
+
+                                            // 3. Handler cho sort-option
+                                            $('.sort-option').on('click', function (e) {
+                                                e.preventDefault();
+
+                                                const {from, to} = $range.result;      // giá trị hiện tại của slider
+                                                const url = new URL(window.location.href); // giá trị hiện tại của đường link
+
+                                                url.searchParams.set('minPrice', from);
+                                                url.searchParams.set('maxPrice', to);
+                                                url.searchParams.set('sortBy', this.dataset.sort);
+
+                                                // Nếu đang ở /shopDetail chuyển path
+                                                if (url.pathname.includes('shopDetail')) {
+                                                    url.pathname = url.pathname.replace('shopDetail', 'filterProduct');
+                                                }
+
+                                                window.location.href = url.toString();
+                                            });
+                                        });
+
+                                    </script>
+
+                                </div>
+
+
+                                <div class="grid-option grid-option-2">
+                                    <ul>
+                                        <li class="three-grid">
+                                            <a href="javascript:void(0)">
+                                                <img th:src="@{FrontEnd/assets/svg/grid-3.svg}" class="blur-up lazyload"
+                                                     alt="">
+                                            </a>
                                         </li>
-                                        <li>
-                                            <a class="dropdown-item" id="low" href="javascript:void(0)">Low - High
-                                                Price</a>
+                                        <li class="five-grid d-xxl-inline-block d-none active">
+                                            <a href="javascript:void(0)">
+                                                <img th:src="@{FrontEnd/assets/svg/grid-5.svg}"
+                                                     class="blur-up lazyload d-lg-inline-block d-none" alt="">
+                                            </a>
                                         </li>
-                                        <li>
-                                            <a class="dropdown-item" id="high" href="javascript:void(0)">High - Low
-                                                Price</a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" id="rating" href="javascript:void(0)">Average
-                                                Rating</a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" id="aToz" href="javascript:void(0)">A - Z
-                                                Order</a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" id="zToa" href="javascript:void(0)">Z - A
-                                                Order</a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" id="off" href="javascript:void(0)">% Off -
-                                                Hight To
-                                                Low</a>
+                                        <li class="list-btn">
+                                            <a href="javascript:void(0)">
+                                                <img th:src="@{FrontEnd/assets/svg/list.svg}" class="blur-up lazyload"
+                                                     alt="">
+                                            </a>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <div class="grid-option grid-option-2">
-                                <ul>
-                                    <li class="three-grid">
-                                        <a href="javascript:void(0)">
-                                            <img th:src="@{FrontEnd/assets/svg/grid-3.svg}" class="blur-up lazyload"
-                                                 alt="">
-                                        </a>
-                                    </li>
-                                    <li class="grid-btn five-grid d-xxl-inline-block d-none">
-                                        <a href="javascript:void(0)">
-                                            <img th:src="@{FrontEnd/assets/svg/grid-4.svg}"
-                                                 class="blur-up lazyload d-lg-inline-block d-none" alt="">
-                                        </a>
-                                    </li>
-                                    <li class="five-grid d-xxl-inline-block d-none active">
-                                        <a href="javascript:void(0)">
-                                            <img th:src="@{FrontEnd/assets/svg/grid-5.svg}"
-                                                 class="blur-up lazyload d-lg-inline-block d-none" alt="">
-                                        </a>
-                                    </li>
-                                    <li class="list-btn">
-                                        <a href="javascript:void(0)">
-                                            <img th:src="@{FrontEnd/assets/svg/list.svg}" class="blur-up lazyload"
-                                                 alt="">
-                                        </a>
+                    <div class="top-filter-category" id="collapseExample">
+
+                        <div class="row g-sm-4 g-3">
+                            <div class="col-xl-3 col-md-6">
+                                <div class="category-title">
+                                    <h3>Category</h3>
+                                </div>
+
+                                <ul class="category-list custom-padding custom-height">
+                                    <li th:each="category : ${categoryShopDetailsResponse}">
+                                        <div class="form-check ps-0 m-0 category-list-box">
+                                            <input type="checkbox"
+                                                   name="category"
+                                                   class="checkbox_animated filter-checkbox"
+                                                   th:value="${category.categoryId}"
+                                                   th:id="${'category_' + category.categoryId}"
+                                                   onchange="this.form.submit()"
+                                                   th:checked="${selectedCategories != null
+                                                    and #lists.contains(selectedCategories, category.categoryId)}"/>
+
+                                            <label class="form-check-label"
+                                                   th:for="${'category_' + category.categoryId}">
+                                                <span th:text="${category.categoryName}"></span>
+                                                <span th:text="'(' + ${category.totalProducts} + ')'"></span>
+                                            </label>
+                                        </div>
                                     </li>
                                 </ul>
+
                             </div>
+
+                            <div class="col-xl-3 col-md-6">
+                                <div class="category-title">
+                                    <h3>Rating</h3>
+                                </div>
+
+                                <ul class="category-list" th:each="r : ${#numbers.sequence(5,1,-1)}">
+                                    <li>
+                                        <div class="form-check ps-0 m-0 category-list-box">
+                                            <input type="checkbox"
+                                                   class="checkbox_animated filter-checkbox"
+                                                   name="rating"
+                                                   th:id="${'rating' + r}"
+                                                   th:value="${r}"
+                                                   onchange="this.form.submit()"
+                                                   th:checked="${selectedRating != null
+                                            && #lists.contains(selectedRating, r)}"/>
+                                            <label th:for="${'rating' + r}" class="form-check-label">
+                                                <ul class="rating">
+                                                    <li th:each="i : ${#numbers.sequence(1,5)}">
+                                                        <i data-feather="star"
+                                                           th:classappend="${i <= r} ? 'fill' : ''"></i>
+                                                    </li>
+                                                </ul>
+                                            </label>
+                                        </div>
+                                    </li>
+                                </ul>
+
+                            </div>
+
+                            <div class="col-xl-3 col-md-6">
+                                <div class="category-title">
+                                    <h3>Price</h3>
+                                </div>
+                                <div class="range-slider">
+                                    <input type="text" class="js-range-slider" value="">
+
+                                    <input type="hidden" name="minPrice" id="minPrice" th:value="${session.minPrice}"/>
+                                    <input type="hidden" name="maxPrice" id="maxPrice" th:value="${session.maxPrice}"/>
+                                </div>
+                            </div>
+
+                            <script th:inline="javascript">
+                                window.APP = {
+                                    minPrice: "[[${session.minPrice}]]",
+                                    maxPrice: "[[${session.maxPrice}]]"
+                                };
+                            </script>
+
+
                         </div>
                     </div>
-                </div>
-
-                <div class="top-filter-category" id="collapseExample">
-                    <div class="row g-sm-4 g-3">
-                        <div class="col-xl-3 col-md-6">
-                            <div class="category-title">
-                                <h3>Category</h3>
-                            </div>
-                            <ul class="category-list custom-padding custom-height">
-                                <li th:each="category : ${categoryShopDetailsResponse}">
-                                    <div class="form-check ps-0 m-0 category-list-box">
-                                        <input class="checkbox_animated" type="checkbox"
-                                               th:value="${category.categoryId}" id="fruit">
-                                        <label class="form-check-label" for="fruit">
-                                            <span th:text="${category.categoryName}" class="name">Category name</span>
-                                            <span th:text="${'('+category.totalProducts+')'}" class="number">Number of product by category</span>
-                                        </label>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="col-xl-3 col-md-6">
-                            <div class="category-title">
-                                <h3>Price</h3>
-                            </div>
-                            <div class="range-slider">
-                                <input type="text" class="js-range-slider" value="">
-                            </div>
-                        </div>
-
-                        <div class="col-xl-3 col-md-6">
-                            <div class="category-title">
-                                <h3>Rating</h3>
-                            </div>
-                            <ul class="category-list">
-                                <li>
-                                    <div class="form-check ps-0 m-0 category-list-box">
-                                        <input class="checkbox_animated" type="checkbox" id="flexCheckDefault">
-                                        <label class="form-check-label" for="flexCheckDefault">
-                                            <ul class="rating">
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                            </ul>
-                                        </label>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="form-check ps-0 m-0 category-list-box">
-                                        <input class="checkbox_animated" type="checkbox" id="flexCheckDefault1">
-                                        <label class="form-check-label" for="flexCheckDefault1">
-                                            <ul class="rating">
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star"></i>
-                                                </li>
-                                            </ul>
-                                        </label>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="form-check ps-0 m-0 category-list-box">
-                                        <input class="checkbox_animated" type="checkbox" id="flexCheckDefault2">
-                                        <label class="form-check-label" for="flexCheckDefault2">
-                                            <ul class="rating">
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star"></i>
-                                                </li>
-                                            </ul>
-                                        </label>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="form-check ps-0 m-0 category-list-box">
-                                        <input class="checkbox_animated" type="checkbox" id="flexCheckDefault3">
-                                        <label class="form-check-label" for="flexCheckDefault3">
-                                            <ul class="rating">
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star"></i>
-                                                </li>
-                                            </ul>
-                                        </label>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="form-check ps-0 m-0 category-list-box">
-                                        <input class="checkbox_animated" type="checkbox" id="flexCheckDefault4">
-                                        <label class="form-check-label" for="flexCheckDefault4">
-                                            <ul class="rating">
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star"></i>
-                                                </li>
-                                            </ul>
-                                        </label>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="col-xl-3 col-md-6">
-                            <div class="category-title">
-                                <h3>Weight</h3>
-                            </div>
-                            <ul class="category-list custom-padding custom-height">
-                                <li th:each="category : ${categoryShopDetailsResponse}">
-                                    <div class="form-check ps-0 m-0 category-list-box">
-                                        <input class="checkbox_animated" type="checkbox"
-                                               th:value="${category.categoryId}" id="flexCheckDefault5">
-                                        <label class="form-check-label" for="flexCheckDefault5">
-                                            <span th:text="${category.description}" class="name">Range weight</span>
-                                            <span th:text="${'('+category.totalProducts+')'}" class="number">Number of product by category</span>
-                                        </label>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                </form>
 
                 <div class="row g-sm-4 g-3 row-cols-xxl-5 row-cols-xl-3 row-cols-lg-2 row-cols-md-3 row-cols-2 product-list-section">
                     <div th:each="product : ${shopDetailProducts}">
@@ -375,51 +331,56 @@
                                         <img th:src="@{${product.imageUrlGallery}}"
                                              class="img-fluid blur-up lazyload" alt="">
                                     </a>
-                                    <ul class="option">
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="Quick View">
+
+                                    <ul class="product-option"
+                                        style=" display: flex;justify-content: center;align-items: center;">
+                                        <li th:if="${session.account != null}" data-bs-toggle="tooltip"
+                                            data-bs-placement="top" title="View">
                                             <a href="javascript:void(0)" data-bs-toggle="modal"
-                                               data-bs-target="#exampleModal">
-                                                <i class="iconly-Show icli"></i>
+                                               data-bs-target="#view">
+                                                <i data-feather="eye"></i>
                                             </a>
                                         </li>
+
+                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                            <a href="compare.html">
+                                                <i data-feather="refresh-cw"></i>
+                                            </a>
+                                        </li>
+
                                         <li th:if="${session.account != null}" data-bs-toggle="tooltip"
                                             data-bs-placement="top" title="Wishlist">
                                             <button class="btn p-0 wishlist notifi-wishlist"
                                                     th:data-productid="${product.productId}"
-                                                    type="button">
-                                                <i class="iconly-Heart icli" style="color:#198754;"></i>
+                                                    type="button"
+                                                    style="margin-left: 20px">
+                                                <i class="iconly-Heart icli"></i>
                                             </button>
-
-
                                             <script>
                                                 $(function () {
                                                     $(document).on('click', '.notifi-wishlist', async function () {
                                                         const btn = $(this);
                                                         const userId = "[[${session.accountId}]]";
-                                                        const id  = btn.data('productid');
+                                                        const id = btn.data('productid');
                                                         if (!id || btn.prop('disabled')) return;
 
                                                         btn.prop('disabled', true);
-                                                        console.log("hello"+id);
+                                                        console.log("hello" + id);
                                                         try {
                                                             await axios.post(`http://localhost:8080/AgriculturalWarehouseManagement/wishlistProduct/${userId}/${id}`);
                                                         } catch (e) {
-                                                            console.error(e); toast('❌ Error');
+                                                            console.error(e);
+                                                            toast('❌ Error');
                                                         } finally {
                                                             btn.prop('disabled', false);
                                                         }
                                                     });
 
-                                                    function toast(m){ alert(m); }               // thay bằng toast đẹp nếu muốn
+                                                    function toast(m) {
+                                                        alert(m);
+                                                    }               // thay bằng toast đẹp nếu muốn
                                                 });
                                             </script>
-                                        </li>
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="Compare">
-                                            <a href="compare.html">
-                                                <i class="iconly-Swap icli"></i>
-                                            </a>
                                         </li>
                                     </ul>
                                 </div>
