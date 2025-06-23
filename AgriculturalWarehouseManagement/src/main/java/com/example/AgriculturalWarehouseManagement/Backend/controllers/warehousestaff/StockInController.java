@@ -1,8 +1,14 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.warehousestaff;
 
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.ProductBatchDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.StockInDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.StockInDetailDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.models.StockIn;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Suppliers;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Warehouse;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.SupplierRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.WarehouseRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff.StockInDetailService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff.StockInService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 @RestController
 @RequestMapping("/api/stockins")
@@ -19,6 +26,12 @@ public class StockInController {
 
     @Autowired
     private StockInDetailService stockInDetailService; // Thêm để lấy chi tiết
+
+    @Autowired
+    private SupplierRepository supplierRepository;
+
+    @Autowired
+    private WarehouseRepository warehouseRepository;
 
     @PostMapping
     public ResponseEntity<StockInDTO> createStockIn(@RequestBody StockInDTO stockInDTO) {
@@ -61,5 +74,33 @@ public class StockInController {
         }
     }
 
+
+    @PostMapping("/with-details")
+    public ResponseEntity<StockIn> createStockInWithDetails(
+            @RequestPart("stockIn") StockInDTO stockInDTO,
+            @RequestPart("details") List<StockInDetailDTO> details,
+            @RequestPart(value = "newBatches", required = false) List<ProductBatchDTO> newBatches) {
+        try {
+            if (stockInDTO.getSupplierID() == null || stockInDTO.getWarehouseID() == null || stockInDTO.getStockInDate() == null) {
+                return ResponseEntity.badRequest().body(null);
+            }
+
+            StockIn stockIn = new StockIn();
+            Suppliers supplier = supplierRepository.findById(stockInDTO.getSupplierID())
+                    .orElseThrow(() -> new IllegalArgumentException("Supplier ID " + stockInDTO.getSupplierID() + " không tồn tại."));
+            Warehouse warehouse = warehouseRepository.findById(stockInDTO.getWarehouseID())
+                    .orElseThrow(() -> new IllegalArgumentException("Warehouse ID " + stockInDTO.getWarehouseID() + " không tồn tại."));
+            stockIn.setSupplierID(supplier);
+            stockIn.setWarehouseID(warehouse);
+            stockIn.setStockInDate(stockInDTO.getStockInDate());
+            stockIn.setNote(stockInDTO.getNote());
+
+            StockIn savedStockIn = stockInService.saveStockInWithDetailsUsingOldApis(stockIn, details, newBatches);
+            return ResponseEntity.ok(savedStockIn);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 
 }

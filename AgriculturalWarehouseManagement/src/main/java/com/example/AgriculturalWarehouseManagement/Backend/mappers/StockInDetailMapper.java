@@ -16,9 +16,7 @@ public class StockInDetailMapper {
         if (stockindetail.getStockInID() != null) {
             dto.setStockInID(stockindetail.getStockInID().getId());
         }
-        if (stockindetail.getProductDetailID() != null) {
-            dto.setProductDetailID(stockindetail.getProductDetailID().getProductDetailId());
-        }
+
         if (stockindetail.getBatchID() != null) {
             dto.setBatchID(stockindetail.getBatchID().getBatchId());
         }
@@ -41,13 +39,6 @@ public class StockInDetailMapper {
             StockIn stockIn = new StockIn();
             stockIn.setId(stockindetailDTO.getStockInID());
             stockindetail.setStockInID(stockIn);
-        }
-
-        // Gán ProductDetail entity từ ID
-        if (stockindetailDTO.getProductDetailID() != null) {
-            ProductDetail productDetail = new ProductDetail();
-            productDetail.setProductDetailId(stockindetailDTO.getProductDetailID());
-            stockindetail.setProductDetailID(productDetail);
         }
 
         // Gán ProductBatch entity từ ID

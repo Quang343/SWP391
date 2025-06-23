@@ -13,8 +13,8 @@ import java.math.BigDecimal;
 public class StockInDetailDTO {
     private Integer id;
     private Integer stockInID;
-    private Integer productDetailID;
     private Integer quantity;
     private BigDecimal unitPrice;
     private Integer batchID;
+
 }

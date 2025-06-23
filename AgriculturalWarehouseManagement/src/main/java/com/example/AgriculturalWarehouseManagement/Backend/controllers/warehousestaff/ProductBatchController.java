@@ -1,6 +1,7 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.warehousestaff;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.ProductBatchDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductBatchRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff.ProductBatchService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -17,6 +18,9 @@ import java.util.Map;
 public class ProductBatchController {
     @Autowired
     private ProductBatchService service;
+
+    @Autowired
+    private ProductBatchRepository productBatchRepository;
 
     @PostMapping
     public ResponseEntity<ProductBatchDTO> create(@Valid @RequestBody ProductBatchDTO dto) {
@@ -70,5 +74,12 @@ public class ProductBatchController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/available")
+    public List<ProductBatchDTO> getAvailableBatches() {
+        List<ProductBatchDTO> availableBatches = productBatchRepository.findAvailableBatches();
+        System.out.println("Available Batches: " + availableBatches);
+        return availableBatches;
     }
 }

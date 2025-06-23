@@ -23,11 +23,6 @@ public class StockInDetail {
     private StockIn stockInID;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "productdetailid", nullable = false)
-    private ProductDetail productDetailID;
-
-    @NotNull
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
