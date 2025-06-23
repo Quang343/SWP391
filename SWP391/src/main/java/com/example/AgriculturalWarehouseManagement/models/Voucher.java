@@ -1,13 +1,16 @@
 package com.example.AgriculturalWarehouseManagement.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "Voucher")
@@ -17,17 +20,18 @@ public class Voucher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "voucher_code", nullable = false, length = 50)
+    @Column(name = "voucher_code", unique = true, nullable = false, length = 50)
     private String voucherCode;
 
     @Column(name = "start_date", nullable = false)
-    private Date startDate;
+    private LocalDateTime startDate;
 
     @Column(name = "end_date", nullable = false)
-    private Date endDate;
+    private LocalDateTime endDate;
 
     @Column(name = "discount_type", nullable = false)
-    private String discountType;
+    @Enumerated(EnumType.STRING)
+    private DiscountType discountType;
 
     @Column(name = "discount_value", precision = 15, scale = 2, nullable = false)
     private BigDecimal discountValue;
@@ -40,4 +44,37 @@ public class Voucher {
     @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     private VoucherStatus status;
+
+    @Column(name = "min_order_amount", precision = 15, scale = 2, nullable = false)
+    private BigDecimal minOrderAmount;
+
+    @Column(name = "islocked", nullable = false)
+    private Boolean isLocked = false;
+
+    public String getDiscountValueString() {
+        if (discountType.equals(DiscountType.PERCENT))
+            return String.format("%.0f%%", discountValue);
+        else{
+            return String.format("%s VND", convertBigDecimalToStringFormatted(discountValue));
+        }
+    }
+
+    public String getMinOrderAmountString() {
+        return String.format("%s VND", convertBigDecimalToStringFormatted(minOrderAmount));
+    }
+
+    private String convertBigDecimalToStringFormatted(BigDecimal value) {
+        String str = String.valueOf(value.intValue());
+        StringBuilder builder = new StringBuilder();
+        int count = 0;
+        for(int i = str.length() - 1; i >= 0; i--){
+            count++;
+            builder.append(str.charAt(i));
+            if(count == 3 && i != 0){
+                builder.append(',');
+                count = 0;
+            }
+        }
+        return builder.reverse().toString();
+    }
 }

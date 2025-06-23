@@ -4,6 +4,7 @@ import com.example.AgriculturalWarehouseManagement.dtos.CategoryDTO;
 import com.example.AgriculturalWarehouseManagement.models.Category;
 import com.example.AgriculturalWarehouseManagement.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,26 +35,29 @@ public class CategoryService implements ICategoryService{
                 .name(categoryDTO.getName())
                 .description(categoryDTO.getDescription())
                 .status(categoryDTO.getStatus())
+                .imageUrl(categoryDTO.getImageUrl())
                 .build();
         return categoryRepository.save(category);
     }
 
     @Override
-    public boolean existsByName(CategoryDTO categoryDTO) {
-        return categoryRepository.existsByName(categoryDTO.getName());
+    public boolean existsByNameIgnoreCase(String name) {
+        return categoryRepository.existsByNameIgnoreCase(name);
     }
 
     @Override
-    public Category updateCategory(Long id, CategoryDTO categoryDTO) {
-        try {
-            Category category = findById(id);
-            category.setName(categoryDTO.getName());
-            category.setDescription(categoryDTO.getDescription());
-            category.setStatus(categoryDTO.getStatus());
-            return categoryRepository.save(category);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public Category updateCategory(Long id, CategoryDTO categoryDTO) throws Exception {
+        Category category = findById(id);
+        if(!category.getName().equalsIgnoreCase(categoryDTO.getName()) &&
+                categoryRepository.existsByNameIgnoreCase(categoryDTO.getName())){
+            throw new Exception("Category name already exists");
         }
+
+        category.setName(categoryDTO.getName());
+        category.setDescription(categoryDTO.getDescription());
+        category.setStatus(categoryDTO.getStatus());
+        category.setImageUrl(categoryDTO.getImageUrl());
+        return categoryRepository.save(category);
     }
 
     @Override

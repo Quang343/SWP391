@@ -26,6 +26,6 @@ public class ProductDTO {
 //    @NotNull(message = "Warehouse is required")
 //    private Long warehouseId;
 
-    @NotNull
+    @NotBlank(message = "Status is required")
     private String status;
 }

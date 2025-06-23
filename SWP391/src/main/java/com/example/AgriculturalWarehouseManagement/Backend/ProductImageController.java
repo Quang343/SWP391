@@ -49,9 +49,8 @@ public class ProductImageController {
                 //Lưu file và cập nhật url
                 String fileName = storeFile(file);
                 //luu vao doi tuong product trong db
-                ProductImageDTO productImageDTO = ProductImageDTO.builder()
-                        .imageUrl(fileName)
-                        .build();
+                ProductImageDTO productImageDTO = new ProductImageDTO();
+                productImageDTO.setImageUrl(fileName);
                 ProductImage productImage = productService.createProductImage
                         (existingProduct.getId(), productImageDTO);
                 productImages.add(productImage);

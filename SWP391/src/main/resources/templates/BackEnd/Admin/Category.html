@@ -8,16 +8,17 @@
         background-color: #d1e7dd !important;
         color: #0c0c0c !important;
     }
-    #autoDismissAlert {
-        transition: opacity 0.8s ease-in-out, transform 0.4s ease;
-        transform: translateY(0);
-        opacity: 1;
+
+    .category-img img{
+        width: 65px;
+        height: auto;
+        border-radius: 50%;
     }
 
-    #autoDismissAlert.hide {
-        opacity: 0;
-        transform: translateY(-10px);
+    #deleteModalStartMsg p{
+        font-size: 1rem;
     }
+
 </style>
 <body>
 <!-- tap on top start -->
@@ -90,9 +91,10 @@
 <!--                                                <td th:text="${category.getDescription()}"></td>-->
                                                 <td th:text="${category.getStatus()}"></td>
                                                 <td>
-                                                    <div class="category-icon">
-                                                        <img th:src="@{Backend/assets/svg/1/vegetable.svg}"
-                                                             class="img-fluid" alt="">
+                                                    <div class="category-img">
+<!--                                                        <img th:src="@{'/Backend/assets/images/category/' + ${category.getImageUrl()}}"-->
+<!--                                                             class="img-fluid" alt="">-->
+                                                        <img th:src="@{'/uploads/category/' + ${category.getImageUrl()}}" class="img-fluid" alt="">
                                                     </div>
                                                 </td>
                                                 <td>
@@ -109,19 +111,11 @@
                                                         </li>
 
                                                         <li>
-<!--                                                            <a href="javascript:void(0)" data-bs-toggle="modal"-->
-<!--                                                               data-bs-target="#exampleModalToggle"-->
-<!--                                                                th:attr="data-id=${category.getId()}">-->
-<!--                                                                <i class="ri-delete-bin-line"></i>-->
-<!--                                                            </a>-->
-                                                            <form th:action="@{'/admin/delete_category/' + ${category.getId()}}" method="post"
-                                                                  onsubmit="return confirm('Bạn có chắc chắn muốn xoá danh mục này không?')">
-                                                                <input type="hidden" name="_method" value="delete" />
-<!--                                                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
-                                                                <button type="submit" style="outline: none; border: none; background: transparent">
-                                                                    <i class="ri-delete-bin-line" style="color: red"></i>
-                                                                </button>
-                                                            </form>
+                                                            <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                                data-bs-target="#deleteModalStart"
+                                                                th:attr="data-id=${category.getId()}">
+                                                                <i class="ri-delete-bin-line"></i>
+                                                            </a>
                                                         </li>
                                                     </ul>
                                                 </td>
@@ -138,17 +132,7 @@
             </div>
             <!-- All User Table Ends-->
 
-            <div class="container-fluid">
-                <!-- footer start-->
-                <footer class="footer">
-                    <div class="row">
-                        <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-                        </div>
-                    </div>
-                </footer>
-                <!-- footer end-->
-            </div>
+            <div th:replace="BackEnd/fragments/footer::footer"></div>
         </div>
         <!-- Container-fluid end -->
     </div>
@@ -174,51 +158,48 @@
 </div>
 
 <!-- Delete Modal Box Start -->
-<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle" aria-hidden="true" tabindex="-1">
+<div class="modal fade theme-modal remove-coupon" id="deleteModalStart" aria-hidden="true" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header d-block text-center">
-                <h5 class="modal-title w-100" id="exampleModalLabel22">Xác nhận xóa</h5>
+                <h5 class="modal-title w-100" id="deleteModalStartLabel">Xác nhận xóa</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="remove-box">
+                <div id="deleteModalStartMsg" class="remove-box">
                     <p>Bạn có chắc chắn muốn xóa</p>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
-                <button type="submit" class="btn btn-animation btn-md fw-bold" data-bs-target="#exampleModalToggle2"
-                        data-bs-toggle="modal" data-bs-dismiss="modal">Yes</button>
-<!--                <form th:action="@{'/items/delete/' + ${item.id}}" method="post">-->
-<!--                    <button type="submit" class="btn btn-animation btn-md fw-bold"-->
-<!--                            data-bs-toggle="modal" data-bs-dismiss="modal">Yes</button>-->
-<!--                </form>-->
+                <button type="submit" class="btn btn-animation btn-md fw-bold" data-bs-target="#resultModal"
+                        data-bs-toggle="modal" data-bs-dismiss="modal" onclick="confirmDelete()">Yes</button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle2" aria-hidden="true" tabindex="-1">
+<!-- Modal thông báo tái sử dụng -->
+<div class="modal fade theme-modal remove-coupon" id="resultModal" aria-hidden="true" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel12">Done!</h5>
+                <h5 class="modal-title text-center" id="resultModalTitle">Done!</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="remove-box text-center">
-                    <div class="wrapper">
+                    <div id="resultModalIcon" class="wrapper">
                         <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
-                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
                         </svg>
                     </div>
-                    <h4 class="text-content">It's Removed.</h4>
+                    <h4 id="resultModalMessage" class="text-content">It's Removed.</h4>
                 </div>
             </div>
             <div class="modal-footer">
@@ -263,17 +244,40 @@
 
 <!-- Theme js -->
 <script th:src="@{/Backend/assets/js/script.js}"></script>
+
 <script>
-    setTimeout(function () {
-        const alertNode = document.getElementById('autoDismissAlert');
-        if (alertNode) {
-            alertNode.classList.add('hide');
-            setTimeout(() => {
-                const bsAlert = new bootstrap.Alert(alertNode);
-                bsAlert.close(); // Đóng hoàn toàn
-            }, 800); // Chờ hiệu ứng hoàn tất
-        }
-    }, 5000);
+    let selectedCategoryId = null;
+    const deleteModalStart = document.getElementById('deleteModalStart');
+    const deleteModalStartLabel = document.getElementById('deleteModalStartLabel');
+    const deleteModalStartMsg = document.getElementById('deleteModalStartMsg');
+
+    deleteModalStartLabel.textContent = 'Xác nhận xoá';
+    deleteModalStartMsg.innerHTML = `<p>Bạn có chắc chắn muốn xóa ?</p>`
+
+    deleteModalStart.addEventListener('show.bs.modal', function (event) {
+        selectedCategoryId = event.relatedTarget.getAttribute('data-id');
+    })
+
+    function confirmDelete() {
+        if(!selectedCategoryId) return;
+
+        fetch(`/admin/delete_category/${selectedCategoryId}`, {
+            method: 'DELETE'
+        })
+        .then((response) => response.json())
+        .then(data => {
+            document.getElementById('resultModalMessage').innerText = data.message;
+            const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
+            resultModal.show();
+
+            selectedCategoryId = null;
+            setTimeout(() => location.reload(), 1500);
+        })
+        .catch(error => {
+            alert("Lỗi khi xoá category: " + error);
+        });
+    }
+
 </script>
 
 </body>

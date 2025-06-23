@@ -16,12 +16,17 @@ public class ProductImageService implements  IProductImageService{
     private final ProductImageRepository productImageRepository;
 
     @Override
-    public List<ProductImage> findByProductId(Long productId) {
-        return productImageRepository.findByProductId(productId);
+    public List<ProductImage> findAllByProduct(Product product) {
+        return productImageRepository.findAllByProduct(product);
     }
 
     @Override
     public List<ProductImage> findAll() {
         return productImageRepository.findAll();
+    }
+
+    @Override
+    public void deleteAllByProduct(Product product) {
+        productImageRepository.deleteAllByProduct(product);
     }
 }

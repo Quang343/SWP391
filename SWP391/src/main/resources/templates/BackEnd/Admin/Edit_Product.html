@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
@@ -68,6 +67,7 @@
         font-family: sans-serif;
         font-size: 14px;
     }
+
     .alert-danger {
         background-color: #f8d7da;
         color: #721c24;
@@ -78,6 +78,28 @@
         background-color: #f5c6cb;
         border-color: #ed969e;
     }
+
+    .btn-danger {
+        background-color: #ef2f55 !important;
+        border-color: #ef2f55 !important;
+    }
+
+    .btn-danger:hover {
+        background: #ff0019 !important;
+        color: #fff;
+    }
+
+    .previewImageItem img{
+        filter: grayscale(0.5);
+        transition: .5s;
+        cursor: pointer;
+    }
+
+    .previewImageItem img:hover {
+        transform: scale(1.01);
+        filter: grayscale(0);
+    }
+
 </style>
 <body>
 <!-- tap on top start -->
@@ -113,22 +135,18 @@
                                         </div>
 
                                         <form class="theme-form theme-form-2 mega-form"
-                                              th:action="@{'/admin/update_product/' + ${id}}" method="post"
+                                              th:action="@{'/admin/update_product/' + ${id}}"
                                               th:object="${productDTO}"
+                                              method="post"
                                               enctype="multipart/form-data">
                                             <!-- Name -->
-<!--                                            <input type="hidden" name="_method" value="put">-->
+                                            <!--                                            <input type="hidden" name="_method" value="put">-->
                                             <div class="mb-4 row align-items-center">
                                                 <label class="form-label-title col-sm-3 mb-0">Product
                                                     Name</label>
                                                 <div class="col-sm-9">
                                                     <input class="form-control" type="text"
                                                            placeholder="Product Name" th:field="*{name}" required>
-                                                </div>
-                                                <div th:if="${#fields.hasErrors('name')}"
-                                                     th:errors="*{name}"
-                                                     class="text-danger small mt-1 m-l-0"
-                                                     style="font-weight: bold; font-size: 13px;">
                                                 </div>
                                             </div>
 
@@ -137,7 +155,8 @@
                                                 <label
                                                         class="col-sm-3 col-form-label form-label-title">Category</label>
                                                 <div class="col-sm-9">
-                                                    <select class="js-example-basic-single w-100" th:field="*{categoryId}">
+                                                    <select class="js-example-basic-single w-100"
+                                                            th:field="*{categoryId}">
                                                         <option value="" disabled selected>Category Menu</option>
                                                         <option th:each="category : ${categories}"
                                                                 th:value="${category.getId()}"
@@ -151,7 +170,9 @@
                                                 <label class="form-label-title col-sm-3 mb-0">Product
                                                     Description</label>
                                                 <div class="col-sm-9">
-                                                    <textarea id="role-description" class="description-box" th:field="*{description}" placeholder="Enter product description here..."></textarea>
+                                                    <textarea id="role-description" class="description-box"
+                                                              th:field="*{description}"
+                                                              placeholder="Enter product description here..."></textarea>
                                                 </div>
                                             </div>
 
@@ -159,7 +180,8 @@
                                                 <label class="col-sm-3 col-form-label form-label-title">Stock
                                                     Status</label>
                                                 <div class="col-sm-9">
-                                                    <select class="js-example-basic-single w-100" name="status" th:field="*{status}">
+                                                    <select class="js-example-basic-single w-100" name="status"
+                                                            th:field="*{status}">
                                                         <option th:each="status : ${statuses}"
                                                                 th:value="${status}"
                                                                 th:text="${status}">
@@ -169,18 +191,36 @@
                                             </div>
 
                                             <div class="mb-4 row align-items-center">
-                                                <label
-                                                        class="col-sm-3 col-form-label form-label-title">Images</label>
-<!--                                                <input type="hidden" id="productId" name="id" th:value="${id}" />-->
+                                                <label class="col-sm-3 col-form-label form-label-title">Images</label>
                                                 <div class="col-sm-9">
                                                     <input class="form-control form-choose" type="file"
-                                                           id="images" name="files" multiple accept="image/*">
+                                                           id="fileInput" multiple accept="image/*">
+                                                    <div id="previewContainer" class="d-flex flex-wrap">
+                                                        <div th:each="i : ${images}" class="previewImageItem position-relative m-2"
+                                                             th:data-url="@{'/uploads/product/' + ${i.imageUrl}}"
+                                                             style="width: 100px; height: 100px;">
+                                                            <!-- Ảnh sản phẩm -->
+                                                            <img class="img-thumbnail w-100 h-100"
+                                                                 th:src="@{'/uploads/product/' + ${i.imageUrl}}"
+                                                                 style="object-fit: cover; border-radius: 8px;"/>
+
+                                                            <!-- Nút xoá -->
+                                                            <button type="button"
+                                                                    class="btn btn-sm btn-danger position-absolute translate-middle rounded-circle"
+                                                                    style="width: 24px; height: 24px; padding: 0; right: -20px; top: 4px;"
+                                                                    onclick="removeImage(this)">
+                                                                <i class="fas fa-times small"
+                                                                   style="font-size: 13px;"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
                                             <div class="mb-4 row">
                                                 <div class="col-sm-9 offset-sm-3">
-                                                    <div id="error-message" class="alert alert-danger d-none" role="alert"></div>
+                                                    <div id="error-message" class="alert alert-danger d-none"
+                                                         role="alert"></div>
                                                 </div>
                                             </div>
 
@@ -207,7 +247,8 @@
                                             -->
                                             <div class="mb-4 row">
                                                 <div class="card-submit-button">
-                                                    <button class="btn btn-animation ms-auto" type="submit">Save</button>
+                                                    <button class="btn btn-animation ms-auto" type="submit">Save
+                                                    </button>
                                                 </div>
                                             </div>
                                         </form>
@@ -221,15 +262,7 @@
             <!-- New Product Add End -->
 
             <!-- footer Start -->
-            <div class="container-fluid">
-                <footer class="footer">
-                    <div class="row">
-                        <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+            <div th:replace="BackEnd/fragments/footer::footer"></div>
             <!-- footer End -->
         </div>
         <!-- Container-fluid End -->
@@ -248,7 +281,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="button-box">
                     <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-                    <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
+                    <button type="button" th:onclick="|window.location='@{backend/login}'|"
+                            class="btn btn--yes btn-primary">Yes
+                    </button>
                 </div>
             </div>
         </div>
@@ -261,7 +296,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="resultModalTitle">TITLE</h5>
+                <h5 class="modal-title text-center" id="resultModalTitle"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
@@ -271,8 +306,8 @@
                     <div class="wrapper" id="resultModalIcon">
                         <!-- Biểu tượng động sẽ được thay ở đây -->
                         <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
-                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
                         </svg>
                     </div>
                     <h4 class="text-content" id="resultModalMessage">MESSAGE</h4>
@@ -322,13 +357,142 @@
 <script th:src="@{/Backend/assets/js/script.js}"></script>
 
 <script>
+    const imageInput = document.getElementById('fileInput');
+    const previewContainer = document.getElementById('previewContainer');
+    let selectedFiles = []; // chứa File (cả ảnh cũ & mới)
+
+    // 1. Khi trang load: fetch lại ảnh cũ và convert về File
+    window.addEventListener('load', async () => {
+        const oldImageDivs = previewContainer.querySelectorAll('.previewImageItem[data-url]');
+        for (const div of oldImageDivs) {
+            const url = div.dataset.url;
+            const file = await urlToFile(url);
+            selectedFiles.push(file);
+        }
+    });
+
+    // 2. Thêm ảnh mới khi người dùng chọn
+    imageInput.addEventListener('change', function () {
+        const currentCount = previewContainer.querySelectorAll('.previewImageItem').length;
+        const newFiles = [...this.files];
+
+        if (currentCount >= 5) {
+            alert("Bạn đã chọn tối đa 5 ảnh.");
+            this.value = "";
+            return;
+        }
+
+        if (currentCount + newFiles.length > 5) {
+            alert(`Bạn chỉ có thể thêm tối đa ${5 - currentCount} ảnh nữa.`);
+            this.value = "";
+            return;
+        }
+
+        newFiles.forEach(file => {
+            selectedFiles.push(file);
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const div = document.createElement('div');
+                div.className = 'previewImageItem position-relative m-2';
+                div.style.width = '100px';
+                div.style.height = '100px';
+
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'img-thumbnail w-100 h-100';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '8px';
+
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'btn btn-sm btn-danger position-absolute translate-middle rounded-circle';
+                Object.assign(button.style, {
+                    width: '24px',
+                    height: '24px',
+                    padding: '0',
+                    right: '-20px',
+                    top: '4px'
+                });
+                button.innerHTML = `<i class="fas fa-times small" style="font-size: 13px;"></i>`;
+                button.onclick = () => {
+                    div.remove();
+                    selectedFiles = selectedFiles.filter(f => f.name !== file.name);
+                };
+
+                div.appendChild(img);
+                div.appendChild(button);
+                previewContainer.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        this.value = ""; // reset input sau khi chọn
+    });
+
+    // 3. Xoá ảnh khỏi danh sách preview + mảng
+    function removeImage(button) {
+        const div = button.closest(".previewImageItem");
+        const img = div.querySelector("img");
+        const src = img.src;
+        const name = src.substring(src.lastIndexOf("/") + 1);
+        selectedFiles = selectedFiles.filter(f => !src.includes(f.name));
+        div.remove();
+    }
+
+    // 4. Chuyển URL ảnh cũ thành File
+    async function urlToFile(url) {
+        const res = await fetch(url);
+        const blob = await res.blob();
+        const name = url.split("/").pop();
+        return new File([blob], name, { type: blob.type });
+    }
+
+    // 5. Submit form bằng fetch
+    document.querySelector('.theme-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const form = this;
+        const formData = new FormData(form);
+        const errorDiv = document.getElementById("error-message");
+        errorDiv.classList.add("d-none");
+        errorDiv.textContent = "";
+
+        formData.delete("images"); // Xoá input cũ nếu có
+
+        selectedFiles.forEach(file => {
+            formData.append("images", file);
+        });
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const msg = await response.text();
+                errorDiv.textContent = msg;
+                errorDiv.classList.remove("d-none");
+                return;
+            }
+
+            showModal('success', 'Cập nhật thành công!');
+            setTimeout(() => window.location.href = '/admin/products', 2000);
+
+        } catch (err) {
+            console.error("Lỗi khi gửi:", err);
+        }
+    });
+</script>
+
+<script>
     function showModal(status, message) {
         const title = document.getElementById('resultModalTitle');
         const icon = document.getElementById('resultModalIcon');
         const msg = document.getElementById('resultModalMessage');
 
         // Cập nhật nội dung
-        title.textContent = status === 'success' ? 'Thành công!' : 'Thất bại!';
+        title.textContent = status === 'success' ? 'Thành công' : 'Thất bại!';
         msg.textContent = message;
 
         // Icon: dùng lại SVG hoặc đổi sang icon lỗi nếu muốn
@@ -345,55 +509,6 @@
     }
 
 </script>
-<script>
-    document.querySelector('.theme-form').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const form = this;
-        const errorDiv = document.getElementById("error-message");
-        errorDiv.classList.add("d-none");
-        errorDiv.textContent = "";
-
-        // Tạo FormData từ form HTML (gồm cả text và ảnh)
-        const formData = new FormData(form);
-
-        try {
-            // Gửi dữ liệu text + ảnh cùng lúc
-            const response = await fetch(form.action, {
-                method: 'POST', // hoặc 'PUT' nếu dùng @PutMapping
-                body: formData
-            });
-
-            if (!response.ok) {
-                const contentType = response.headers.get("content-type");
-                let msg = "Lỗi không xác định";
-
-                if (contentType && contentType.includes("application/json")) {
-                    const errorData = await response.json();
-                    msg = typeof errorData === 'object'
-                        ? Object.values(errorData).join('\n')
-                        : JSON.stringify(errorData);
-                } else {
-                    msg = await response.text();
-                }
-
-                errorDiv.textContent = msg;
-                errorDiv.classList.remove("d-none");
-                console.error("Chi tiết lỗi cập nhật:", msg);
-                throw new Error("Lỗi khi cập nhật sản phẩm");
-            }
-
-            showModal('success', 'Cập nhật thành công!');
-            setTimeout(() => {
-                window.location.href = '/admin/products';
-            }, 2500);
-
-        } catch (err) {
-            console.error("Lỗi khi gửi form:", err);
-        }
-    });
-</script>
-
 
 <!--
 <script>

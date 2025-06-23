@@ -15,4 +15,6 @@ public class CategoryDTO {
 
     @NotBlank
     private String status;
+
+    private String imageUrl;
 }

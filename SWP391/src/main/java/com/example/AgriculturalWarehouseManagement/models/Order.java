@@ -36,9 +36,6 @@ public class Order {
     @Column(length = 50, nullable = false)
     private String status;
 
-    @Column(name = "totalamount", precision = 15, scale = 2, nullable = false)
-    private BigDecimal totalAmount;
-
     @Column(name = "fullname", length = 255)
     private String fullName;
 
@@ -52,6 +49,22 @@ public class Order {
     private String address;
 
     private String note;
+
+    @Column(name = "totalamount", precision = 15, scale = 2, nullable = false)
+    private BigDecimal totalAmount;
+
+    @ManyToOne
+    @JoinColumn(name = "voucher_id")
+    private Voucher voucher;
+
+    @Column(name = "voucher_code", length = 50)
+    private String voucherCode;
+
+    @Column(name = "discount_amount", precision = 15, scale = 2)
+    private BigDecimal discountAmount;
+
+    @Column(name = "final_amount", precision = 15, scale = 2, nullable = false)
+    private BigDecimal finalAmount;
 
     public String getStatusBadgeClass() {
         switch (status) {

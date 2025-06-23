@@ -3,22 +3,29 @@ package com.example.AgriculturalWarehouseManagement.Backend;
 import com.example.AgriculturalWarehouseManagement.dtos.CategoryDTO;
 import com.example.AgriculturalWarehouseManagement.models.Category;
 import com.example.AgriculturalWarehouseManagement.services.CategoryService;
+import jakarta.validation.Path;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Controller
 public class CategoryController {
     private final CategoryService categoryService;
+
     @GetMapping("/admin/categories")
     public String adminCategory(Model model) {
         List<String> status = new ArrayList<>(Arrays.asList("ACTIVE", "INACTIVE"));
@@ -40,53 +47,111 @@ public class CategoryController {
         categoryDTO.setName(category.getName());
         categoryDTO.setDescription(category.getDescription());
         categoryDTO.setStatus(category.getStatus());
+        categoryDTO.setImageUrl(category.getImageUrl());
         model.addAttribute("categoryDTO", categoryDTO);
         model.addAttribute("id", category.getId());
-        return  "BackEnd/Admin/Edit_Category";
+        return "BackEnd/Admin/Edit_Category";
     }
 
-    @PutMapping("/admin/update_category/{id}")
-    public String updateCategory(@PathVariable Long id,
-                                 @ModelAttribute CategoryDTO categoryDTO,
-                                 RedirectAttributes redirectAttributes){
+    @PostMapping("/admin/update_category/{id}")
+    public ResponseEntity<?> updateCategory(
+            @PathVariable("id") Long id,
+            @RequestParam("name") String name,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam("status") String status,
+            @RequestPart(value = "image", required = false) MultipartFile image
+    ){
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setName(name);
+        categoryDTO.setDescription(description);
+        categoryDTO.setStatus(status);
+
         try {
-            Category category = categoryService.updateCategory(id, categoryDTO);
-            redirectAttributes.addFlashAttribute("successMessage", "Updated Successfully!");
+            Category existingCategory = categoryService.findById(id);
+            if (image != null && !image.isEmpty()) {
+                String oldFileName = existingCategory.getImageUrl();
+                if(oldFileName != null && !oldFileName.isBlank()){
+                    deleteFile(oldFileName);
+                }
+
+                String newFileName = storeFile(image);
+                categoryDTO.setImageUrl(newFileName);
+            }else
+                categoryDTO.setImageUrl(existingCategory.getImageUrl());
+
+            categoryService.updateCategory(id, categoryDTO);
+            return ResponseEntity.ok().body("Category updated successfully");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Updated error: " + e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return "redirect:/admin/categories";
+    }
+
+    public void deleteFile(String fileName){
+        try{
+            java.nio.file.Path filePath = Paths.get("uploads/category").resolve(fileName);
+            Files.deleteIfExists(filePath);
+        }catch (Exception e){
+            System.err.println("Failed to delete old file: " + e.getMessage());
+        }
     }
 
     @PostMapping("/admin/saveCategory")
-    public String saveCategory(@ModelAttribute @Valid CategoryDTO categoryDTO,
-            BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            return "BackEnd/Admin/Add_Category";
+    public ResponseEntity<?> saveCategory(
+            @RequestParam("name") String name,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam("status") String status,
+            @RequestPart(value = "image", required = false) MultipartFile image
+    ){
+        if(categoryService.existsByNameIgnoreCase(name)) {
+            return ResponseEntity.badRequest().body("Category name already exists");
         }
-        if (categoryService.existsByName(categoryDTO)) {
-            bindingResult.rejectValue("name", "error.name", "Category name already exists");
-            return "BackEnd/Admin/Add_Category";
+
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setName(name);
+        categoryDTO.setDescription(description);
+        categoryDTO.setStatus(status);
+
+        if (image != null && !image.isEmpty()) {
+            try {
+                String fileName = storeFile(image);
+                categoryDTO.setImageUrl(fileName);
+            }catch (Exception e){
+                return ResponseEntity.badRequest().body("Image upload failed");
+            }
         }
-        try{
-            Category category = categoryService.createCategory(categoryDTO);
-            redirectAttributes.addFlashAttribute("successMessage", "Category added successfully!");
-        }catch(Exception e){
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to add category: " + e.getMessage());
+        categoryService.createCategory(categoryDTO);
+        return ResponseEntity.ok(Map.of("message", "Category created successfully"));
+    }
+
+    private String storeFile(MultipartFile file) throws IOException {
+        if (file.getOriginalFilename() == null) {
+            throw new IOException("Empty file name");
         }
-        return "redirect:/admin/categories";
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        //Thêm UUID vào trước để đảm bảo fileName là duy nhất
+        String uniqueFileName = UUID.randomUUID().toString() + "." + fileName;
+        //Đường dẫn đến thư mục mà bạn muốn lưu file
+//        java.nio.file.Path uploadDir = Paths.get("src/main/resources/static/Backend/assets/images/category");
+        //Kiểm tra và tạo nếu thư mục chưa tồn tại
+        java.nio.file.Path uploadDir = Paths.get("uploads/category");
+        if (!Files.exists(uploadDir)) {
+            Files.createDirectories(uploadDir);
+        }
+        //Đường dẫn đầy đủ đến file
+        java.nio.file.Path destination = Paths.get(uploadDir.toString(), uniqueFileName);
+        //Sao chép file vào thư mục đích
+        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+        return uniqueFileName;
     }
 
     @DeleteMapping("/admin/delete_category/{id}")
-    public String softDelete(@PathVariable Long id, RedirectAttributes redirectAttributes){
-        try{
+    public ResponseEntity<?> softDelete(@PathVariable Long id) {
+        try {
             categoryService.deleteCategory(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Category deleted successfully!");
-        }catch(Exception e){
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete category with error: " + e.getMessage());
+            return ResponseEntity.ok().body(Map.of("message", "Category deleted successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return "redirect:/admin/categories";
     }
 
 }

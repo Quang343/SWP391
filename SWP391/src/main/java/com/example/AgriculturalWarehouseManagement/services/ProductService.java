@@ -25,14 +25,11 @@ public class ProductService implements IProductService {
 
     @Override
     public Product createProduct(ProductDTO productDTO) {
-        //*
         Category category = categoryRepository.findById(productDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
-        //*
-        Warehouse warehouse = warehouseRepository.findById(1L).orElse(null);
 
         Product product = Product.builder()
-                .name(productDTO.getName())
+                .name(productDTO.getName().trim())
                 .description(productDTO.getDescription())
                 .category(category)
                 .status(ProductStatus.valueOf(productDTO.getStatus()))
@@ -42,12 +39,14 @@ public class ProductService implements IProductService {
 
     @Override
     public Product updateProduct(Long id, ProductDTO productDTO) {
+        Category category = categoryRepository.findById(productDTO.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
         Product product = findById(id);
+        product.setCategory(category);
         product.setName(productDTO.getName().trim());
-        product.setDescription(productDTO.getDescription());
+        product.setDescription(productDTO.getDescription().trim());
         product.setStatus(ProductStatus.valueOf(productDTO.getStatus()));
 
-        Warehouse warehouse = warehouseRepository.findById(1L).orElse(null);
         return productRepository.save(product);
     }
 
@@ -89,7 +88,7 @@ public class ProductService implements IProductService {
                 .imageUrl(productImageDTO.getImageUrl())
                 .build();
         //không cho insert quá 5 ảnh cho 1 sản phẩm
-        int size = productImageRepository.findByProductId(productId).size();
+        int size = productImageRepository.findAllByProduct(product).size();
         if (size >= ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
             throw new Exception("Number of images must be <= " + ProductImage.MAXIMUM_IMAGES_PER_PRODUCT);
         }

@@ -2,7 +2,7 @@ package com.example.AgriculturalWarehouseManagement.Backend;
 
 import com.example.AgriculturalWarehouseManagement.models.Order;
 import com.example.AgriculturalWarehouseManagement.models.OrderStatus;
-import com.example.AgriculturalWarehouseManagement.services.OrderService;
+import com.example.AgriculturalWarehouseManagement.services.order.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

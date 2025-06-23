@@ -8,7 +8,9 @@ import com.example.AgriculturalWarehouseManagement.models.Product;
 import com.example.AgriculturalWarehouseManagement.models.ProductImage;
 import com.example.AgriculturalWarehouseManagement.models.ProductStatus;
 import com.example.AgriculturalWarehouseManagement.services.CategoryService;
+import com.example.AgriculturalWarehouseManagement.services.ProductImageService;
 import com.example.AgriculturalWarehouseManagement.services.ProductService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,10 +27,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
-
+@Transactional
 @Controller
 //@RestController
 @RequiredArgsConstructor
@@ -36,10 +39,18 @@ public class ProductController {
 
     private final ProductService productService;
     private final CategoryService categoryService;
+    private final ProductImageService productImageService;
     private final ModelMapper modelMapper;
 
+    @GetMapping("/admin/products")
+    public String getAllProducts(Model model) {
+        List<Product> products = productService.findAll();
+        model.addAttribute("products", products);
+        return "BackEnd/Admin/All_Products";
+    }
+
     @GetMapping("/admin/add_product")
-    public String showCreateForm(Model model){
+    public String showCreateForm(Model model) {
         List<Category> categories = categoryService.findAll();
         List<String> statuses = getProductStatus();
         model.addAttribute("statuses", statuses);
@@ -49,55 +60,52 @@ public class ProductController {
     }
 
     @PostMapping("/admin/saveProduct")
-    public String saveProduct(@ModelAttribute("productDTO") @Valid ProductDTO productDTO,
-                              BindingResult bindingResult,
-                              Model model,
-                              RedirectAttributes redirectAttributes) {
-        if(bindingResult.hasErrors()){
-            return "BackEnd/Admin/Add_Product";
+    public ResponseEntity<?> saveProduct(
+            @ModelAttribute("productDTO") @Valid ProductDTO productDTO,
+            BindingResult bindingResult,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors().forEach((error) -> {
+                errors.put(error.getField(), error.getDefaultMessage());
+            });
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
         }
-        if(productService.existsByName(productDTO.getName())){
-            bindingResult.rejectValue("name", "error.name",  "Product name already exists");
-            List<Category> categories = categoryService.findAll();
-            List<String> statuses = getProductStatus();
-            model.addAttribute("statuses", statuses);
-            model.addAttribute("categories", categories);
-            return "BackEnd/Admin/Add_Product";
+        if (productService.existsByName(productDTO.getName())) {
+            return ResponseEntity.badRequest().body(Map.of("name", "Product name already exists"));
         }
-        try{
+        try {
             Product product = productService.createProduct(productDTO);
-            redirectAttributes.addFlashAttribute("successMessage", "Product has been created");
+            if (images != null && !images.isEmpty()) {
+                ResponseEntity<?> imageUploadResult = handleImageUpload(product.getId(), images);
+                if (!imageUploadResult.getStatusCode().is2xxSuccessful()) {
+                    return imageUploadResult;
+                }
+            }
+            return ResponseEntity.status(HttpStatus.OK).body("Product created successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        catch(Exception e){
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to add the product");
-        }
-        return "redirect:/admin/products";
     }
 
-    private List<String> getProductStatus(){
+    private List<String> getProductStatus() {
         return Arrays.stream(ProductStatus.values())
                 .map(Enum::name)
                 .toList();
     }
 
-    @GetMapping("/admin/products")
-    public String getAllProducts(Model model){
-        List<Product> products = productService.findAll();
-        model.addAttribute("products", products);
-        return "BackEnd/Admin/All_Products";
-    }
-
-    private void config(){
+    private void config() {
         modelMapper.typeMap(Product.class, ProductDTO.class);
     }
 
-
     @GetMapping("/admin/edit_product/{id}")
-    public String showEditForm(@PathVariable("id") Long id, Model model){
+    public String showEditForm(@PathVariable("id") Long id, Model model) {
         Product product = productService.findById(id);
         config();
         ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
         List<String> statuses = getProductStatus();
+        List<ProductImage> images = productImageService.findAllByProduct(product);
+        model.addAttribute("images", images);
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("statuses", statuses);
         model.addAttribute("productDTO", productDTO);
@@ -176,9 +184,9 @@ public class ProductController {
 
 
     @DeleteMapping("/admin/delete_product/{id}")
-    public String deleteProduct(@PathVariable("id") Long id, RedirectAttributes redirectAttributes){
+    public String deleteProduct(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         boolean isDeleted = productService.deleteProduct(id);
-        if(isDeleted)
+        if (isDeleted)
             redirectAttributes.addFlashAttribute("successMessage", "Product has been deleted");
         else
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete the product");
@@ -197,12 +205,10 @@ public class ProductController {
             @PathVariable Long id,
             @Valid @ModelAttribute ProductDTO productDTO,
             BindingResult bindingResult,
-            @RequestParam(value = "files", required = false) List<MultipartFile> images
-            ) {
+            @RequestParam(value = "images", required = false) List<MultipartFile> images
+    ) {
         try {
-            // 1. Cập nhật dữ liệu sản phẩm
             if (bindingResult.hasErrors()) {
-            // Trả về lỗi validation (dạng JSON)
                 Map<String, String> errors = new HashMap<>();
                 bindingResult.getFieldErrors().forEach(error ->
                         errors.put(error.getField(), error.getDefaultMessage()));
@@ -210,73 +216,94 @@ public class ProductController {
             }
 
             Product product = productService.findById(id);
-            if (product == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Product not found");
-            }
+//            if (product == null) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
+//            }
 
-            // Kiểm tra trùng tên
             if (!product.getName().equals(productDTO.getName().trim()) &&
                     productService.existsByName(productDTO.getName())) {
                 return ResponseEntity.badRequest().body(
                         Map.of("name", "Product name already exists")
                 );
             }
-            Product updatedProduct = productService.updateProduct(id, productDTO);
 
-            // 2. Nếu có ảnh thì xử lý tiếp
+            productService.updateProduct(id, productDTO);
+
             if (images != null && !images.isEmpty()) {
-                if (images.size() > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
-                    return ResponseEntity.badRequest().body("Tối đa chỉ được upload 5 ảnh");
-                }
-
-                List<ProductImage> productImages = new ArrayList<>();
-                for (MultipartFile file : images) {
-                    if (file.isEmpty()) continue;
-
-                    if (file.getSize() > 10 * 1024 * 1024) {
-                        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body("Ảnh vượt quá 10MB");
-                    }
-
-                    String contentType = file.getContentType();
-                    if (contentType == null || !contentType.startsWith("image/")) {
-                        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("Chỉ chấp nhận ảnh");
-                    }
-
-                    // Lưu file
-                    String fileName = storeFile(file);
-
-                    // Lưu vào DB
-                    ProductImageDTO dto = ProductImageDTO.builder().imageUrl(fileName).build();
-                    ProductImage image = productService.createProductImage(updatedProduct.getId(), dto);
-                    productImages.add(image);
+                deleteOldFiles(product);
+                productImageService.deleteAllByProduct(product);
+                ResponseEntity<?> imageUploadResult = handleImageUpload(id, images);
+                if (!imageUploadResult.getStatusCode().is2xxSuccessful()) {
+                    return imageUploadResult;
                 }
             }
+
             return ResponseEntity.ok("Cập nhật thành công");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
+    private void deleteOldFiles(Product product){
+        List<ProductImage> images = productImageService.findAllByProduct(product);
+        for(ProductImage productImage : images){
+            String oldFileName = productImage.getImageUrl();
+            if(oldFileName != null && !oldFileName.isBlank()){
+                deleteFile(oldFileName);
+            }
+        }
+    }
+
+    private ResponseEntity<?> handleImageUpload(Long productId, List<MultipartFile> images) throws Exception {
+        try {
+//            if (images.size() > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
+//                return ResponseEntity.badRequest().body("Tối đa chỉ được upload 5 ảnh");
+//            }
+
+            for (MultipartFile file : images) {
+                if (file.isEmpty()) continue;
+
+                if (file.getSize() > 10 * 1024 * 1024) {
+                    return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(Map.of("image", "Ảnh vượt quá 10MB"));
+                }
+
+                String contentType = file.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")) {
+                    return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(Map.of("imageType", "Chỉ chấp nhận ảnh"));
+                }
+
+                String fileName = storeFile(file);
+                ProductImageDTO dto = new ProductImageDTO();
+                dto.setImageUrl(fileName);
+                productService.createProductImage(productId, dto);
+            }
+            return ResponseEntity.ok("Upload successful");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Lỗi khi lưu ảnh: " + e.getMessage());
+        }
+    }
+
+    public void deleteFile(String fileName){
+        try{
+            java.nio.file.Path filePath = Paths.get("uploads/product").resolve(fileName);
+            Files.deleteIfExists(filePath);
+        }catch (Exception e){
+            System.err.println("Failed to delete old file: " + e.getMessage());
+        }
+    }
+
     private String storeFile(MultipartFile file) throws IOException {
-        if(file.getOriginalFilename() == null){
+        if (file.getOriginalFilename() == null) {
             throw new IOException("Empty file name");
         }
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        //Thêm UUID vào trước để đảm bảo fileName là duy nhất
         String uniqueFileName = UUID.randomUUID().toString() + "." + fileName;
-        //Đường dẫn đến thư mục mà bạn muốn lưu file
-        java.nio.file.Path uploadDir = Paths.get("uploads");
-        //Kiểm tra và tạo nếu thư mục chưa tồn tại
-        if(!Files.exists(uploadDir)){
+        Path uploadDir = Paths.get("uploads/product");
+        if (!Files.exists(uploadDir)) {
             Files.createDirectories(uploadDir);
         }
-        //Đường dẫn đầy đủ đến file
-        java.nio.file.Path destination = Paths.get(uploadDir.toString(), uniqueFileName);
-        //Sao chép file vào thư mục đích
+        Path destination = uploadDir.resolve(uniqueFileName);
         Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
         return uniqueFileName;
     }
-
-
 }

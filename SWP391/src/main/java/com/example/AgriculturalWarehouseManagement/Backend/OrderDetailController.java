@@ -2,8 +2,8 @@ package com.example.AgriculturalWarehouseManagement.Backend;
 
 import com.example.AgriculturalWarehouseManagement.models.Order;
 import com.example.AgriculturalWarehouseManagement.models.OrderDetail;
-import com.example.AgriculturalWarehouseManagement.services.OrderDetailService;
-import com.example.AgriculturalWarehouseManagement.services.OrderService;
+import com.example.AgriculturalWarehouseManagement.services.order.OrderDetailService;
+import com.example.AgriculturalWarehouseManagement.services.order.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

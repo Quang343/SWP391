@@ -1,4 +1,4 @@
-package com.example.AgriculturalWarehouseManagement.services;
+package com.example.AgriculturalWarehouseManagement.services.order;
 
 import com.example.AgriculturalWarehouseManagement.models.OrderDetail;
 import com.example.AgriculturalWarehouseManagement.repositories.OrderDetailRepository;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class OrderDetailService implements IOrderDetailService{
+public class OrderDetailService implements IOrderDetailService {
 
     private final OrderDetailRepository orderDetailRepository;
 

@@ -9,8 +9,8 @@ public interface ICategoryService {
     List<Category> findAll();
     List<Category> findCategoryByStatusIn(List<String> status);
     Category findById(Long id) throws Exception;
-    Category createCategory(CategoryDTO categoryDTO);
-    Category updateCategory(Long id, CategoryDTO categoryDTO);
+    Category createCategory(CategoryDTO categoryDTO) ;
+    Category updateCategory(Long id, CategoryDTO categoryDTO) throws Exception;
     void  deleteCategory(Long id);
-    boolean existsByName(CategoryDTO categoryDTO);
+    boolean existsByNameIgnoreCase(String name);
 }

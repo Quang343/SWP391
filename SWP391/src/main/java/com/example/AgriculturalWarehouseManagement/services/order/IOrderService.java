@@ -1,4 +1,4 @@
-package com.example.AgriculturalWarehouseManagement.services;
+package com.example.AgriculturalWarehouseManagement.services.order;
 
 import com.example.AgriculturalWarehouseManagement.dtos.OrderDTO;
 import com.example.AgriculturalWarehouseManagement.models.Order;
