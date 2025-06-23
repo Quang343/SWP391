@@ -57,8 +57,7 @@
                             <div
                                     class="banner-detail p-center-right position-relative shop-banner ms-auto banner-small">
                                 <div>
-                                    <h2>Healthy, nutritious & Tasty Fruits & Veggies</h2>
-                                    <h3>Save upto 50%</h3>
+                                    <h2>Trái cây và rau củ lành mạnh, bổ dưỡng và ngon miệng</h2>
                                 </div>
                             </div>
                         </div>
@@ -71,8 +70,7 @@
                             <div
                                     class="banner-detail p-center-right position-relative shop-banner ms-auto banner-small">
                                 <div>
-                                    <h2>Healthy, nutritious & Tasty Fruits & Veggies</h2>
-                                    <h3>Save upto 50%</h3>
+                                    <h2>Trái cây và rau củ lành mạnh, bổ dưỡng và ngon miệng</h2>
                                 </div>
                             </div>
                         </div>
@@ -85,8 +83,7 @@
                             <div
                                     class="banner-detail p-center-right position-relative shop-banner ms-auto banner-small">
                                 <div>
-                                    <h2>Healthy, nutritious & Tasty Fruits & Veggies</h2>
-                                    <h3>Save upto 50%</h3>
+                                    <h2>Trái cây và rau củ lành mạnh, bổ dưỡng và ngon miệng</h2>
                                 </div>
                             </div>
                         </div>
@@ -408,7 +405,7 @@
                                         <span th:text="${ '(' + product.ratingCount + ')'}">Rating count</span>
                                     </div>
                                     <h6 th:text="${product.productWeight}" class="unit">Weight and unit</h6>
-                                    <h5 th:text="${ '$'+ product.productPrice}" class="price">
+                                    <h5 th:text="${#numbers.formatInteger(product.productPrice, 0, 'POINT') + '₫'}" class="price">
                                         Product price smallest in ProductDetail
                                     </h5>
                                     <div class="add-to-cart-box bg-white">
@@ -422,29 +419,136 @@
                     </div>
                 </div>
 
-                <nav class="custom-pagination">
+                <nav class="custom-pagination" th:if="${checkPageCategorys != null and checkPageCategorys.size() > 0}">
                     <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="javascript:void(0)" tabindex="-1">
+                        <!-- Mũi tên về đầu -->
+                        <li th:class="'page-item' + (${currentPage == 1} ? ' disabled' : '')">
+                            <a class="page-link"
+                               th:href="@{/shopDetail(categoryId=${checkPageCategorys[0]}, page=1)}"
+                               tabindex="-1">
                                 <i class="fa-solid fa-angles-left"></i>
                             </a>
                         </li>
-                        <li class="page-item active">
-                            <a class="page-link" href="javascript:void(0)">1</a>
+
+                        <!-- Các trang lân cận -->
+                        <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+                            th:if="${i == 1 or i == totalPages or (i >= currentPage - 1 and i <= currentPage + 1)}"
+                            th:class="'page-item' + (${i == currentPage} ? ' active' : '')">
+                            <a class="page-link"
+                               th:href="@{/shopDetail(categoryId=${checkPageCategorys[0]}, page=${i})}"
+                               th:text="${i}">
+                            </a>
                         </li>
-                        <li class="page-item">
-                            <a class="page-link" href="javascript:void(0)">2</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="javascript:void(0)">3</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="javascript:void(0)">
+
+                        <!-- Mũi tên về cuối -->
+                        <li th:class="'page-item' + (${currentPage == totalPages} ? ' disabled' : '')">
+                            <a class="page-link"
+                               th:href="@{/shopDetail(categoryId=${checkPageCategorys[0]}, page=${totalPages})}">
                                 <i class="fa-solid fa-angles-right"></i>
                             </a>
                         </li>
                     </ul>
                 </nav>
+
+
+                <nav class="custom-pagination" th:if="${checkShopDetailProducts != null}">
+                    <ul class="pagination justify-content-center">
+
+                        <!-- Mũi tên về đầu -->
+                        <li th:class="'page-item' + (${currentPage == 1} ? ' disabled' : '')">
+                            <a class="page-link" th:href="@{/shopDetail(page=1)}">
+                                <i class="fa-solid fa-angles-left"></i>
+                            </a>
+                        </li>
+
+                        <!-- Trang 1 -->
+                        <li th:class="'page-item' + (${currentPage == 1} ? ' active' : '')">
+                            <a class="page-link" th:href="@{/shopDetail(page=1)}">1</a>
+                        </li>
+
+                        <!-- Dấu ... trước nếu currentPage > 3 -->
+                        <li class="page-item disabled" th:if="${currentPage > 3}">
+                            <span class="page-link">…</span>
+                        </li>
+
+                        <!-- Các trang lân cận: currentPage-1, currentPage, currentPage+1 -->
+                        <li th:each="i : ${#numbers.sequence(currentPage - 1, currentPage + 1)}"
+                            th:if="${i > 1 and i < totalPages}"
+                            th:class="'page-item' + (${i == currentPage} ? ' active' : '')">
+                            <a class="page-link" th:href="@{/shopDetail(page=${i})}" th:text="${i}">i</a>
+                        </li>
+
+                        <!-- Dấu ... sau nếu currentPage < totalPages - 2 -->
+                        <li class="page-item disabled" th:if="${currentPage < totalPages - 2}">
+                            <span class="page-link">…</span>
+                        </li>
+
+                        <!-- Trang cuối -->
+                        <li th:if="${totalPages > 1}"
+                            th:class="'page-item' + (${currentPage == totalPages} ? ' active' : '')">
+                            <a class="page-link" th:href="@{/shopDetail(page=${totalPages})}" th:text="${totalPages}">last</a>
+                        </li>
+
+                        <!-- Mũi tên về cuối -->
+                        <li th:class="'page-item' + (${currentPage == totalPages} ? ' disabled' : '')">
+                            <a class="page-link" th:href="@{/shopDetail(page=${totalPages})}">
+                                <i class="fa-solid fa-angles-right"></i>
+                            </a>
+                        </li>
+
+                    </ul>
+                </nav>
+
+
+                <nav class="custom-pagination" th:if="${checkFilterShopDetailProducts != null}">
+                    <ul class="pagination justify-content-center">
+
+                        <!-- Mũi tên về đầu -->
+                        <li th:class="'page-item' + (${currentPage == 1} ? ' disabled' : '')">
+                            <a class="page-link" th:href="@{${baseUrl}(page=1)}">
+                                <i class="fa-solid fa-angles-left"></i>
+                            </a>
+                        </li>
+
+                        <!-- Trang 1 -->
+                        <li th:class="'page-item' + (${currentPage == 1} ? ' active' : '')">
+                            <a class="page-link" th:href="@{${baseUrl}(page=1)}">1</a>
+                        </li>
+
+                        <!-- … phía trước nếu currentPage > 3 -->
+                        <li class="page-item disabled" th:if="${currentPage > 3}">
+                            <span class="page-link">…</span>
+                        </li>
+
+                        <!-- Trang lân cận currentPage -->
+                        <li th:each="i : ${#numbers.sequence(currentPage - 1, currentPage + 1)}"
+                            th:if="${i > 1 and i < totalPages}"
+                            th:class="'page-item' + (${i == currentPage} ? ' active' : '')">
+                            <a class="page-link" th:href="@{${baseUrl}(page=${i})}" th:text="${i}">i</a>
+                        </li>
+
+                        <!-- … phía sau nếu currentPage < totalPages - 2 -->
+                        <li class="page-item disabled" th:if="${currentPage < totalPages - 2}">
+                            <span class="page-link">…</span>
+                        </li>
+
+                        <!-- Trang cuối (nếu >1) -->
+                        <li th:if="${totalPages > 1}"
+                            th:class="'page-item' + (${currentPage == totalPages} ? ' active' : '')">
+                            <a class="page-link" th:href="@{${baseUrl}(page=${totalPages})}"
+                               th:text="${totalPages}">last</a>
+                        </li>
+
+                        <!-- Mũi tên về cuối -->
+                        <li th:class="'page-item' + (${currentPage == totalPages} ? ' disabled' : '')">
+                            <a class="page-link" th:href="@{${baseUrl}(page=${totalPages})}">
+                                <i class="fa-solid fa-angles-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+
             </div>
         </div>
     </div>

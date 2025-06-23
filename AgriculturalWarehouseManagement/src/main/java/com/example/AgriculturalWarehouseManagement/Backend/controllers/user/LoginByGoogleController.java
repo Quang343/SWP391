@@ -27,11 +27,10 @@ public class LoginByGoogleController {
     @Autowired
     JwtTokenFilter jwtTokenFilter;
 
-    @GetMapping("loginGG")
+    @GetMapping(value = "/loginGG",  params = "code")
     private String loginGG(@RequestParam String code, RedirectAttributes redirectAttributes) throws IOException {
-
         if (code == null || code.isEmpty()) {
-            return "FrontEnd/Home/login";
+            return "redirect:/login";
         }
 
         GoogleLogin googleLogin = new GoogleLogin();
@@ -70,6 +69,12 @@ public class LoginByGoogleController {
         }
 
 
+    }
+
+    @GetMapping(value = "/loginGG", params = "error")
+    private String ggFailure(@RequestParam String error,
+                             RedirectAttributes redirect) {
+        return "redirect:/login";
     }
 
 }

@@ -21,44 +21,7 @@
 <!-- Header End -->
 
 <!-- mobile fix menu start -->
-<!--<div class="mobile-menu d-md-none d-block mobile-cart">-->
-<!--    <ul>-->
-<!--        <li class="active">-->
-<!--            <a href="index.html">-->
-<!--                <i class="iconly-Home icli"></i>-->
-<!--                <span>Home</span>-->
-<!--            </a>-->
-<!--        </li>-->
 
-<!--        <li class="mobile-category">-->
-<!--            <a href="javascript:void(0)">-->
-<!--                <i class="iconly-Category icli js-link"></i>-->
-<!--                <span>Category</span>-->
-<!--            </a>-->
-<!--        </li>-->
-
-<!--        <li>-->
-<!--            <a href="search.html" class="search-box">-->
-<!--                <i class="iconly-Search icli"></i>-->
-<!--                <span>Search</span>-->
-<!--            </a>-->
-<!--        </li>-->
-
-<!--        <li>-->
-<!--            <a href="wishlist.html" class="notifi-wishlist">-->
-<!--                <i class="iconly-Heart icli"></i>-->
-<!--                <span>My Wish</span>-->
-<!--            </a>-->
-<!--        </li>-->
-
-<!--        <li>-->
-<!--            <a href="cart.html">-->
-<!--                <i class="iconly-Bag-2 icli fly-cate"></i>-->
-<!--                <span>Cart</span>-->
-<!--            </a>-->
-<!--        </li>-->
-<!--    </ul>-->
-<!--</div>-->
 <!-- mobile fix menu end -->
 
 <!-- Home Section Start -->
@@ -70,11 +33,10 @@
                     <img th:src="@{FrontEnd/assets/images/veg-2/banner/4.png}" class="bg-img blur-up lazyload" alt="">
                     <div class="home-detail p-center-left w-75 position-relative mend-auto">
                         <div>
-                            <h6>Exclusive offer <span>30% Off</span></h6>
-                            <h1 class="w-75 text-uppercase poster-1">Stay home & delivered your <span
-                                    class="daily">Daily Needs</span></h1>
-                            <p class="w-58 d-none d-sm-block">Many organizations have issued official
-                                statements encouraging people to reduce their intake of sugary drinks.</p>
+                            <h6>Ưu đãi độc quyền <span>Giảm 30%</span></h6>
+                            <h1 class="w-75 text-uppercase poster-1">Ở nhà và giao hàng của bạn<span
+                                    class="daily">Nhu cầu hàng ngày</span></h1>
+                            <p class="w-58 d-none d-sm-block">Nhiều tổ chức đã đưa ra các tuyên bố chính thức khuyến khích mọi người giảm lượng đồ uống có đường.</p>
                             <button onclick="location.href = 'shop-left-sidebar.html';"
                                     class="btn btn-animation mt-xxl-4 mt-2 home-button mend-auto">Shop Now <i
                                     class="fa-solid fa-right-long ms-2 icon"></i></button>
@@ -90,8 +52,8 @@
                         <div>
                             <h2 class="mt-0 text-danger">45% <span class="discount text-title">OFF</span>
                             </h2>
-                            <h3 class="theme-color">Real Refreshment</h3>
-                            <h5 class="text-content">Only this week, Don't miss..</h5>
+                            <h3 class="theme-color">Sự tươi mát đích thực</h3>
+                            <h5 class="text-content">Chỉ tuần này thôi, đừng bỏ lỡ nhé..</h5>
                             <button onclick="location.href = 'shop-left-sidebar.html';"
                                     class="btn btn-animation mt-xxl-4 mt-2 home-button mend-auto">Shop Now <i
                                     class="fa-solid fa-right-long ms-2 icon"></i></button>
@@ -108,19 +70,18 @@
 <section>
     <div class="container-fluid-lg">
         <div class="title">
-            <h2>Browse by Categories</h2>
+            <h2>Categories</h2>
             <span class="title-leaf">
                     <svg class="icon-width">
                         <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
                     </svg>
                 </span>
-            <p>Top Categories Of The Week</p>
         </div>
         <div class="row">
             <div class="col-12">
                 <div class="slider-9">
                     <div th:each="category : ${categoryUsersResponses}">
-                        <a href="shop-left-sidebar.html" class="category-box wow fadeInUp">
+                        <a th:href="@{/shopDetail(categoryId=${category.categoryId})}" class="category-box wow fadeInUp">
                             <div>
                                 <img th:src="@{${category.imageUrl}}" class="blur-up lazyload" alt="">
                                 <h5 th:text="${category.categoryName}">Category name</h5>
@@ -167,7 +128,7 @@
                         <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
                     </svg>
                 </span>
-            <p>A virtual assistant collects the products from your list</p>
+
         </div>
         <div class="row">
             <div class="col-12">
@@ -391,7 +352,7 @@
         </div>
 
         <div class="cookie-contain">
-            <h5 class="text-content">We use cookies to make your experience better</h5>
+            <h5 class="text-content">Chúng tôi sử dụng cookie để làm cho trải nghiệm của bạn tốt hơn</h5>
         </div>
     </div>
 

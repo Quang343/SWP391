@@ -107,7 +107,7 @@
 <section class="product-section" th:fragment="productsection1_home">
     <div class="container-fluid-lg">
         <div class="title">
-            <h2>Top Products</h2>
+            <h2>Products</h2>
         </div>
 
         <div class="slider-6 img-slider slick-slider-1 arrow-slider">
@@ -152,7 +152,7 @@
                         <a href="product-left-thumbnail.html">
                             <h5 th:text="${product.productName}" class="name">Product name</h5>
                         </a>
-                        <h5 th:text="${ '$'+ product.productPrice}" class="price">
+                        <h5 th:text="${#numbers.formatInteger(product.productPrice, 0, 'POINT') + '₫'}" class="price">
                             Product price smallest in ProductDetail
                         </h5>
                         <div class="price-qty">

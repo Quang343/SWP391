@@ -30,7 +30,7 @@
                                                 <a href="product-left-thumbnail.html">
                                                     <h4 th:text="${product.productName}" class="name">Product name</h4>
                                                 </a>
-                                                <h5 th:text="${ '$'+ product.productPrice}" class="price">
+                                                <h5 th:text="${#numbers.formatInteger(product.productPrice, 0, 'POINT') + '₫'}" class="price">
                                                     Product price smallest in ProductDetail
                                                 </h5>
                                                 <ul class="option">
@@ -103,7 +103,7 @@
                                                 <a href="product-left-thumbnail.html">
                                                     <h4 th:text="${product.productName}" class="name">Product name</h4>
                                                 </a>
-                                                <h5 th:text="${ '$'+ product.productPrice}" class="price">
+                                                <h5 th:text="${#numbers.formatInteger(product.productPrice, 0, 'POINT') + '₫'}" class="price">
                                                     Product price smallest in ProductDetail
                                                 </h5>
                                                 <ul class="option">
@@ -174,7 +174,7 @@
                                                 <a href="product-left-thumbnail.html">
                                                     <h4 th:text="${product.productName}" class="name">Product name</h4>
                                                 </a>
-                                                <h5 th:text="${ '$'+ product.productPrice}" class="price">
+                                                <h5 th:text="${#numbers.formatInteger(product.productPrice, 0, 'POINT') + '₫'}" class="price">
                                                     Product price smallest in ProductDetail
                                                 </h5>
                                                 <ul class="option">

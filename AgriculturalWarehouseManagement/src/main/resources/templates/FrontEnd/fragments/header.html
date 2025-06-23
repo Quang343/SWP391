@@ -60,7 +60,9 @@
             font-weight: bold;
         }
 
-
+        .nav-link::after {
+            content: none !important;
+        }
     </style>
 
     <div class="header-top">
@@ -69,7 +71,7 @@
                 <div class="col-xxl-3 d-xxl-block d-none">
                     <div class="top-left-header">
                         <i class="iconly-Location icli text-white"></i>
-                        <span class="text-white">1418 Riverwood Drive, CA 96052, US</span>
+                        <span class="text-white">Đại học FPT</span>
                     </div>
                 </div>
 
@@ -78,9 +80,7 @@
                         <div class="notification-slider">
                             <div>
                                 <div class="timer-notification">
-                                    <h6><strong class="me-1">Welcome to Fastkart!</strong>Wrap new offers/gift
-                                        every single day on Weekends.<strong class="ms-1">New Coupon Code: Fast024
-                                        </strong>
+                                    <h6><strong class="me-1">Chào mừng đến với Fastkart!</strong>Gửi ưu đãi/quà tặng mới vào mỗi ngày cuối tuần.
 
                                     </h6>
                                 </div>
@@ -88,8 +88,8 @@
 
                             <div>
                                 <div class="timer-notification">
-                                    <h6>Something you love is now on sale!
-                                        <a href="shop-left-sidebar.html" class="text-white">Buy Now
+                                    <h6>Món đồ bạn yêu thích hiện đang được bán!
+                                        <a href="shopDetail" class="text-white">Mua ngay
                                             !</a>
                                     </h6>
                                 </div>
@@ -104,11 +104,18 @@
                             <div class="dropdown theme-form-select">
                                 <button class="btn dropdown-toggle" type="button" id="select-language"
                                         data-bs-toggle="dropdown">
-                                    <img th:src="@{FrontEnd/assets/images/country/united-states.png}"
+                                    <img th:src="@{FrontEnd/assets/images/country/vietname.png}"
                                          class="img-fluid blur-up lazyload" alt="">
-                                    <span>English</span>
+                                    <span>Việt nam</span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item" href="javascript:void(0)" id="english">
+                                            <img th:src="@{FrontEnd/assets/images/country/united-states.png}"
+                                                 class="img-fluid blur-up lazyload" alt="">
+                                            <span>English</span>
+                                        </a>
+                                    </li>
                                     <li>
                                         <a class="dropdown-item" href="javascript:void(0)" id="english">
                                             <img th:src="@{FrontEnd/assets/images/country/united-kingdom.png}"
@@ -137,9 +144,12 @@
                             <div class="dropdown theme-form-select">
                                 <button class="btn dropdown-toggle" type="button" id="select-dollar"
                                         data-bs-toggle="dropdown">
-                                    <span>USD</span>
+                                    <span>VND</span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end sm-dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" id="aud" href="javascript:void(0)">USD</a>
+                                    </li>
                                     <li>
                                         <a class="dropdown-item" id="aud" href="javascript:void(0)">AUD</a>
                                     </li>
@@ -191,13 +201,92 @@
                             <form th:action="@{/filterProduct}" method="get">
                                 <div class="search-box">
                                     <div class="input-group">
-                                        <input type="search" name="keyword" id="keywordHidden" class="form-control" th:value="${session.keyword}" placeholder="I'm searching for...">
+                                        <input type="search" name="keyword" id="keyword" class="form-control"
+                                               th:value="${session.keyword}" placeholder="Tôi đang tìm kiếm cho...">
                                         <button class="btn" type="submit" id="button-addon2">
                                             <i data-feather="search"></i>
                                         </button>
                                     </div>
                                 </div>
+
+                                <ul id="liveResults"
+                                    class="list-group position-absolute w-100 shadow"
+                                    style="
+                                        z-index: 1050;
+                                        top: 100%;
+                                        display: none;
+                                        max-height: 300px;
+                                        overflow-y: auto;
+                                      ">
+                                </ul>
                             </form>
+
+
+                            <!-- Script  -->
+
+                            <script>
+                                // ngừng gõ ≥ 300ms (0,3s), thì hàm gọi API
+                                const debounce = (fn, delay = 300) => {
+                                    let t;
+                                    return (...args) => {
+                                        clearTimeout(t);
+                                        t = setTimeout(() => fn(...args), delay);
+                                    };
+                                };
+
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    const input = document.getElementById('keyword');
+                                    const list = document.getElementById('liveResults');
+
+                                    // Gọi API khi người dùng gõ
+                                    const handleSearch = debounce(async () => {
+                                        let keyword = input.value.trim();
+                                        if (!keyword) {
+                                            keyword = " ";
+                                            console.log("hello" + keyword)
+                                        }
+
+                                        try {
+                                            const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/searchProduct/${encodeURIComponent(keyword)}`);
+                                            const products = response.data;
+
+                                            if (!products || products.length === 0) {
+                                                list.style.display = 'none';
+                                                return;
+                                            }
+
+                                            renderList(products);
+                                        } catch (error) {
+                                            console.error('Lỗi gọi API tìm kiếm:', error);
+                                            list.style.display = 'none';
+                                        }
+                                    }, 300);
+
+                                    input.addEventListener('input', handleSearch);
+
+                                    // Khi bấm chuột ra ngoài ô tìm kiếm hoặc ngoài form, danh sách gợi ý sẽ tự động ẩn đi
+                                    document.addEventListener('click', e => {
+                                        if (!e.target.closest('form')) list.style.display = 'none';
+                                    });
+
+                                    // input ➜ handleSearch ➜ renderList
+                                    function renderList(items) {
+                                        list.innerHTML = items.map(p => `
+                                            <li class="list-group-item p-0" style="width: 39%">
+                                              <a href="http://localhost:8080/AgriculturalWarehouseManagement/productDetail?productId=${p.productId}"
+                                                 class="d-flex align-items-center gap-2 text-decoration-none text-dark px-2 py-1">
+                                                <img src="${p.imageUrlGallery}" alt="" style="width:40px;height:40px;object-fit:cover;">
+                                                <span>${p.productName}</span>
+                                                <span class="ms-auto text-muted">${p.productPrice.toLocaleString()}₫</span>
+                                              </a>
+                                            </li>
+                                          `).join('');
+
+                                        list.style.display = 'block';
+                                    }
+                                });
+                            </script>
+
 
                         </div>
 
@@ -370,7 +459,7 @@
 
                             <ul class="category-list">
                                 <li th:each="category : ${categoryUsersResponses}" class="onhover-category-list">
-                                    <a href="javascript:void(0)" class="category-name">
+                                    <a th:href="@{/shopDetail(categoryId=${category.categoryId})}" class="category-name">
                                         <img th:src="@{${category.imageUrl}}" alt="">
                                         <h6 th:text="${category.categoryName}">Category name</h6>
                                         <i class="fa-solid fa-angle-right"></i>
