@@ -97,7 +97,7 @@
                         <div class="blog-box wow fadeInUp">
                             <div class="blog-image">
                                 <a href="blog-detail">
-                                    <img th:src="@{'/AgriculturalWarehouseManagement/assets/images/blog/' + ${blog.blogDetail.thumbnail}}"
+                                    <img th:src="@{'/assets/images/blog/' + ${blog.blogDetail.thumbnail}}"
                                          class="bg-img blur-up lazyload" alt="">
                                 </a>
                             </div>
@@ -220,38 +220,39 @@
                 <nav class="custom-pagination">
                     <ul class="pagination justify-content-center">
                         <!-- Nút về Đầu -->
-                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                            <a class="page-link" th:href="@{/blog-grid(page=0, size=${size})}" title="Trang đầu">
+                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                            <a class="page-link" th:href="@{/blog-grid(page=1, size=${size})}" title="Trang đầu">
                                 <i class="fa-solid fa-angle-double-left"></i>
                             </a>
                         </li>
                         <!-- Previous -->
-                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                             <a class="page-link" th:href="@{/blog-grid(page=${currentPage-1}, size=${size})}">
-                                <i class="fa-solid fa-angles-left"></i>
+                                <i class="fa-solid fa-angle-left"></i>
                             </a>
                         </li>
-                        <!-- Các số trang -->
+                        <!-- Các số trang: i chạy từ 1 đến totalPages -->
                         <li class="page-item"
-                            th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+                            th:each="i : ${#numbers.sequence(1, totalPages)}"
                             th:classappend="${currentPage == i} ? 'active'">
-                            <a class="page-link" th:href="@{/blog-grid(page=${i}, size=${size})}" th:text="${i+1}"></a>
+                            <a class="page-link" th:href="@{/blog-grid(page=${i}, size=${size})}" th:text="${i}"></a>
                         </li>
                         <!-- Next -->
-                        <li class="page-item" th:classappend="${currentPage == totalPages-1} ? 'disabled'">
+                        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                             <a class="page-link" th:href="@{/blog-grid(page=${currentPage+1}, size=${size})}">
-                                <i class="fa-solid fa-angles-right"></i>
+                                <i class="fa-solid fa-angle-right"></i>
                             </a>
                         </li>
                         <!-- Nút về Cuối -->
-                        <li class="page-item" th:classappend="${currentPage == totalPages-1} ? 'disabled'">
-                            <a class="page-link" th:href="@{/blog-grid(page=${totalPages-1}, size=${size})}" title="Trang cuối">
+                        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                            <a class="page-link" th:href="@{/blog-grid(page=${totalPages}, size=${size})}"
+                               title="Trang cuối">
                                 <i class="fa-solid fa-angle-double-right"></i>
                             </a>
                         </li>
                     </ul>
-                </nav>
 
+                </nav>
 
 
             </div>
@@ -278,7 +279,8 @@
                                     <div class="recent-post-box" th:each="recent : ${recentBlogs}">
                                         <div class="recent-box">
                                             <a th:href="@{|/blog-detail?id=${recent.blogID}|}" class="recent-image">
-                                                <img src="/AgriculturalWarehouseManagement/Frontend/assets/images/blog/1.jpg"
+                                                <img th:src="@{'/assets/images/blog/' + ${recent.thumbnail}}"
+                                                     style="padding: 5px ; object-fit:cover;"
                                                      class="img-fluid blur-up lazyload" alt="">
                                             </a>
 

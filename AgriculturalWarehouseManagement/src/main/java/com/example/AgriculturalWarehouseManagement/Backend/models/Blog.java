@@ -41,7 +41,6 @@ public class Blog {
     private String author;
 
 
-
     public Integer getBlogID() {
         return blogID;
     }
@@ -113,6 +112,7 @@ public class Blog {
     public void setAuthor(String author) {
         this.author = author;
     }
+
     // Liên kết 1-1 với BlogDetail (mappedBy phía BlogDetail)
     @OneToOne(mappedBy = "blog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private BlogDetail blogDetail;

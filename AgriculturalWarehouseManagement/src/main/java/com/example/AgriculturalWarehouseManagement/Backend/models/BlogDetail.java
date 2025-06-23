@@ -21,11 +21,6 @@ public class BlogDetail {
     @Column(name = "detailcontent")
     private String detailContent;
 
-
-
-    // Getter & Setter...
-
-
     public Integer getBlogDetailID() {
         return blogDetailID;
     }

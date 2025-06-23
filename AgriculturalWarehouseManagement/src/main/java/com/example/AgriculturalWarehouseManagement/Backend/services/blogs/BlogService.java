@@ -1,5 +1,6 @@
 package com.example.AgriculturalWarehouseManagement.Backend.services.blogs;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.response.blog.BlogRecentDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Blog;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.BlogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -21,7 +24,6 @@ public class BlogService {
     }
 
     public List<Blog> getAllActiveBlogs() {
-        // Cách 1: Viết lại query join fetch có điều kiện status
         return blogRepository.findAllActiveWithDetail("Active");
     }
 
@@ -30,9 +32,21 @@ public class BlogService {
     }
 
     // Thêm method này để lấy N bài viết mới nhất, ví dụ 4 bài
-    public List<Blog> getRecentBlogs(int count) {
-        return blogRepository.findTopNByStatusOrderByCreatedAtDesc("Active", count);
+    public List<BlogRecentDTO> getRecentBlogs(int count) {
+        List<Object[]> results = blogRepository.findTopNByStatusOrderByCreatedAtDescWithThumbnail("Active", count);
+        List<BlogRecentDTO> dtos = new ArrayList<>();
+        for (Object[] row : results) {
+            BlogRecentDTO dto = new BlogRecentDTO();
+            dto.setBlogID((Integer) row[0]);
+            dto.setTitle((String) row[3]);
+            dto.setCreatedAt((Date) row[5]);
+            dto.setAuthor((String) row[8]);
+            dto.setThumbnail((String) row[9]); // Vị trí thumbnail, đếm theo thứ tự cột
+            dtos.add(dto);
+        }
+        return dtos;
     }
+
 
     public Page<Blog> getActiveBlogsPage(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);

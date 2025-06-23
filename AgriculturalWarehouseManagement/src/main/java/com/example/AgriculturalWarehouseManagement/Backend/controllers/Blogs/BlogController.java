@@ -24,23 +24,25 @@ public class BlogController {
     }
 
     @RequestMapping("/blog-list")
-    public String bloglist(@RequestParam(defaultValue = "0") int page, // Số trang hiện tại (bắt đầu từ 0)
-                           @RequestParam(defaultValue = "3") int size, // Số bài viết mỗi trang
-                           Model model) {
+    public String bloglist(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "3") int size,
+            Model model) {
+
+        if (page < 1) page = 1; // Luôn đảm bảo page >= 1
+        int pageIndex = page - 1; // Spring Data page index bắt đầu từ 0
+
         // Lấy Page<Blog> với phân trang và sắp xếp
-        Page<Blog> blogPage = blogService.getActiveBlogsPage(page, size);
-        // Lấy danh sách bài viết ở trang hiện tại
+        Page<Blog> blogPage = blogService.getActiveBlogsPage(pageIndex, size);
+
         model.addAttribute("blogs", blogPage.getContent());
-        // Tổng số trang (phục vụ cho phân trang ở view)
         model.addAttribute("totalPages", blogPage.getTotalPages());
-        // Số trang hiện tại
         model.addAttribute("currentPage", page);
         model.addAttribute("size", size);
-
-        // Lấy 4 bài viết mới nhất cho sidebar/recent posts
         model.addAttribute("recentBlogs", blogService.getRecentBlogs(4));
         return "FrontEnd/Home/blog-list";
     }
+
 
     @RequestMapping("/blog-detail")
     public String blogdetail(@RequestParam("id") Integer id, Model model) {
@@ -60,21 +62,22 @@ public class BlogController {
     }
 
     @RequestMapping("/blog-grid")
-    public String bloggrid(@RequestParam(defaultValue = "0") int page, // Số trang hiện tại (bắt đầu từ 0)
-                           @RequestParam(defaultValue = "3") int size, // Số bài viết mỗi trang
-                           Model model) {
-        // Lấy Page<Blog> với phân trang và sắp xếp
-        Page<Blog> blogPage = blogService.getActiveBlogsPage(page, size);
-        // Lấy danh sách bài viết ở trang hiện tại
-        model.addAttribute("blogs", blogPage.getContent());
-        // Tổng số trang (phục vụ cho phân trang ở view)
-        model.addAttribute("totalPages", blogPage.getTotalPages());
-        // Số trang hiện tại
-        model.addAttribute("currentPage", page);
-        model.addAttribute("size", size); // Truyền biến size sang view để dùng trong phân trang
+    public String bloggrid(
+            @RequestParam(defaultValue = "1") int page, 
+            @RequestParam(defaultValue = "3") int size,
+            Model model) {
 
-        // Lấy 4 bài viết mới nhất cho sidebar/recent posts
+        if (page < 1) page = 1; // Nếu user nhập page=0 hay page<1, set lại thành 1
+
+        int pageIndex = page - 1; // Chuyển từ page=1 thành pageIndex=0
+        Page<Blog> blogPage = blogService.getActiveBlogsPage(pageIndex, size);
+
+        model.addAttribute("blogs", blogPage.getContent());
+        model.addAttribute("totalPages", blogPage.getTotalPages());
+        model.addAttribute("currentPage", page); // Truyền page (bắt đầu từ 1)
+        model.addAttribute("size", size);
         model.addAttribute("recentBlogs", blogService.getRecentBlogs(4));
         return "FrontEnd/Home/blog-grid";
     }
+
 }
