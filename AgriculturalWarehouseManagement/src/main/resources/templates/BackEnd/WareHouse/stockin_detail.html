@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="BackEnd/fragments/WareHouse/head::head"></head>
+
+<body>
+<!-- tap on top start -->
+<div class="tap-top">
+    <i data-feather="chevrons-up"></i>
+</div>
+<!-- tap on top end -->
+
+<!-- page-wrapper Start -->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <!-- Page Header Start-->
+    <div th:replace="BackEnd/fragments/WareHouse/header::header"></div>
+    <!-- Page Header Ends-->
+
+    <!-- Page Body Start-->
+    <div class="page-body-wrapper">
+        <!-- Page Sidebar Start-->
+        <div th:replace="BackEnd/fragments/WareHouse/sidebar::sidebar"></div>
+        <!-- Page Sidebar Ends-->
+
+        <!-- tracking section start -->
+        <div class="page-body">
+            <!-- tracking table start -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="title-header title-header-block package-card">
+                                    <div>
+                                        <h5>Mã nhập kho #<span id="stockInId"></span></h5>
+                                    </div>
+                                    <div class="card-order-section">
+                                        <ul>
+                                            <li id="stockInDate"></li>
+                                            <li id="itemCount"></li>
+                                            <li id="totalAmount"></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="bg-inner cart-section order-details-table">
+                                    <div class="row g-4">
+                                        <div class="col-xl-8">
+                                            <div class="table-responsive table-details">
+                                                <table class="table cart-table table-borderless">
+                                                    <thead>
+                                                    <tr>
+                                                        <th colspan="2">Mục</th>
+                                                        <th class="text-end" colspan="3">
+                                                            <a href="javascript:void(0)" id="editItemsLink" class="theme-color">Chỉnh sửa mục</a>
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody id="stockInDetailTable">
+                                                    <!-- Dữ liệu sẽ được tải động bằng JavaScript -->
+                                                    </tbody>
+                                                    <tfoot>
+                                                    <tr class="table-order">
+                                                        <td colspan="4">
+                                                            <h5>Tổng phụ:</h5>
+                                                        </td>
+                                                        <td>
+                                                            <h4 id="subtotal">0 VND</h4>
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="table-order">
+                                                        <td colspan="4">
+                                                            <h5>Vận chuyển:</h5>
+                                                        </td>
+                                                        <td>
+                                                            <h4>50.000 VND</h4>
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="table-order">
+                                                        <td colspan="4">
+                                                            <h5>Thuế (GST 5%):</h5>
+                                                        </td>
+                                                        <td>
+                                                            <h4 id="gstTax">0 VND</h4>
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="table-order">
+                                                        <td colspan="4">
+                                                            <h4 class="theme-color fw-bold">Tổng giá:</h4>
+                                                        </td>
+                                                        <td>
+                                                            <h4 class="theme-color fw-bold" id="totalPrice">0 VND</h4>
+                                                        </td>
+                                                    </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4">
+                                            <div class="order-success">
+                                                <div class="row g-4">
+                                                    <h4>Tóm tắt</h4>
+                                                    <ul class="order-details">
+                                                        <li>Mã nhập kho: <span id="stockInIdSummary"></span></li>
+                                                        <li>Ngày nhập kho: <span id="stockInDateSummary"></span></li>
+                                                        <li>Tổng đơn: <span id="totalAmountSummary"></span> VND</li>
+                                                    </ul>
+                                                    <h4>Địa chỉ kho</h4>
+                                                    <ul class="order-details">
+                                                        <li id="warehouseName">Tên kho</li>
+                                                        <li>Thạch Thất, Hòa Lạc, Hà Nội</li>
+                                                        <li>Việt Nam, Số liên lạc: 0123456789</li>
+                                                    </ul>
+                                                    <div class="payment-mode">
+                                                        <h4>Phương thức thanh toán</h4>
+                                                        <p>Thanh toán khi nhận hàng (Tiền mặt/Thẻ). Thanh toán khi nhận hàng (COD) có sẵn. Chấp nhận thẻ/Chuyển khoản ngân hàng tùy thuộc vào phương thức.</p>
+                                                    </div>
+                                                    <div class="delivery-sec">
+                                                        <h3>Ngày giao hàng dự kiến: <span id="expectedDeliveryDate"></span></h3>
+                                                        <a href="order-tracking.html">Theo dõi đơn hàng</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- section end -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- tracking table end -->
+
+            <div class="container-fluid">
+                <!-- footer start-->
+                <footer class="footer">
+                    <div class="row">
+                        <div class="col-md-12 footer-copyright text-center">
+                            <p class="mb-0">Bản quyền 2022 © Fastkart theme bởi pixelstrap</p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        <!-- tracking section End -->
+    </div>
+</div>
+<!-- page-wrapper End -->
+
+<!-- Logout Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title" id="staticBackdropLabel">Đăng xuất</h5>
+                <p>Bạn có chắc chắn muốn đăng xuất?</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                <div class="button-box">
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">Không</button>
+                    <button type="button" th:onclick="|window.location='@{/backend/login}'|" class="btn btn--yes btn-primary">Có</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Logout Modal End -->
+
+<!-- Edit StockIn Detail Modal -->
+<div class="modal fade" id="editStockInDetailModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa chi tiết nhập kho</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editStockInDetailForm">
+                    <input type="hidden" id="editDetailId" name="detailId">
+                    <input type="hidden" id="editStockInId" name="stockInId">
+                    <div class="mb-3">
+                        <label for="editProductName" class="form-label">Tên sản phẩm</label>
+                        <input type="text" class="form-control" id="editProductName" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editQuantity" class="form-label">Số lượng</label>
+                        <input type="number" class="form-control" id="editQuantity" name="quantity" min="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUnitPrice" class="form-label">Đơn giá</label>
+                        <input type="number" class="form-control" id="editUnitPrice" name="unitPrice" min="0" step="100" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editBatchId" class="form-label">Batch ID</label>
+                        <select class="form-control" id="editBatchId" name="batchID"></select>
+                    </div>
+                    <div class="button-box">
+                        <button type="button" class="btn btn--no" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn--yes btn-primary">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Edit Modal End -->
+
+<!-- latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+
+<!-- Custom JavaScript -->
+<script>
+    $(document).ready(function() {
+        // Hàm định dạng giá tiền sang định dạng VND, bỏ ,00
+        function formatPrice(number) {
+            return number.toLocaleString('vi-VN') + ' VND';
+        }
+
+        // Kiểm tra stockInId từ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const stockInId = urlParams.get('stockInId');
+        if (!stockInId) {
+            alert('Vui lòng chọn Mã nhập kho từ danh sách trước.');
+            window.location.href = '/warehouse/stockin';
+            return;
+        }
+        console.log('Mã nhập kho từ URL:', stockInId);
+
+        // Hiển thị Mã nhập kho
+        $('#stockInId').text(stockInId);
+        $('#stockInIdSummary').text(stockInId);
+
+        // Biến trạng thái chế độ chỉnh sửa
+        let isEditMode = false;
+
+        // Danh sách batch IDs đã sử dụng
+        let usedBatchIds = [];
+
+        // Hàm tải batch chưa liên kết với StockInDetail
+        function loadAvailableBatches(selectElement, currentBatchId) {
+            $.ajax({
+                url: 'http://localhost:8080/api/product-batches/available',
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    selectElement.empty();
+                    selectElement.append('<option value="">Không chọn</option>');
+                    if (!data || data.length === 0) {
+                        selectElement.append('<option value="" disabled>Không có Batch khả dụng</option>');
+                        return;
+                    }
+                    $.each(data, function(index, batch) {
+                        const id = batch.batchID || batch.id;
+                        if (id && !usedBatchIds.includes(parseInt(id)) && id != currentBatchId) {
+                            selectElement.append(`<option value="${id}">Batch ID: ${id}</option>`);
+                        }
+                    });
+                    if (currentBatchId) {
+                        selectElement.append(`<option value="${currentBatchId}">Batch ID: ${currentBatchId}</option>`);
+                        selectElement.val(currentBatchId);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi khi tải danh sách Batch khả dụng:', { status, error });
+                    selectElement.append('<option value="" disabled>Lỗi tải Batch</option>');
+                    alert('Không thể tải danh sách Batch khả dụng. Vui lòng kiểm tra console.');
+                }
+            });
+        }
+
+        // Hàm cập nhật danh sách batch IDs đã sử dụng
+        function updateUsedBatchIds() {
+            usedBatchIds = [];
+            $('#stockInDetailTable tr').each(function() {
+                const batchId = $(this).data('batch-id');
+                if (batchId && batchId !== '') {
+                    usedBatchIds.push(parseInt(batchId));
+                }
+            });
+            console.log('Danh sách Batch IDs đã sử dụng:', usedBatchIds);
+        }
+
+        // Xử lý click vào nút Chỉnh sửa mục
+        $('#editItemsLink').click(function() {
+            isEditMode = !isEditMode;
+            $(this).text(isEditMode ? 'Hoàn tất chỉnh sửa' : 'Chỉnh sửa mục');
+            $('#stockInDetailTable tr').toggleClass('selectable', isEditMode);
+            if (!isEditMode) {
+                $('#stockInDetailTable tr').removeClass('selected');
+            }
+        });
+
+        // Tải ngày nhập kho
+        $.ajax({
+            url: `http://localhost:8080/api/stockins/${stockInId}`,
+            method: 'GET',
+            dataType: 'json',
+            success: function(stockInData) {
+                console.log('Dữ liệu StockIn:', stockInData);
+                const stockInDate = stockInData.stockInDate ? new Date(stockInData.stockInDate).toLocaleDateString('vi-VN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : 'N/A';
+                $('#stockInDate').text(stockInDate);
+                $('#stockInDateSummary').text(stockInDate);
+            },
+            error: function(xhr, status, error) {
+                console.error('Lỗi khi tải StockIn:', { status, error, response: xhr.responseText });
+                $('#stockInDate').text('N/A');
+                $('#stockInDateSummary').text('N/A');
+            }
+        });
+
+        // Tải dữ liệu StockInDetail
+        $.ajax({
+            url: `http://localhost:8080/api/stockins/${stockInId}/details`,
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                console.log('Danh sách StockInDetail được tải thành công:', data);
+                const tbody = $('#stockInDetailTable');
+                tbody.empty();
+                let totalAmount = 0;
+                let itemCount = data.length;
+
+                $.each(data, function(index, detail) {
+                    const unitPrice = parseInt(detail.unitPrice) || 0; // Giá trị Long (e.g., 1000000)
+                    const quantity = parseInt(detail.quantity) || 0;
+                    const subTotal = unitPrice * quantity;
+                    totalAmount += subTotal;
+                    let detailName = 'N/A';
+
+                    // Lấy tên sản phẩm từ batchID
+                    if (detail.batchID) {
+                        $.ajax({
+                            url: `http://localhost:8080/api/product-batches/${detail.batchID}`,
+                            method: 'GET',
+                            async: false,
+                            dataType: 'json',
+                            success: function(batch) {
+                                const productDetailId = batch.productDetailID || batch.productDetail || 'N/A';
+                                if (productDetailId !== 'N/A') {
+                                    $.ajax({
+                                        url: `http://localhost:8080/api/product-details/${productDetailId}`,
+                                        method: 'GET',
+                                        async: false,
+                                        success: function(productDetail) {
+                                            detailName = productDetail.detailName || 'N/A';
+                                        },
+                                        error: function() {
+                                            detailName = 'N/A';
+                                        }
+                                    });
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error(`Lỗi khi lấy ProductBatch ${detail.batchID}:`, { status, error });
+                            }
+                        });
+                    }
+
+                    const row = `
+                    <tr class="table-order" data-detail-id="${detail.id || index}" data-batch-id="${detail.batchID || ''}">
+                        <td>
+                            <a href="javascript:void(0)">
+                                <img src="assets/images/profile/${index + 1}.jpg" class="img-fluid blur-up lazyload" alt="">
+                            </a>
+                        </td>
+                        <td>
+                            <p>Tên sản phẩm</p>
+                            <h5>${detailName}</h5>
+                        </td>
+                        <td>
+                            <p>Số lượng</p>
+                            <h5>${quantity}</h5>
+                        </td>
+                        <td>
+                            <p>Đơn giá</p>
+                            <h5>${formatPrice(unitPrice)}</h5>
+                        </td>
+                        <td>
+                            <p>Batch ID</p>
+                            <h5>${detail.batchID || 'N/A'}</h5>
+                        </td>
+                    </tr>
+                    `;
+                    tbody.append(row);
+                });
+
+                // Tính thuế GST (5% của tổng phụ)
+                const gstTax = Math.round(totalAmount * 0.05);
+                const totalWithShippingAndTax = totalAmount + 50000 + gstTax;
+
+                // Cập nhật danh sách batch IDs đã sử dụng
+                updateUsedBatchIds();
+
+                // Cập nhật thông tin tổng quan
+                $('#itemCount').text(`${itemCount} mục`);
+                $('#totalAmount').text(formatPrice(totalAmount));
+                $('#totalAmountSummary').text(totalAmount.toLocaleString('vi-VN'));
+                $('#subtotal').text(formatPrice(totalAmount));
+                $('#gstTax').text(formatPrice(gstTax));
+                $('#totalPrice').text(formatPrice(totalWithShippingAndTax));
+                $('#expectedDeliveryDate').text(new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }));
+                $('#warehouseName').text(`Kho ${stockInId}`);
+            },
+            error: function(xhr, status, error) {
+                console.error('Lỗi khi tải StockInDetail:', { status, error, response: xhr.responseText });
+                $('#stockInDetailTable').html('<tr><td colspan="5">Không thể tải chi tiết. Kiểm tra console.</td></tr>');
+            }
+        });
+
+        // Xử lý click vào hàng khi ở chế độ chỉnh sửa
+        $('#stockInDetailTable').on('click', 'tr.selectable', function() {
+            if (isEditMode) {
+                $('#stockInDetailTable tr').removeClass('selected');
+                $(this).addClass('selected');
+
+                // Lấy dữ liệu từ hàng
+                const detailId = $(this).data('detail-id');
+                const batchId = $(this).data('batch-id');
+                const productName = $(this).find('td:eq(1) h5').text();
+                const quantity = $(this).find('td:eq(2) h5').text();
+                const unitPrice = parseInt($(this).find('td:eq(3) h5').text().replace(/[^\d]/g, '')) || 0; // Long value (e.g., 1000000)
+
+                // Điền dữ liệu vào modal
+                $('#editDetailId').val(detailId);
+                $('#editStockInId').val(stockInId);
+                $('#editProductName').val(productName).prop('readonly', true);
+                $('#editQuantity').val(quantity);
+                $('#editUnitPrice').val(unitPrice);
+
+                // Tải danh sách batch chưa sử dụng
+                loadAvailableBatches($('#editBatchId'), batchId);
+
+                // Mở modal
+                $('#editStockInDetailModal').modal('show');
+            }
+        });
+
+        // Xử lý gửi form chỉnh sửa
+        $('#editStockInDetailForm').submit(function(e) {
+            e.preventDefault();
+            const detailId = $('#editDetailId').val();
+            const stockInId = $('#editStockInId').val();
+            const batchId = $('#editBatchId').val();
+            // Lấy giá trị đơn giá (Long)
+            let unitPrice = parseInt($('#editUnitPrice').val()) || 0;
+
+            // Validate Long: max 10 digits
+            if (unitPrice.toString().length > 10) {
+                $.notify({
+                    message: 'Đơn giá không được vượt quá 10 chữ số.'
+                }, {
+                    type: 'error',
+                    placement: { from: 'top', align: 'right' },
+                    delay: 5000
+                });
+                return;
+            }
+
+            const updatedDetail = {
+                id: parseInt(detailId),
+                stockInID: parseInt(stockInId),
+                quantity: parseInt($('#editQuantity').val()),
+                unitPrice: unitPrice,
+                batchID: batchId || null
+            };
+
+            // Gửi yêu cầu cập nhật đến API
+            $.ajax({
+                url: `http://localhost:8080/api/stockindetails/${detailId}`,
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(updatedDetail),
+                success: function(response) {
+                    console.log('Cập nhật StockInDetail thành công:', response);
+                    let detailName = 'N/A';
+                    const batchId = response.batchID;
+
+                    // Lấy tên sản phẩm từ batchID
+                    if (batchId) {
+                        $.ajax({
+                            url: `http://localhost:8080/api/product-batches/${batchId}`,
+                            method: 'GET',
+                            async: false,
+                            dataType: 'json',
+                            success: function(batch) {
+                                const productDetailId = batch.productDetailID || batch.productDetail || 'N/A';
+                                if (productDetailId !== 'N/A') {
+                                    $.ajax({
+                                        url: `http://localhost:8080/api/product-details/${productDetailId}`,
+                                        method: 'GET',
+                                        async: false,
+                                        success: function(productDetail) {
+                                            detailName = productDetail.detailName || 'N/A';
+                                        },
+                                        error: function() {
+                                            detailName = 'N/A';
+                                        }
+                                    });
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error(`Lỗi khi lấy ProductBatch ${batchId}:`, { status, error });
+                            }
+                        });
+                    }
+
+                    // Cập nhật hàng trong bảng
+                    const row = $(`#stockInDetailTable tr[data-detail-id="${detailId}"]`);
+                    row.find('td:eq(1) h5').text(detailName);
+                    row.find('td:eq(2) h5').text(response.quantity);
+                    row.find('td:eq(3) h5').text(formatPrice(response.unitPrice));
+                    row.data('batch-id', response.batchID || '');
+
+                    // Cập nhật danh sách batch IDs đã sử dụng
+                    updateUsedBatchIds();
+
+                    // Cập nhật tổng tiền
+                    let totalAmount = 0;
+                    $('#stockInDetailTable tr').each(function() {
+                        const qty = parseInt($(this).find('td:eq(2) h5').text()) || 0;
+                        const price = parseInt($(this).find('td:eq(3) h5').text().replace(/[^\d]/g, '')) || 0;
+                        totalAmount += qty * price;
+                    });
+
+                    // Tính thuế GST (5% của tổng phụ)
+                    const gstTax = Math.round(totalAmount * 0.05);
+                    const totalWithShippingAndTax = totalAmount + 50000 + gstTax;
+
+                    $('#totalAmount').text(formatPrice(totalAmount));
+                    $('#totalAmountSummary').text(totalAmount.toLocaleString('vi-VN'));
+                    $('#subtotal').text(formatPrice(totalAmount));
+                    $('#gstTax').text(formatPrice(gstTax));
+                    $('#totalPrice').text(formatPrice(totalWithShippingAndTax));
+
+                    // Hiển thị thông báo thành công
+                    $.notify({
+                        message: 'Cập nhật chi tiết nhập kho thành công!'
+                    }, {
+                        type: 'success',
+                        placement: { from: 'top', align: 'right' },
+                        delay: 3000
+                    });
+
+                    // Đóng modal
+                    $('#editStockInDetailModal').modal('hide');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi khi cập nhật StockInDetail:', { status, error, response: xhr.responseText });
+                    let errorMessage = 'Không thể cập nhật chi tiết. Vui lòng kiểm tra lại.';
+                    if (xhr.status === 400) {
+                        errorMessage = 'Dữ liệu không hợp lệ. Vui lòng kiểm tra số lượng, đơn giá hoặc Batch ID.';
+                    } else if (xhr.status === 404) {
+                        errorMessage = 'Không tìm thấy chi tiết nhập kho.';
+                    }
+                    $.notify({
+                        message: errorMessage
+                    }, {
+                        type: 'error',
+                        placement: { from: 'top', align: 'right' },
+                        delay: 5000
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    .selectable {
+        cursor: pointer;
+    }
+    .selectable:hover {
+        background-color: #f8f9fa;
+    }
+    .selected {
+        background-color: #e0f7fa !important;
+    }
+    #editUnitPrice {
+        text-align: right;
+    }
+</style>
+
+</body>
+</html>
