@@ -16,6 +16,6 @@ public class StaticResourceConfig implements WebMvcConfigurer {
         // Cho phép truy cập ảnh thông qua URL: /Backend/assets/images/abc.jpg
         registry
                 .addResourceHandler("/Backend/assets/images/**")
-                .addResourceLocations("file:" + uploadDir + "/");
+                .addResourceLocations("file:" + uploadDir + "/Seller/");
     }
 }

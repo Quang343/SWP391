@@ -424,8 +424,9 @@
 
                         <div class="tab-pane fade" id="pills-product" role="tabpanel">
                             <div class="product-tab">
-                                <div class="title" style="display: flex; justify-content: space-between; align-items: center;">
-                                    <div >
+                                <div class="title"
+                                     style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
                                         <h2>All Product</h2>
                                         <button class="btn btn-success"
                                                 data-bs-toggle="modal"
@@ -459,6 +460,8 @@
                                         <tbody id="productTable">
                                         <!-- Bỏ th:each đi -->
                                         <!-- JS sẽ tự add từng <tr> vào tbody -->
+
+
                                         </tbody>
                                     </table>
 
@@ -473,7 +476,8 @@
 
                         <div class="tab-pane fade" id="pills-product-detail" role="tabpanel">
                             <div class="product-detail-tab">
-                                <div class="title" style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="title"
+                                     style="display: flex; justify-content: space-between; align-items: center;">
                                     <div>
                                         <h2>All Product Detail</h2>
                                         <button class="btn btn-primary"
@@ -491,31 +495,57 @@
             </span>
                                 </div>
 
-                                <div class="table-responsive dashboard-bg-box">
+                                <div class="table-responsive dashboard-bg-box" id="tableAllDetailContainer">
                                     <table class="table product-detail-table">
                                         <thead>
                                         <tr>
                                             <th scope="col">STT</th>
                                             <th scope="col">Product Name</th>
                                             <th scope="col">Detail Name</th>
-                                            <th scope="col">Weight</th>
-                                            <th scope="col">Unit</th>
-                                            <th scope="col">Price</th>
+                                            <th scope="col">Price (VNĐ)</th>
                                             <th scope="col">Expiry (months)</th>
+                                            <th scope="col">Status</th>
                                             <th scope="col">Actions</th>
                                         </tr>
                                         </thead>
-                                        <tbody id="productDetailTable">
+                                        <tbody id="productDetailAllTable">
                                         <!-- Sẽ được JS đổ dữ liệu vào -->
                                         </tbody>
                                     </table>
 
                                     <nav class="custom-pagination mt-3">
-                                        <ul class="pagination justify-content-center" id="paginationProductDetail">
+                                        <ul class="pagination justify-content-center" id="paginationAllDetail">
                                             <!-- JS sẽ render phân trang -->
                                         </ul>
                                     </nav>
                                 </div>
+
+                                <div class="table-responsive dashboard-bg-box" id="tableByProductContainer"
+                                     style="display: none;">
+                                    <table class="table product-detail-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">STT</th>
+                                            <th scope="col">Product Name</th>
+                                            <th scope="col">Detail Name</th>
+                                            <th scope="col">Price</th>
+                                            <th scope="col">Expiry (months)</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="productDetailByProductTable">
+                                        <!-- Sẽ được JS đổ dữ liệu vào -->
+                                        </tbody>
+                                    </table>
+
+                                    <nav class="custom-pagination mt-3">
+                                        <ul class="pagination justify-content-center" id="paginationByProductDetail">
+                                            <!-- JS sẽ render phân trang -->
+                                        </ul>
+                                    </nav>
+                                </div>
+
                             </div>
                         </div>
 
@@ -734,7 +764,7 @@
         </div>
     </div>
 
-
+    <!--CSS-->
     <style>
         .delete:hover {
             color: #dc3545 !important;
@@ -770,6 +800,7 @@
             backdrop-filter: blur(10px);
         }
     </style>
+
 </section>
 <!-- User Dashboard Section End -->
 
@@ -866,50 +897,50 @@
 
 <!-- Tap to top and theme setting button start -->
 <div class="theme-option">
-<!--    <div class="setting-box">-->
-<!--        <button class="btn setting-button">-->
-<!--            <i class="fa-solid fa-gear"></i>-->
-<!--        </button>-->
+    <div class="setting-box">
+        <button class="btn setting-button">
+            <i class="fa-solid fa-gear"></i>
+        </button>
 
-<!--        <div class="theme-setting-2">-->
-<!--            <div class="theme-box">-->
-<!--                <ul>-->
-<!--                    <li>-->
-<!--                        <div class="setting-name">-->
-<!--                            <h4>Color</h4>-->
-<!--                        </div>-->
-<!--                        <div class="theme-setting-button color-picker">-->
-<!--                            <form class="form-control">-->
-<!--                                <label for="colorPick" class="form-label mb-0">Theme Color</label>-->
-<!--                                <input type="color" class="form-control form-control-color" id="colorPick"-->
-<!--                                       value="#0da487" title="Choose your color">-->
-<!--                            </form>-->
-<!--                        </div>-->
-<!--                    </li>-->
+        <div class="theme-setting-2">
+            <div class="theme-box">
+                <ul>
+                    <li>
+                        <div class="setting-name">
+                            <h4>Color</h4>
+                        </div>
+                        <div class="theme-setting-button color-picker">
+                            <form class="form-control">
+                                <label for="colorPick" class="form-label mb-0">Theme Color</label>
+                                <input type="color" class="form-control form-control-color" id="colorPick"
+                                       value="#0da487" title="Choose your color">
+                            </form>
+                        </div>
+                    </li>
 
-<!--                    <li>-->
-<!--                        <div class="setting-name">-->
-<!--                            <h4>Dark</h4>-->
-<!--                        </div>-->
-<!--                        <div class="theme-setting-button">-->
-<!--                            <button class="btn btn-2 outline" id="darkButton">Dark</button>-->
-<!--                            <button class="btn btn-2 unline" id="lightButton">Light</button>-->
-<!--                        </div>-->
-<!--                    </li>-->
+                    <li>
+                        <div class="setting-name">
+                            <h4>Dark</h4>
+                        </div>
+                        <div class="theme-setting-button">
+                            <button class="btn btn-2 outline" id="darkButton">Dark</button>
+                            <button class="btn btn-2 unline" id="lightButton">Light</button>
+                        </div>
+                    </li>
 
-<!--                    <li>-->
-<!--                        <div class="setting-name">-->
-<!--                            <h4>RTL</h4>-->
-<!--                        </div>-->
-<!--                        <div class="theme-setting-button rtl">-->
-<!--                            <button class="btn btn-2 rtl-unline">LTR</button>-->
-<!--                            <button class="btn btn-2 rtl-outline">RTL</button>-->
-<!--                        </div>-->
-<!--                    </li>-->
-<!--                </ul>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
+                    <li>
+                        <div class="setting-name">
+                            <h4>RTL</h4>
+                        </div>
+                        <div class="theme-setting-button rtl">
+                            <button class="btn btn-2 rtl-unline">LTR</button>
+                            <button class="btn btn-2 rtl-outline">RTL</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
     <div class="back-to-top">
         <a id="back-to-top" href="#">
@@ -1379,14 +1410,13 @@
 </div>
 <!-- Edit Profile Modal End -->
 
-<!--Tab Product-->
-
 <!--Thêm thư viện-->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <!--Thêm thư viện End-->
 
+<!--1. Tab Product-->
 <!-- Add Product Modal -->
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -1445,7 +1475,8 @@
                                 <label for="productImages" class="upload-label">
                                     <i class="fa fa-upload me-2"></i>Chọn ảnh (tối đa 5)
                                 </label>
-                                <input type="file" id="productImages" class="form-control visually-hidden" accept="image/*" multiple>
+                                <input type="file" id="productImages" class="form-control visually-hidden"
+                                       accept="image/*" multiple>
                                 <p class="text-muted mt-2 mb-0" id="fileUploadNote">Chưa có tệp nào được chọn.</p>
                                 <div id="previewContainer" class="d-flex flex-wrap gap-2 mt-2"></div>
                             </div>
@@ -1586,6 +1617,7 @@
         font-size: 12px;
         cursor: pointer;
     }
+
     .wrap-text {
         white-space: normal !important;
         word-wrap: break-word;
@@ -1715,18 +1747,20 @@
 
 <!--Upload file Add Modal-->
 <script>
+
+    let selectedFiles = [];
+
     document.addEventListener("DOMContentLoaded", () => {
         const input = document.getElementById("productImages");
         const note = document.getElementById("fileUploadNote");
         const previewContainer = document.getElementById("previewContainer");
         const modalEl = document.getElementById("addProductModal");
 
-        let selectedFiles = [];
 
         // 🧹 Khi modal đóng → reset
         modalEl.addEventListener("hidden.bs.modal", () => {
             selectedFiles = [];
-            input.value = "";
+            // input.value = "";
             previewContainer.innerHTML = "";
             note.textContent = "Chưa có tệp nào được chọn.";
         });
@@ -1785,88 +1819,6 @@
 
         // 🧠 (Gợi ý): Nếu bạn dùng `selectedFiles` để submit → cần sửa phần upload ảnh lại để dùng selectedFiles
     });
-</script>
-
-<!--Phân trang-->
-<script>
-    let currentPage = 1;
-    const pageSize = 5;
-    let allProducts = [];
-
-    function renderPaginationTemplate(totalItems, currentPage) {
-        const perPage = 5;
-        const totalPages = Math.ceil(totalItems / perPage);
-        const paginationUl = document.querySelector(".custom-pagination ul");
-        paginationUl.innerHTML = "";
-
-        const maxVisiblePages = 5;
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-        let endPage = startPage + maxVisiblePages - 1;
-
-        if (endPage > totalPages) {
-            endPage = totalPages;
-            startPage = Math.max(1, endPage - maxVisiblePages + 1);
-        }
-
-        // <<< Trang đầu
-        const firstLi = document.createElement("li");
-        firstLi.className = "page-item";
-        firstLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Về trang đầu"><i class="fa-solid fa-angles-left"></i></a>`;
-        firstLi.onclick = () => loadProducts(1);
-        paginationUl.appendChild(firstLi);
-
-        // << Lùi 1 trang
-        const prevLi = document.createElement("li");
-        prevLi.className = "page-item";
-        prevLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Trang trước"><i class="fa-solid fa-angle-left"></i></a>`;
-        prevLi.onclick = () => {
-            const newPage = currentPage === 1 ? 1 : currentPage - 1;
-            loadProducts(newPage);
-        };
-        paginationUl.appendChild(prevLi);
-
-        // ... nếu cần
-        if (startPage > 1) {
-            const dots = document.createElement("li");
-            dots.className = "page-item disabled";
-            dots.innerHTML = `<span class="page-link">...</span>`;
-            paginationUl.appendChild(dots);
-        }
-
-        // Các trang số
-        for (let i = startPage; i <= endPage; i++) {
-            const li = document.createElement("li");
-            li.className = "page-item" + (i === currentPage ? " active" : "");
-            li.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Trang ${i}">${i}</a>`;
-            li.onclick = () => loadProducts(i);
-            paginationUl.appendChild(li);
-        }
-
-        // ... nếu cần
-        if (endPage < totalPages) {
-            const dots = document.createElement("li");
-            dots.className = "page-item disabled";
-            dots.innerHTML = `<span class="page-link">...</span>`;
-            paginationUl.appendChild(dots);
-        }
-
-        // >> Tới 1 trang
-        const nextLi = document.createElement("li");
-        nextLi.className = "page-item";
-        nextLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Trang tiếp theo"><i class="fa-solid fa-angle-right"></i></a>`;
-        nextLi.onclick = () => {
-            const newPage = currentPage === totalPages ? totalPages : currentPage + 1;
-            loadProducts(newPage);
-        };
-        paginationUl.appendChild(nextLi);
-
-        // >>> Trang cuối
-        const lastLi = document.createElement("li");
-        lastLi.className = "page-item";
-        lastLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Tới trang cuối"><i class="fa-solid fa-angles-right"></i></a>`;
-        lastLi.onclick = () => loadProducts(totalPages);
-        paginationUl.appendChild(lastLi);
-    }
 </script>
 
 <!--CRUD-->
@@ -2043,7 +1995,6 @@
             const description = document.getElementById('description').value.trim();
             const categoryId = document.getElementById('categoryId').value;
             const status = document.getElementById('status').value;
-            const imageFiles = document.getElementById('productImages').files;
 
             // Kiểm tra trùng tên
             axios.get('/AgriculturalWarehouseManagementApplication/api/seller/products')
@@ -2067,8 +2018,9 @@
                             }
 
                             // 👉 Bắt đầu upload ảnh
+                            const files = selectedFiles.slice(0, 5); // ✅ sửa dòng này để dùng đúng file đã chọn
                             const uploads = [];
-                            const files = Array.from(imageFiles).slice(0, 5); // giới hạn 5 ảnh
+
                             for (const file of files) {
                                 const formData = new FormData();
                                 formData.append("file", file);
@@ -2206,6 +2158,7 @@
                             // 👉 Cảnh báo nếu người dùng chọn quá số slot trống
                             if (files.length > availableSlots) {
                                 alert(`Chỉ có thể tải tối đa ${availableSlots} ảnh nữa.`);
+                                return;
                             }
 
                             const filesToUpload = files.slice(0, availableSlots); // ✅ Giới hạn số ảnh upload
@@ -2271,28 +2224,26 @@
             delBtn.title = "Delete Image";
 
             delBtn.addEventListener("click", () => {
-                if (confirm("Bạn có chắc chắn muốn xoá ảnh này?")) {
-                    axios.delete(`/AgriculturalWarehouseManagementApplication/api/seller/product/${productId}/images/${imageId}`)
-                        .then(() => {
-                            const box = delBtn.closest(".image-box");
-                            const wrapper = delBtn.closest(".image-wrapper");
+                axios.delete(`/AgriculturalWarehouseManagementApplication/api/seller/product/${productId}/images/${imageId}`)
+                    .then(() => {
+                        const box = delBtn.closest(".image-box");
+                        const wrapper = delBtn.closest(".image-wrapper");
 
-                            if (wrapper.classList.contains("from-slot")) {
-                                box.innerHTML = "+";
-                                box.className = "image-box add-btn";
-                                box.onclick = () => document.getElementById("imageUploader").click();
+                        if (wrapper.classList.contains("from-slot")) {
+                            box.innerHTML = "+";
+                            box.className = "image-box add-btn";
+                            box.onclick = () => document.getElementById("imageUploader").click();
 
-                                wrapper.classList.remove("from-slot");
-                                wrapper.innerHTML = "";
-                                wrapper.appendChild(box);
-                            } else {
-                                wrapper.remove();
-                            }
+                            wrapper.classList.remove("from-slot");
+                            wrapper.innerHTML = "";
+                            wrapper.appendChild(box);
+                        } else {
+                            wrapper.remove();
+                        }
 
-                            renderAddSlots(document.getElementById("imageContainer"), document.getElementById("imageUploader"));
-                        })
-                        .catch(err => alert("Xoá ảnh lỗi"));
-                }
+                        renderAddSlots(document.getElementById("imageContainer"), document.getElementById("imageUploader"));
+                    })
+                    .catch(err => alert("Xoá ảnh lỗi"));
             });
 
             // 🔍 Nút zoom (phóng ảnh to)
@@ -2340,9 +2291,573 @@
 
 </script>
 
-<!--Logic Tab Product End-->
+<!--Phân trang-->
+<script>
+    let currentPage = 1;
+    const pageSize = 5;
+    let allProducts = [];
 
+    function renderPaginationTemplate(totalItems, currentPage) {
+        const perPage = 5;
+        const totalPages = Math.ceil(totalItems / perPage);
+        const paginationUl = document.querySelector(".custom-pagination ul");
+        paginationUl.innerHTML = "";
+
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = startPage + maxVisiblePages - 1;
+
+        if (endPage > totalPages) {
+            endPage = totalPages;
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        // <<< Trang đầu
+        const firstLi = document.createElement("li");
+        firstLi.className = "page-item";
+        firstLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Về trang đầu"><i class="fa-solid fa-angles-left"></i></a>`;
+        firstLi.onclick = () => loadProducts(1);
+        paginationUl.appendChild(firstLi);
+
+        // << Lùi 1 trang
+        const prevLi = document.createElement("li");
+        prevLi.className = "page-item";
+        prevLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Trang trước"><i class="fa-solid fa-angle-left"></i></a>`;
+        prevLi.onclick = () => {
+            const newPage = currentPage === 1 ? 1 : currentPage - 1;
+            loadProducts(newPage);
+        };
+        paginationUl.appendChild(prevLi);
+
+        // ... nếu cần
+        if (startPage > 1) {
+            const dots = document.createElement("li");
+            dots.className = "page-item disabled";
+            dots.innerHTML = `<span class="page-link">...</span>`;
+            paginationUl.appendChild(dots);
+        }
+
+        // Các trang số
+        for (let i = startPage; i <= endPage; i++) {
+            const li = document.createElement("li");
+            li.className = "page-item" + (i === currentPage ? " active" : "");
+            li.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Trang ${i}">${i}</a>`;
+            li.onclick = () => loadProducts(i);
+            paginationUl.appendChild(li);
+        }
+
+        // ... nếu cần
+        if (endPage < totalPages) {
+            const dots = document.createElement("li");
+            dots.className = "page-item disabled";
+            dots.innerHTML = `<span class="page-link">...</span>`;
+            paginationUl.appendChild(dots);
+        }
+
+        // >> Tới 1 trang
+        const nextLi = document.createElement("li");
+        nextLi.className = "page-item";
+        nextLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Trang tiếp theo"><i class="fa-solid fa-angle-right"></i></a>`;
+        nextLi.onclick = () => {
+            const newPage = currentPage === totalPages ? totalPages : currentPage + 1;
+            loadProducts(newPage);
+        };
+        paginationUl.appendChild(nextLi);
+
+        // >>> Trang cuối
+        const lastLi = document.createElement("li");
+        lastLi.className = "page-item";
+        lastLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Tới trang cuối"><i class="fa-solid fa-angles-right"></i></a>`;
+        lastLi.onclick = () => loadProducts(totalPages);
+        paginationUl.appendChild(lastLi);
+    }
+</script>
+
+<!--Logic Tab Product End-->
 <!--Tab Product End-->
+
+<!--2. Tab Product Detail-->
+<!--Modal Add Product Detail-->
+<div class="modal fade" id="addProductDetailModal" tabindex="-1" aria-labelledby="addProductDetailModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="addProductDetailForm" class="theme-form theme-form-2 mega-form">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductDetailModalLabel">Add Product Detail</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Product Name -->
+                    <div class="mb-4 row align-items-center">
+                        <label class="col-sm-3 col-form-label">Product Name</label>
+                        <div class="col-sm-9">
+                            <select class="form-select" id="productId" required>
+                                <option value="" disabled selected>Choose product...</option>
+                                <!-- Sẽ được JS load -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Category (readonly) -->
+                    <div class="mb-4 row align-items-center">
+                        <label class="col-sm-3 col-form-label">Category</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="categoryName" readonly>
+                            <input type="hidden" id="categoryIdHidden"> <!-- dùng cho JS -->
+                        </div>
+                    </div>
+
+                    <!-- Radio chọn chế độ -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Weight Mode</label><br/>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="weightMode" id="availableWeightOption"
+                                   checked/>
+                            <label class="form-check-label" for="availableWeightOption">Available Weights</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="weightMode" id="customWeightOption"/>
+                            <label class="form-check-label" for="customWeightOption">Custom Weight / Unit</label>
+                        </div>
+                    </div>
+
+                    <!-- Available -->
+                    <div id="availableWeightSection" class="mb-3">
+                        <label class="form-label fw-bold">Available Weights</label>
+                        <div id="weightUnitSelectContainer" class="d-flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <!-- Custom -->
+                    <div id="customWeightSection" class="mb-3" style="display: none;">
+                        <label class="form-label fw-bold">Custom Weight / Unit</label>
+                        <div class="d-flex align-items-center flex-wrap gap-2">
+                            <input type="number" step="0.01" id="weight" class="form-control"
+                                   placeholder="Enter weight..." style="max-width: 150px;"/>
+
+                            <div id="unitButtonGroup" class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-secondary" data-unit="g">g</button>
+                                <button type="button" class="btn btn-outline-secondary" data-unit="kg">kg</button>
+                                <button type="button" class="btn btn-outline-secondary" data-unit="ml">ml</button>
+                                <button type="button" class="btn btn-outline-secondary" data-unit="l">l</button>
+                            </div>
+
+                            <input type="hidden" id="unit"/>
+                        </div>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="mb-4 row align-items-center">
+                        <label class="col-sm-3 col-form-label">Price</label>
+                        <div class="col-sm-9">
+                            <input type="number" class="form-control" id="price" min="0" required>
+                        </div>
+                    </div>
+
+                    <!-- Expiry -->
+                    <div class="mb-4 row align-items-center">
+                        <label class="col-sm-3 col-form-label">Expiry (months)</label>
+                        <div class="col-sm-9">
+                            <input type="number" class="form-control" id="expiry" min="1" required>
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="mb-4 row align-items-center">
+                        <label class="col-sm-3 col-form-label">Status</label>
+                        <div class="col-sm-9">
+                            <select class="form-select" id="productDetailStatus" required>
+                                <option value="" disabled selected>Loading statuses...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add Detail</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--Modal Add Product Detail End-->
+
+<!--CSS-->
+<style>
+    /* Dùng chung cho cả unit buttons và available weight buttons */
+    .btn.weight-unit-btn,
+    #unitButtonGroup .btn {
+        padding: 4px 10px;
+        font-size: 0.85rem;
+        min-width: 50px;
+        height: 32px;
+        border: 2px solid #000000;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        background-color: white;
+        color: #000000;
+    }
+
+    .btn.weight-unit-btn:hover,
+    #unitButtonGroup .btn:hover {
+        background-color: #000000;
+        color: #fff;
+    }
+
+    .btn.weight-unit-btn.active,
+    #unitButtonGroup .btn.active,
+    #unitButtonGroup .btn.btn-primary {
+        background-color: #000000;
+        color: white;
+        border-color: #000000;
+    }
+</style>
+
+
+<!--CRUD-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        loadProductDropdown();
+        loadProductDetailStatuses();
+        setupProductDropdownChange();
+        setupAddProductDetailForm();
+        setupUnitButtons();
+        setupWeightModeToggle();
+    });
+
+    let selectedProductId = null;
+    let selectedCategoryId = null;
+    const modal = document.getElementById('addProductDetailModal');
+    modal.addEventListener('hidden.bs.modal', function () {
+        const form = document.getElementById("addProductDetailForm");
+        form.reset();
+
+        // Reset các phần khác
+        document.getElementById("productId").value = "";
+        document.getElementById("categoryName").value = "";
+        document.getElementById("unit").value = "";
+        document.getElementById("productDetailStatus").value = "";
+        document.getElementById("weightUnitSelectContainer").innerHTML = "";
+        const detailNameInput = document.getElementById("detailName");
+        if (detailNameInput) detailNameInput.value = "";
+
+        // Reset các nút unit
+        document.querySelectorAll('#unitButtonGroup button[data-unit]').forEach(btn => {
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-outline-secondary');
+        });
+
+        // Reset chọn Available Weight
+        document.querySelectorAll('.weight-unit-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Reset radio mode về Available
+        document.getElementById("availableWeightOption").checked = true;
+        document.getElementById("customWeightOption").checked = false;
+        document.getElementById("availableWeightSection").style.display = "block";
+        document.getElementById("customWeightSection").style.display = "none";
+
+        // Reset biến toàn cục
+        selectedProductId = null;
+        selectedCategoryId = null;
+    });
+
+    function loadProductDropdown() {
+        axios.get('/AgriculturalWarehouseManagementApplication/api/seller/products')
+            .then(res => {
+                const select = document.getElementById('productId');
+                select.innerHTML = '<option value="" disabled selected>Choose product...</option>';
+                res.data.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = product.name;
+                    select.appendChild(option);
+                });
+            });
+    }
+
+    function loadProductDetailStatuses() {
+        axios.get('/AgriculturalWarehouseManagementApplication/api/seller/product-details/statuses')
+            .then(res => {
+                const select = document.getElementById('productDetailStatus');
+                select.innerHTML = '<option value="" disabled selected>Choose a status</option>';
+                res.data.forEach(status => {
+                    const text = status.replace(/_/g, ' ');
+                    const option = new Option(text, status);
+                    select.add(option);
+                });
+            });
+    }
+
+    function setupAvailableWeightSelection() {
+        const buttons = document.querySelectorAll(".weight-unit-btn");
+        buttons.forEach(btn => {
+            btn.addEventListener("click", function () {
+                buttons.forEach(b => b.classList.remove("active"));
+                this.classList.add("active");
+            });
+        });
+    }
+
+    function setupProductDropdownChange() {
+        document.getElementById("productId").addEventListener("change", function () {
+            const productId = this.value;
+            selectedProductId = productId;
+
+            axios.get(`/AgriculturalWarehouseManagementApplication/api/seller/product-details/products/${productId}`)
+                .then(res => {
+                    const product = res.data;
+
+                    // ✅ Hiển thị Category
+                    const category = product.category;
+                    selectedCategoryId = category.id;
+                    document.getElementById("categoryName").value = category.name;
+
+                    // ✅ Lấy danh sách weight-unit từ category
+                    axios.get(`/AgriculturalWarehouseManagementApplication/api/seller/product-details/category-weights/${selectedCategoryId}`)
+                        .then(weightRes => {
+                            const list = weightRes.data;
+                            const container = document.getElementById("weightUnitSelectContainer");
+                            container.innerHTML = "";
+
+                            list.forEach(item => {
+                                const button = document.createElement("button");
+                                button.type = "button";
+                                button.className = "btn weight-unit-btn";
+                                button.textContent = `${item.weight} ${item.unit}`;
+                                button.dataset.weight = item.weight;
+                                button.dataset.unit = item.unit;
+                                container.appendChild(button);
+                            });
+                            setupAvailableWeightSelection();
+
+                        });
+
+                    // ✅ Load bảng Product Detail
+                    loadAllProductDetails();
+                });
+        });
+    }
+
+    function setupUnitButtons() {
+        const unitButtons = document.querySelectorAll('#unitButtonGroup button[data-unit]');
+        const unitInput = document.getElementById("unit");
+
+        unitButtons.forEach(btn => {
+            btn.addEventListener("click", function () {
+                // Gán giá trị vào input ẩn
+                unitInput.value = this.dataset.unit;
+
+                // Đổi style nút
+                unitButtons.forEach(b => b.classList.remove("btn-primary"));
+                unitButtons.forEach(b => b.classList.add("btn-outline-secondary"));
+
+                this.classList.remove("btn-outline-secondary");
+                this.classList.add("btn-primary");
+            });
+        });
+    }
+
+    function setupAddProductDetailForm() {
+        const form = document.getElementById("addProductDetailForm");
+        const btn = form.querySelector("button[type='submit']");
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            btn.disabled = true;
+            btn.innerText = "Saving...";
+            let weight = null;
+            let unit = null;
+
+            const isAvailableMode = document.getElementById("availableWeightOption").checked;
+
+            if (isAvailableMode) {
+                const selectedBtn = document.querySelector("#weightUnitSelectContainer .weight-unit-btn.active");
+                if (!selectedBtn) {
+                    alert("Vui lòng chọn Available Weight!");
+                    btn.disabled = false;
+                    btn.innerText = "Add Detail";
+                    return;
+                }
+                weight = parseFloat(selectedBtn.dataset.weight);
+                unit = selectedBtn.dataset.unit;
+            } else {
+                weight = parseFloat(document.getElementById("weight").value);
+                unit = document.getElementById("unit").value.trim();
+            }
+
+            const dto = {
+                productId: selectedProductId,
+                weight: weight,
+                unit: unit,
+                price: parseFloat(document.getElementById("price").value),
+                expiry: parseInt(document.getElementById("expiry").value),
+                status: document.getElementById("productDetailStatus").value
+            };
+
+
+            axios.post('/AgriculturalWarehouseManagementApplication/api/seller/product-details', dto)
+                .then(() => {
+                    alert("Thêm Product Detail thành công.");
+                    bootstrap.Modal.getInstance(document.getElementById('addProductDetailModal')).hide();
+
+                    form.reset();
+
+                    // ✅ Reset dropdown Product + Category
+                    document.getElementById("productId").value = "";
+                    document.getElementById("categoryName").value = "";
+
+                    // ✅ Reset unit
+                    document.getElementById("unit").value = "";
+
+                    // ✅ Reset trạng thái
+                    document.getElementById("productDetailStatus").value = "";
+
+                    // ✅ Reset badge weight-unit
+                    document.getElementById("weightUnitSelectContainer").innerHTML = "";
+
+                    // ✅ Reset Detail Name (nếu có)
+                    const detailNameInput = document.getElementById("detailName");
+                    if (detailNameInput) detailNameInput.value = "";
+
+                    // ✅ Reset các nút unit (giao diện)
+                    document.querySelectorAll('#unitButtonGroup button[data-unit]').forEach(btn => {
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-outline-secondary');
+                    });
+
+                    // ✅ Reset biến toàn cục
+                    selectedProductId = null;
+                    selectedCategoryId = null;
+
+                    // ✅ Hiển thị bảng All
+                    switchToAllDetailTable();
+                    loadAllProductDetails();
+                })
+                .catch(err => {
+                    if (err.response && err.response.data && err.response.data.message) {
+                        alert("Lỗi khi thêm Product Detail: " + err.response.data.message);
+                    } else {
+                        alert("Lỗi khi thêm Product Detail.");
+                        console.error(err);
+                    }
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerText = "Add Detail";
+                });
+        });
+    }
+
+    function setupWeightModeToggle() {
+        const availableRadio = document.getElementById("availableWeightOption");
+        const customRadio = document.getElementById("customWeightOption");
+
+        const availableSection = document.getElementById("availableWeightSection");
+        const customSection = document.getElementById("customWeightSection");
+
+        document.querySelectorAll('input[name="weightMode"]').forEach(radio => {
+            radio.addEventListener("change", () => {
+                if (availableRadio.checked) {
+                    availableSection.style.display = "block";
+                    customSection.style.display = "none";
+                } else {
+                    availableSection.style.display = "none";
+                    customSection.style.display = "block";
+                }
+            });
+        });
+    }
+
+
+    // Chọn lại radio mặc định là Available
+    document.getElementById("availableWeightOption").checked = true;
+    document.getElementById("customWeightOption").checked = false;
+    document.getElementById("availableWeightSection").style.display = "block";
+    document.getElementById("customWeightSection").style.display = "none";
+
+
+</script>
+<script>
+    // Gọi khi cần chuyển từ bảng All → Bảng theo Product
+    function switchToByProductTable() {
+        document.getElementById("tableAllDetailContainer").style.display = "none";
+        document.getElementById("tableByProductContainer").style.display = "block";
+    }
+
+    // Gọi khi cần chuyển từ Bảng theo Product → Bảng All
+    function switchToAllDetailTable() {
+        document.getElementById("tableByProductContainer").style.display = "none";
+        document.getElementById("tableAllDetailContainer").style.display = "block";
+    }
+
+    // Gọi switch khi chọn sản phẩm
+    function loadProductDetailsByProduct(productId) {
+        switchToByProductTable(); // 👈 THÊM DÒNG NÀY
+        axios.get(`/AgriculturalWarehouseManagementApplication/api/seller/product-details/product-dto/${productId}`)
+            .then(res => {
+                const list = res.data;
+                const tbody = document.getElementById("productDetailByProductTable");
+                tbody.innerHTML = "";
+
+                list.forEach((item, index) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.productName}</td>
+                        <td>${item.detailName}</td>
+                        <td>${item.price}</td>
+                        <td>${item.expiry}</td>
+                        <td>${item.status}</td>
+                        <td><!-- actions --></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            });
+    }
+
+    function loadAllProductDetails() {
+        axios.get('/AgriculturalWarehouseManagementApplication/api/seller/product-details/all-dto')
+            .then(res => {
+                const list = res.data;
+                const tbody = document.getElementById("productDetailAllTable");
+                tbody.innerHTML = "";
+
+                list.forEach((item, index) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${item.productName}</td>
+                    <td>${item.detailName}</td>
+                    <td>${item.price}</td>
+                    <td>${item.expiry}</td>
+<td>${item.status}</td>
+                    <td><!-- actions --></td>
+                `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(err => {
+                console.error("❌ Lỗi khi load all product details:", err);
+            });
+    }
+
+
+    // Khi mở trang ban đầu, hiển thị bảng ALL
+    document.addEventListener("DOMContentLoaded", () => {
+        switchToAllDetailTable();
+        loadAllProductDetails(); // 👈 load dữ liệu cho bảng All
+
+    });
+</script>
+
+
+<!--Tab Product Detail End-->
 
 
 <!-- latest jquery-->

@@ -2,6 +2,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.Seller;
 
 import com.example.AgriculturalWarehouseManagement.dtos.ProductDTO;
 import com.example.AgriculturalWarehouseManagement.dtos.ProductImageDTO;
+import com.example.AgriculturalWarehouseManagement.dtos.Seller.Product_SellerDTO;
 import com.example.AgriculturalWarehouseManagement.models.Category;
 import com.example.AgriculturalWarehouseManagement.models.Product;
 import com.example.AgriculturalWarehouseManagement.models.ProductImage;
@@ -9,6 +10,7 @@ import com.example.AgriculturalWarehouseManagement.models.ProductStatus;
 import com.example.AgriculturalWarehouseManagement.services.CategoryService;
 import com.example.AgriculturalWarehouseManagement.services.ProductImageService;
 import com.example.AgriculturalWarehouseManagement.services.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +38,40 @@ public class Product_SellerController {
 
     @Autowired
     private ProductImageService productImageService;
+
+    @PostMapping("/api/seller/products")
+    public ResponseEntity<?> createProductForSeller(@Valid @RequestBody ProductDTO productDTO) {
+        System.out.println("Received product creation request: " + productDTO);
+
+        if (productService.existsByName(productDTO.getName())) {
+            return ResponseEntity.badRequest().body("Product name already exists");
+        }
+
+        try {
+            Product product = productService.createProduct(productDTO);
+
+            String categoryName = "Unknown";
+            try {
+                Category category = categoryService.findById(productDTO.getCategoryId());
+                categoryName = category.getName();
+            } catch (Exception e) {
+                System.out.println("Không tìm thấy category với ID: " + productDTO.getCategoryId());
+            }
+
+            Product_SellerDTO responseDTO = Product_SellerDTO.builder()
+                    .id(product.getId())
+                    .name(product.getName())
+                    .description(product.getDescription())
+                    .status(product.getStatus().name())
+                    .categoryName(categoryName)
+                    .build();
+
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            e.printStackTrace(); // log lỗi cụ thể ra console
+            return ResponseEntity.status(500).body("Đã xảy ra lỗi khi thêm sản phẩm.");
+        }
+    }
 
     @GetMapping("/api/seller/products")
     public ResponseEntity<?> getAllProducts() {
@@ -136,7 +172,7 @@ public class Product_SellerController {
         productImageService.deleteById(imageId);
 
         // (Optional) Nếu bạn muốn xóa cả file vật lý:
-        Files.deleteIfExists(Paths.get(uploadDir, image.get().getImageUrl()));
+        Files.deleteIfExists(Paths.get(uploadDir + "/Seller", image.get().getImageUrl()));
 
         return ResponseEntity.ok("Ảnh đã được xóa vĩnh viễn.");
     }
@@ -158,7 +194,7 @@ public class Product_SellerController {
 
         String uniqueFileName = UUID.randomUUID().toString() + extension;
 
-        Path uploadPath = Paths.get(uploadDir);
+        Path uploadPath = Paths.get(uploadDir + "/Seller");
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }

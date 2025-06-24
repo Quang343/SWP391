@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProductSellerResponseDTO {
+public class Product_SellerDTO {
 
     private Long id;
 
