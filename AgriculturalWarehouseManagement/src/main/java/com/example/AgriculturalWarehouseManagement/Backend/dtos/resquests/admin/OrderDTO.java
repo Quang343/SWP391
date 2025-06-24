@@ -40,4 +40,7 @@ public class OrderDTO {
     private String address;
 
     private String note;
+
+    private Long voucherId;
+
 }

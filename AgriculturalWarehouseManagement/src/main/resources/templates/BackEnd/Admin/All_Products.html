@@ -1,31 +1,34 @@
 
 <!DOCTYPE html>
-<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" >
 
 <head th:replace="BackEnd/fragments/Admin/head::head"></head>
 <style>
+    .col-stt {
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
     .alert-success {
         background-color: #d1e7dd !important;
         color: #0c0c0c !important;
     }
-
-    .category-img img{
-        width: 65px;
-        height: auto;
-        border-radius: 50%;
+    #autoDismissAlert {
+        transition: opacity 0.8s ease-in-out, transform 0.4s ease;
+        transform: translateY(0);
+        opacity: 1;
     }
 
-    #deleteModalStartMsg p{
-        font-size: 1rem;
+    #autoDismissAlert.hide {
+        opacity: 0;
+        transform: translateY(-10px);
     }
-
 </style>
 <body>
-<!-- tap on top start -->
+<!-- tap on top start-->
 <div class="tap-top">
     <span class="lnr lnr-chevron-up"></span>
 </div>
-<!-- tap on tap end -->
+<!-- tap on tap end-->
 
 <!-- page-wrapper Start-->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
@@ -33,7 +36,7 @@
     <div th:replace="BackEnd/fragments/Admin/header::header"></div>
     <!-- Page Header Ends-->
 
-    <!-- Page Body Start -->
+    <!-- Page Body Start-->
     <div class="page-body-wrapper">
         <!-- Page Sidebar Start-->
         <div th:replace="BackEnd/fragments/Admin/sidebar::sidebar"></div>
@@ -41,7 +44,6 @@
 
         <!-- Container-fluid starts-->
         <div class="page-body">
-            <!-- All User Table Start -->
             <div class="container-fluid">
                 <div id="autoDismissAlert" th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
                     <i class="fa fa-check-circle me-2"></i>
@@ -60,43 +62,54 @@
                     <div class="col-sm-12">
                         <div class="card card-table">
                             <div class="card-body">
-                                <div class="title-header option-title">
-                                    <h5>All Category</h5>
-                                    <form class="d-inline-flex">
-                                        <a th:href="@{/admin/add_category}"
-                                           class="align-items-center btn btn-theme d-flex">
-                                            <i data-feather="plus-square"></i>Add New
-                                        </a>
-                                    </form>
+                                <div class="title-header option-title d-sm-flex d-block">
+                                    <h5>Products List</h5>
+                                    <div class="right-options">
+                                        <ul>
+                                            <li>
+                                                <a href="javascript:void(0)">import</a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:void(0)">Export</a>
+                                            </li>
+                                            <li>
+                                                <a class="btn btn-solid" th:href="@{/admin/add_product}">Add Product</a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-
-                                <div class="table-responsive category-table">
-                                    <div>
-                                        <table class="table all-package theme-table" id="table_id">
+                                <div>
+                                    <div class="table-responsive">
+                                        <table class="table all-package theme-table table-product" id="table_id">
                                             <thead>
-                                                <tr>
-                                                    <th>STT</th>
-                                                    <th>Name</th>
-<!--                                                    <th>Description</th>-->
-                                                    <th>Status</th>
-                                                    <th>Icon</th>
-                                                    <th>Actions</th>
-                                                </tr>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Product Name</th>
+                                                <th>Category</th>
+                                                <th>Description</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
                                             </thead>
 
                                             <tbody>
-                                            <tr th:each="category, init : ${categories}">
-                                                <td th:text="${init.count}"></td>
-                                                <td th:text="${category.getName()}"></td>
-<!--                                                <td th:text="${category.getDescription()}"></td>-->
-                                                <td th:text="${category.getStatus()}"></td>
+                                            <tr th:each="product, init : ${products}">
+                                                <!--
                                                 <td>
-                                                    <div class="category-img">
-<!--                                                        <img th:src="@{'/Backend/assets/images/category/' + ${category.getImageUrl()}}"-->
-<!--                                                             class="img-fluid" alt="">-->
-                                                        <img th:src="@{'/uploads/category/' + ${category.getImageUrl()}}" class="img-fluid" alt="">
+                                                    <div class="table-image">
+                                                        <img src="assets/images/product/1.png" class="img-fluid"
+                                                             alt="">
                                                     </div>
                                                 </td>
+                                                -->
+                                                <td th:text="${init.count}"></td>
+                                                <td th:text="${product.getName()}"></td>
+                                                <td th:text="${product.getCategory().getName()}"></td>
+                                                <td th:text="${product.getDescription()}"></td>
+
+<!--                                                <td class="td-price">$95.97</td>-->
+                                                <td th:text="${product.getStatus()}"></td>
+
                                                 <td>
                                                     <ul>
                                                         <li>
@@ -104,18 +117,21 @@
                                                                 <i class="ri-eye-line"></i>
                                                             </a>
                                                         </li>
+
                                                         <li>
-                                                            <a th:href="@{'/admin/edit_category/' + ${category.getId()}}">
+                                                            <a th:href="@{'/admin/edit_product/' + ${product.getId()}}">
                                                                 <i class="ri-pencil-line"></i>
                                                             </a>
                                                         </li>
 
                                                         <li>
-                                                            <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                                data-bs-target="#deleteModalStart"
-                                                                th:attr="data-id=${category.getId()}">
-                                                                <i class="ri-delete-bin-line"></i>
-                                                            </a>
+                                                            <form method="post" th:action="@{'/admin/delete_product/' + ${product.getId()}}"
+                                                            onsubmit="return confirm('Bạn có chắc chắn muốn xoá sản phẩm này ?')">
+                                                                <input type="hidden" name="_method" value="delete" />
+                                                                <button type="submit" style="outline: none; border: none; background: transparent">
+                                                                    <i class="ri-delete-bin-line" style="color: red"></i>
+                                                                </button>
+                                                            </form>
                                                         </li>
                                                     </ul>
                                                 </td>
@@ -130,76 +146,76 @@
                     </div>
                 </div>
             </div>
-            <!-- All User Table Ends-->
+            <!-- Container-fluid Ends-->
 
             <div th:replace="BackEnd/fragments/Admin/footer::footer"></div>
-        </div>
-        <!-- Container-fluid end -->
-    </div>
-    <!-- Page Body End -->
 
-    <!-- Modal Start -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog  modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
-                    <p>Are you sure you want to log out?</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <div class="button-box">
-                        <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-                        <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
-                    </div>
+        </div>
+    </div>
+</div>
+<!-- page-wrapper End-->
+
+<!-- Modal Start -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                <p>Are you sure you want to log out?</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="button-box">
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                    <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Modal End -->
 </div>
+<!-- Modal End -->
 
 <!-- Delete Modal Box Start -->
-<div class="modal fade theme-modal remove-coupon" id="deleteModalStart" aria-hidden="true" tabindex="-1">
+<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle" aria-hidden="true" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header d-block text-center">
-                <h5 class="modal-title w-100" id="deleteModalStartLabel">Xác nhận xóa</h5>
+                <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure ?</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <div id="deleteModalStartMsg" class="remove-box">
-                    <p>Bạn có chắc chắn muốn xóa</p>
+                <div class="remove-box">
+                    <p>The permission for the use/group, preview is inherited from the object, object will create a
+                        new permission for this object</p>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
-                <button type="submit" class="btn btn-animation btn-md fw-bold" data-bs-target="#resultModal"
-                        data-bs-toggle="modal" data-bs-dismiss="modal" onclick="confirmDelete()">Yes</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-target="#exampleModalToggle2"
+                        data-bs-toggle="modal" data-bs-dismiss="modal">Yes</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal thông báo tái sử dụng -->
-<div class="modal fade theme-modal remove-coupon" id="resultModal" aria-hidden="true" tabindex="-1">
+<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle2" aria-hidden="true" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="resultModalTitle">Done!</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel12">Done!</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="remove-box text-center">
-                    <div id="resultModalIcon" class="wrapper">
+                    <div class="wrapper">
                         <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
                         </svg>
                     </div>
-                    <h4 id="resultModalMessage" class="text-content">It's Removed.</h4>
+                    <h4 class="text-content">It's Removed.</h4>
                 </div>
             </div>
             <div class="modal-footer">
@@ -244,42 +260,17 @@
 
 <!-- Theme js -->
 <script th:src="@{/Backend/assets/js/script.js}"></script>
-
 <script>
-    let selectedCategoryId = null;
-    const deleteModalStart = document.getElementById('deleteModalStart');
-    const deleteModalStartLabel = document.getElementById('deleteModalStartLabel');
-    const deleteModalStartMsg = document.getElementById('deleteModalStartMsg');
-
-    deleteModalStartLabel.textContent = 'Xác nhận xoá';
-    deleteModalStartMsg.innerHTML = `<p>Bạn có chắc chắn muốn xóa ?</p>`
-
-    deleteModalStart.addEventListener('show.bs.modal', function (event) {
-        selectedCategoryId = event.relatedTarget.getAttribute('data-id');
-    })
-
-    function confirmDelete() {
-        if(!selectedCategoryId) return;
-
-        fetch(`/admin/delete_category/${selectedCategoryId}`, {
-            method: 'DELETE'
-        })
-        .then((response) => response.json())
-        .then(data => {
-            document.getElementById('resultModalMessage').innerText = data.message;
-            const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
-            resultModal.show();
-
-            selectedCategoryId = null;
-            setTimeout(() => location.reload(), 1500);
-        })
-        .catch(error => {
-            alert("Lỗi khi xoá category: " + error);
-        });
-    }
-
+    setTimeout(function () {
+        const alertNode = document.getElementById('autoDismissAlert');
+        if (alertNode) {
+            alertNode.classList.add('hide');
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(alertNode);
+                bsAlert.close(); // Đóng hoàn toàn
+            }, 800); // Chờ hiệu ứng hoàn tất
+        }
+    }, 5000);
 </script>
-
 </body>
-
 </html>

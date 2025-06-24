@@ -28,22 +28,16 @@ public class FrontEndController {
 
     @RequestMapping("/seller")
     public String seller() {
-        return "FrontEnd/Seller/seller";
+        return "FrontEnd/Seller/Seller_Dashboard";
     }
 
     @RequestMapping("/cart")
     public String cart() {
         return "FrontEnd/Home/cart";
     }
-
-    @RequestMapping("/blog-list")
-    public String bloglist() {
-        return "FrontEnd/Home/blog-list";
-    }
-
-   @RequestMapping("/blog-detail")
-    public String blogdetail(){
-        return "FrontEnd/Home/blog-detail";
+    @RequestMapping("/seller-dashboard")
+    public String sellerDashboard() {
+        return "FrontEnd/Seller/seller-dashboard";
     }
 
     @RequestMapping("/blog-grid")

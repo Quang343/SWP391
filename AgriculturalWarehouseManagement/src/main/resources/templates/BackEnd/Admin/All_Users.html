@@ -4,6 +4,26 @@
 
 <head th:replace="BackEnd/fragments/Admin/head::head"></head>
 
+<style>
+  .col-stt {
+    text-align: center !important;
+    vertical-align: middle !important;
+  }
+  .alert-success {
+   background-color: #d1e7dd !important;
+   color: #0c0c0c !important;
+  }
+  #autoDismissAlert {
+    transition: opacity 0.8s ease-in-out, transform 0.4s ease;
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  #autoDismissAlert.hide {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+</style>
 <body>
 <!-- tap on top start -->
 <div class="tap-top">
@@ -27,6 +47,19 @@
     <div class="page-body">
       <!-- All User Table Start -->
       <div class="container-fluid">
+        <div id="autoDismissAlert" th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+          <i class="fa fa-check-circle me-2"></i>
+          <span th:text="${successMessage}">Success message here</span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+          <i class="fa fa-exclamation-triangle me-2"></i>
+          <span th:text="${errorMessage}">Error message here</span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="container-fluid">
         <div class="row">
           <div class="col-sm-12">
             <div class="card card-table">
@@ -34,7 +67,7 @@
                 <div class="title-header option-title">
                   <h5>All Users</h5>
                   <form class="d-inline-flex">
-                    <a th:href="@{/admin/adduser}" class="align-items-center btn btn-theme d-flex">
+                    <a th:href="@{/admin/add_user}" class="align-items-center btn btn-theme d-flex">
                       <i data-feather="plus"></i>Add New
                     </a>
                   </form>
@@ -43,35 +76,39 @@
                 <div class="table-responsive table-product">
                   <table class="table all-package theme-table" id="table_id">
                     <thead>
-                    <tr>
-                      <th>User</th>
-                      <th>Name</th>
-                      <th>Phone</th>
-                      <th>Email</th>
-                      <th>Option</th>
-                    </tr>
+                      <tr>
+                        <th class="col-stt text-center">STT</th>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
                     </thead>
 
                     <tbody>
-                    <tr>
+                    <tr th:each="user, iterStat : ${users}">
+                      <!--
                       <td>
                         <div class="table-image">
                           <img th:src="@{Backend/assets/images/users/1.jpg}" class="img-fluid"
                                alt="">
                         </div>
                       </td>
-
+                      -->
+                      <td class="col-stt text-center" th:text="${iterStat.count}"></td>
                       <td>
                         <div class="user-name">
-                          <span>Everett C. Green</span>
-                          <span>Essex Court</span>
+                          <span th:text="${user.getUserName()}"></span>
                         </div>
                       </td>
-
-                      <td>+ 802 - 370 - 2430</td>
-
-                      <td>EverettCGreen@rhyta.com</td>
-
+                      <td th:text="${user.getFullName()}"></td>
+                      <td th:text="${user.getPhone()}"></td>
+                      <td th:text="${user.getEmail()}"></td>
+                      <td th:text="${user.getRole().getName()}"></td>
+                      <td th:text="${user.getStatus()}"></td>
                       <td>
                         <ul>
                           <li>
@@ -81,149 +118,24 @@
                           </li>
 
                           <li>
-                            <a href="javascript:void(0)">
+                            <a th:href="@{'/admin/edit_user/' + ${user.getUserId()}}">
                               <i class="ri-pencil-line"></i>
                             </a>
                           </li>
 
                           <li>
-                            <a href="javascript:void(0)" data-bs-toggle="modal"
-                               data-bs-target="#exampleModalToggle">
-                              <i class="ri-delete-bin-line"></i>
-                            </a>
+                            <form th:action="@{'/admin/delete_user/' + ${user.getUserId()}}" method="post"
+                                  onsubmit="return confirm('Bạn có chắc chắn muốn xoá ?')">
+                              <input type="hidden" name="_method" value="delete" />
+                              <button type="submit" style="outline: none; border: none; background: transparent">
+                                <i class="ri-delete-bin-line" style="color: red"></i>
+                              </button>
+                            </form>
                           </li>
                         </ul>
                       </td>
                     </tr>
 
-                    <tr>
-                      <td>
-                        <div class="table-image">
-                          <img src="assets/images/users/4.jpg" class="img-fluid"
-                               alt="">
-                        </div>
-                      </td>
-
-                      <td>
-                        <div class="user-name">
-                          <span>Lorna M. Bonner</span>
-                          <span>Broadway Street</span>
-                        </div>
-                      </td>
-
-                      <td>+ 843 - 765 - 6166</td>
-
-                      <td>LornaMBonner@teleworm.us</td>
-
-                      <td>
-                        <ul>
-                          <li>
-                            <a href="order-detail.html">
-                              <i class="ri-eye-line"></i>
-                            </a>
-                          </li>
-
-                          <li>
-                            <a href="javascript:void(0)">
-                              <i class="ri-pencil-line"></i>
-                            </a>
-                          </li>
-
-                          <li>
-                            <a href="javascript:void(0)" data-bs-toggle="modal"
-                               data-bs-target="#exampleModalToggle">
-                              <i class="ri-delete-bin-line"></i>
-                            </a>
-                          </li>
-                        </ul>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <div class="table-image">
-                          <img src="assets/images/users/5.jpg" class="img-fluid"
-                               alt="">
-                        </div>
-                      </td>
-
-                      <td>
-                        <div class="user-name">
-                          <span>Everett C. Green</span>
-                          <span>Essex Court</span>
-                        </div>
-                      </td>
-
-                      <td>+ 802 - 370 - 2430</td>
-
-                      <td>EverettCGreen@rhyta.com</td>
-
-                      <td>
-                        <ul>
-                          <li>
-                            <a href="order-detail.html">
-                              <i class="ri-eye-line"></i>
-                            </a>
-                          </li>
-
-                          <li>
-                            <a href="javascript:void(0)">
-                              <i class="ri-pencil-line"></i>
-                            </a>
-                          </li>
-
-                          <li>
-                            <a href="javascript:void(0)" data-bs-toggle="modal"
-                               data-bs-target="#exampleModalToggle">
-                              <i class="ri-delete-bin-line"></i>
-                            </a>
-                          </li>
-                        </ul>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <div class="table-image">
-                          <img src="assets/images/users/1.jpg" class="img-fluid"
-                               alt="">
-                        </div>
-                      </td>
-
-                      <td>
-                        <div class="user-name">
-                          <span>Lorraine D. McDowell</span>
-                          <span>Woodland Terrace</span>
-                        </div>
-                      </td>
-
-                      <td>+ 916 - 942 - 7555</td>
-
-                      <td>LorraineDMcDowell@dayrep.com</td>
-
-                      <td>
-                        <ul>
-                          <li>
-                            <a href="order-detail.html">
-                              <i class="ri-eye-line"></i>
-                            </a>
-                          </li>
-
-                          <li>
-                            <a href="javascript:void(0)">
-                              <i class="ri-pencil-line"></i>
-                            </a>
-                          </li>
-
-                          <li>
-                            <a href="javascript:void(0)" data-bs-toggle="modal"
-                               data-bs-target="#exampleModalToggle">
-                              <i class="ri-delete-bin-line"></i>
-                            </a>
-                          </li>
-                        </ul>
-                      </td>
-                    </tr>
                     </tbody>
                   </table>
                 </div>
@@ -236,13 +148,7 @@
 
       <div class="container-fluid">
         <!-- footer start-->
-        <footer class="footer">
-          <div class="row">
-            <div class="col-md-12 footer-copyright text-center">
-              <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-            </div>
-          </div>
-        </footer>
+        <div th:replace="BackEnd/fragments/Admin/footer::footer"></div>
         <!-- footer end-->
       </div>
     </div>
@@ -321,6 +227,7 @@
   </div>
 </div>
 <!-- Delete Modal Box End -->
+
 <!-- latest js -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
 
@@ -350,7 +257,6 @@
 <script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
 <script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
 
-
 <!-- all checkbox select js -->
 <script th:src="@{Backend/assets/js/checkbox-all-check.js}"></script>
 
@@ -359,6 +265,19 @@
 
 <!-- Theme js -->
 <script th:src="@{Backend/assets/js/script.js}"></script>
+
+<script>
+  setTimeout(function () {
+    const alertNode = document.getElementById('autoDismissAlert');
+    if (alertNode) {
+      alertNode.classList.add('hide');
+      setTimeout(() => {
+        const bsAlert = new bootstrap.Alert(alertNode);
+        bsAlert.close(); // Đóng hoàn toàn
+      }, 800); // Chờ hiệu ứng hoàn tất
+    }
+  }, 5000);
+</script>
 </body>
 
 </html>

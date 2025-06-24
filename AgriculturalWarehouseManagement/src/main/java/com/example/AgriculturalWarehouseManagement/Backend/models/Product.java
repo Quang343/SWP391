@@ -32,10 +32,6 @@ public class Product {
     @Column(length = 500)
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "warehouseid", nullable = false)
-    private Warehouse warehouse;
-
     @Column(length = 50)
     @Enumerated(EnumType.STRING)
     private ProductStatus status;

@@ -5,11 +5,14 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.
 import com.example.AgriculturalWarehouseManagement.Backend.models.Order;
 import com.example.AgriculturalWarehouseManagement.Backend.models.OrderStatus;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Voucher;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.OrderRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.UserRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.VoucherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -20,12 +23,14 @@ public class OrderService implements IOrderService {
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final VoucherRepository voucherRepository;
     private final Random random = new Random();
 
     @Override
     public Order createOrder(OrderDTO orderDTO) {
         User user = userRepository.findById(orderDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
         Order order = Order.builder()
                 .user(user)
                 .orderDate(orderDTO.getOrderDate())
@@ -38,8 +43,28 @@ public class OrderService implements IOrderService {
                 .note(orderDTO.getNote())
                 .orderCode(generateUniqueOrderCode())
                 .build();
+
+        BigDecimal discount = BigDecimal.ZERO;
+
+        Optional<Voucher> optionalVoucher = voucherRepository.findById(orderDTO.getVoucherId());
+        if (optionalVoucher.isPresent()) {
+            Voucher voucher = optionalVoucher.get();
+            order.setVoucher(voucher);
+            order.setVoucherCode(voucher.getVoucherCode());
+            discount = calculateDiscount(voucher, orderDTO.getTotalAmount());
+        }
+        order.setDiscountAmount(discount);
+        order.setFinalAmount(order.getTotalAmount().subtract(order.getDiscountAmount()));
         orderRepository.save(order);
         return order;
+    }
+
+    private BigDecimal calculateDiscount(Voucher voucher, BigDecimal orderAmount) {
+        if (voucher.getDiscountType().name().equalsIgnoreCase("PERCENT")) {
+            return orderAmount.multiply(voucher.getDiscountValue().divide(BigDecimal.valueOf(100)));
+        } else {
+            return voucher.getDiscountValue();
+        }
     }
 
     @Override
@@ -104,10 +129,5 @@ public class OrderService implements IOrderService {
             code = String.format("#ORD%d", randomNumber);
         } while (orderRepository.existsByOrderCode(code));
         return code;
-    }
-
-    @Override
-    public List<Order> findByStatus(String status) {
-        return orderRepository.findByStatus(status);
     }
 }

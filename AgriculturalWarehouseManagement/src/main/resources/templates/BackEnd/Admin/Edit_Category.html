@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
@@ -66,78 +67,94 @@
                                             <h5>Category Information</h5>
                                         </div>
 
-                                        <form id="categoryForm" onsubmit="submitCategory(event)" enctype="multipart/form-data">
+                                        <form id="updateCategoryForm" th:action="@{'/admin/update_category/' + ${id}}"
+                                              onsubmit="submitCategory(event)" enctype="multipart/form-data">
                                             <div class="theme-form theme-form-2 mega-form">
                                                 <div class="mb-4 row align-items-center">
                                                     <label class="form-label-title col-sm-3 mb-0">Category Name</label>
                                                     <div class="col-sm-9">
-                                                        <input class="form-control" type="text" id="name"
-                                                               placeholder="Category Name" name="name" required>
-                                                        <!--                                                        <div th:if="${#fields.hasErrors('name')}"-->
-                                                        <!--                                                             th:errors="*{name}"-->
-                                                        <!--                                                             class="text-danger small mt-1 m-l-0"></div>-->
+                                                        <input class="form-control" type="text" id="name" name="name"
+                                                               placeholder="Category Name" th:value="${categoryDTO.getName()}" required>
                                                     </div>
                                                 </div>
 
                                                 <div class="mb-4 row align-items-center">
                                                     <div class="form-group">
-                                                        <label class="form-label-title col-sm-3 mb-0"
-                                                               for="category-description">Category Description</label>
+                                                        <label class="form-label-title col-sm-3 mb-0" for="category-description">Category Description</label>
                                                         <div class="col-sm-9">
-                                                            <textarea id="category-description" class="description-box"
-                                                                      name="description"
-                                                                      placeholder="Enter category description here...">
-                                                            </textarea>
+                                                            <textarea id="category-description" name="description" class="description-box" th:text="${categoryDTO.getDescription()}" placeholder="Enter category description here..."></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!--
-                                                <form class="dropzone custom-dropzone" id="multiFileUpload"
-                                                      action="/upload.php">
-                                                    <div class="dropzone-wrapper">
-                                                        <div class="dz-message needsclick">
-                                                            <div>
-                                                                <i class="icon-cloud-up"></i>
-                                                                <h6>Drop files here or click to upload.</h6>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                                -->
 
                                                 <div class="mb-4 row align-items-center">
-                                                    <label class="form-label-title col-sm-3 mb-0">Category
-                                                        Status</label>
+                                                    <label class="form-label-title col-sm-3 mb-0">Category Status</label>
                                                     <div class="col-sm-9">
-                                                        <select id="status" class="form-select" name="status">
-                                                            <option selected disabled value="">Select status
-                                                            </option>
-                                                            <option value="ACTIVE">Active</option>
-                                                            <option value="INACTIVE">Inactive</option>
-                                                            <option value="DELETED">Deleted</option>
+                                                        <select class="form-select" id="status" name="status" required>
+                                                            <option disabled value="" th:selected="${categoryDTO.getStatus() == null}">Select status</option>
+                                                            <option value="ACTIVE" th:selected="${categoryDTO.getStatus() == 'ACTIVE'}">Active</option>
+                                                            <option value="INACTIVE" th:selected="${categoryDTO.getStatus() == 'INACTIVE'}">Inactive</option>
+                                                            <option value="DELETED" th:selected="${categoryDTO.getStatus() == 'DELETED'}">Deleted</option>
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="row align-items-center">
-                                                    <div class="col-sm-3 form-label-title">Category Image</div>
-                                                    <div class="col-sm-9">
-                                                        <input class="form-control form-choose" type="file"
-                                                               id="image" name="image" accept="image/*">
-                                                        <div id="preview" class="mt-3 d-flex flex-wrap gap-2"></div>
+
+                                                <div class="mb-4 row align-items-center">
+                                                    <div class="form-group">
+                                                        <label class="form-label-title col-sm-3 mb-0" for="image">Category Image</label>
+                                                        <div class="col-sm-9">
+                                                            <input class="form-control form-choose" type="file"
+                                                                   id="image" name="image" accept="image/*">
+                                                            <div id="preview" class="mt-2 d-flex flex-wrap gap-2">
+                                                                <div id="preview-image-container">
+                                                                    <img id="preview-image"
+                                                                         th:if="${categoryDTO.getImageUrl() != null}"
+                                                                         th:src="@{'/uploads/category/' + ${categoryDTO.getImageUrl()}}"
+                                                                         class="img-thumbnail" alt="Current Image"
+                                                                         style="width: 150px; height: 150px; object-fit: cover;">
+                                                                </div>
+                                                                <small id="selected-file-name" class="text-muted d-block mt-1"></small>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
+
+                                                <!--
+                                                <div class="row align-items-center">
+                                                    <div class="col-sm-3 form-label-title">Select Category Icon</div>
+                                                    <div class="col-sm-9">
+                                                        <div class="dropdown icon-dropdown">
+                                                            <button class="btn dropdown-toggle" type="button"
+                                                                    id="dropdownMenuButton1" data-bs-toggle="dropdown">
+                                                                Select Icon
+                                                            </button>
+                                                            <ul class="dropdown-menu"
+                                                                aria-labelledby="dropdownMenuButton1">
+                                                                <li>
+                                                                    <a class="dropdown-item" href="#">
+                                                                        <img src="../assets/svg/1/vegetable.svg"
+                                                                             class="img-fluid" alt="">
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                -->
                                             </div>
 
-                                            <div class="m-t-10 mb-4 row" style="justify-content: flex-end;">
+                                            <!-- Error Message -->
+                                            <div class="mb-4 row"
+                                                 style="justify-content: flex-end;">
                                                 <div class="col-sm-9">
-                                                    <div id="error-message" class="alert alert-danger d-none"
+                                                    <div id="error-message"
+                                                         class="alert alert-danger d-none"
                                                          role="alert"></div>
                                                 </div>
                                             </div>
 
                                             <div class="card-submit-button">
-                                                <button class="btn btn-animation ms-auto" type="submit">Submit
-                                                </button>
+                                                <button class="btn btn-animation ms-auto" type="submit">Save</button>
                                             </div>
                                         </form>
                                     </div>
@@ -170,8 +187,7 @@
                 <div class="button-box">
                     <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
                     <button type="button" onclick="location.href = 'login.html';"
-                            class="btn  btn--yes btn-primary">Yes
-                    </button>
+                            class="btn  btn--yes btn-primary">Yes</button>
                 </div>
             </div>
         </div>
@@ -278,52 +294,68 @@
 </script>
 
 <script>
-    // Xem trước ảnh
+    let selectedImageFile = null;
+
     document.getElementById("image").addEventListener("change", function (event) {
-        const preview = document.getElementById("preview");
-        preview.innerHTML = "";
+        const fileInput = event.target;
+        const imageContainer = document.getElementById("preview-image-container");
+        const fileNameDisplay = document.getElementById("selected-file-name");
+        const file = fileInput.files[0];
 
-        const file = event.target.files[0];
-        if (!file || !file.type.startsWith("image/")) return;
+        if (!file || !file.type.startsWith("image/")) {
+            // Nếu người dùng nhấn cancel → KHÔNG xoá ảnh cũ
+            return;
+        }
 
+        selectedImageFile = file; // Lưu lại ảnh mới
+        fileNameDisplay.textContent = `Đã chọn: ${file.name}`;
+
+        // Tạo và gắn ảnh mới
         const reader = new FileReader();
         reader.onload = function (e) {
+            imageContainer.innerHTML = '';
             const img = document.createElement("img");
             img.src = e.target.result;
             img.className = "img-thumbnail";
-            Object.assign(img.style, { width: "100px", height: "100px", objectFit: "cover" });
-            preview.appendChild(img);
+            Object.assign(img.style, {
+                width: "150px",
+                height: "150px",
+                objectFit: "cover"
+            });
+            imageContainer.appendChild(img);
         };
         reader.readAsDataURL(file);
     });
 
-    // Submit form bằng Axios
-    async function submitCategory(event) {
-        event.preventDefault(); // Ngăn form submit mặc định
+    // Khi submit, bạn nhớ dùng biến selectedImageFile nếu muốn kiểm soát tốt hơn
+    async function submitCategory(event){
+        event.preventDefault();
 
-        const formData = new FormData();
-        formData.append("name", document.getElementById("name").value);
-        formData.append("description", document.getElementById("category-description").value);
-        formData.append("status", document.getElementById("status").value);
+        const form = document.getElementById("updateCategoryForm");
 
-        const fileInput = document.getElementById("image");
-        if (fileInput.files.length > 0) {
-            formData.append("image", fileInput.files[0]);
+        if (!form) {
+            console.error("Form không tồn tại.");
+            return;
         }
 
+        const formData = new FormData(form);
+
+        if (selectedImageFile) {
+            formData.set("image", selectedImageFile);
+        }
         const errorDiv = document.getElementById('error-message');
         errorDiv.classList.add("d-none");
         errorDiv.textContent = '';
 
         try {
-            const response = await axios.post("/admin/saveCategory", formData, {
+            const response = await axios.post(form.action, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
 
             // Thành công
-            const successMsg = response.data.message || "Thêm thành công";
+            const successMsg = response.data.message || "Cập nhật thành công";
             showModal('success', successMsg);
             setTimeout(() => {
                 window.location.href = '/admin/categories';
@@ -333,11 +365,11 @@
             let msg = "Đã xảy ra lỗi khi gửi form.";
 
             if (error.response) {
-                    const data = error.response.data;
-                    msg = typeof data === 'object'
-                        ? Object.values(data).join('\n')
-                        : data;
-                    console.error("Chi tiết lỗi:", data);
+                const data = error.response.data;
+                msg = typeof data === 'object'
+                    ? Object.values(data).join('\n')
+                    : data;
+                console.error("Chi tiết lỗi:", data);
             } else {
                 console.error("Lỗi kết nối hoặc client:", error.message);
             }
@@ -347,6 +379,55 @@
         }
     }
 </script>
+<!--
+<script>
+    document.querySelector('.editForm').addEventListener('submit', async  function(e){
+        e.preventDefault();
+
+        const form = this;
+
+        const errorDiv = document.getElementById('error-message');
+        errorDiv.classList.add("d-none");
+        errorDiv.textContent = '';
+
+        const formData = new FormData(form);
+
+        try{
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if(!response.ok) {
+                const contentType = response.headers.get("content-type");
+                let msg = "";
+
+                if (contentType && contentType.includes("application/json")) {
+                    const errorData = await response.json();
+                    msg = typeof errorData === 'object'
+                        ? Object.values(errorData).join('\n')
+                        : JSON.stringify(errorData);
+                } else {
+                    msg = await response.text();
+                }
+
+                errorDiv.textContent = msg;
+                errorDiv.classList.remove('d-none');
+                console.error("Chi tiết lỗi cập nhật:", msg);
+                throw new Error("Lỗi khi update category");
+            }
+            showModal('success', "Updated successfully");
+            setTimeout(() => {
+                window.location.href = '/admin/categories';
+            }, 2000);
+        }catch (e) {
+            console.error("Lỗi khi gửi form:", e);
+        }
+    })
+
+
+</script>
+-->
 
 </body>
 </html>

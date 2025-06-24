@@ -27,5 +27,5 @@ public interface IOrderService {
 
     boolean isExistsByOrderCode(String orderCode);
 
-    List<Order> findByStatus(String status);
+    //List<Order> findByStatus(String status);
 }

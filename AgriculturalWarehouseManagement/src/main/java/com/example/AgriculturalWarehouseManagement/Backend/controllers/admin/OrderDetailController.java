@@ -22,17 +22,11 @@ public class OrderDetailController {
     private final OrderDetailService orderDetailService;
     private final OrderService orderService;
 
-//    @RequestMapping("/admin/order_details")
-//    public String getAllOrderDetails(Model model) {
-//        List<OrderDetail> orderDetails = orderDetailService.findAll();
-//        model.addAttribute("orderDetails", orderDetails);
-//        return "BackEnd/Admin/OrderDetail";
-//    }
-
-    @GetMapping("/admin/order_details")
-        public ResponseEntity<?> getAllOrderDetails(Model model) {
+    @RequestMapping("/admin/order_details")
+    public String getAllOrderDetails(Model model) {
         List<OrderDetail> orderDetails = orderDetailService.findAll();
-        return ResponseEntity.ok(orderDetails);
+        model.addAttribute("orderDetails", orderDetails);
+        return "BackEnd/Admin/OrderDetail";
     }
 
     @RequestMapping("/admin/orders/{orderId}/details")
