@@ -7,8 +7,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class BackEndController {
 
     @RequestMapping("/admin")
-    public String admin() {
-        return "BackEnd/Admin/index";
+    public String admin() {return "BackEnd/Admin/index";}
+
+    @RequestMapping("")
+    public String home() {
+        return "/home";
+    }
+
+    @RequestMapping("/signup")
+    public String signup() {
+        return "BackEnd/signup";
+    }
+
+    @RequestMapping("/admin/order_tracking")
+    public String orderTracking() {
+        return "BackEnd/Admin/OrderTracking";
     }
 
     @RequestMapping("/warehouse")
