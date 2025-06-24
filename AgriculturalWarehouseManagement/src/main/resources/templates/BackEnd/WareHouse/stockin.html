@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="BackEnd/fragments/WareHouse/head::head"></head>
+
+<body>
+<!-- tap on top start-->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end-->
+
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  <div th:replace="BackEnd/fragments/WareHouse/header::header"></div>
+  <!-- Page Header Ends-->
+
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    <div th:replace="BackEnd/fragments/WareHouse/sidebar::sidebar"></div>
+    <!-- Page Sidebar Ends-->
+
+    <!-- StockIn section Start -->
+    <div class="page-body">
+      <!-- Table Start -->
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="card card-table">
+              <div class="card-body">
+                <div class="title-header option-title">
+                  <h5>StockIn List</h5>
+                  <a th:href="@{/warehouse/addstockin}" class="btn btn-solid">Add news StockIn</a>
+                </div>
+                <div>
+                  <div class="table-responsive">
+                    <table class="table all-package order-table theme-table" id="table_id">
+                      <thead>
+                      <tr>
+                        <th>StockIn ID</th>
+                        <th>Supplier ID</th>
+                        <th>Warehouse ID</th>
+                        <th>Date</th>
+                        <th>Note</th>
+                        <th>Option</th>
+                      </tr>
+                      </thead>
+                      <tbody id="stockInTableBody">
+                      <!-- Dữ liệu sẽ được tải động bằng JavaScript -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Table End -->
+    </div>
+    <!-- StockIn section End -->
+  </div>
+  <!-- Page Body End-->
+</div>
+<!-- page-wrapper End -->
+
+<!-- Modal start -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+        <p>Are you sure you want to log out?</p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="button-box">
+          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+          <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal end -->
+
+<!-- Delete Modal Box Start -->
+<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle" aria-hidden="true" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-block text-center">
+        <h4 class="modal-title w-100" id="exampleModalLabel22">Are You Sure ?</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="remove-box">
+          <p>Are you sure you want to delete this StockIn?</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
+        <button type="button" class="btn btn-animation btn-md fw-bold" id="confirmDeleteBtn">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle2" aria-hidden="true" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-center" id="exampleModalLabel12">Done!</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="remove-box text-center">
+          <div class="wrapper">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+          </div>
+          <h4 class="text-content">StockIn removed successfully.</h4>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Delete Modal Box End -->
+
+<!-- Offcanvas Box Start -->
+<div class="offcanvas offcanvas-end order-offcanvas" tabindex="-1" id="order-details"
+     aria-labelledby="offcanvasExampleLabel" aria-expanded="false">
+  <div class="offcanvas-header">
+    <h4 class="offcanvas-title" id="offcanvasExampleLabel">StockIn #<span id="offcanvasStockInId"></span></h4>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="order-date">
+      <h6 id="offcanvasStockInDate"></h6>
+    </div>
+
+    <form id="updateStockInForm">
+      <input type="hidden" id="offcanvasStockInIdInput" />
+      <div class="mb-3">
+        <label for="offcanvasSupplierId">Supplier</label>
+        <select class="form-control" id="offcanvasSupplierId" name="supplierId">
+          <option value="">Select Supplier</option>
+          <!-- Options will be populated by JavaScript -->
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="offcanvasWarehouseId">Warehouse</label>
+        <select class="form-control" id="offcanvasWarehouseId" name="warehouseId">
+          <option value="">Select Warehouse</option>
+          <!-- Options will be populated by JavaScript -->
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="offcanvasStockInDateInput">Date</label>
+        <input type="date" class="form-control" id="offcanvasStockInDateInput" />
+      </div>
+      <div class="mb-3">
+        <label for="offcanvasStockInTimeInput">Time</label>
+        <input type="time" class="form-control" id="offcanvasStockInTimeInput" />
+      </div>
+      <div class="mb-3">
+        <label for="offcanvasNote">Note</label>
+        <input type="text" class="form-control" id="offcanvasNote" />
+      </div>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+  </div>
+</div>
+<!-- Offcanvas Box End -->
+
+<!-- Latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+<script th:src="@{/Backend/assets/js/checkbox-all-check.js}"></script>
+
+<!-- Custom JavaScript -->
+<script>
+  $(document).ready(function() {
+    // Function to load Suppliers into dropdown
+    function loadSuppliersDropdown(selectElement, selectedId) {
+      $.ajax({
+        url: 'http://localhost:8080/api/suppliers',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          selectElement.empty().append('<option value="">Select Supplier</option>');
+          $.each(data, function(index, supplier) {
+            const supplierId = supplier.supplierID || supplier.id;
+            const supplierName = supplier.supplierName || supplier.name;
+            if (supplierId && supplierName) {
+              const selected = supplierId == selectedId ? 'selected' : '';
+              selectElement.append(`<option value="${supplierId}" ${selected}>${supplierName} (ID: ${supplierId})</option>`);
+            }
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error('Error loading Suppliers:', status, error);
+          selectElement.empty().append('<option value="">Error loading Suppliers</option>');
+        }
+      });
+    }
+
+    // Function to load Warehouses into dropdown
+    function loadWarehousesDropdown(selectElement, selectedId) {
+      $.ajax({
+        url: 'http://localhost:8080/api/warehouses',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          selectElement.empty().append('<option value="">Select Warehouse</option>');
+          $.each(data, function(index, warehouse) {
+            const warehouseId = warehouse.warehouseId || warehouse.id;
+            const warehouseName = warehouse.warehouseName || warehouse.name;
+            if (warehouseId && warehouseName) {
+              const selected = warehouseId == selectedId ? 'selected' : '';
+              selectElement.append(`<option value="${warehouseId}" ${selected}>${warehouseName} (ID: ${warehouseId})</option>`);
+            }
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error('Error loading Warehouses:', status, error);
+          selectElement.empty().append('<option value="">Error loading Warehouses</option>');
+        }
+      });
+    }
+
+    // Load StockIn data
+    function loadStockIns() {
+      $.ajax({
+        url: 'http://localhost:8080/api/stockins',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+          var tbody = $('#stockInTableBody');
+          tbody.empty();
+          $.each(data, function(index, stockIn) {
+            // Fetch Supplier and Warehouse names
+            $.when(
+                    $.ajax({ url: 'http://localhost:8080/api/suppliers/' + stockIn.supplierID, method: 'GET', dataType: 'json' }),
+                    $.ajax({ url: 'http://localhost:8080/api/warehouses/' + stockIn.warehouseID, method: 'GET', dataType: 'json' })
+            ).done(function(supplierResponse, warehouseResponse) {
+              var supplierName = supplierResponse[0].supplierName || 'N/A';
+              var warehouseName = warehouseResponse[0].warehouseName || 'N/A';
+              var row = '<tr data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="' + stockIn.id + '">' +
+                      '<td>' + stockIn.id + '</td>' +
+                      '<td>' + supplierName + '</td>' +
+                      '<td>' + warehouseName + '</td>' +
+                      '<td>' + (stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleString() : 'N/A') + '</td>' +
+                      '<td>' + (stockIn.note || 'N/A') + '</td>' +
+                      '<td>' +
+                      '<ul>' +
+                      '<li><a href="/warehouse/stockindetail?stockInId=' + stockIn.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
+                      '<li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="' + stockIn.id + '" class="edit-link"><i class="ri-pencil-line"></i></a></li>' +
+                      '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="' + stockIn.id + '"><i class="ri-delete-bin-line"></i></a></li>' +
+
+                      '</ul>' +
+                      '</td>' +
+                      '</tr>';
+              tbody.append(row);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+              console.error('Error fetching supplier or warehouse:', textStatus, errorThrown);
+              var row = '<tr data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="' + stockIn.id + '">' +
+                      '<td>' + stockIn.id + '</td>' +
+                      '<td>N/A</td>' +
+                      '<td>N/A</td>' +
+                      '<td>' + (stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleString() : 'N/A') + '</td>' +
+                      '<td>' + (stockIn.note || 'N/A') + '</td>' +
+                      '<td>' +
+                      '<ul>' +
+                      '<li><a href="/warehouse/stockindetail?stockInId=' + stockIn.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
+                      '<li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="' + stockIn.id + '" class="edit-link"><i class="ri-pencil-line"></i></a></li>' +
+                      '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="' + stockIn.id + '"><i class="ri-delete-bin-line"></i></a></li>' +
+                      '<li><a class="btn btn-sm btn-solid text-white" href="order-tracking.html">Tracking</a></li>' +
+                      '</ul>' +
+                      '</td>' +
+                      '</tr>';
+              tbody.append(row);
+            });
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error('Error loading StockIns:', status, error);
+          $('#stockInTableBody').html('<tr><td colspan="6">Failed to load data. Check console.</td></tr>');
+        }
+      });
+    }
+
+    // Load StockIn details into offcanvas
+    $(document).on('show.bs.offcanvas', '#order-details', function(event) {
+      var stockInId = $(event.relatedTarget).data('stockin-id');
+      $('#offcanvasStockInId').text(stockInId);
+      $('#offcanvasStockInIdInput').val(stockInId);
+
+      $.ajax({
+        url: 'http://localhost:8080/api/stockins/' + stockInId,
+        method: 'GET',
+        dataType: 'json',
+        success: function(stockIn) {
+          var dateTime = stockIn.stockInDate ? new Date(stockIn.stockInDate) : null;
+          $('#offcanvasStockInDate').text(dateTime ? dateTime.toLocaleString() : 'N/A');
+
+          // Load suppliers and warehouses into dropdowns
+          loadSuppliersDropdown($('#offcanvasSupplierId'), stockIn.supplierID);
+          loadWarehousesDropdown($('#offcanvasWarehouseId'), stockIn.warehouseID);
+
+          $('#offcanvasStockInDateInput').val(dateTime ? dateTime.toISOString().split('T')[0] : '');
+          $('#offcanvasStockInTimeInput').val(dateTime ? dateTime.toTimeString().slice(0, 5) : '00:00');
+          $('#offcanvasNote').val(stockIn.note || '');
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.error('Error loading StockIn details:', textStatus, errorThrown);
+          alert('Failed to load StockIn details.');
+        }
+      });
+    });
+
+    // Update StockIn
+    $('#updateStockInForm').on('submit', function(e) {
+      e.preventDefault();
+      var stockInId = $('#offcanvasStockInIdInput').val();
+      var date = $('#offcanvasStockInDateInput').val();
+      var time = $('#offcanvasStockInTimeInput').val();
+      var stockInDate = date + 'T' + (time || '00:00') + ':00'; // Combine date and time
+
+      var formData = {
+        id: stockInId,
+        supplierID: $('#offcanvasSupplierId').val(),
+        warehouseID: $('#offcanvasWarehouseId').val(),
+        stockInDate: stockInDate,
+        note: $('#offcanvasNote').val()
+      };
+
+      $.ajax({
+        url: 'http://localhost:8080/api/stockins/' + stockInId,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(formData),
+        success: function(response) {
+          alert('StockIn updated successfully!');
+          $('#order-details').offcanvas('hide');
+          loadStockIns(); // Reload table
+        },
+        error: function(xhr, status, error) {
+          console.error('Error updating StockIn:', status, error);
+          alert('Error updating StockIn: ' + (xhr.responseText || 'Unknown error'));
+        }
+      });
+    });
+
+    // Store StockIn ID for deletion
+    $(document).on('click', '[data-bs-target="#exampleModalToggle"]', function() {
+      var stockInId = $(this).data('stockin-id');
+      $('#exampleModalToggle').data('stockin-id', stockInId);
+    });
+
+    // Delete StockIn
+    $('#confirmDeleteBtn').on('click', function() {
+      var stockInId = $('#exampleModalToggle').data('stockin-id');
+      if (!stockInId) {
+        console.error('No StockIn ID found for deletion.');
+        alert('Error: No StockIn selected for deletion.');
+        return;
+      }
+
+      $.ajax({
+        url: 'http://localhost:8080/api/stockins/' + stockInId,
+        method: 'DELETE',
+        success: function() {
+          $('#exampleModalToggle').modal('hide');
+          $('#exampleModalToggle2').modal('show');
+          loadStockIns(); // Reload table
+        },
+        error: function(xhr, status, error) {
+          console.error('Error deleting StockIn:', status, error);
+          alert('Failed to delete StockIn: ' + (xhr.responseText || 'Unknown error'));
+          $('#exampleModalToggle').modal('hide');
+        }
+      });
+    });
+
+    // Initialize table
+    loadStockIns();
+  });
+</script>
+
+</body>
+</html>
