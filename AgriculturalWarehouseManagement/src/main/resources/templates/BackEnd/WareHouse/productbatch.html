@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" >
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
 
@@ -85,10 +84,10 @@
 
 <!-- Modal Start -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-    <div class="modal-dialog  modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                <h5 class="modal-title" id="staticBackdropLabel">Log Out</h5>
                 <p>Are you sure you want to log out?</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="button-box">
@@ -134,12 +133,11 @@
 </div>
 
 <!-- Delete Modal Box Start -->
-<!-- Delete Modal Box Start -->
 <div class="modal fade theme-modal remove-coupon" id="exampleModalToggle" aria-hidden="true" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header d-block text-center">
-                <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure ?</h5>
+                <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure?</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
@@ -184,6 +182,25 @@
     </div>
 </div>
 <!-- Delete Modal Box End -->
+<!-- Modal for Adjustment History -->
+<div class="modal fade" id="adjustmentHistoryModal" tabindex="-1" aria-labelledby="adjustmentHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adjustmentHistoryModalLabel">Lịch Sử Nhập Hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="adjustmentHistoryTable">
+                    <tbody id="adjustmentHistoryBody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="adjustmentDetailModal" tabindex="-1" aria-labelledby="adjustmentDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" style="max-width: 90%; width: fit-content; min-width: 300px;">
@@ -271,6 +288,8 @@
     </div>
 </div>
 
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <!-- latest js -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
@@ -333,7 +352,7 @@
                     });
                 },
                 error: function(xhr, status, error) {
-                    console.error('Lỗi khi lấy ProductDetails: ', status, error);
+                    console.error('Error fetching Product Details:', status, error, xhr.responseText);
                     alert('Không thể tải danh sách Product Detail. Kiểm tra console.');
                 }
             });
@@ -346,12 +365,11 @@
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    console.log('Dữ liệu từ /api/product-batches:', data);
                     var tbody = $('#productBatchTableBody');
                     tbody.empty();
 
                     if (!data || data.length === 0) {
-                        tbody.append('<tr><td colspan="7">Không có dữ liệu</td></tr>');
+                        tbody.append('<tr><td colspan="8">Không có dữ liệu</td></tr>');
                         return;
                     }
 
@@ -364,23 +382,22 @@
                         dataType: 'json',
                         async: false,
                         success: function(adjustments) {
-                            console.log('Dữ liệu từ /api/adjustments:', adjustments);
                             $.each(adjustments, function(index, adj) {
                                 var batchId = adj.batchId;
-                                console.log(`Adjustment ${index}: batchId=${batchId}, quantity=${adj.quantity}`);
                                 if (batchId) {
-                                    adjustmentTotals[batchId] = (adjustmentTotals[batchId] || 0) + (adj.quantity || 0);
+                                    var quantity = adj.quantity || 0;
+                                    if (adj.adjustmentType === "Add") {
+                                        adjustmentTotals[batchId] = (adjustmentTotals[batchId] || 0) + quantity;
+                                    } else if (adj.adjustmentType === "Remove") {
+                                        adjustmentTotals[batchId] = (adjustmentTotals[batchId] || 0) - quantity;
+                                    }
                                     if (!adjustmentDetails[batchId]) adjustmentDetails[batchId] = [];
                                     adjustmentDetails[batchId].push(adj);
-                                } else {
-                                    console.warn(`Adjustment ${index} không có batchId hợp lệ:`, adj);
                                 }
                             });
-                            console.log('adjustmentTotals:', adjustmentTotals);
-                            console.log('adjustmentDetails:', adjustmentDetails);
                         },
                         error: function(xhr, status, error) {
-                            console.error('Lỗi khi lấy adjustments: ', status, error);
+                            console.error('Error fetching adjustments:', status, error, xhr.responseText);
                         }
                     });
 
@@ -392,273 +409,323 @@
                         dataType: 'json',
                         async: false,
                         success: function(adjustments) {
-                            console.log('Dữ liệu từ /api/adjustments:', adjustments);
                             $.each(adjustments, function(index, adj) {
                                 var batchId = adj.batch || adj.batchId;
-                                console.log(`Adjustment ${index}: batchId=${batchId}`);
                                 if (batchId) {
                                     adjustmentCounts[batchId] = (adjustmentCounts[batchId] || 0) + 1;
                                 }
                             });
-                            console.log('adjustmentCounts:', adjustmentCounts);
                         },
                         error: function(xhr, status, error) {
-                            console.error('Lỗi khi lấy adjustments: ', status, error);
+                            console.error('Error fetching adjustment counts:', status, error, xhr.responseText);
                         }
                     });
 
-                    $.each(data, function(index, batch) {
-                        console.log(`Batch ${index}:`, batch);
-                        var productDetailId = batch.productDetailID || batch.productDetail || 'N/A';
-                        var remainingQuantity = batch.importedQuantity - (batch.soldQuantity || 0);
-                        var totalAdjustment = adjustmentTotals[batch.batchID] || 0; // Sử dụng batchID
-                        remainingQuantity -= totalAdjustment;
-                        var adjustmentCount = adjustmentCounts[batch.batchID] || 0; // Sử dụng batchID
-                        console.log(`Batch ${batch.batchID}: totalAdjustment=${totalAdjustment}, adjustmentCount=${adjustmentCount}, remainingQuantity=${remainingQuantity}`);
+                    // Create promises for fetching StockInDetail quantities
+                    var stockInPromises = data.map(function(batch) {
+                        return new Promise(function(resolve) {
+                            var stockInQuantity = 0;
+                            var shortageAlert = '';
 
-                        // Lấy expiry từ API product-details
-                        var expiry = 'N/A';
-                        $.ajax({
-                            url: '/api/product-details/' + productDetailId,
-                            method: 'GET',
-                            async: false,
-                            success: function(detail) {
-                                console.log(`Dữ liệu từ /api/product-details/${productDetailId}:`, detail);
-                                expiry = detail.expiry || 'N/A';
-                            },
-                            error: function() {
-                                expiry = 'N/A';
+                            if (!batch.batchID || isNaN(parseInt(batch.batchID))) {
+                                console.warn(`Invalid batchID for batch: ${JSON.stringify(batch)}`);
+                                resolve({ batch, stockInQuantity, shortageAlert });
+                                return;
                             }
-                        });
 
-                        // Tính phần trăm thời gian đã sử dụng
-                        var percentageUsed = null;
-                        if (batch.manufactureDate && expiry && !isNaN(expiry)) {
-                            var manufactureDate = new Date(batch.manufactureDate);
-                            var expiryDate = new Date(manufactureDate.getTime());
-                            expiryDate.setMonth(expiryDate.getMonth() + parseInt(expiry));
-                            var today = new Date();
-
-                            var totalTime = expiryDate - manufactureDate;
-                            var usedTime = today - manufactureDate;
-                            percentageUsed = (usedTime / totalTime) * 100;
-                            console.log(`Batch ${batch.batchID}: manufactureDate=${batch.manufactureDate}, expiry=${expiry}, percentageUsed=${percentageUsed}`);
-                        }
-
-                        var row = '<tr' + (percentageUsed !== null ? (percentageUsed >= 100 ? ' class="table-danger"' : percentageUsed >= 70 ? ' style="background-color: #ffca2c;"' : percentageUsed >= 50 ? ' class="table-warning"' : '') : '') + '>' +
-                            '<td>' + (batch.batchID || 'N/A') + '</td>' +
-                            '<td><a href="javascript:void(0)" class="detail-link" data-id="' + productDetailId + '">' + productDetailId + '</a></td>' +
-                            '<td>' + (batch.manufactureDate || 'N/A') + '</td>' +
-                            '<td>' + (batch.importedQuantity || 'N/A') + '</td>' +
-                            '<td>' + (batch.soldQuantity || 0) + '</td>' +
-                            '<td>' + remainingQuantity + '</td>' +
-                            '<td>' + (adjustmentCount > 0 ? '<a href="javascript:void(0)" class="view-adjustment-detail" data-batch-id="' + (batch.batchID || '') + '">' + totalAdjustment + '</a>' : '<span style="pointer-events: none; opacity: 0.5;">' + totalAdjustment + '</span>') + '</td>' +
-                            '<td>' +
-                            '<ul class="action-list">' +
-                            '<li><a href="javascript:void(0)" class="view-detail" data-id="' + productDetailId + '"><i class="ri-eye-line"></i></a></li>' +
-                            '<li><a href="javascript:void(0)" class="edit-batch" data-batch-id="' + (batch.batchID || '') + '" data-product-detail-id="' + productDetailId + '" data-manufacture-date="' + (batch.manufactureDate || '') + '" data-imported-quantity="' + (batch.importedQuantity || '') + '"><i class="ri-pencil-line"></i></a></li>' +
-                            '<li><a href="javascript:void(0)" class="delete-batch" data-batch-id="' + (batch.batchID || '') + '"><i class="ri-delete-bin-line"></i></a></li>' +
-                            '<li><a href="javascript:void(0)" class="add-adjustment" data-batch-id="' + (batch.batchID || '') + '"><i class="ri-add-line"></i></a></li>' +
-                            '</ul>' +
-                            '</td>' +
-                            '</tr>';
-
-                        tbody.append(row);
-                    });
-
-                    // Xử lý click vào View Product Detail
-                    $('.view-detail').on('click', function() {
-                        var productDetailId = $(this).data('id');
-                        if (productDetailId === 'N/A') {
-                            alert('Không có ProductDetail để hiển thị.');
-                            return;
-                        }
-                        $.ajax({
-                            url: '/api/product-details/' + productDetailId,
-                            method: 'GET',
-                            dataType: 'json',
-                            success: function(detail) {
-                                $('#modalProductDetailId').text(detail.productDetailId || 'N/A');
-                                $('#modalDetailName').text(detail.detailName || 'N/A');
-                                $('#modalProductId').text(detail.productID || 'N/A');
-                                $('#modalPrice').text(detail.price ? detail.price.toFixed(2) : 'N/A');
-                                $('#modalExpiry').text(detail.expiry || 'N/A');
-                                $('#modalWeight').text(detail.categoryWeight || 'N/A'); // Mặc định hiển thị categoryWeight
-                                $('#productDetailModal').modal('show');
-
-                                // Lấy unit từ CategoryWeight nếu categoryWeight tồn tại
-                                if (detail.categoryWeight) {
-                                    $.ajax({
-                                        url: '/api/categoryweights/' + detail.categoryWeight,
-                                        method: 'GET',
-                                        dataType: 'json',
-                                        success: function(categoryWeight) {
-                                            // Kết hợp categoryWeight và unit, ví dụ: "1000 kg"
-                                            $('#modalWeight').text(categoryWeight.unit ? detail.categoryWeight + ' ' + categoryWeight.unit : detail.categoryWeight);
-                                        },
-                                        error: function(xhr, status, error) {
-                                            console.error('Lỗi khi lấy CategoryWeight: ', status, error);
-                                            $('#modalWeight').text(detail.categoryWeight || 'N/A');
-                                        }
-                                    });
+                            $.ajax({
+                                url: `/api/stockindetails/quantity/${batch.batchID}`,
+                                method: 'GET',
+                                dataType: 'json',
+                                success: function(stockInDetails) {
+                                    console.log(`API Response for batchID ${batch.batchID}:`, stockInDetails);
+                                    if (stockInDetails && Array.isArray(stockInDetails) && stockInDetails.length > 0) {
+                                        stockInQuantity = stockInDetails.reduce((sum, detail) => {
+                                            const qty = parseInt(detail.quantity) || 0;
+                                            console.log(`Detail for batchID ${batch.batchID}: quantity=${qty}`);
+                                            return sum + qty;
+                                        }, 0);
+                                    } else {
+                                        console.log(`No StockInDetails found for batchID ${batch.batchID}`);
+                                    }
+                                    resolve({ batch, stockInQuantity, shortageAlert });
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error(`Error fetching StockInDetails for batchID ${batch.batchID}: status=${status}, error=${error}, response=${xhr.responseText}`);
+                                    resolve({ batch, stockInQuantity, shortageAlert });
                                 }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('Lỗi khi lấy ProductDetail: ', status, error);
-                                alert('Không thể tải chi tiết sản phẩm. Kiểm tra console.');
-                            }
+                            });
                         });
                     });
 
-                    // Xử lý click vào Edit ProductBatch
-                    $('.edit-batch').on('click', function() {
-                        var batchId = $(this).data('batch-id');
-                        var productDetailId = $(this).data('product-detail-id');
-                        var manufactureDate = $(this).data('manufacture-date');
-                        var importedQuantity = $(this).data('imported-quantity');
-                        if (!batchId) {
-                            alert('Batch ID không hợp lệ.');
-                            return;
-                        }
-                        $('#editBatchId').val(batchId);
-                        $('#editManufactureDate').val(manufactureDate);
-                        $('#editImportedQuantity').val(importedQuantity);
-                        populateProductDetailDropdown($('#editProductDetailId'), productDetailId);
-                        $('#editProductBatchModal').modal('show');
-                    });
+                    // Process all batches after fetching StockInDetail data
+                    Promise.all(stockInPromises).then(function(results) {
+                        results.forEach(function({ batch, stockInQuantity, shortageAlert }) {
+                            var productDetailId = batch.productDetailID || batch.productDetail || 'N/A';
+                            var importedQuantity = batch.importedQuantity || 0;
+                            var remainingQuantity = importedQuantity - (batch.soldQuantity || 0);
+                            var totalAdjustment = adjustmentTotals[batch.batchID] || 0;
+                            remainingQuantity += totalAdjustment;
+                            var adjustmentCount = adjustmentCounts[batch.batchID] || 0;
 
-                    // Xử lý click vào Delete ProductBatch
-                    $('.delete-batch').on('click', function(e) {
-                        e.preventDefault();
-                        var batchId = $(this).data('batch-id');
-                        if (!batchId) {
-                            alert('Batch ID không hợp lệ.');
-                            return;
-                        }
-                        if ($('#exampleModalToggle').length === 0) {
-                            alert('Không tìm thấy modal xác nhận xóa.');
-                            return;
-                        }
-                        $('.confirm-delete').data('batch-id', batchId);
-                        $('#exampleModalToggle').modal('show');
-                    });
+                            // Tính tổng điều chỉnh chỉ từ "Add"
+                            var addAdjustmentTotal = 0;
+                            if (adjustmentDetails[batch.batchID]) {
+                                addAdjustmentTotal = adjustmentDetails[batch.batchID]
+                                    .filter(adj => adj.adjustmentType === "Add")
+                                    .reduce((sum, adj) => sum + (parseInt(adj.quantity) || 0), 0);
+                            }
 
-                    // Xử lý click vào View Adjustment Detail
-                    $('.view-adjustment-detail').on('click', function() {
-                        var batchId = $(this).data('batch-id');
-                        if (!batchId || batchId === 'N/A') {
-                            alert('Batch ID không hợp lệ hoặc không tồn tại.');
-                            return;
-                        }
-
-                        $.ajax({
-                            url: '/api/product-batches/adjustments?batchId=' + batchId,
-                            method: 'GET',
-                            dataType: 'json',
-                            success: function(response) {
-                                var tbody = $('#adjustmentDetailBody');
-                                tbody.empty();
-
-                                if (!response) {
-                                    tbody.append('<tr><td colspan="5">Không nhận được dữ liệu từ server.</td></tr>');
-                                    console.log('Phản hồi từ API là null hoặc undefined cho batchId: ' + batchId);
-                                } else if (!response.adjustments || response.adjustments.length === 0) {
-                                    tbody.append('<tr><td colspan="5">Không có điều chỉnh cho batchId: ' + batchId + '</td></tr>');
-                                    console.log('Không có adjustments trong phản hồi cho batchId: ' + batchId, response);
+                            // Calculate temporary imported quantity with only Add adjustments
+                            console.log(`Batch ID ${batch.batchID}: importedQuantity=${importedQuantity}, stockInQuantity=${stockInQuantity}, addAdjustmentTotal=${addAdjustmentTotal}`);
+                            var temporaryImported = importedQuantity + addAdjustmentTotal; // Chỉ cộng "Add"
+                            if (importedQuantity < stockInQuantity) {
+                                var shortage = stockInQuantity - importedQuantity;
+                                console.log(`Shortage detected for Batch ID ${batch.batchID}: shortage=${shortage}`);
+                                if (temporaryImported >= stockInQuantity && addAdjustmentTotal > 0) {
+                                    shortageAlert = `<a href="javascript:void(0)" class="view-adjustment-history" data-batch-id="${batch.batchID}" data-imported="${importedQuantity}"><i class="ri-history-line" style="vertical-align: middle;"></i></a>`;
                                 } else {
-                                    var adjustments = response.adjustments;
-                                    $.each(adjustments, function(index, adj) {
-                                        var id = adj.id !== undefined && adj.id !== null ? adj.id : 'N/A';
-                                        var quantity = adj.quantity !== undefined && adj.quantity !== null ? adj.quantity : 'N/A';
-                                        var adjustDate = adj.adjustDate !== undefined && adj.adjustDate !== null ? adj.adjustDate : 'N/A';
-                                        var adjustmentType = adj.adjustmentType !== undefined && adj.adjustmentType !== null ? adj.adjustmentType : 'N/A';
-                                        var reason = adj.reason !== undefined && adj.reason !== null ? adj.reason : 'N/A'; // Thêm trường reason
-
-                                        tbody.append('<tr>' +
-                                            '<td>' + id + '</td>' +
-                                            '<td>' + quantity + '</td>' +
-                                            '<td>' + reason + '</td>' + // Thêm cột reason
-                                            '<td>' + adjustDate + '</td>' +
-                                            '<td>' + adjustmentType + '</td>' +
-
-                                            '</tr>');
-                                        console.log('Dữ liệu điều chỉnh cho batchId ' + batchId + ' tại index ' + index + ':', adj);
-                                    });
+                                    shortageAlert = `<a href="javascript:void(0)" class="shortage-alert" data-shortage="${shortage}" title="Thiếu ${shortage} đơn vị"><i class="ri-alert-line" style="color: red; vertical-align: middle;"></i></a>`;
                                 }
-                                $('#adjustmentDetailModal').modal('show');
-                            },
-                            error: function(xhr, status, error) {
-                                var tbody = $('#adjustmentDetailBody');
-                                tbody.empty();
-                                var errorMessage = 'Lỗi khi lấy chi tiết điều chỉnh: ' + (xhr.status + ' - ' + (xhr.responseText || status || error));
-                                tbody.append('<tr><td colspan="5">' + errorMessage + '</td></tr>');
-                                console.error('Lỗi chi tiết:', errorMessage, xhr.responseText);
-                                alert('Không thể tải chi tiết điều chỉnh. Kiểm tra console để xem lỗi cụ thể.');
+                            } else if (temporaryImported >= stockInQuantity && addAdjustmentTotal > 0) {
+                                shortageAlert = `<a href="javascript:void(0)" class="view-adjustment-history" data-batch-id="${batch.batchID}" data-imported="${importedQuantity}"><i class="ri-history-line" style="vertical-align: middle;"></i></a>`;
                             }
+
+                            // Lấy expiry từ API product-details
+                            var expiry = 'N/A';
+                            $.ajax({
+                                url: '/api/product-details/' + productDetailId,
+                                method: 'GET',
+                                async: false,
+                                success: function(detail) {
+                                    expiry = detail.expiry || 'N/A';
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error(`Error fetching Product Detail for ID ${productDetailId}: status=${status}, error=${error}`);
+                                }
+                            });
+
+                            // Tính phần trăm thời gian đã sử dụng
+                            var percentageUsed = null;
+                            if (batch.manufactureDate && expiry && !isNaN(expiry)) {
+                                var manufactureDate = new Date(batch.manufactureDate);
+                                var expiryDate = new Date(manufactureDate.getTime());
+                                expiryDate.setMonth(expiryDate.getMonth() + parseInt(expiry));
+                                var today = new Date();
+
+                                var totalTime = expiryDate - manufactureDate;
+                                var usedTime = today - manufactureDate;
+                                percentageUsed = (usedTime / totalTime) * 100;
+                            }
+
+                            var row = '<tr' + (percentageUsed !== null ? (percentageUsed >= 100 ? ' class="table-danger"' : percentageUsed >= 70 ? ' style="background-color: #ffca2c;"' : percentageUsed >= 50 ? ' class="table-warning"' : '') : '') + '>' +
+                                '<td>' + (batch.batchID || 'N/A') + '</td>' +
+                                '<td><a href="javascript:void(0)" class="detail-link" data-id="' + productDetailId + '">' + productDetailId + '</a></td>' +
+                                '<td>' + (batch.manufactureDate || 'N/A') + '</td>' +
+                                '<td>' + (temporaryImported || importedQuantity || 'N/A') + (shortageAlert ? ' ' + shortageAlert : '') + '</td>' +
+                                '<td>' + (batch.soldQuantity || 0) + '</td>' +
+                                '<td>' + remainingQuantity + '</td>' +
+                                '<td>' + (adjustmentCount > 0 ? '<a href="javascript:void(0)" class="view-adjustment-detail" data-batch-id="' + (batch.batchID || '') + '">' + totalAdjustment + '</a>' : '<span style="pointer-events: none; opacity: 0.5;">' + totalAdjustment + '</span>') + '</td>' +
+                                '<td>' +
+                                '<ul class="action-list">' +
+                                '<li><a href="javascript:void(0)" class="view-detail" data-id="' + productDetailId + '"><i class="ri-eye-line"></i></a></li>' +
+                                '<li><a href="javascript:void(0)" class="edit-batch" data-batch-id="' + (batch.batchID || '') + '" data-product-detail-id="' + productDetailId + '" data-manufacture-date="' + (batch.manufactureDate || '') + '" data-imported-quantity="' + (importedQuantity || '') + '"><i class="ri-pencil-line"></i></a></li>' +
+                                '<li><a href="javascript:void(0)" class="delete-batch" data-batch-id="' + (batch.batchID || '') + '"><i class="ri-delete-bin-line"></i></a></li>' +
+                                '<li><a href="javascript:void(0)" class="add-adjustment" data-batch-id="' + (batch.batchID || '') + '"><i class="ri-add-line"></i></a></li>' +
+                                '</ul>' +
+                                '</td>' +
+                                '</tr>';
+
+                            $('#productBatchTableBody').append(row);
                         });
-                    });
 
-                    // Xử lý click vào Add Adjustment
-                    $('.add-adjustment').on('click', function() {
-                        var batchId = $(this).data('batch-id');
-                        if (!batchId || batchId === 'N/A') {
-                            alert('Batch ID không hợp lệ.');
-                            return;
-                        }
-                        $('#addAdjustmentBatchId').val(batchId);
-                        $('#addQuantity').val('');
-                        $('#addReason').val('');
-                        $('#addAdjustmentType').val('');
-                        $('#addAdjustmentModal').modal('show');
-                    });
+                        // Re-attach event handlers after table update
+                        $('.shortage-alert').on('click', function() {
+                            var shortage = $(this).data('shortage');
+                            alert(`Thiếu ${shortage} đơn vị. Vui lòng yêu cầu nhập thêm hàng.`);
+                        });
 
-                    // Xử lý lưu điều chỉnh (Add)
-                    $('#saveAddAdjustment').on('click', function() {
-                        var batchId = $('#addAdjustmentBatchId').val();
-                        var quantity = $('#addQuantity').val();
-                        var reason = $('#addReason').val();
-                        var adjustmentType = $('#addAdjustmentType').val();
-
-                        if (!batchId || isNaN(parseInt(batchId))) {
-                            alert('Batch ID không hợp lệ.');
-                            return;
-                        }
-                        if (!quantity || isNaN(parseInt(quantity))) {
-                            alert('Vui lòng nhập số lượng hợp lệ.');
-                            return;
-                        }
-                        if (!adjustmentType) {
-                            alert('Vui lòng chọn loại điều chỉnh.');
-                            return;
-                        }
-
-                        var formData = {
-                            batchId: parseInt(batchId),
-                            quantity: parseInt(quantity),
-                            adjustmentType: adjustmentType,
-                            reason: reason || null
-                        };
-
-                        $.ajax({
-                            url: '/api/adjustments',
-                            method: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(formData),
-                            dataType: 'json',
-                            success: function(response) {
-                                alert('Thêm điều chỉnh thành công!');
-                                $('#addAdjustmentModal').modal('hide');
-                                loadProductBatches();
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('Lỗi khi thêm điều chỉnh: ', status, error);
-                                alert('Lỗi khi thêm điều chỉnh: ' + (xhr.responseText || 'Kiểm tra console.'));
+                        $('.view-adjustment-detail').on('click', function() {
+                            var batchId = $(this).data('batch-id');
+                            if (!batchId || batchId === 'N/A') {
+                                alert('Batch ID không hợp lệ hoặc không tồn tại.');
+                                return;
                             }
+
+                            $.ajax({
+                                url: '/api/product-batches/adjustments?batchId=' + batchId,
+                                method: 'GET',
+                                dataType: 'json',
+                                success: function(response) {
+                                    var tbody = $('#adjustmentDetailBody');
+                                    tbody.empty();
+
+                                    if (!response) {
+                                        tbody.append('<tr><td colspan="5">Không nhận được dữ liệu từ server.</td></tr>');
+                                    } else if (!response.adjustments || response.adjustments.length === 0) {
+                                        tbody.append('<tr><td colspan="5">Không có điều chỉnh cho batchId: ' + batchId + '</td></tr>');
+                                    } else {
+                                        var adjustments = response.adjustments;
+                                        $.each(adjustments, function(index, adj) {
+                                            var id = adj.id !== undefined && adj.id !== null ? adj.id : 'N/A';
+                                            var quantity = adj.quantity !== undefined && adj.quantity !== null ? adj.quantity : 'N/A';
+                                            var adjustDate = adj.adjustDate !== undefined && adj.adjustDate !== null ? adj.adjustDate : 'N/A';
+                                            var adjustmentType = adj.adjustmentType !== undefined && adj.adjustmentType !== null ? adj.adjustmentType : 'N/A';
+                                            var reason = adj.reason !== undefined && adj.reason !== null ? adj.reason : 'N/A';
+                                            var displayQuantity = adjustmentType === 'Remove' && quantity !== 'N/A' ? '-' + quantity : quantity;
+
+                                            tbody.append('<tr>' +
+                                                '<td>' + id + '</td>' +
+                                                '<td>' + displayQuantity + '</td>' +
+                                                '<td>' + reason + '</td>' +
+                                                '<td>' + adjustDate + '</td>' +
+                                                '<td>' + adjustmentType + '</td>' +
+                                                '</tr>');
+                                        });
+                                    }
+                                    $('#adjustmentDetailModal').modal('show');
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error fetching adjustment details:', status, error, xhr.responseText);
+                                    var tbody = $('#adjustmentDetailBody');
+                                    tbody.empty();
+                                    var errorMessage = 'Lỗi khi lấy chi tiết điều chỉnh: ' + (xhr.status + ' - ' + (xhr.responseText || status || error));
+                                    tbody.append('<tr><td colspan="5">' + errorMessage + '</td></tr>');
+                                    alert('Không thể tải chi tiết điều chỉnh. Kiểm tra console.');
+                                }
+                            });
+                        });
+
+                        // Handler for adjustment history
+                        $(document).on('click', '.view-adjustment-history', function() {
+                            var batchId = $(this).data('batch-id');
+                            var imported = $(this).data('imported');
+                            if (!batchId || batchId === 'N/A') {
+                                alert('Batch ID không hợp lệ hoặc không tồn tại.');
+                                return;
+                            }
+
+                            $.ajax({
+                                url: '/api/product-batches/adjustments?batchId=' + batchId,
+                                method: 'GET',
+                                dataType: 'json',
+                                success: function(response) {
+                                    var tbody = $('#adjustmentHistoryBody');
+                                    tbody.empty();
+
+                                    if (!response) {
+                                        tbody.append('<tr><td colspan="2">Không nhận được dữ liệu từ server.</td></tr>');
+                                    } else if (!response.adjustments || response.adjustments.length === 0) {
+                                        tbody.append('<tr><td colspan="2">Không có điều chỉnh cho batchId: ' + batchId + '</td></tr>');
+                                    } else {
+                                        var adjustments = response.adjustments.filter(adj => adj.adjustmentType === "Add").sort((a, b) => new Date(b.adjustDate) - new Date(a.adjustDate)); // Sort by date descending
+                                        tbody.append('<tr><td>Số lượng nhập lần 1:</td><td>' + imported + '</td></tr>');
+                                        adjustments.forEach((adj, index) => {
+                                            var quantity = adj.quantity !== undefined && adj.quantity !== null ? adj.quantity : 'N/A';
+                                            var adjustDate = adj.adjustDate !== undefined && adj.adjustDate !== null ? adj.adjustDate : 'N/A';
+                                            tbody.append('<tr><td>Số lượng nhập lần ' + (index + 2) + ' (' + adjustDate + '):</td><td>' + quantity + '</td></tr>');
+                                        });
+                                    }
+                                    $('#adjustmentHistoryModal').modal('show');
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error fetching adjustment history:', status, error, xhr.responseText);
+                                    var tbody = $('#adjustmentHistoryBody');
+                                    tbody.empty();
+                                    var errorMessage = 'Lỗi khi lấy lịch sử điều chỉnh: ' + (xhr.status + ' - ' + (xhr.responseText || status || error));
+                                    tbody.append('<tr><td colspan="2">' + errorMessage + '</td></tr>');
+                                    alert('Không thể tải lịch sử điều chỉnh. Kiểm tra console.');
+                                }
+                            });
+                        });
+
+                        $('.view-detail').on('click', function() {
+                            var productDetailId = $(this).data('id');
+                            if (productDetailId === 'N/A') {
+                                alert('Không có ProductDetail để hiển thị.');
+                                return;
+                            }
+                            $.ajax({
+                                url: '/api/product-details/' + productDetailId,
+                                method: 'GET',
+                                dataType: 'json',
+                                success: function(detail) {
+                                    $('#modalProductDetailId').text(detail.productDetailId || 'N/A');
+                                    $('#modalDetailName').text(detail.detailName || 'N/A');
+                                    $('#modalProductId').text(detail.productID || 'N/A');
+                                    $('#modalPrice').text(detail.price ? detail.price.toFixed(2) : 'N/A');
+                                    $('#modalExpiry').text(detail.expiry || 'N/A');
+                                    $('#modalWeight').text(detail.categoryWeight || 'N/A');
+                                    $('#productDetailModal').modal('show');
+
+                                    if (detail.categoryWeight) {
+                                        $.ajax({
+                                            url: '/api/categoryweights/' + detail.categoryWeight,
+                                            method: 'GET',
+                                            dataType: 'json',
+                                            success: function(categoryWeight) {
+                                                $('#modalWeight').text(categoryWeight.unit ? detail.categoryWeight + ' ' + categoryWeight.unit : detail.categoryWeight);
+                                            },
+                                            error: function(xhr, status, error) {
+                                                $('#modalWeight').text(detail.categoryWeight || 'N/A');
+                                            }
+                                        });
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error fetching Product Detail:', status, error, xhr.responseText);
+                                    alert('Không thể tải chi tiết sản phẩm. Kiểm tra console.');
+                                }
+                            });
+                        });
+
+                        $('.edit-batch').on('click', function() {
+                            var batchId = $(this).data('batch-id');
+                            var productDetailId = $(this).data('product-detail-id');
+                            var manufactureDate = $(this).data('manufacture-date');
+                            var importedQuantity = $(this).data('imported-quantity');
+                            if (!batchId) {
+                                alert('Batch ID không hợp lệ.');
+                                return;
+                            }
+                            $('#editBatchId').val(batchId);
+                            $('#editManufactureDate').val(manufactureDate);
+                            $('#editImportedQuantity').val(importedQuantity);
+                            populateProductDetailDropdown($('#editProductDetailId'), productDetailId);
+                            $('#editProductBatchModal').modal('show');
+                        });
+
+                        $('.delete-batch').on('click', function(e) {
+                            e.preventDefault();
+                            var batchId = $(this).data('batch-id');
+                            if (!batchId) {
+                                alert('Batch ID không hợp lệ.');
+                                return;
+                            }
+                            if ($('#exampleModalToggle').length === 0) {
+                                alert('Không tìm thấy modal xác nhận xóa.');
+                                return;
+                            }
+                            $('.confirm-delete').data('batch-id', batchId);
+                            $('#exampleModalToggle').modal('show');
+                        });
+
+                        $('.add-adjustment').on('click', function() {
+                            var batchId = $(this).data('batch-id');
+                            if (!batchId || batchId === 'N/A') {
+                                alert('Batch ID không hợp lệ.');
+                                return;
+                            }
+                            $('#addAdjustmentBatchId').val(batchId);
+                            $('#addQuantity').val('');
+                            $('#addReason').val('');
+                            $('#addAdjustmentType').val('');
+                            $('#addAdjustmentModal').modal('show');
                         });
                     });
                 },
                 error: function(xhr, status, error) {
-                    console.error('Lỗi khi gọi API /api/product-batches: ', status, error);
+                    console.error('Error fetching Product Batches:', status, error, xhr.responseText);
                     alert('Lỗi khi tải dữ liệu: ' + error + '. Kiểm tra console.');
                 }
             });
@@ -704,13 +771,12 @@
                     loadProductBatches();
                 },
                 error: function(xhr, status, error) {
-                    console.error('Lỗi khi sửa ProductBatch: ', status, error);
+                    console.error('Error updating ProductBatch:', status, error, xhr.responseText);
                     alert('Lỗi khi sửa ProductBatch: ' + (xhr.responseText || 'Kiểm tra console.'));
                 }
             });
         });
 
-        // Xử lý xác nhận xóa ProductBatch
         $(document).on('click', '.confirm-delete', function(e) {
             e.preventDefault();
             var batchId = $(this).data('batch-id');
@@ -733,9 +799,67 @@
                     loadProductBatches();
                 },
                 error: function(xhr, status, error) {
-                    console.error('Lỗi khi xóa ProductBatch: ', status, error);
+                    console.error('Error deleting ProductBatch:', status, error, xhr.responseText);
                     alert('Lỗi khi xóa ProductBatch: ' + (xhr.responseText || 'Kiểm tra console.'));
                     $('#exampleModalToggle').modal('hide');
+                }
+            });
+        });
+
+        $('#saveAddAdjustment').on('click', function() {
+            var batchId = $('#addAdjustmentBatchId').val();
+            var quantity = $('#addQuantity').val();
+            var reason = $('#addReason').val();
+            var adjustmentType = $('#addAdjustmentType').val();
+
+            if (!batchId || isNaN(parseInt(batchId))) {
+                alert('Batch ID không hợp lệ.');
+                return;
+            }
+            if (!quantity || isNaN(parseInt(quantity))) {
+                alert('Vui lòng nhập số lượng hợp lệ.');
+                return;
+            }
+            if (!adjustmentType) {
+                alert('Vui lòng chọn loại điều chỉnh.');
+                return;
+            }
+
+            var parsedQuantity = parseInt(quantity);
+            if (parsedQuantity > 0 && adjustmentType !== "Add") {
+                alert('Số lượng lớn hơn 0 phải có loại điều chỉnh là "Thêm".');
+                return;
+            }
+            if (parsedQuantity < 0 && adjustmentType !== "Remove") {
+                alert('Số lượng nhỏ hơn 0 phải có loại điều chỉnh là "Trừ".');
+                return;
+            }
+            if (parsedQuantity === 0) {
+                alert('Số lượng không được bằng 0.');
+                return;
+            }
+
+            var formData = {
+                batchId: parseInt(batchId),
+                quantity: Math.abs(parsedQuantity),
+                adjustmentType: adjustmentType,
+                reason: reason || null
+            };
+
+            $.ajax({
+                url: '/api/adjustments',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                dataType: 'json',
+                success: function(response) {
+                    alert('Thêm điều chỉnh thành công!');
+                    $('#addAdjustmentModal').modal('hide');
+                    loadProductBatches();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error adding adjustment:', status, error, xhr.responseText);
+                    alert('Lỗi khi thêm điều chỉnh: ' + (xhr.responseText || 'Kiểm tra console.'));
                 }
             });
         });
@@ -743,5 +867,4 @@
 </script>
 
 </body>
-
 </html>

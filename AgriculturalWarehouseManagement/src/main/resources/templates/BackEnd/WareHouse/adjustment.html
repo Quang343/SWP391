@@ -45,7 +45,6 @@
                                             <thead>
                                             <tr>
                                                 <th>Adjustment ID</th>
-                                                <th>Warehouse ID</th>
                                                 <th>Batch ID</th>
                                                 <th>Quantity</th>
                                                 <th>Adjust Date</th>
@@ -111,10 +110,6 @@
             <div class="modal-body">
                 <form id="editAdjustmentForm">
                     <input type="hidden" id="editAdjustmentId">
-                    <div class="mb-3">
-                        <label for="editWarehouseId" class="form-label">Warehouse</label>
-                        <select class="form-select" id="editWarehouseId" required></select>
-                    </div>
                     <div class="mb-3">
                         <label for="editBatchId" class="form-label">Batch (Optional)</label>
                         <select class="form-select" id="editBatchId">
@@ -235,35 +230,6 @@
 <!-- Custom JS for API call -->
 <script>
     $(document).ready(function() {
-        // Populate Warehouse dropdown
-        function populateWarehouseDropdown(selectElement, selectedId) {
-            $.ajax({
-                url: '/api/warehouses',
-                method: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    selectElement.empty();
-                    selectElement.append('<option value="" disabled selected>Chọn Warehouse</option>');
-                    if (!data || data.length === 0) {
-                        selectElement.append('<option value="" disabled>No Warehouses</option>');
-                        selectElement.prop('disabled', true);
-                        return;
-                    }
-                    $.each(data, function(index, warehouse) {
-                        var id = warehouse.id || warehouse.warehouseId;
-                        if (id) {
-                            var selected = id == selectedId ? 'selected' : '';
-                            selectElement.append(`<option value="${id}" ${selected}>${warehouse.name || warehouse.warehouseName || 'No name'} (ID: ${id})</option>`);
-                        }
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error fetching Warehouses: ', status, error);
-                    alert('Unable to load Warehouse list. Check console.');
-                }
-            });
-        }
-
         // Populate Batch dropdown
         function populateBatchDropdown(selectElement, selectedId) {
             $.ajax({
@@ -301,127 +267,80 @@
                     var tbody = $('#adjustmentTableBody');
                     tbody.empty();
                     if (!data || data.length === 0) {
-                        tbody.append('<tr><td colspan="8">No data</td></tr>');
+                        tbody.append('<tr><td colspan="7">No data</td></tr>');
                         return;
                     }
 
                     $.ajax({
-                        url: '/api/warehouses',
+                        url: '/api/product-batches',
                         method: 'GET',
                         dataType: 'json',
-                        success: function(warehouses) {
-                            var warehouseMap = {};
-                            $.each(warehouses, function(index, warehouse) {
-                                var id = warehouse.id || warehouse.warehouseId;
-                                if (id) {
-                                    warehouseMap[id] = warehouse.name || warehouse.warehouseName || 'No name';
-                                }
+                        success: function(batches) {
+                            var batchMap = {};
+                            $.each(batches, function(index, batch) {
+                                batchMap[batch.batchId || batch.id] = batch.batchId || 'No ID';
                             });
 
-                            $.ajax({
-                                url: '/api/product-batches',
-                                method: 'GET',
-                                dataType: 'json',
-                                success: function(batches) {
-                                    var batchMap = {};
-                                    $.each(batches, function(index, batch) {
-                                        batchMap[batch.batchId || batch.id] = batch.batchId || 'No ID';
-                                    });
+                            $.each(data, function(index, adjustment) {
+                                var batchId = adjustment.batch || adjustment.batchId;
+                                var mappedBatchId = batchMap[batchId] || batchId || 'N/A';
 
-                                    $.each(data, function(index, adjustment) {
-                                        var warehouseId = adjustment.warehouse || adjustment.warehouseId;
-                                        var batchId = adjustment.batch || adjustment.batchId;
-                                        var warehouseName = warehouseMap[warehouseId] || 'N/A';
-                                        var mappedBatchId = batchMap[batchId] || batchId || 'N/A';
+                                var row = '<tr>' +
+                                    '<td>' + (adjustment.id || 'N/A') + '</td>' +
+                                    '<td>' + mappedBatchId + '</td>' +
+                                    '<td>' + (adjustment.quantity || 'N/A') + '</td>' +
+                                    '<td>' + (adjustment.adjustDate || 'N/A') + '</td>' +
+                                    '<td>' + (adjustment.reason || 'N/A') + '</td>' +
+                                    '<td>' + (adjustment.adjustmentType || 'N/A') + '</td>' +
+                                    '<td>' +
+                                    '<ul class="action-list">' +
+                                    '<li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="' + (adjustment.id || '') + '" data-batch-id="' + (batchId || '') + '" data-quantity="' + (adjustment.quantity || '') + '" data-reason="' + (adjustment.reason || '') + '" data-adjustment-type="' + (adjustment.adjustmentType || '') + '"><i class="ri-pencil-line"></i></a></li>' +
+                                    '<li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="' + (adjustment.id || '') + '"><i class="ri-delete-bin-line"></i></a></li>' +
+                                    '</ul>' +
+                                    '</td>' +
+                                    '</tr>';
+                                tbody.append(row);
+                            });
 
-                                        var row = '<tr>' +
-                                            '<td>' + (adjustment.id || 'N/A') + '</td>' +
-                                            '<td>' + warehouseName + ' (ID: ' + (warehouseId || 'N/A') + ')</td>' +
-                                            '<td>' + mappedBatchId + '</td>' +
-                                            '<td>' + (adjustment.quantity || 'N/A') + '</td>' +
-                                            '<td>' + (adjustment.adjustDate || 'N/A') + '</td>' +
-                                            '<td>' + (adjustment.reason || 'N/A') + '</td>' +
-                                            '<td>' + (adjustment.adjustmentType || 'N/A') + '</td>' +
-                                            '<td>' +
-                                            '<ul class="action-list">' +
-                                            '<li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="' + (adjustment.id || '') + '" data-warehouse-id="' + (warehouseId || '') + '" data-batch-id="' + (batchId || '') + '" data-quantity="' + (adjustment.quantity || '') + '" data-reason="' + (adjustment.reason || '') + '" data-adjustment-type="' + (adjustment.adjustmentType || '') + '"><i class="ri-pencil-line"></i></a></li>' +
-                                            '<li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="' + (adjustment.id || '') + '"><i class="ri-delete-bin-line"></i></a></li>' +
-                                            '</ul>' +
-                                            '</td>' +
-                                            '</tr>';
-                                        tbody.append(row);
-                                    });
+                            $('.edit-adjustment').on('click', function() {
+                                var adjustmentId = $(this).data('adjustment-id');
+                                var batchId = $(this).data('batch-id');
+                                var quantity = $(this).data('quantity');
+                                var reason = $(this).data('reason');
+                                var adjustmentType = $(this).data('adjustment-type');
 
-                                    $('.edit-adjustment').on('click', function() {
-                                        var adjustmentId = $(this).data('adjustment-id');
-                                        var warehouseId = $(this).data('warehouse-id');
-                                        var batchId = $(this).data('batch-id');
-                                        var quantity = $(this).data('quantity');
-                                        var reason = $(this).data('reason');
-                                        var adjustmentType = $(this).data('adjustment-type');
-
-                                        if (!adjustmentId) {
-                                            alert('Adjustment ID không hợp lệ.');
-                                            return;
-                                        }
-
-                                        $('#editAdjustmentId').val(adjustmentId);
-                                        $('#editQuantity').val(quantity);
-                                        $('#editReason').val(reason);
-                                        $('#editAdjustmentType').val(adjustmentType);
-                                        populateWarehouseDropdown($('#editWarehouseId'), warehouseId);
-                                        populateBatchDropdown($('#editBatchId'), batchId);
-
-                                        $('#editAdjustmentModal').modal('show');
-                                    });
-
-                                    $('.delete-adjustment').on('click', function(e) {
-                                        e.preventDefault();
-                                        var adjustmentId = $(this).data('adjustment-id');
-                                        if (!adjustmentId) {
-                                            alert('Adjustment ID không hợp lệ.');
-                                            return;
-                                        }
-                                        $('.confirm-delete').data('adjustment-id', adjustmentId);
-                                        $('#exampleModalToggle').modal('show');
-                                    });
-                                },
-                                error: function(xhr, status, error) {
-                                    console.error('Error fetching Batches: ', status, error);
-                                    alert('Unable to load Batch list. Check console.');
-                                    $.each(data, function(index, adjustment) {
-                                        var warehouseId = adjustment.warehouse || adjustment.warehouseId;
-                                        var batchId = adjustment.batch || adjustment.batchId;
-                                        var warehouseName = warehouseMap[warehouseId] || 'N/A';
-                                        var row = '<tr>' +
-                                            '<td>' + (adjustment.id || 'N/A') + '</td>' +
-                                            '<td>' + warehouseName + ' (ID: ' + (warehouseId || 'N/A') + ')</td>' +
-                                            '<td>' + (batchId || 'N/A') + '</td>' +
-                                            '<td>' + (adjustment.quantity || 'N/A') + '</td>' +
-                                            '<td>' + (adjustment.adjustDate || 'N/A') + '</td>' +
-                                            '<td>' + (adjustment.reason || 'N/A') + '</td>' +
-                                            '<td>' + (adjustment.adjustmentType || 'N/A') + '</td>' +
-                                            '<td>' +
-                                            '<ul class="action-list">' +
-                                            '<li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="' + (adjustment.id || '') + '" data-warehouse-id="' + (warehouseId || '') + '" data-batch-id="' + (batchId || '') + '" data-quantity="' + (adjustment.quantity || '') + '" data-reason="' + (adjustment.reason || '') + '" data-adjustment-type="' + (adjustment.adjustmentType || '') + '"><i class="ri-pencil-line"></i></a></li>' +
-                                            '<li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="' + (adjustment.id || '') + '"><i class="ri-delete-bin-line"></i></a></li>' +
-                                            '</ul>' +
-                                            '</td>' +
-                                            '</tr>';
-                                        tbody.append(row);
-                                    });
+                                if (!adjustmentId) {
+                                    alert('Adjustment ID không hợp lệ.');
+                                    return;
                                 }
+
+                                $('#editAdjustmentId').val(adjustmentId);
+                                $('#editQuantity').val(quantity);
+                                $('#editReason').val(reason);
+                                $('#editAdjustmentType').val(adjustmentType);
+                                populateBatchDropdown($('#editBatchId'), batchId);
+
+                                $('#editAdjustmentModal').modal('show');
+                            });
+
+                            $('.delete-adjustment').on('click', function(e) {
+                                e.preventDefault();
+                                var adjustmentId = $(this).data('adjustment-id');
+                                if (!adjustmentId) {
+                                    alert('Adjustment ID không hợp lệ.');
+                                    return;
+                                }
+                                $('.confirm-delete').data('adjustment-id', adjustmentId);
+                                $('#exampleModalToggle').modal('show');
                             });
                         },
                         error: function(xhr, status, error) {
-                            console.error('Error fetching Warehouses: ', status, error);
-                            alert('Unable to load Warehouse list. Check console.');
+                            console.error('Error fetching Batches: ', status, error);
+                            alert('Unable to load Batch list. Check console.');
                             $.each(data, function(index, adjustment) {
-                                var warehouseId = adjustment.warehouse || adjustment.warehouseId;
                                 var batchId = adjustment.batch || adjustment.batchId;
                                 var row = '<tr>' +
                                     '<td>' + (adjustment.id || 'N/A') + '</td>' +
-                                    '<td>' + (warehouseId || 'N/A') + '</td>' +
                                     '<td>' + (batchId || 'N/A') + '</td>' +
                                     '<td>' + (adjustment.quantity || 'N/A') + '</td>' +
                                     '<td>' + (adjustment.adjustDate || 'N/A') + '</td>' +
@@ -429,7 +348,7 @@
                                     '<td>' + (adjustment.adjustmentType || 'N/A') + '</td>' +
                                     '<td>' +
                                     '<ul class="action-list">' +
-                                    '<li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="' + (adjustment.id || '') + '" data-warehouse-id="' + (warehouseId || '') + '" data-batch-id="' + (batchId || '') + '" data-quantity="' + (adjustment.quantity || '') + '" data-reason="' + (adjustment.reason || '') + '" data-adjustment-type="' + (adjustment.adjustmentType || '') + '"><i class="ri-pencil-line"></i></a></li>' +
+                                    '<li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="' + (adjustment.id || '') + '" data-batch-id="' + (batchId || '') + '" data-quantity="' + (adjustment.quantity || '') + '" data-reason="' + (adjustment.reason || '') + '" data-adjustment-type="' + (adjustment.adjustmentType || '') + '"><i class="ri-pencil-line"></i></a></li>' +
                                     '<li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="' + (adjustment.id || '') + '"><i class="ri-delete-bin-line"></i></a></li>' +
                                     '</ul>' +
                                     '</td>' +
@@ -449,16 +368,11 @@
         // Save Edited Adjustment
         $(document).on('click', '#saveEditAdjustment', function() {
             var adjustmentId = $('#editAdjustmentId').val();
-            var warehouseId = $('#editWarehouseId').val();
             var batchId = $('#editBatchId').val() || null;
             var quantity = $('#editQuantity').val();
             var reason = $('#editReason').val();
             var adjustmentType = $('#editAdjustmentType').val();
 
-            if (!warehouseId || isNaN(parseInt(warehouseId))) {
-                alert('Vui lòng chọn một Warehouse hợp lệ.');
-                return;
-            }
             if (!quantity || isNaN(parseInt(quantity))) {
                 alert('Vui lòng nhập số lượng hợp lệ.');
                 return;
@@ -469,7 +383,6 @@
             }
 
             var formData = {
-                warehouseId: parseInt(warehouseId),
                 batchId: batchId ? parseInt(batchId) : null,
                 quantity: parseInt(quantity),
                 reason: reason || null,

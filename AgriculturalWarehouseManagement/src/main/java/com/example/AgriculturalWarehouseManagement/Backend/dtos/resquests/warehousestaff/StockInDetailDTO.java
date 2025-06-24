@@ -14,7 +14,7 @@ public class StockInDetailDTO {
     private Integer id;
     private Integer stockInID;
     private Integer quantity;
-    private BigDecimal unitPrice;
+    private Integer unitPrice;
     private Integer batchID;
 
 }

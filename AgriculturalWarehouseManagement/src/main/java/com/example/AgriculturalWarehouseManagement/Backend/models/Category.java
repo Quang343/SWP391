@@ -29,4 +29,6 @@ public class Category {
     @Column(length = 100)
     private String status;
 
+    @Column(name = "image_url", length = 100)
+    private String imageUrl;
 }

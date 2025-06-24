@@ -22,7 +22,6 @@ public class AdjustmentMapper {
     public AdjustmentDTO toDTO(Adjustment adjustment) {
         return AdjustmentDTO.builder()
                 .id(adjustment.getId())
-                .warehouseId(adjustment.getWarehouse() != null ? adjustment.getWarehouse().getId() : null)
                 .batchId(adjustment.getBatch() != null ? adjustment.getBatch().getBatchId() : null)
                 .quantity(adjustment.getQuantity())
                 .adjustDate(adjustment.getAdjustDate() != null ? adjustment.getAdjustDate().truncatedTo(ChronoUnit.SECONDS) : null)
@@ -43,11 +42,6 @@ public class AdjustmentMapper {
                 ? AdjustmentType.valueOf(adjustmentDTO.getAdjustmentType())
                 : null);
 
-        if (adjustmentDTO.getWarehouseId() != null) {
-            warehouseRepository.findById(adjustmentDTO.getWarehouseId())
-                    .ifPresent(adjustment::setWarehouse);
-        }
-
         if (adjustmentDTO.getBatchId() != null) {
             productBatchRepository.findById(adjustmentDTO.getBatchId())
                     .ifPresent(adjustment::setBatch);
@@ -65,11 +59,6 @@ public class AdjustmentMapper {
         adjustment.setAdjustmentType(adjustmentDTO.getAdjustmentType() != null
                 ? AdjustmentType.valueOf(adjustmentDTO.getAdjustmentType())
                 : null);
-
-        if (adjustmentDTO.getWarehouseId() != null) {
-            warehouseRepository.findById(adjustmentDTO.getWarehouseId())
-                    .ifPresent(adjustment::setWarehouse);
-        }
 
         if (adjustmentDTO.getBatchId() != null) {
             productBatchRepository.findById(adjustmentDTO.getBatchId())

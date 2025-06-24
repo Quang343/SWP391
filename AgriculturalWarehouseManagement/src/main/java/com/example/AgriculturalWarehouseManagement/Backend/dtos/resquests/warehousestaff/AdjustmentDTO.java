@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AdjustmentDTO {
     private Integer id;
-    private Integer warehouseId;
     private Integer batchId;
     private Integer quantity;
     private LocalDateTime adjustDate;

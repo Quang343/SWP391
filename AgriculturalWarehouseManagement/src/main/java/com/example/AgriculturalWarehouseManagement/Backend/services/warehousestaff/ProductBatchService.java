@@ -108,7 +108,6 @@ public class ProductBatchService {
     private AdjustmentDTO adjustmentToAdjustmentDTO(Adjustment adjustment) {
         AdjustmentDTO dto = new AdjustmentDTO();
         dto.setId(adjustment.getId());
-        dto.setWarehouseId(adjustment.getWarehouse().getId()); // Đảm bảo không null nếu không có
         dto.setBatchId(adjustment.getBatch() != null ? adjustment.getBatch().getBatchId() : null); // Lấy batchId từ Batch entity
         dto.setQuantity(adjustment.getQuantity());
         dto.setAdjustDate(adjustment.getAdjustDate()); // Đảm bảo không null

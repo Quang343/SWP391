@@ -7,6 +7,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.wareho
 import com.example.AgriculturalWarehouseManagement.Backend.models.StockIn;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Suppliers;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Warehouse;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.StockInRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.SupplierRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.WarehouseRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff.StockInDetailService;
@@ -32,6 +33,9 @@ public class StockInController {
 
     @Autowired
     private WarehouseRepository warehouseRepository;
+
+    @Autowired
+    private StockInRepository stockInRepository;
 
     @PostMapping
     public ResponseEntity<StockInDTO> createStockIn(@RequestBody StockInDTO stockInDTO) {
@@ -102,5 +106,4 @@ public class StockInController {
             return ResponseEntity.badRequest().body(null);
         }
     }
-
 }

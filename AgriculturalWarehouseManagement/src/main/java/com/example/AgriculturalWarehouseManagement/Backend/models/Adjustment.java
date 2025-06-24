@@ -24,10 +24,6 @@ public class Adjustment {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "warehouseid", nullable = false)
-    private Warehouse warehouse;
-
-    @ManyToOne
     @JoinColumn(name = "batchid")
     private ProductBatch batch;
 

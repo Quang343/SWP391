@@ -26,8 +26,8 @@ public class StockInDetail {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Column(name = "unitprice", precision = 10, scale = 2)
-    private BigDecimal unitPrice;
+    @Column(name = "unitprice")
+    private Integer unitPrice;
 
     @ManyToOne
     @JoinColumn(name = "batchid")
