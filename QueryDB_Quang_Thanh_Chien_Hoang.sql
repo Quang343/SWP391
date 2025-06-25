@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `managerwarehouse` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `managerwarehouse`;
 -- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --
 -- Host: localhost    Database: managerwarehouse
@@ -216,7 +214,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` VALUES (1,'Vegetables','Various vegetables such as cabbage, lettuce, carrots...','INACTIVE',NULL),(2,'Fruits','Fresh fruits like mango, dragon fruit, durian...','ACTIVE',NULL),(3,'Rice','ST25 rice, sticky rice, jasmine rice...','ACTIVE',NULL),(4,'Dried Goods','Dried vegetables and fruits for long-term storage','DELETED',NULL),(5,'Grains','Corn, beans, sesame, cashew nuts...','ACTIVE',NULL),(6,'Herbs','Natural herbs and spices used for flavoring, coloring, or preserving food, including items like ginger, turmeric, lemongrass, cinnamon, chili, and basil.','ACTIVE',NULL),(7,'Seeds','A variety of agricultural seeds used for planting or consumption, including sunflower seeds, sesame, flax, pumpkin seeds, and more.','ACTIVE',NULL),(8,'Oils','Various types of natural plant-based oils extracted from seeds, nuts, or fruits, commonly used for cooking, processing, or health purposes—such as soybean oil, sesame oil, peanut oil, and coconut oils.','ACTIVE',NULL),(9,'Spices','A variety of dried plant products used to season, flavor, or preserve food, including pepper, chili, cinnamon, star anise, turmeric, and cloves.','DELETED',NULL),(10,'DriedFruits','A selection of fruits that have been dried to remove moisture for preservation, including raisins, dates, apricots, figs, and dried mango.','DELETED',NULL);
+INSERT INTO `category` VALUES (1,'Vegetables','Various vegetables such as cabbage, lettuce, carrots...','INACTIVE','b8963217-101e-44b3-acf3-edd7fa743d9b.loi_ich_cua_qua_thanh_long.webp'),(2,'Fruits','Fresh fruits like mango, dragon fruit, durian...','ACTIVE',NULL),(3,'Rice','ST25 rice, sticky rice, jasmine rice...','ACTIVE',NULL),(4,'Dried Goods','Dried vegetables and fruits for long-term storage','DELETED',NULL),(5,'Grains','Corn, beans, sesame, cashew nuts...','ACTIVE',NULL),(6,'Herbs','Natural herbs and spices used for flavoring, coloring, or preserving food, including items like ginger, turmeric, lemongrass, cinnamon, chili, and basil.','ACTIVE',NULL),(7,'Seeds','A variety of agricultural seeds used for planting or consumption, including sunflower seeds, sesame, flax, pumpkin seeds, and more.','ACTIVE',NULL),(8,'Oils','Various types of natural plant-based oils extracted from seeds, nuts, or fruits, commonly used for cooking, processing, or health purposes—such as soybean oil, sesame oil, peanut oil, and coconut oils.','ACTIVE',NULL),(9,'Spices','A variety of dried plant products used to season, flavor, or preserve food, including pepper, chili, cinnamon, star anise, turmeric, and cloves.','DELETED',NULL),(10,'DriedFruits','A selection of fruits that have been dried to remove moisture for preservation, including raisins, dates, apricots, figs, and dried mango.','DELETED',NULL);
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -358,7 +356,7 @@ CREATE TABLE `gallery` (
   PRIMARY KEY (`galleryid`),
   KEY `ProductID` (`ProductID`),
   CONSTRAINT `gallery_ibfk_1` FOREIGN KEY (`ProductID`) REFERENCES `product` (`ProductID`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -367,7 +365,7 @@ CREATE TABLE `gallery` (
 
 LOCK TABLES `gallery` WRITE;
 /*!40000 ALTER TABLE `gallery` DISABLE KEYS */;
-INSERT INTO `gallery` VALUES (12,5,'b3146cd6-6a03-4cbf-a859-8d46968c2031.jpg'),(13,5,'e5249b06-0403-49b0-b1d6-0d28792a5462.jpg'),(14,5,'f654b7cf-d07d-4bfa-9121-0b05351fbfaf.webp'),(15,5,'03a5371d-d2f5-4c1e-b9a9-f118f05be98f.jpg');
+INSERT INTO `gallery` VALUES (29,5,'c6334886-37b7-4b64-8220-c6cd6964d8f8.jpg'),(30,5,'e13f2bf7-0051-4499-afad-777e6dd76383.jpg'),(31,5,'bc9df6ea-97c0-4ccc-bfb2-b55b095468d0.webp'),(32,5,'87d170e3-5079-4899-9095-762e570d8586.jpg'),(38,5,'e0d72267-8cbb-4792-b18f-5a13a8642e49.jpg');
 /*!40000 ALTER TABLE `gallery` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -530,7 +528,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (5,2,'Fresh Mango','Sweet mangoes harvested from organic farms.','INACTIVE'),(6,2,'Dragon Fruit','Red-flesh dragon fruit, rich in antioxidants.','ACTIVE'),(7,3,'Jasmine Rice','Fragrant jasmine rice, long grain.','ACTIVE'),(8,3,'Brown Rice','Unpolished brown rice with high fiber.','ACTIVE'),(9,1,'Potatoes','Naturally grown.','OUT_OF_STOCK'),(11,2,'cxxcxcdfdffd','d','INACTIVE');
+INSERT INTO `product` VALUES (5,2,'Fresh Mango','Sweet mangoes harvested from organic farms.','INACTIVE'),(6,2,'Dragon Fruit','Red-flesh dragon fruit, rich in antioxidants.','INACTIVE'),(7,3,'Jasmine Rice','Fragrant jasmine rice, long grain.','ACTIVE'),(8,3,'Brown Rice','Unpolished brown rice with high fiber.','ACTIVE'),(9,1,'Potatoes','Naturally grown.','OUT_OF_STOCK'),(11,2,'cxxcxcdfdffd','d','INACTIVE');
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -545,8 +543,6 @@ CREATE TABLE `productbatch` (
   `BatchID` int NOT NULL AUTO_INCREMENT,
   `ProductDetailID` int DEFAULT NULL,
   `ManufactureDate` date DEFAULT NULL,
-  `ProductDate` date DEFAULT NULL,
-  `Quantity` int DEFAULT NULL,
   `importedquantity` int DEFAULT NULL,
   `soldquantity` int DEFAULT NULL,
   PRIMARY KEY (`BatchID`),
@@ -561,7 +557,7 @@ CREATE TABLE `productbatch` (
 
 LOCK TABLES `productbatch` WRITE;
 /*!40000 ALTER TABLE `productbatch` DISABLE KEYS */;
-INSERT INTO `productbatch` VALUES (1,1,'2025-06-01','2025-06-10',200,NULL,NULL),(2,2,'2025-06-03','2025-06-07',150,NULL,NULL),(3,3,'2025-06-05','2025-06-20',300,NULL,NULL),(4,1,'2024-06-24',NULL,NULL,100,0);
+INSERT INTO `productbatch` VALUES (1,1,'2025-06-01',NULL,NULL),(2,2,'2025-06-03',NULL,NULL),(3,3,'2025-06-05',NULL,NULL),(4,1,'2024-06-24',100,0);
 /*!40000 ALTER TABLE `productbatch` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -669,7 +665,6 @@ CREATE TABLE `stockin` (
   KEY `SupplierID` (`SupplierID`),
   KEY `WarehouseID` (`WarehouseID`),
   CONSTRAINT `FKqpedmvy18q37rkmabub44d6oj` FOREIGN KEY (`SupplierID`) REFERENCES `suppliers` (`supplierid`),
-  CONSTRAINT `stockin_ibfk_1` FOREIGN KEY (`SupplierID`) REFERENCES `supplier` (`id`),
   CONSTRAINT `stockin_ibfk_2` FOREIGN KEY (`WarehouseID`) REFERENCES `warehouse` (`WarehouseID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -779,30 +774,6 @@ CREATE TABLE `stockoutdetail` (
 LOCK TABLES `stockoutdetail` WRITE;
 /*!40000 ALTER TABLE `stockoutdetail` DISABLE KEYS */;
 /*!40000 ALTER TABLE `stockoutdetail` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `supplier`
---
-
-DROP TABLE IF EXISTS `supplier`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `supplier` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `supplier_name` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `contact_info` varchar(500) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `supplier`
---
-
-LOCK TABLES `supplier` WRITE;
-/*!40000 ALTER TABLE `supplier` DISABLE KEYS */;
-/*!40000 ALTER TABLE `supplier` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -993,4 +964,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-06-24 23:37:06
+-- Dump completed on 2025-06-26  2:49:47

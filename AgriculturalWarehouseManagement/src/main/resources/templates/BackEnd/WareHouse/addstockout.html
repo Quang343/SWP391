@@ -201,7 +201,7 @@
         // Tải danh sách Warehouses
         console.log('Bắt đầu tải danh sách Warehouses...');
         $.ajax({
-            url: 'http://localhost:8080/api/warehouses',
+            url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/warehouses',
             method: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -275,7 +275,7 @@
 
             console.log('Dữ liệu StockOut chuẩn bị gửi:', stockOutData);
 
-            fetch('/api/stockouts', {
+            fetch('/AgriculturalWarehouseManagementApplication/api/stockouts', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

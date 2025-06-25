@@ -6,6 +6,9 @@ import com.example.AgriculturalWarehouseManagement.Backend.mappers.SupplierMappe
 import com.example.AgriculturalWarehouseManagement.Backend.models.Suppliers;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.SupplierRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +26,15 @@ public class SupplierService {
     // Get All Suppliers
     public List<Suppliers> getAllSuppliers() {
         return supplierRepository.findAll();
+    }
+
+    // Lấy danh sách nhà cung cấp với phân trang
+    public Page<Suppliers> getPaginatedSuppliers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Suppliers> supplierPage = supplierRepository.findPaginatedSuppliers(pageable);
+        // Debug output to console
+        System.out.println("Debug - Page: " + page + ", Size: " + size + ", Total Pages: " + supplierPage.getTotalPages() + ", Total Elements: " + supplierPage.getTotalElements());
+        return supplierPage;
     }
 
     // Get Suppliers by ID

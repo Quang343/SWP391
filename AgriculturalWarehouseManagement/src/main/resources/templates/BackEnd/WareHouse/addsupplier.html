@@ -145,7 +145,7 @@
         try {
             Dropzone.autoDiscover = false;
             const dropzone = new Dropzone("#logoUpload", {
-                url: "/api/suppliers/createSupplier",
+                url: "/AgriculturalWarehouseManagementApplication/api/suppliers/createSupplier",
                 autoProcessQueue: false,
                 maxFiles: 1,
                 acceptedFiles: "image/*",
@@ -203,7 +203,7 @@
                     logoFile: logoFile.name
                 });
 
-                fetch('/api/suppliers/createSupplier', {
+                fetch('/AgriculturalWarehouseManagementApplication/api/suppliers/createSupplier', {
                     method: 'POST',
                     body: formData
                 })

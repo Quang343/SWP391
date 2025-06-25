@@ -234,7 +234,7 @@
         const stockInId = urlParams.get('stockInId');
         if (!stockInId) {
             alert('Vui lòng chọn Mã nhập kho từ danh sách trước.');
-            window.location.href = '/warehouse/stockin';
+            window.location.href = '/AgriculturalWarehouseManagementApplication/warehouse/stockin';
             return;
         }
         console.log('Mã nhập kho từ URL:', stockInId);
@@ -252,7 +252,7 @@
         // Hàm tải batch chưa liên kết với StockInDetail
         function loadAvailableBatches(selectElement, currentBatchId) {
             $.ajax({
-                url: 'http://localhost:8080/api/product-batches/available',
+                url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/product-batches/available',
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -305,7 +305,7 @@
 
         // Tải ngày nhập kho
         $.ajax({
-            url: `http://localhost:8080/api/stockins/${stockInId}`,
+            url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/${stockInId}`,
             method: 'GET',
             dataType: 'json',
             success: function(stockInData) {
@@ -329,7 +329,7 @@
 
         // Tải dữ liệu StockInDetail
         $.ajax({
-            url: `http://localhost:8080/api/stockins/${stockInId}/details`,
+            url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/${stockInId}/details`,
             method: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -349,7 +349,7 @@
                     // Lấy tên sản phẩm từ batchID
                     if (detail.batchID) {
                         $.ajax({
-                            url: `http://localhost:8080/api/product-batches/${detail.batchID}`,
+                            url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/product-batches/${detail.batchID}`,
                             method: 'GET',
                             async: false,
                             dataType: 'json',
@@ -357,7 +357,7 @@
                                 const productDetailId = batch.productDetailID || batch.productDetail || 'N/A';
                                 if (productDetailId !== 'N/A') {
                                     $.ajax({
-                                        url: `http://localhost:8080/api/product-details/${productDetailId}`,
+                                        url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/product-details/${productDetailId}`,
                                         method: 'GET',
                                         async: false,
                                         success: function(productDetail) {
@@ -485,7 +485,7 @@
 
             // Gửi yêu cầu cập nhật đến API
             $.ajax({
-                url: `http://localhost:8080/api/stockindetails/${detailId}`,
+                url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockindetails/${detailId}`,
                 method: 'PUT',
                 contentType: 'application/json',
                 data: JSON.stringify(updatedDetail),
@@ -497,7 +497,7 @@
                     // Lấy tên sản phẩm từ batchID
                     if (batchId) {
                         $.ajax({
-                            url: `http://localhost:8080/api/product-batches/${batchId}`,
+                            url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/product-batches/${batchId}`,
                             method: 'GET',
                             async: false,
                             dataType: 'json',
@@ -505,7 +505,7 @@
                                 const productDetailId = batch.productDetailID || batch.productDetail || 'N/A';
                                 if (productDetailId !== 'N/A') {
                                     $.ajax({
-                                        url: `http://localhost:8080/api/product-details/${productDetailId}`,
+                                        url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/product-details/${productDetailId}`,
                                         method: 'GET',
                                         async: false,
                                         success: function(productDetail) {

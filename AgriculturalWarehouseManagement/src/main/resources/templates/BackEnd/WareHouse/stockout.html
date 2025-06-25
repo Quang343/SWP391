@@ -222,7 +222,7 @@
         // Tải dữ liệu StockOut
         function loadStockOuts() {
             $.ajax({
-                url: 'http://localhost:8080/api/stockouts',
+                url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockouts',
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -231,7 +231,7 @@
                     $.each(data, function(index, stockOut) {
                         // Chỉ lấy tên Warehouse
                         $.ajax({
-                            url: 'http://localhost:8080/api/warehouses/' + stockOut.warehouseID,
+                            url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/warehouses/' + stockOut.warehouseID,
                             method: 'GET',
                             dataType: 'json',
                             success: function(warehouseResponse) {
@@ -245,7 +245,7 @@
                                     '<td>' + (stockOut.note || 'N/A') + '</td>' +
                                     '<td>' +
                                     '<ul>' +
-                                    '<li><a href="/warehouse/stockoutdetail?stockOutId=' + stockOut.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
+                                    '<li><a href="/AgriculturalWarehouseManagementApplication/warehouse/stockoutdetail?stockOutId=' + stockOut.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
                                     '<li><a href="javascript:void(0)"><i class="ri-pencil-line"></i></a></li>' +
                                     '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockout-id="' + stockOut.id + '"><i class="ri-delete-bin-line"></i></a></li>' +
                                     '<li><a class="btn btn-sm btn-solid text-white" href="order-tracking.html">Theo dõi</a></li>' +
@@ -289,8 +289,8 @@
             var stockOutId = $(event.relatedTarget).data('stockout-id');
             $('#offcanvasStockOutId').text(stockOutId);
             $.when(
-                $.ajax({ url: 'http://localhost:8080/api/stockouts/' + stockOutId, method: 'GET', dataType: 'json' }),
-                $.ajax({ url: 'http://localhost:8080/api/stockoutdetails/stockout/' + stockOutId, method: 'GET', dataType: 'json' })
+                $.ajax({ url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockouts/' + stockOutId, method: 'GET', dataType: 'json' }),
+                $.ajax({ url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockoutdetails/stockout/' + stockOutId, method: 'GET', dataType: 'json' })
             ).done(function(stockOutResponse, stockOutDetailsResponse) {
                 var stockOut = stockOutResponse[0];
                 var stockOutDetails = stockOutDetailsResponse[0];
@@ -320,7 +320,7 @@
             var stockOutId = $('#exampleModalToggle').data('stockout-id');
             if (stockOutId) {
                 $.ajax({
-                    url: 'http://localhost:8080/api/stockouts/' + stockOutId,
+                    url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockouts/' + stockOutId,
                     method: 'DELETE',
                     success: function() {
                         $('#exampleModalToggle').modal('hide');

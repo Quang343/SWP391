@@ -489,10 +489,10 @@
                                     </div>
 
                                     <span class="title-leaf">
-                <svg class="icon-width bg-gray">
-                    <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
-                </svg>
-            </span>
+                                        <svg class="icon-width bg-gray">
+                                            <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                                        </svg>
+                                    </span>
                                 </div>
 
                                 <div class="table-responsive dashboard-bg-box" id="tableAllDetailContainer">
@@ -2208,7 +2208,7 @@
             box.className = "image-box";
 
             const image = document.createElement("img");
-            image.src = "/AgriculturalWarehouseManagementApplication/Backend/assets/images/" + imageUrl;
+            image.src = "/AgriculturalWarehouseManagementApplication/seller/" + imageUrl;
             image.alt = "Product Image";
 
             box.appendChild(image);
@@ -2486,6 +2486,34 @@
 
 <!--CSS-->
 <style>
+    .product-detail-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+    }
+
+    .product-detail-table thead th {
+        font-weight: 600;
+        padding: 12px 10px;
+        color: #333;
+        text-align: center;
+        border-bottom: 1px solid #eee !important;  /* ✅ CHỈNH LẠI ĐỘ ĐẬM */
+    }
+
+    .product-detail-table tbody td {
+        border-bottom: 1px solid #eee;
+        padding: 12px 10px;
+        vertical-align: middle;
+        color: #444;
+    }
+
+    .product-detail-table tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .product-detail-table tbody td {
+        text-align: center;
+    }
     /* Dùng chung cho cả unit buttons và available weight buttons */
     .btn.weight-unit-btn,
     #unitButtonGroup .btn {
@@ -2836,7 +2864,7 @@
                     <td>${item.detailName}</td>
                     <td>${item.price}</td>
                     <td>${item.expiry}</td>
-<td>${item.status}</td>
+                    <td>${item.status}</td>
                     <td><!-- actions --></td>
                 `;
                     tbody.appendChild(row);
@@ -2852,7 +2880,6 @@
     document.addEventListener("DOMContentLoaded", () => {
         switchToAllDetailTable();
         loadAllProductDetails(); // 👈 load dữ liệu cho bảng All
-
     });
 </script>
 

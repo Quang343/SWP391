@@ -207,7 +207,7 @@
     // Function to load Suppliers into dropdown
     function loadSuppliersDropdown(selectElement, selectedId) {
       $.ajax({
-        url: 'http://localhost:8080/api/suppliers',
+        url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/suppliers',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -231,7 +231,7 @@
     // Function to load Warehouses into dropdown
     function loadWarehousesDropdown(selectElement, selectedId) {
       $.ajax({
-        url: 'http://localhost:8080/api/warehouses',
+        url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/warehouses',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -255,7 +255,7 @@
     // Load StockIn data
     function loadStockIns() {
       $.ajax({
-        url: 'http://localhost:8080/api/stockins',
+        url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -264,8 +264,8 @@
           $.each(data, function(index, stockIn) {
             // Fetch Supplier and Warehouse names
             $.when(
-                    $.ajax({ url: 'http://localhost:8080/api/suppliers/' + stockIn.supplierID, method: 'GET', dataType: 'json' }),
-                    $.ajax({ url: 'http://localhost:8080/api/warehouses/' + stockIn.warehouseID, method: 'GET', dataType: 'json' })
+                    $.ajax({ url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/suppliers/' + stockIn.supplierID, method: 'GET', dataType: 'json' }),
+                    $.ajax({ url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/warehouses/' + stockIn.warehouseID, method: 'GET', dataType: 'json' })
             ).done(function(supplierResponse, warehouseResponse) {
               var supplierName = supplierResponse[0].supplierName || 'N/A';
               var warehouseName = warehouseResponse[0].warehouseName || 'N/A';
@@ -277,7 +277,7 @@
                       '<td>' + (stockIn.note || 'N/A') + '</td>' +
                       '<td>' +
                       '<ul>' +
-                      '<li><a href="/warehouse/stockindetail?stockInId=' + stockIn.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
+                      '<li><a href="/AgriculturalWarehouseManagementApplication/warehouse/stockindetail?stockInId=' + stockIn.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
                       '<li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="' + stockIn.id + '" class="edit-link"><i class="ri-pencil-line"></i></a></li>' +
                       '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="' + stockIn.id + '"><i class="ri-delete-bin-line"></i></a></li>' +
 
@@ -320,7 +320,7 @@
       $('#offcanvasStockInIdInput').val(stockInId);
 
       $.ajax({
-        url: 'http://localhost:8080/api/stockins/' + stockInId,
+        url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/' + stockInId,
         method: 'GET',
         dataType: 'json',
         success: function(stockIn) {
@@ -359,7 +359,7 @@
       };
 
       $.ajax({
-        url: 'http://localhost:8080/api/stockins/' + stockInId,
+        url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/' + stockInId,
         method: 'PUT',
         contentType: 'application/json',
         data: JSON.stringify(formData),
@@ -391,7 +391,7 @@
       }
 
       $.ajax({
-        url: 'http://localhost:8080/api/stockins/' + stockInId,
+        url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/' + stockInId,
         method: 'DELETE',
         success: function() {
           $('#exampleModalToggle').modal('hide');
