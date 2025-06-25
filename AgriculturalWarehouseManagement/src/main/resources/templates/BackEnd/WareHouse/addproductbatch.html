@@ -153,7 +153,7 @@
         $(document).ready(function() {
             // Populate ProductDetail dropdown
             $.ajax({
-                url: '/api/product-details',
+                url: '/AgriculturalWarehouseManagementApplication/api/product-details',
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -220,11 +220,11 @@
                     importedQuantity: parseInt(importedQuantity)
                 };
 
-                console.log('Gửi payload tới /api/product-batches: ', formData);
+                console.log('Gửi payload tới /AgriculturalWarehouseManagementApplication/api/product-batches: ', formData);
 
                 // Gửi yêu cầu AJAX
                 $.ajax({
-                    url: '/api/product-batches',
+                    url: '/AgriculturalWarehouseManagementApplication/api/product-batches',
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(formData),

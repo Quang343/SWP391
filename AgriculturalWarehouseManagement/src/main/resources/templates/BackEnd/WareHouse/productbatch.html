@@ -332,7 +332,7 @@
         // Hàm populate dropdown ProductDetail cho modal sửa
         function populateProductDetailDropdown(selectElement, selectedId) {
             $.ajax({
-                url: '/api/product-details',
+                url: '/AgriculturalWarehouseManagementApplication/api/product-details',
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -361,7 +361,7 @@
         // Gọi API để lấy danh sách ProductBatch
         function loadProductBatches() {
             $.ajax({
-                url: '/api/product-batches',
+                url: '/AgriculturalWarehouseManagementApplication/api/product-batches',
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -377,7 +377,7 @@
                     var adjustmentTotals = {};
                     var adjustmentDetails = {};
                     $.ajax({
-                        url: '/api/adjustments',
+                        url: '/AgriculturalWarehouseManagementApplication/api/adjustments',
                         method: 'GET',
                         dataType: 'json',
                         async: false,
@@ -404,7 +404,7 @@
                     // Đếm số bản ghi điều chỉnh cho từng batch
                     var adjustmentCounts = {};
                     $.ajax({
-                        url: '/api/adjustments',
+                        url: '/AgriculturalWarehouseManagementApplication/api/adjustments',
                         method: 'GET',
                         dataType: 'json',
                         async: false,
@@ -434,7 +434,7 @@
                             }
 
                             $.ajax({
-                                url: `/api/stockindetails/quantity/${batch.batchID}`,
+                                url: `/AgriculturalWarehouseManagementApplication/api/stockindetails/quantity/${batch.batchID}`,
                                 method: 'GET',
                                 dataType: 'json',
                                 success: function(stockInDetails) {
@@ -494,7 +494,7 @@
                             // Lấy expiry từ API product-details
                             var expiry = 'N/A';
                             $.ajax({
-                                url: '/api/product-details/' + productDetailId,
+                                url: '/AgriculturalWarehouseManagementApplication/api/product-details/' + productDetailId,
                                 method: 'GET',
                                 async: false,
                                 success: function(detail) {
@@ -553,7 +553,7 @@
                             }
 
                             $.ajax({
-                                url: '/api/product-batches/adjustments?batchId=' + batchId,
+                                url: '/AgriculturalWarehouseManagementApplication/api/product-batches/adjustments?batchId=' + batchId,
                                 method: 'GET',
                                 dataType: 'json',
                                 success: function(response) {
@@ -606,7 +606,7 @@
                             }
 
                             $.ajax({
-                                url: '/api/product-batches/adjustments?batchId=' + batchId,
+                                url: '/AgriculturalWarehouseManagementApplication/api/product-batches/adjustments?batchId=' + batchId,
                                 method: 'GET',
                                 dataType: 'json',
                                 success: function(response) {
@@ -646,7 +646,7 @@
                                 return;
                             }
                             $.ajax({
-                                url: '/api/product-details/' + productDetailId,
+                                url: '/AgriculturalWarehouseManagementApplication/api/product-details/' + productDetailId,
                                 method: 'GET',
                                 dataType: 'json',
                                 success: function(detail) {
@@ -660,7 +660,7 @@
 
                                     if (detail.categoryWeight) {
                                         $.ajax({
-                                            url: '/api/categoryweights/' + detail.categoryWeight,
+                                            url: '/AgriculturalWarehouseManagementApplication/api/categoryweights/' + detail.categoryWeight,
                                             method: 'GET',
                                             dataType: 'json',
                                             success: function(categoryWeight) {
@@ -760,7 +760,7 @@
             };
 
             $.ajax({
-                url: '/api/product-batches/' + batchId,
+                url: '/AgriculturalWarehouseManagementApplication/api/product-batches/' + batchId,
                 method: 'PUT',
                 contentType: 'application/json',
                 data: JSON.stringify(formData),
@@ -786,7 +786,7 @@
             }
 
             $.ajax({
-                url: '/api/product-batches/' + batchId,
+                url: '/AgriculturalWarehouseManagementApplication/api/product-batches/' + batchId,
                 method: 'DELETE',
                 headers: { 'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content') },
                 success: function() {
@@ -847,7 +847,7 @@
             };
 
             $.ajax({
-                url: '/api/adjustments',
+                url: '/AgriculturalWarehouseManagementApplication/api/adjustments',
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(formData),

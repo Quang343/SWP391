@@ -95,7 +95,7 @@ public class StockInService {
 
                 try {
                     ResponseEntity<ProductBatchDTO> batchResponse = restTemplate.postForEntity(
-                            "http://localhost:8080/api/product-batches",
+                            "http://localhost:8080/AgriculturalWarehouseManagementApplication/api/product-batches",
                             newBatch,
                             ProductBatchDTO.class
                     );
@@ -139,7 +139,7 @@ public class StockInService {
                 detailToSave.setUnitPrice(detailDTO.getUnitPrice());
                 detailToSave.setBatchID(batchId);
                 restTemplate.postForEntity(
-                        "http://localhost:8080/api/stockindetails",
+                        "http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockindetails",
                         detailToSave,
                         StockInDetailDTO.class
                 );

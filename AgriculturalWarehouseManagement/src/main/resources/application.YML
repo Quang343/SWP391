@@ -3,7 +3,7 @@ spring:
     url: jdbc:mysql://localhost:3306/managerwarehouse?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh
 
     username: root
-    password: 123456
+    password:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -19,16 +19,6 @@ spring:
       enabled: true
     restart:
       enabled: true # Bật auto-restart để hỗ trợ hot-reload trong phát triển
-
-  web:
-    resources:
-      static-locations:
-        - classpath:/static/
-        - classpath:/static/Frontend/
-        - file:D:/Project SWP391/SWP391/AgriculturalWarehouseManagement/src/main/resources/static/
-      #        - file:D:/FU Learning/25-Summer/SWP391/QuanLyKhoNongSan/SWP391/AgriculturalWarehouseManagement/src/main/resources/static/
-      cache:
-        period: 0 # Tắt bộ đệm tài nguyên tĩnh
 
   servlet:
     multipart:

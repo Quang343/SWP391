@@ -160,7 +160,7 @@
         const stockOutId = urlParams.get('stockOutId');
         if (!stockOutId) {
             alert('Please select a StockOut ID from the StockOut list first.');
-            window.location.href = '/warehouse/stockout';
+            window.location.href = '/AgriculturalWarehouseManagementApplication/warehouse/stockout';
             return;
         }
         console.log('StockOut ID from URL:', stockOutId);
@@ -171,9 +171,9 @@
 
         // Load StockOut and StockOutDetail data
         $.when(
-            $.ajax({ url: `http://localhost:8080/api/stockouts/${stockOutId}`, method: 'GET', dataType: 'json' }),
-            $.ajax({ url: `http://localhost:8080/api/stockoutdetails/stockout/${stockOutId}`, method: 'GET', dataType: 'json' }),
-            $.ajax({ url: `http://localhost:8080/api/warehouses/${stockOutId}`, method: 'GET', dataType: 'json' }).fail(function() { return { warehouseName: 'N/A' }; })
+            $.ajax({ url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockouts/${stockOutId}`, method: 'GET', dataType: 'json' }),
+            $.ajax({ url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockoutdetails/stockout/${stockOutId}`, method: 'GET', dataType: 'json' }),
+            $.ajax({ url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/warehouses/${stockOutId}`, method: 'GET', dataType: 'json' }).fail(function() { return { warehouseName: 'N/A' }; })
         ).done(function(stockOutResponse, stockOutDetailsResponse, warehouseResponse) {
             const stockOut = stockOutResponse[0];
             const stockOutDetails = stockOutDetailsResponse[0];
