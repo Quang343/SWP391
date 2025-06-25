@@ -179,44 +179,43 @@
                 <!--                </nav>-->
 
                 <nav class="custom-pagination">
-
                     <ul class="pagination justify-content-center">
-                        <!-- Nút về Đầu -->
-                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                            <a class="page-link" th:href="@{/blog-list(page=${i},size=${size},keyword=${keyword})}" title="Trang đầu">
+                        <!-- Nút về Đầu, chỉ hiện nếu không ở trang 1 -->
+                        <li class="page-item" th:if="${currentPage > 1}">
+                            <a class="page-link" th:href="@{/blog-list(page=1, size=${size}, keyword=${keyword})}" title="Trang đầu">
                                 <i class="fa-solid fa-angle-double-left"></i>
                             </a>
                         </li>
-                        <!-- Nút quay về trang trước, disabled nếu ở trang 1 -->
-                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                            <a class="page-link" th:href="@{/blog-list(page=${currentPage-1},size=${size})}"
-                               tabindex="-1">
+                        <!-- Nút về trước, chỉ hiện nếu không ở trang 1 -->
+                        <li class="page-item" th:if="${currentPage > 1}">
+                            <a class="page-link" th:href="@{/blog-list(page=${currentPage - 1}, size=${size}, keyword=${keyword})}" title="Trang trước">
                                 <i class="fa-solid fa-angle-left"></i>
                             </a>
                         </li>
-                        <!-- Hiển thị số trang, i từ 1 đến totalPages -->
-                        <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+
+                        <!-- Số trang -->
+                        <li th:each="i : ${#numbers.sequence(startPage, endPage)}"
                             class="page-item"
                             th:classappend="${currentPage == i} ? 'active'">
-                            <a class="page-link" th:href="@{/blog-list(page=${i},size=${size})}" th:text="${i}"></a>
+                            <a class="page-link"
+                               th:href="@{/blog-list(page=${i}, size=${size}, keyword=${keyword})}"
+                               th:text="${i}"></a>
                         </li>
-                        <!-- Nút sang trang sau, disabled nếu ở trang cuối -->
-                        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                            <a class="page-link" th:href="@{/blog-list(page=${currentPage+1},size=${size})}">
+
+                        <!-- Nút trang sau, chỉ hiện nếu không ở trang cuối -->
+                        <li class="page-item" th:if="${currentPage < totalPages}">
+                            <a class="page-link" th:href="@{/blog-list(page=${currentPage + 1}, size=${size}, keyword=${keyword})}" title="Trang sau">
                                 <i class="fa-solid fa-angle-right"></i>
                             </a>
                         </li>
-                        <!-- Nút về Cuối -->
-                        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                            <a class="page-link" th:href="@{/blog-list(page=${totalPages}, size=${size})}"
-                               title="Trang cuối">
+                        <!-- Nút về Cuối, chỉ hiện nếu không ở trang cuối -->
+                        <li class="page-item" th:if="${currentPage < totalPages}">
+                            <a class="page-link" th:href="@{/blog-list(page=${totalPages}, size=${size}, keyword=${keyword})}" title="Trang cuối">
                                 <i class="fa-solid fa-angle-double-right"></i>
                             </a>
                         </li>
                     </ul>
-
                 </nav>
-
 
             </div>
 

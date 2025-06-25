@@ -38,14 +38,30 @@ public class BlogController {
             blogPage = blogService.getActiveBlogsPage(pageIndex, size);
         }
 
+        int totalPages = blogPage.getTotalPages();
+        int currentPage = page;
+        int maxPages = 5; // Số nút trang muốn hiển thị
+
+        // Tính toán sliding window cho phân trang
+        int startPage = Math.max(1, currentPage - maxPages / 2);
+        int endPage = Math.min(totalPages, startPage + maxPages - 1);
+        startPage = Math.max(1, endPage - maxPages + 1);
+
         model.addAttribute("blogs", blogPage.getContent());
-        model.addAttribute("totalPages", blogPage.getTotalPages());
-        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("currentPage", currentPage);
         model.addAttribute("size", size);
         model.addAttribute("keyword", keyword); // Giữ lại giá trị search khi reload
         model.addAttribute("recentBlogs", blogService.getRecentBlogs(4));
+
+        // Thêm biến cho phân trang
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        model.addAttribute("maxPages", maxPages);
+
         return "FrontEnd/Home/blog-list";
     }
+
 
 
     @RequestMapping("/blog-detail")
@@ -57,8 +73,8 @@ public class BlogController {
 
         Blog blog = blogService.getBlogById(id);
 
-        if (blog == null) {
-            return "error/404";
+        if (blog == null || id <= 0) {
+            return "FrontEnd/Home/error_404";
         }
         model.addAttribute("blog", blog);
 
@@ -84,12 +100,27 @@ public class BlogController {
         int pageIndex = page - 1; // Chuyển từ page=1 thành pageIndex=0
         Page<Blog> blogPage = blogService.getActiveBlogsPage(pageIndex, size);
 
+        int totalPages = blogPage.getTotalPages();
+        int currentPage = page;
+        int maxPages = 5;
+
+        int startPage = Math.max(1, currentPage - maxPages / 2);
+        int endPage = Math.min(totalPages, startPage + maxPages - 1);
+        startPage = Math.max(1, endPage - maxPages + 1);
+
         model.addAttribute("blogs", blogPage.getContent());
-        model.addAttribute("totalPages", blogPage.getTotalPages());
-        model.addAttribute("currentPage", page); // Truyền page (bắt đầu từ 1)
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("currentPage", currentPage);
         model.addAttribute("size", size);
         model.addAttribute("recentBlogs", blogService.getRecentBlogs(4));
+
+        // Thêm biến phân trang cho giao diện
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        model.addAttribute("maxPages", maxPages);
+
         return "FrontEnd/Home/blog-grid";
     }
+
 
 }
