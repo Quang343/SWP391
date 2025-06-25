@@ -13,9 +13,6 @@ public interface BlogRepository extends JpaRepository<Blog, Integer> {
 
     List<Blog> findAllByStatus(String status);
 
-//    @Query("SELECT b FROM Blog b LEFT JOIN FETCH b.blogDetail WHERE b.blogID = :id")
-//    Blog findByIdWithDetail(@Param("id") Integer id);
-
     @Query("SELECT b FROM Blog b LEFT JOIN FETCH b.blogDetail WHERE b.blogID = :id")
     Blog findByIdWithDetail(@Param("id") Integer id);
 

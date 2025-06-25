@@ -110,63 +110,6 @@
                             </h2>
                             <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
                                 <div class="accordion-body pt-0">
-                                    <!--                                    <div class="recent-post-box">-->
-                                    <!--                                        <div class="recent-box">-->
-                                    <!--                                            <a href="blog-detail.html" class="recent-image">-->
-                                    <!--                                                <img src="../assets/images/inner-page/blog/1.jpg"-->
-                                    <!--                                                     class="img-fluid blur-up lazyload" alt="">-->
-                                    <!--                                            </a>-->
-
-                                    <!--                                            <div class="recent-detail">-->
-                                    <!--                                                <a href="blog-detail.html">-->
-                                    <!--                                                    <h5 class="recent-name">Green onion knife and salad placed</h5>-->
-                                    <!--                                                </a>-->
-                                    <!--                                                <h6>25 Jan, 2022 <i data-feather="thumbs-up"></i></h6>-->
-                                    <!--                                            </div>-->
-                                    <!--                                        </div>-->
-
-                                    <!--                                        <div class="recent-box">-->
-                                    <!--                                            <a href="blog-detail.html" class="recent-image">-->
-                                    <!--                                                <img src="../assets/images/inner-page/blog/2.jpg"-->
-                                    <!--                                                     class="img-fluid blur-up lazyload" alt="">-->
-                                    <!--                                            </a>-->
-
-                                    <!--                                            <div class="recent-detail">-->
-                                    <!--                                                <a href="blog-detail.html">-->
-                                    <!--                                                    <h5 class="recent-name">Health and skin for your organic</h5>-->
-                                    <!--                                                </a>-->
-                                    <!--                                                <h6>25 Jan, 2022 <i data-feather="thumbs-up"></i></h6>-->
-                                    <!--                                            </div>-->
-                                    <!--                                        </div>-->
-
-                                    <!--                                        <div class="recent-box">-->
-                                    <!--                                            <a href="blog-detail.html" class="recent-image">-->
-                                    <!--                                                <img src="../assets/images/inner-page/blog/3.jpg"-->
-                                    <!--                                                     class="img-fluid blur-up lazyload" alt="">-->
-                                    <!--                                            </a>-->
-
-                                    <!--                                            <div class="recent-detail">-->
-                                    <!--                                                <a href="blog-detail.html">-->
-                                    <!--                                                    <h5 class="recent-name">Organics mix masala fresh & soft</h5>-->
-                                    <!--                                                </a>-->
-                                    <!--                                                <h6>25 Jan, 2022 <i data-feather="thumbs-up"></i></h6>-->
-                                    <!--                                            </div>-->
-                                    <!--                                        </div>-->
-
-                                    <!--                                        <div class="recent-box">-->
-                                    <!--                                            <a href="blog-detail.html" class="recent-image">-->
-                                    <!--                                                <img src="../assets/images/inner-page/blog/4.jpg"-->
-                                    <!--                                                     class="img-fluid blur-up lazyload" alt="">-->
-                                    <!--                                            </a>-->
-
-                                    <!--                                            <div class="recent-detail">-->
-                                    <!--                                                <a href="blog-detail.html">-->
-                                    <!--                                                    <h5 class="recent-name">Fresh organics brand and picnic</h5>-->
-                                    <!--                                                </a>-->
-                                    <!--                                                <h6>25 Jan, 2022 <i data-feather="thumbs-up"></i></h6>-->
-                                    <!--                                            </div>-->
-                                    <!--                                        </div>-->
-                                    <!--                                    </div>-->
                                     <div class="recent-post-box" th:each="recent : ${recentBlogs}">
                                         <div class="recent-box">
                                             <a th:href="@{|/blog-detail?id=${recent.blogID}|}" class="recent-image">
@@ -385,11 +328,12 @@
 
             <div class="col-xxl-9 col-xl-8 col-lg-7 ratio_50">
                 <div class="blog-detail-image rounded-3 mb-4">
-                    <img th:if="${blog.blogDetail != null}"
-                         th:src="@{'/assets/images/blog/' + ${blog.blogDetail.thumbnail}}"
-                         class="bg-img blur-up lazyload" alt="">
-                    <!--                    <img src="/AgriculturalWarehouseManagementApplication/Frontend/assets/images/blog/5.jpg"-->
-                    <!--                         class="blur-up lazyload" style="width:309px; height:177px; object-fit:cover;"-->
+                    <img th:src="@{'/assets/images/blog/' + ${blog.blogDetail.thumbnail}}"
+                         class="img-fluid w-100 h-100 object-fit-cover"
+                         style="width:100%;height:100%;object-fit:cover;object-position:center;" alt="">
+                    <!--                    <img src="/AgriculturalWarehouseManagementApplication/Frontend/assets/images/blog/12.jpg"-->
+                    <!--                         class="img-fluid w-100 h-100 object-fit-cover"-->
+                    <!--                         style="width:100%;height:100%;object-fit:cover;object-position:center;"-->
                     <!--                         alt="">-->
 
                     <div class="blog-image-contain">
@@ -437,13 +381,10 @@
 
                     <div class="blog-details-quote">
                         <h3>Adipisicing elit Qui ipsam natus aspernatur quaerat impedit eveniet ipsum dolor</h3>
-                        <h5>- Denny Dose</h5>
+                        <h5 th:text="${blog.author}">- Denny Dose</h5>
                     </div>
 
-                    <p th:if="${blog.blogDetail != null}"
-                       th:text="${blog.blogDetail.detailcontent}">Agile currying favour pulling teeth collaboration
-                        through advanced technology. Everyone
-                        thinks
+                    <p th:text="${blog.blogDetail.getDetailContent()}">
                     </p>
 
                     <p class="mb-0">We need to harvest synergy effects land it in region nor time to open the

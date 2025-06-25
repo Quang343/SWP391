@@ -41,8 +41,9 @@ public class BlogController {
 
     @RequestMapping("/blog-detail")
     public String blogdetail(@RequestParam("id") Integer id, Model model) {
-//        Blog blog = blogService.getBlogById(id);
-        Blog blog = blogService.getBlogById(id);  // Đã JOIN BlogDetail luôn
+
+
+        Blog blog = blogService.getBlogById(id);
 
         if (blog == null) {
             // Không có blog, trả về trang 404 hoặc báo lỗi

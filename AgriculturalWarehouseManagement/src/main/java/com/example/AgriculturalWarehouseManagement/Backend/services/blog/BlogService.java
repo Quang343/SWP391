@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +32,7 @@ public class BlogService {
 //        return blogRepository.findById(id).orElse(null);
 //    }
 
+    @Transactional(readOnly = true)
     public Blog getBlogById(Integer id) {
         return blogRepository.findByIdWithDetail(id); // Chỉ cần gọi hàm này
     }
