@@ -16,7 +16,6 @@ public interface BlogRepository extends JpaRepository<Blog, Integer> {
     @Query("SELECT b FROM Blog b LEFT JOIN FETCH b.blogDetail WHERE b.blogID = :id")
     Blog findByIdWithDetail(@Param("id") Integer id);
 
-
     // Lấy N bài mới nhất (dùng native query)
     @Query(
             value = "SELECT b.*, bd.thumbnail " +
@@ -36,6 +35,15 @@ public interface BlogRepository extends JpaRepository<Blog, Integer> {
     // Phân trang, sắp xếp bài mới nhất trước
     @Query("SELECT b FROM Blog b WHERE b.status = :status ORDER BY b.createdAt DESC")
     Page<Blog> findAllByStatusOrderByCreatedAtDesc(@Param("status") String status, Pageable pageable);
+
+    @Query("SELECT b FROM Blog b WHERE b.status = :status AND (" +
+            "LOWER(b.author) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(b.content) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%')) ) " +
+            "ORDER BY b.createdAt DESC")
+    Page<Blog> searchByAuthorOrContent(@Param("status") String status,
+                                       @Param("keyword") String keyword,
+                                       Pageable pageable);
 
 
 }

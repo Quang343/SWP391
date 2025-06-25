@@ -23,30 +23,41 @@ public class BlogController {
     public String bloglist(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "3") int size,
+            @RequestParam(required = false) String keyword,
             Model model) {
 
-        if (page < 1) page = 1; // Luôn đảm bảo page >= 1
-        int pageIndex = page - 1; // Spring Data page index bắt đầu từ 0
+        if (page < 1) page = 1;
+        int pageIndex = page - 1;
 
-        // Lấy Page<Blog> với phân trang và sắp xếp
-        Page<Blog> blogPage = blogService.getActiveBlogsPage(pageIndex, size);
+        Page<Blog> blogPage;
+
+        // Nếu có keyword thì search, không thì lấy tất cả
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            blogPage = blogService.searchBlogs(keyword, pageIndex, size);
+        } else {
+            blogPage = blogService.getActiveBlogsPage(pageIndex, size);
+        }
 
         model.addAttribute("blogs", blogPage.getContent());
         model.addAttribute("totalPages", blogPage.getTotalPages());
         model.addAttribute("currentPage", page);
         model.addAttribute("size", size);
+        model.addAttribute("keyword", keyword); // Giữ lại giá trị search khi reload
         model.addAttribute("recentBlogs", blogService.getRecentBlogs(4));
         return "FrontEnd/Home/blog-list";
     }
 
-    @RequestMapping("/blog-detail")
-    public String blogdetail(@RequestParam("id") Integer id, Model model) {
 
+    @RequestMapping("/blog-detail")
+    public String blogdetail(@RequestParam(value = "id", required = false) Integer id, Model model) {
+
+        if (id == null) {
+            return "redirect:/blog-list";
+        }
 
         Blog blog = blogService.getBlogById(id);
 
         if (blog == null) {
-            // Không có blog, trả về trang 404 hoặc báo lỗi
             return "error/404";
         }
         model.addAttribute("blog", blog);

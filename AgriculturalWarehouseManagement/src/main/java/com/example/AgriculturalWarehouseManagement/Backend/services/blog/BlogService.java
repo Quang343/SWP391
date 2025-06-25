@@ -59,6 +59,10 @@ public class BlogService {
         Pageable pageable = PageRequest.of(page, size);
         return blogRepository.findAllByStatusOrderByCreatedAtDesc("Active", pageable);
     }
+    public Page<Blog> searchBlogs(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return blogRepository.searchByAuthorOrContent("Active", keyword, pageable);
+    }
 
 
 }

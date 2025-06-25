@@ -1,6 +1,8 @@
 package com.example.AgriculturalWarehouseManagement.Backend.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +24,8 @@ public class Blog {
     @Column(name = "blogcategoryid")
     private Integer blogCategoryID;
 
+    @NotBlank(message = "Tiêu đề không được để trống")
+    @Size(max = 255, message = "Tiêu đề không được vượt quá 255 ký tự")
     @Column(name = "title")
     private String title;
 
