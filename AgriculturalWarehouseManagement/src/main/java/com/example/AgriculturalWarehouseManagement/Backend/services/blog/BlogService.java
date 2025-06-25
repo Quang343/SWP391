@@ -1,8 +1,8 @@
-package com.example.AgriculturalWarehouseManagement.Backend.services.blogs;
+package com.example.AgriculturalWarehouseManagement.Backend.services.blog;
 
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.response.admin.blog.BlogRecentDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.response.blog.BlogRecentDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Blog;
-import com.example.AgriculturalWarehouseManagement.Backend.repositorys.BlogRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.blog.BlogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,9 +27,14 @@ public class BlogService {
         return blogRepository.findAllActiveWithDetail("Active");
     }
 
+//    public Blog getBlogById(Integer id) {
+//        return blogRepository.findById(id).orElse(null);
+//    }
+
     public Blog getBlogById(Integer id) {
-        return blogRepository.findById(id).orElse(null);
+        return blogRepository.findByIdWithDetail(id); // Chỉ cần gọi hàm này
     }
+
 
     // Thêm method này để lấy N bài viết mới nhất, ví dụ 4 bài
     public List<BlogRecentDTO> getRecentBlogs(int count) {

@@ -112,7 +112,7 @@
                                 <a href="blog-detail">
                                     <h3 th:text="${blog.title}">one pot creamy mediterranean chicken pasta cream.</h3>
                                 </a>
-                                <button th:onclick="|location.href='/blog-detail?id=${blog.blogID}'|"
+                                <button th:onclick="|location.href='@{/blog-detail(id=${blog.blogID})}'|"
                                         class="blog-button">Read More
                                     <i class="fa-solid fa-right-long"></i></button>
                             </div>

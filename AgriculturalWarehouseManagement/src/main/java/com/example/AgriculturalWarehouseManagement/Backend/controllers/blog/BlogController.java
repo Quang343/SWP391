@@ -1,7 +1,7 @@
-package com.example.AgriculturalWarehouseManagement.Backend.controllers.Blogs;
+package com.example.AgriculturalWarehouseManagement.Backend.controllers.blog;
 
 import com.example.AgriculturalWarehouseManagement.Backend.models.Blog;
-import com.example.AgriculturalWarehouseManagement.Backend.services.blogs.BlogService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.blog.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -39,14 +39,13 @@ public class BlogController {
         return "FrontEnd/Home/blog-list";
     }
 
-
     @RequestMapping("/blog-detail")
     public String blogdetail(@RequestParam("id") Integer id, Model model) {
-
-        Blog blog = blogService.getBlogById(id);
+//        Blog blog = blogService.getBlogById(id);
+        Blog blog = blogService.getBlogById(id);  // Đã JOIN BlogDetail luôn
 
         if (blog == null) {
-            // Nếu không có blog, trả về trang 404 hoặc báo lỗi
+            // Không có blog, trả về trang 404 hoặc báo lỗi
             return "error/404";
         }
         model.addAttribute("blog", blog);
@@ -54,8 +53,13 @@ public class BlogController {
         // Lấy 4 bài viết mới nhất cho sidebar/recent posts
         model.addAttribute("recentBlogs", blogService.getRecentBlogs(4));
 
-        return "FrontEnd/Home/blog-detail";
+        // (Có thể lấy thêm comment nếu muốn)
+        // List<CommentBlog> comments = commentBlogService.getByBlogId(id);
+        // model.addAttribute("comments", comments);
+
+        return "FrontEnd/Home/blog-detail"; // Đường dẫn file html đúng với cấu trúc project
     }
+
 
     @RequestMapping("/blog-grid")
     public String bloggrid(

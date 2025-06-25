@@ -1,4 +1,4 @@
-package com.example.AgriculturalWarehouseManagement.Backend.dtos.response.admin.blog;
+package com.example.AgriculturalWarehouseManagement.Backend.dtos.response.blog;
 
 import java.util.Date;
 
