@@ -324,28 +324,30 @@
                         <div class="product-box-3 h-100 wow fadeInUp">
                             <div class="product-header">
                                 <div class="product-image">
-                                    <a href="product-left-thumbnail.html">
+                                    <a th:href="@{/productDetail(productId=${product.productId})}">
                                         <img th:src="@{${product.imageUrlGallery}}"
                                              class="img-fluid blur-up lazyload" alt="">
                                     </a>
 
                                     <ul class="product-option"
                                         style=" display: flex;justify-content: center;align-items: center;">
-                                        <li th:if="${session.account != null}" data-bs-toggle="tooltip"
+                                        <li  data-bs-toggle="tooltip"
                                             data-bs-placement="top" title="View">
-                                            <a href="javascript:void(0)" data-bs-toggle="modal"
-                                               data-bs-target="#view">
+                                            <a th:href="@{/productDetail(productId=${product.productId})}">
                                                 <i data-feather="eye"></i>
                                             </a>
                                         </li>
 
                                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                            <a href="compare.html">
-                                                <i data-feather="refresh-cw"></i>
+                                            <a href="javascript:void(0)"
+                                               data-bs-toggle="modal"
+                                               data-bs-target="#view"
+                                               th:data-product-id="${product.productId}">
+                                                <i class="iconly-Swap icli"></i>
                                             </a>
                                         </li>
 
-                                        <li th:if="${session.account != null}" data-bs-toggle="tooltip"
+                                        <li th:if="${session.account != null}"  data-bs-toggle="tooltip"
                                             data-bs-placement="top" title="Wishlist">
                                             <button class="btn p-0 wishlist notifi-wishlist"
                                                     th:data-productid="${product.productId}"
@@ -388,8 +390,8 @@
                                          th:if="${category.categoryId == product.categoryId}"
                                          th:text="${category.categoryName}" class="span-name"
                                    >Category</span>
-                                    <!--                                    th:remove="all-but-first" giúp Thymeleaf chỉ hiển thị phần tử đầu tiên khớp điều kiện, các phần còn lại bị loại bỏ sau khi render.-->
-                                    <a href="product-left-thumbnail.html">
+
+                                    <a th:href="@{/productDetail(productId=${product.productId})}">
                                         <h5 th:text="${product.productName}" class="name">Product name</h5>
                                     </a>
                                     <p th:text="${product.productDescription}"
@@ -554,6 +556,93 @@
     </div>
 </section>
 <!-- Shop Section End -->
+
+
+<!-- Quick View Modal Box Start -->
+<div class="modal fade theme-modal view-modal" id="view" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header p-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+                <div class="row g-sm-4 g-2">
+
+                    <div>
+                        <div class="right-sidebar-modal" style="width: 100%; max-width: 400px;">
+
+                            <div class="select-size">
+                                <form th:action="@{/compareProductDetail}" method="post">
+                                    <input name="productId" id="modalProductIdInput" type="hidden" value="">
+                                    <input name="productDetailId" id="modalProductDetailIdInput" type="hidden" value="">
+
+                                    <h4>Choose Weight :</h4>
+                                    <select id="modalWeightSelect" class="form-select select-form-size">
+                                        <option selected>Select Size</option>
+                                    </select>
+
+                                    <button type="submit" class="btn btn-outline-success mt-2">Compare</button>
+                                </form>
+                            </div>
+
+                            <script>
+                                const viewModal = document.getElementById('view');
+
+                                viewModal.addEventListener('show.bs.modal', async function (event) {
+                                    const button = event.relatedTarget;
+                                    const productId = button.getAttribute('data-product-id');
+                                    const productIdInput = viewModal.querySelector('#modalProductIdInput');
+                                    const productDetailIdInput = viewModal.querySelector('#modalProductDetailIdInput');
+                                    const weightSelect = viewModal.querySelector('#modalWeightSelect');
+                                    console.log("hello" + productId);
+
+                                    if (productIdInput) productIdInput.value = productId;
+
+                                    try {
+                                        const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/productDetailAPI/${productId}`);
+                                        const productDetails = response.data;
+
+                                        weightSelect.innerHTML = '';
+
+                                        productDetails.forEach(detail => {
+                                            const option = document.createElement('option');
+                                            option.value = detail.productDetailId;
+                                            option.textContent = `${detail.productWeight} - ${detail.price.toLocaleString()} VND`;
+                                            option.dataset.productDetailID = detail.productDetailId;
+                                            weightSelect.appendChild(option);
+                                        });
+
+                                        // Gắn sự kiện change (chỉ gắn 1 lần duy nhất)
+                                        weightSelect.onchange = function () {
+                                            const selectedOption = weightSelect.options[weightSelect.selectedIndex];
+                                            if (selectedOption) {
+                                                productDetailIdInput.value = selectedOption.dataset.productDetailID;
+                                            }
+                                        };
+
+                                        // Gọi thủ công sự kiện change để tự động gán giá trị đầu tiên
+                                        if (weightSelect.options.length > 0) {
+                                            weightSelect.selectedIndex = 0;
+                                            weightSelect.dispatchEvent(new Event('change'));
+                                        }
+                                    } catch (error) {
+                                        console.error("Lỗi khi lấy dữ liệu product detail:", error);
+                                    }
+                                });
+
+                            </script>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Quick View Modal Box End -->
+
 
 <!-- Footer Section Start -->
 <footer th:replace="FrontEnd/fragments/footer::footer"></footer>

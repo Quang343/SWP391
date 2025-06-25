@@ -170,17 +170,14 @@ public class ProfileController {
         UserResponse userResponseSession = (UserResponse) session.getAttribute("account");
         ResponseResult<User> checkOldPassword = userService.checkOldPassword(userResponseSession.getEmail(), oldPassword);
         if (!checkOldPassword.isActive()) {
-//            System.out.println("hello"+checkOldPassword.getMessage());
             session.setAttribute("errorChangePassword", checkOldPassword.getMessage());
             return "redirect:/profileUser";
         } else {
             ResponseResult<User> result = userService.changePassword(userResponseSession.getEmail(), newPassword);
             if (result.isActive()) {
-//                System.out.println("hello"+result.getMessage());
                 session.setAttribute("successChangePassword", result.getMessage());
                 return "redirect:/profileUser";
             } else {
-//                System.out.println("hello"+checkOldPassword.getMessage());
                 session.setAttribute("errorChangePassword", result.getMessage());
                 return "redirect:/profileUser";
             }

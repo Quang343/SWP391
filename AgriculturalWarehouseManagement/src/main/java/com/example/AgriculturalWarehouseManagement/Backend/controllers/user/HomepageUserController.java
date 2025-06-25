@@ -11,8 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomepageUserController {
@@ -23,6 +23,10 @@ public class HomepageUserController {
     @Autowired
     private CategoryUsersService categoryUsersService;
 
+    @Autowired
+    private jakarta.servlet.http.HttpSession session;
+
+
     @GetMapping("/")
     public String homePage() {
         return "redirect:/home";
@@ -31,12 +35,57 @@ public class HomepageUserController {
     @GetMapping("/home")
     public String home(Model model) {
 
+
+
         // Homepage All category
         List<CategoryUsersResponse> categoryUsersResponses = categoryUsersService.getAllListCategory();
         for (CategoryUsersResponse categoryUsersResponse : categoryUsersResponses) {
             System.out.printf("Category Name: %s\n", categoryUsersResponse.toString());
         }
         model.addAttribute("categoryUsersResponses", categoryUsersResponses);
+
+        // ProductMenu
+        List<ProductUserHomepageResponse> productMenu = productUsersService.getProductUsersHomepages() == null ? new ArrayList<>() : productUsersService.getProductUsersHomepages();
+
+        List<CategoryUsersResponse> firstThreeCategories = categoryUsersResponses == null
+                ? new ArrayList<>()
+                : categoryUsersResponses.stream()
+                .sorted(Comparator.comparingInt(CategoryUsersResponse::getCategoryId)) // sắp xếp tăng dần theo categoryId
+                .limit(3)
+                .collect(Collectors.toList());
+
+
+        List<ProductUserHomepageResponse> productMenu1 = new ArrayList<>();
+        List<ProductUserHomepageResponse> productMenu2 = new ArrayList<>();
+        List<ProductUserHomepageResponse> productMenu3 = new ArrayList<>();
+
+        for (int i = 0; i < firstThreeCategories.size(); i++) {
+            CategoryUsersResponse category = firstThreeCategories.get(i);
+            Integer categoryId = category.getCategoryId();
+
+            List<ProductUserHomepageResponse> productsInCategory = productMenu.stream()
+                    .filter(p -> p.getCategoryId() == (categoryId)) // Dùng .equals()
+                    .limit(6)
+                    .collect(Collectors.toList());
+
+            if (i == 0) {
+                session.setAttribute("categoryName1", category.getCategoryName());
+                productMenu1.addAll(productsInCategory);
+            } else if (i == 1) {
+                session.setAttribute("categoryName2", category.getCategoryName());
+                productMenu2.addAll(productsInCategory);
+            } else if (i == 2) {
+                session.setAttribute("categoryName3", category.getCategoryName());
+                productMenu3.addAll(productsInCategory);
+            }
+        }
+
+        session.setAttribute("productMenu1", productMenu1);
+        session.setAttribute("productMenu2", productMenu2);
+        session.setAttribute("productMenu3", productMenu3);
+
+
+
 
         // HomePage Product user can view
         List<ProductUserHomepageResponse> productView = productUsersService.getProductUsersHomepages();

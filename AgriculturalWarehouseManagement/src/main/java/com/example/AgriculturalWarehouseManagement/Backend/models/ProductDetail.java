@@ -36,4 +36,8 @@ public class ProductDetail {
     @Column(name="detailname", length = 500)
     private String detailName;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50)
+    private ProductDetailStatus status;
+
 }

@@ -4,6 +4,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.models.Role;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.xml.crypto.Data;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class UserResponse {
@@ -18,14 +19,13 @@ public class UserResponse {
     private String gender;
     private String status;
     private String dob;
-    private Date createAt;
-    private Date lastUpdateAt;
+    private LocalDateTime createAt;
+    private LocalDateTime lastUpdateAt;
     private String googleID;
     private String statusGG;
 
     public UserResponse() {
     }
-
 
 
     public int getUserID() {
@@ -84,20 +84,20 @@ public class UserResponse {
         this.phone = phone;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public String getGender() {
         return gender;
     }
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getStatus() {
@@ -116,19 +116,19 @@ public class UserResponse {
         this.dob = dob;
     }
 
-    public Date getCreateAt() {
+    public LocalDateTime getCreateAt() {
         return createAt;
     }
 
-    public void setCreateAt(Date createAt) {
+    public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
     }
 
-    public Date getLastUpdateAt() {
+    public LocalDateTime getLastUpdateAt() {
         return lastUpdateAt;
     }
 
-    public void setLastUpdateAt(Date lastUpdateAt) {
+    public void setLastUpdateAt(LocalDateTime lastUpdateAt) {
         this.lastUpdateAt = lastUpdateAt;
     }
 
@@ -146,26 +146,5 @@ public class UserResponse {
 
     public void setStatusGG(String statusGG) {
         this.statusGG = statusGG;
-    }
-
-    @Override
-    public String toString() {
-        return "UserResponse{" +
-                "userID=" + userID +
-                ", role=" + role +
-                ", userName='" + userName + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", imageUrl='" + imageUrl + '\'' +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", address='" + address + '\'' +
-                ", gender='" + gender + '\'' +
-                ", status='" + status + '\'' +
-                ", dob=" + dob +
-                ", createAt=" + createAt +
-                ", lastUpdateAt=" + lastUpdateAt +
-                ", googleID='" + googleID + '\'' +
-                ", statusGG='" + statusGG + '\'' +
-                '}';
     }
 }

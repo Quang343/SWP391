@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Service
@@ -93,12 +94,11 @@ public class UserService {
         user.setRole(role);
         user.setUserName(registerRequestDTO.getUsername());
         user.setEmail(registerRequestDTO.getEmail());
-        user.setPasswordHash(encodedPassword);
+        user.setPassword(encodedPassword);
         user.setStatus("Active");
         user.setOtp(sessionOtp);
         user.setGoogleID("Inactive");
         user.setStatusGG("Inactive");
-
         userRepository.save(user);
 
     }
@@ -141,8 +141,12 @@ public class UserService {
                                 return new ResponseResult<>("ERROR", "Password must contain at least one special character.", false);
                             }
 
+                            if (passwordEncoder.matches(changePassword, user.getPassword())){
+                                return new ResponseResult<>("ERROR", "The new password cannot be the same as the old password.", false);
+                            }
+
                             String hashedPassword = passwordEncoder.encode(changePassword);
-                            user.setPasswordHash(hashedPassword);
+                            user.setPassword(hashedPassword);
                             userRepository.save(user); // Save in database
 
                             return new ResponseResult<>("SUCCESS", "Change password successfully !!!", true);
@@ -170,6 +174,7 @@ public class UserService {
         user.setStatus("Active");
         user.setGoogleID(googleAccountRequest.getId());
         user.setStatusGG("Active");
+        user.setPassword("");
 
         userRepository.save(user);
         return new ResponseResult<>("SUCCESS", "Insert user account google successfully !!!", true);
@@ -218,6 +223,10 @@ public class UserService {
 
         if (!capitalizedEachWord.isCapitalizedEachWord(profileRequest.getFullName())) {
             return new ResponseResult<>("ERROR", "FullName cannot be capitalized Each Word", false);
+        }
+
+        if (profileRequest.getFullName().length() < 4) {
+            return new ResponseResult<>("ERROR", "FullName cannot be less than 4 characters", false);
         }
 
         String updateInfor = "";
@@ -292,7 +301,7 @@ public class UserService {
         user.setGender(profileRequest.getGender());
         System.out.println("hello ae" + profileRequest.getDob());
         user.setDob(profileRequest.getDob());
-        user.setLastTimeUpdatePass(new Date());
+        user.setLastTimeUpdatePass(LocalDateTime.now());
         userRepository.save(user);
 
         // Check ProfileResponse
@@ -335,7 +344,7 @@ public class UserService {
 
     public ResponseResult<User> checkOldPassword(String email, String oldPassword) {
         User user = userRepository.findByEmail(email);
-        if (!passwordEncoder.matches(oldPassword, user.getPasswordHash())){
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())){
             return new ResponseResult<>("ERROR", "Old password doesn't match !!!", false);
         } else {
             return new ResponseResult<>("SUCCESS", "Old password successfully !!!", true);

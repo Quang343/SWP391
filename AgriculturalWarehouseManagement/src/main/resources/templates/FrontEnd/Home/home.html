@@ -36,7 +36,8 @@
                             <h6>Ưu đãi độc quyền <span>Giảm 30%</span></h6>
                             <h1 class="w-75 text-uppercase poster-1">Ở nhà và giao hàng của bạn<span
                                     class="daily">Nhu cầu hàng ngày</span></h1>
-                            <p class="w-58 d-none d-sm-block">Nhiều tổ chức đã đưa ra các tuyên bố chính thức khuyến khích mọi người giảm lượng đồ uống có đường.</p>
+                            <p class="w-58 d-none d-sm-block">Nhiều tổ chức đã đưa ra các tuyên bố chính thức khuyến
+                                khích mọi người giảm lượng đồ uống có đường.</p>
                             <button onclick="location.href = 'shop-left-sidebar.html';"
                                     class="btn btn-animation mt-xxl-4 mt-2 home-button mend-auto">Shop Now <i
                                     class="fa-solid fa-right-long ms-2 icon"></i></button>
@@ -81,7 +82,8 @@
             <div class="col-12">
                 <div class="slider-9">
                     <div th:each="category : ${categoryUsersResponses}">
-                        <a th:href="@{/shopDetail(categoryId=${category.categoryId})}" class="category-box wow fadeInUp">
+                        <a th:href="@{/shopDetail(categoryId=${category.categoryId})}"
+                           class="category-box wow fadeInUp">
                             <div>
                                 <img th:src="@{${category.imageUrl}}" class="blur-up lazyload" alt="">
                                 <h5 th:text="${category.categoryName}">Category name</h5>
@@ -241,94 +243,73 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body d-flex justify-content-center">
                 <div class="row g-sm-4 g-2">
-                    <div class="col-lg-6">
-                        <div class="slider-image">
-                            <img src="../assets/images/product/category/1.jpg" class="img-fluid blur-up lazyload"
-                                 alt="">
-                        </div>
-                    </div>
 
-                    <div class="col-lg-6">
-                        <div class="right-sidebar-modal">
-                            <h4 class="title-name">Peanut Butter Bite Premium Butter Cookies 600 g</h4>
-                            <h4 class="price">$36.99</h4>
-                            <div class="product-rating">
-                                <ul class="rating">
-                                    <li>
-                                        <i data-feather="star" class="fill"></i>
-                                    </li>
-                                    <li>
-                                        <i data-feather="star" class="fill"></i>
-                                    </li>
-                                    <li>
-                                        <i data-feather="star" class="fill"></i>
-                                    </li>
-                                    <li>
-                                        <i data-feather="star" class="fill"></i>
-                                    </li>
-                                    <li>
-                                        <i data-feather="star"></i>
-                                    </li>
-                                </ul>
-                                <span class="ms-2">8 Reviews</span>
-                                <span class="ms-2 text-danger">6 sold in last 16 hours</span>
-                            </div>
-
-                            <div class="product-detail">
-                                <h4>Product Details :</h4>
-                                <p>Candy canes sugar plum tart cotton candy chupa chups sugar plum chocolate I love.
-                                    Caramels marshmallow icing dessert candy canes I love soufflé I love toffee.
-                                    Marshmallow pie sweet sweet roll sesame snaps tiramisu jelly bear claw. Bonbon
-                                    muffin I love carrot cake sugar plum dessert bonbon.</p>
-                            </div>
-
-                            <ul class="brand-list">
-                                <li>
-                                    <div class="brand-box">
-                                        <h5>Brand Name:</h5>
-                                        <h6>Black Forest</h6>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="brand-box">
-                                        <h5>Product Code:</h5>
-                                        <h6>W0690034</h6>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="brand-box">
-                                        <h5>Product Type:</h5>
-                                        <h6>White Cream Cake</h6>
-                                    </div>
-                                </li>
-                            </ul>
+                    <div>
+                        <div class="right-sidebar-modal" style="width: 100%; max-width: 400px;">
 
                             <div class="select-size">
-                                <h4>Cake Size :</h4>
-                                <select class="form-select select-form-size">
-                                    <option selected>Select Size</option>
-                                    <option value="1.2">1/2 KG</option>
-                                    <option value="0">1 KG</option>
-                                    <option value="1.5">1/5 KG</option>
-                                    <option value="red">Red Roses</option>
-                                    <option value="pink">With Pink Roses</option>
-                                </select>
+                                <form th:action="@{/compareProductDetail}" method="post">
+                                    <input name="productId" id="modalProductIdInput" type="hidden" value="">
+                                    <input name="productDetailId" id="modalProductDetailIdInput" type="hidden" value="">
+
+                                    <h4>Choose Weight :</h4>
+                                    <select id="modalWeightSelect" class="form-select select-form-size">
+                                        <option selected>Select Size</option>
+                                    </select>
+
+                                    <button type="submit" class="btn btn-outline-success mt-2">Compare</button>
+                                </form>
                             </div>
 
-                            <div class="modal-button">
-                                <button onclick="location.href = 'cart.html';"
-                                        class="btn btn-md add-cart-button icon">Add
-                                    To Cart
-                                </button>
-                                <button onclick="location.href = 'product-left-thumbnail.html';"
-                                        class="btn theme-bg-color view-button icon text-white fw-bold btn-md">
-                                    View More Details
-                                </button>
-                            </div>
+                            <script>
+                                const viewModal = document.getElementById('view');
+
+                                viewModal.addEventListener('show.bs.modal', async function (event) {
+                                    const button = event.relatedTarget;
+                                    const productId = button.getAttribute('data-product-id');
+                                    const productIdInput = viewModal.querySelector('#modalProductIdInput');
+                                    const productDetailIdInput = viewModal.querySelector('#modalProductDetailIdInput');
+                                    const weightSelect = viewModal.querySelector('#modalWeightSelect');
+                                    console.log("hello" + productId);
+
+                                    if (productIdInput) productIdInput.value = productId;
+
+                                    try {
+                                        const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/productDetailAPI/${productId}`);
+                                        const productDetails = response.data;
+
+                                        weightSelect.innerHTML = '';
+
+                                        productDetails.forEach(detail => {
+                                            const option = document.createElement('option');
+                                            option.value = detail.productDetailId;
+                                            option.textContent = `${detail.productWeight} - ${detail.price.toLocaleString()} VND`;
+                                            option.dataset.productDetailID = detail.productDetailId;
+                                            weightSelect.appendChild(option);
+                                        });
+
+                                        // Gắn sự kiện change (chỉ gắn 1 lần duy nhất)
+                                        weightSelect.onchange = function () {
+                                            const selectedOption = weightSelect.options[weightSelect.selectedIndex];
+                                            if (selectedOption) {
+                                                productDetailIdInput.value = selectedOption.dataset.productDetailID;
+                                            }
+                                        };
+
+                                        // Gọi thủ công sự kiện change để tự động gán giá trị đầu tiên
+                                        if (weightSelect.options.length > 0) {
+                                            weightSelect.selectedIndex = 0;
+                                            weightSelect.dispatchEvent(new Event('change'));
+                                        }
+                                    } catch (error) {
+                                        console.error("Lỗi khi lấy dữ liệu product detail:", error);
+                                    }
+                                });
+
+                            </script>
+
                         </div>
                     </div>
                 </div>

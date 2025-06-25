@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -48,14 +50,11 @@ public class CommentProduct {
     private int rating = 0;
 
     @Column(name = "createdat", nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @PrePersist
-    public void prePersist() {
-        if (createdAt == null) {
-            createdAt = new Date();
-        }
+    protected void onCreate(){
+        this.createdAt = LocalDateTime.now();
     }
 }
 

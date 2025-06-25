@@ -2,6 +2,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class ProfileResponse {
@@ -14,18 +15,18 @@ public class ProfileResponse {
     private String address;
     private String gender;
     private String dob;
-    private Date lastUpdateAt;
+    private LocalDateTime lastUpdateAt;
 
     public ProfileResponse() {
     }
 
-    public ProfileResponse(int userID, String userName, String fullName, String email, String phone, String address, String gender, String dob, Date lastUpdateAt) {
+    public ProfileResponse(int userID, String userName, String fullName, String email, String address, String phone, String gender, String dob, LocalDateTime lastUpdateAt) {
         this.userID = userID;
         this.userName = userName;
         this.fullName = fullName;
         this.email = email;
-        this.phone = phone;
         this.address = address;
+        this.phone = phone;
         this.gender = gender;
         this.dob = dob;
         this.lastUpdateAt = lastUpdateAt;
@@ -71,20 +72,20 @@ public class ProfileResponse {
         this.phone = phone;
     }
 
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
     public String getAddress() {
         return address;
     }
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getDob() {
@@ -95,26 +96,11 @@ public class ProfileResponse {
         this.dob = dob;
     }
 
-    public Date getLastUpdateAt() {
+    public LocalDateTime getLastUpdateAt() {
         return lastUpdateAt;
     }
 
-    public void setLastUpdateAt(Date lastUpdateAt) {
+    public void setLastUpdateAt(LocalDateTime lastUpdateAt) {
         this.lastUpdateAt = lastUpdateAt;
-    }
-
-    @Override
-    public String toString() {
-        return "ProfileRequest{" +
-                "userID=" + userID +
-                ", userName='" + userName + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", address='" + address + '\'' +
-                ", gender='" + gender + '\'' +
-                ", dob=" + dob +
-                ", lastUpdateAt=" + lastUpdateAt +
-                '}';
     }
 }

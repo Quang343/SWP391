@@ -60,9 +60,11 @@
             font-weight: bold;
         }
 
-        .nav-link::after {
+        .nav-link.no-arrow::before {
+            display: none !important;
             content: none !important;
         }
+
     </style>
 
     <div class="header-top">
@@ -80,7 +82,8 @@
                         <div class="notification-slider">
                             <div>
                                 <div class="timer-notification">
-                                    <h6><strong class="me-1">Chào mừng đến với Fastkart!</strong>Gửi ưu đãi/quà tặng mới vào mỗi ngày cuối tuần.
+                                    <h6><strong class="me-1">Chào mừng đến với Fastkart!</strong>Gửi ưu đãi/quà tặng mới
+                                        vào mỗi ngày cuối tuần.
 
                                     </h6>
                                 </div>
@@ -117,21 +120,21 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="javascript:void(0)" id="english">
+                                        <a class="dropdown-item" href="javascript:void(0)" id="united-kingdom">
                                             <img th:src="@{FrontEnd/assets/images/country/united-kingdom.png}"
                                                  class="img-fluid blur-up lazyload" alt="">
-                                            <span>English</span>
+                                            <span>united-kingdom</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="javascript:void(0)" id="france">
+                                        <a class="dropdown-item" href="javascript:void(0)" id="germany">
                                             <img th:src="@{FrontEnd/assets/images/country/germany.png}"
                                                  class="img-fluid blur-up lazyload" alt="">
                                             <span>Germany</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="javascript:void(0)" id="chinese">
+                                        <a class="dropdown-item" href="javascript:void(0)" id="turki">
                                             <img th:src="@{FrontEnd/assets/images/country/turkish.png}"
                                                  class="img-fluid blur-up lazyload" alt="">
                                             <span>Turki</span>
@@ -148,7 +151,7 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end sm-dropdown-menu">
                                     <li>
-                                        <a class="dropdown-item" id="aud" href="javascript:void(0)">USD</a>
+                                        <a class="dropdown-item" id="usd" href="javascript:void(0)">USD</a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" id="aud" href="javascript:void(0)">AUD</a>
@@ -459,7 +462,8 @@
 
                             <ul class="category-list">
                                 <li th:each="category : ${categoryUsersResponses}" class="onhover-category-list">
-                                    <a th:href="@{/shopDetail(categoryId=${category.categoryId})}" class="category-name">
+                                    <a th:href="@{/shopDetail(categoryId=${category.categoryId})}"
+                                       class="category-name">
                                         <img th:src="@{${category.imageUrl}}" alt="">
                                         <h6 th:text="${category.categoryName}">Category name</h6>
                                         <i class="fa-solid fa-angle-right"></i>
@@ -481,17 +485,67 @@
                                 <div class="offcanvas-body">
                                     <ul class="navbar-nav">
                                         <li class="nav-item">
-                                            <a class="nav-link" href="home">Home</a>
+                                            <a class="nav-link no-arrow" href="home">Home</a>
                                         </li>
 
                                         <li class="nav-item dropdown">
-                                            <a class="nav-link" href="shopDetail">Shop</a>
+                                            <a class="nav-link no-arrow" href="shopDetail">Shop</a>
                                         </li>
 
                                         <li class="nav-item dropdown">
                                             <a class="nav-link dropdown-toggle" href="javascript:void(0)"
                                                data-bs-toggle="dropdown">Product</a>
 
+                                            <div class="dropdown-menu dropdown-menu-3 dropdown-menu-2">
+                                                <div class="row">
+                                                    <div class="col-xl-3">
+                                                        <div class="dropdown-column m-0">
+                                                            <h5 th:text="${categoryName1}" class="dropdown-header">Category name</h5>
+                                                            <th:block th:each="product : ${session.productMenu1}">
+                                                                <a class="dropdown-item"
+                                                                   th:href="@{'/productDetail'(pid=${product.productId})}"
+                                                                   th:text="${product.productName}">Product</a>
+                                                            </th:block>
+                                                            <p>...</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xl-3">
+                                                        <div class="dropdown-column m-0">
+                                                            <h5 th:text="${session.categoryName2}" class="dropdown-header">Category name</h5>
+                                                            <th:block th:each="product : ${session.productMenu2}">
+                                                                <a class="dropdown-item"
+                                                                   th:href="@{'/productDetail'(pid=${product.productId})}"
+                                                                   th:text="${product.productName}">Product</a>
+                                                            </th:block>
+                                                            <p>...</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xl-3">
+                                                        <div class="dropdown-column m-0">
+                                                            <h5 th:text="${session.categoryName3}" class="dropdown-header">Category name</h5>
+                                                            <th:block th:each="product : ${session.productMenu3}">
+                                                                <a class="dropdown-item"
+                                                                   th:href="@{'/productDetail'(pid=${product.productId})}"
+                                                                   th:text="${product.productName}">Product</a>
+                                                            </th:block>
+                                                            <p>...</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-xl-3 d-xl-block d-none">
+                                                        <div class="dropdown-column m-0">
+                                                            <div class="menu-img-banner">
+                                                                <a class="text-title" href="product-circle.html">
+                                                                    <img th:src="@{FrontEnd/assets/images/productMenu.png}"
+                                                                         alt="banner">
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </li>
 
                                         <li class="nav-item dropdown">

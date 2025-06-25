@@ -14,7 +14,7 @@
                                 <div th:each="product : ${group}" class="row gy-sm-4 gy-3">
                                     <div class="col-12">
                                         <div class="product-box-4 wow fadeInUp">
-                                            <a href="shop-left-sidebar.html" class="product-image">
+                                            <a th:href="@{/productDetail(productId=${product.productId})}" class="product-image">
                                                 <img th:src="@{${product.imageUrlGallery}}" class="img-fluid"
                                                      alt="">
                                             </a>
@@ -27,24 +27,17 @@
                                                     </li>
                                                 </ul>
                                                 <span th:text="${ '(' + product.ratingCount + ')'}">Rating count</span>
-                                                <a href="product-left-thumbnail.html">
+                                                <a th:href="@{/productDetail(productId=${product.productId})}">
                                                     <h4 th:text="${product.productName}" class="name">Product name</h4>
                                                 </a>
                                                 <h5 th:text="${#numbers.formatInteger(product.productPrice, 0, 'POINT') + '₫'}" class="price">
                                                     Product price smallest in ProductDetail
                                                 </h5>
                                                 <ul class="option">
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                    <li th:if="${session.account != null}" data-bs-toggle="tooltip" data-bs-placement="top"
                                                         title="Add to Cart">
                                                         <a href="cart.html">
                                                             <i class="iconly-Buy icli"></i>
-                                                        </a>
-                                                    </li>
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Quick View">
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                           data-bs-target="#exampleModal">
-                                                            <i class="iconly-Show icli"></i>
                                                         </a>
                                                     </li>
                                                     <li th:if="${session.account != null}" data-bs-toggle="tooltip"
@@ -56,11 +49,14 @@
                                                             <i class="iconly-Heart icli"></i>
                                                         </button>
                                                     </li>
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Compare">
-                                                        <a href="compare.html">
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                                        <a href="javascript:void(0)"
+                                                           data-bs-toggle="modal"
+                                                           data-bs-target="#view"
+                                                           th:data-product-id="${product.productId}">
                                                             <i class="iconly-Swap icli"></i>
                                                         </a>
+
                                                     </li>
                                                 </ul>
                                             </div>
@@ -87,7 +83,7 @@
                                 <div th:each="product : ${group}" class="row gy-sm-4 gy-3">
                                     <div class="col-12">
                                         <div class="product-box-4 wow fadeInUp">
-                                            <a href="shop-left-sidebar.html" class="product-image">
+                                            <a th:href="@{/productDetail(productId=${product.productId})}" class="product-image">
                                                 <img th:src="@{${product.imageUrlGallery}}" class="img-fluid"
                                                      alt="">
                                             </a>
@@ -100,26 +96,20 @@
                                                     </li>
                                                 </ul>
                                                 <span th:text="${ '(' + product.ratingCount + ')'}">Rating count</span>
-                                                <a href="product-left-thumbnail.html">
+                                                <a th:href="@{/productDetail(productId=${product.productId})}">
                                                     <h4 th:text="${product.productName}" class="name">Product name</h4>
                                                 </a>
                                                 <h5 th:text="${#numbers.formatInteger(product.productPrice, 0, 'POINT') + '₫'}" class="price">
                                                     Product price smallest in ProductDetail
                                                 </h5>
                                                 <ul class="option">
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                    <li th:if="${session.account != null}" data-bs-toggle="tooltip" data-bs-placement="top"
                                                         title="Add to Cart">
                                                         <a href="cart.html">
                                                             <i class="iconly-Buy icli"></i>
                                                         </a>
                                                     </li>
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Quick View">
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                           data-bs-target="#exampleModal">
-                                                            <i class="iconly-Show icli"></i>
-                                                        </a>
-                                                    </li>
+
                                                     <li th:if="${session.account != null}" data-bs-toggle="tooltip"
                                                         data-bs-placement="top"
                                                         title="Wishlist">
@@ -129,11 +119,14 @@
                                                             <i class="iconly-Heart icli"></i>
                                                         </button>
                                                     </li>
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Compare">
-                                                        <a href="compare.html">
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                                        <a href="javascript:void(0)"
+                                                           data-bs-toggle="modal"
+                                                           data-bs-target="#view"
+                                                           th:data-product-id="${product.productId}">
                                                             <i class="iconly-Swap icli"></i>
                                                         </a>
+
                                                     </li>
                                                 </ul>
                                             </div>
@@ -158,7 +151,7 @@
                                 <div th:each="product : ${group}" class="row gy-sm-4 gy-3">
                                     <div class="col-12">
                                         <div class="product-box-4 wow fadeInUp">
-                                            <a href="shop-left-sidebar.html" class="product-image">
+                                            <a th:href="@{/productDetail(productId=${product.productId})}" class="product-image">
                                                 <img th:src="@{${product.imageUrlGallery}}" class="img-fluid"
                                                      alt="">
                                             </a>
@@ -171,24 +164,17 @@
                                                     </li>
                                                 </ul>
                                                 <span th:text="${ '(' + product.ratingCount + ')'}">Rating count</span>
-                                                <a href="product-left-thumbnail.html">
+                                                <a th:href="@{/productDetail(productId=${product.productId})}">
                                                     <h4 th:text="${product.productName}" class="name">Product name</h4>
                                                 </a>
                                                 <h5 th:text="${#numbers.formatInteger(product.productPrice, 0, 'POINT') + '₫'}" class="price">
                                                     Product price smallest in ProductDetail
                                                 </h5>
                                                 <ul class="option">
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
+                                                    <li th:if="${session.account != null}" data-bs-toggle="tooltip" data-bs-placement="top"
                                                         title="Add to Cart">
                                                         <a href="cart.html">
                                                             <i class="iconly-Buy icli"></i>
-                                                        </a>
-                                                    </li>
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Quick View">
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                           data-bs-target="#exampleModal">
-                                                            <i class="iconly-Show icli"></i>
                                                         </a>
                                                     </li>
                                                     <li th:if="${session.account != null}" data-bs-toggle="tooltip"
@@ -221,11 +207,14 @@
                                                             });
                                                         </script>
                                                     </li>
-                                                    <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Compare">
-                                                        <a href="compare.html">
+                                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                                        <a href="javascript:void(0)"
+                                                           data-bs-toggle="modal"
+                                                           data-bs-target="#view"
+                                                           th:data-product-id="${product.productId}">
                                                             <i class="iconly-Swap icli"></i>
                                                         </a>
+
                                                     </li>
                                                 </ul>
                                             </div>

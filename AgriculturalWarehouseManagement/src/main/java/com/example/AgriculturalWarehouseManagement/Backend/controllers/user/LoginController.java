@@ -57,7 +57,7 @@ public class LoginController {
                 return "FrontEnd/Home/login";
             }
 
-            String passwordDatabase = userEntity.getPasswordHash();
+            String passwordDatabase = userEntity.getPassword();
 
             if (rememberMe == true) { // True checkbox
 

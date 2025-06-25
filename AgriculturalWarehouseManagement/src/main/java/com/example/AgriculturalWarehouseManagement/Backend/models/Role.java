@@ -1,8 +1,13 @@
 package com.example.AgriculturalWarehouseManagement.Backend.models;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "role")
 public class Role {
 
@@ -14,34 +19,9 @@ public class Role {
     @Column(name = "rolename", nullable = false, length = 100)
     private String roleName;
 
-    @Column(name = "status", length = 20, nullable = false, columnDefinition = "varchar(20) default 'Active'")
-    private String status = "Active";
+    @Column(length = 500)
+    private String description;
 
-    public static String ADMIN = "admin";
-    public static String USER = "user";
-
-    // Getters and Setters
-    public int getRoleID() {
-        return roleID;
-    }
-
-    public void setRoleID(int roleID) {
-        this.roleID = roleID;
-    }
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    @Column(length = 20)
+    private String status;
 }
