@@ -63,7 +63,7 @@ public class BlogController {
 
     @RequestMapping("/blog-grid")
     public String bloggrid(
-            @RequestParam(defaultValue = "1") int page, 
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "3") int size,
             Model model) {
 
