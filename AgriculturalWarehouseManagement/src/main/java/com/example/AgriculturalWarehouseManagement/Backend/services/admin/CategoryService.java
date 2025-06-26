@@ -5,6 +5,8 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.
 import com.example.AgriculturalWarehouseManagement.Backend.models.Category;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,6 +45,11 @@ public class CategoryService implements ICategoryService{
     @Override
     public boolean existsByNameIgnoreCase(String name) {
         return categoryRepository.existsByNameIgnoreCase(name);
+    }
+
+    @Override
+    public Page<Category> findAll(Pageable pageable) {
+        return categoryRepository.findAll(pageable);
     }
 
     @Override

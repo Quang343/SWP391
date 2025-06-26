@@ -1,7 +1,9 @@
 package com.example.AgriculturalWarehouseManagement.Backend.configurations;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -10,6 +12,11 @@ public class StaticResourceConfig implements WebMvcConfigurer {
 
     @Value("${app.upload.product-dir}")
     private String uploadDir;
+
+    @Bean
+    public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
+        return new HiddenHttpMethodFilter();
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -20,5 +27,8 @@ public class StaticResourceConfig implements WebMvcConfigurer {
         //Warehouse
         registry.addResourceHandler("warehouse/**")
                 .addResourceLocations("file:" + uploadDir + "/Warehouse");
+
+        registry.addResourceHandler("/admin/**")
+                .addResourceLocations("file:" + uploadDir + "/Admin");
     }
 }
