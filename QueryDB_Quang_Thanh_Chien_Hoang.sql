@@ -95,7 +95,7 @@ CREATE TABLE `blog` (
   KEY `BlogCategoryID` (`BlogCategoryID`),
   CONSTRAINT `blog_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `user` (`UserID`),
   CONSTRAINT `blog_ibfk_2` FOREIGN KEY (`BlogCategoryID`) REFERENCES `blogcategory` (`BlogCategoryID`)
-) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -104,7 +104,7 @@ CREATE TABLE `blog` (
 
 LOCK TABLES `blog` WRITE;
 /*!40000 ALTER TABLE `blog` DISABLE KEYS */;
-INSERT INTO `blog` VALUES (67,1,1,'Cách chọn giống lúa năng suất cao','Nội dung chi tiết về giống lúa...','2025-06-24 23:05:37',NULL,'Active','Nguyễn Văn A'),(68,2,2,'Thị trường nông sản tháng 6','Phân tích thị trường nông sản tháng 6...','2025-06-24 23:05:37',NULL,'Active','Trần Thị B'),(69,1,1,'Kỹ thuật tưới tiêu thông minh','Giới thiệu các giải pháp tưới tiêu...','2025-06-24 23:05:37',NULL,'Active','Nguyễn Văn A'),(70,2,2,'Xu hướng phân bón hữu cơ','Bài viết về ưu điểm của phân bón hữu cơ...','2025-06-24 23:05:37',NULL,'Active','Trần Thị B'),(71,1,1,'Bảo quản nông sản sau thu hoạch','Các bước bảo quản nông sản đúng cách...','2025-06-24 23:05:37',NULL,'Active','Nguyễn Văn A'),(72,2,2,'Thị trường lúa gạo xuất khẩu','Phân tích thị trường xuất khẩu lúa gạo...','2025-06-24 23:05:37',NULL,'Active','Trần Thị B'),(73,1,1,'Ứng dụng công nghệ vào nông nghiệp','Ứng dụng IoT, AI vào sản xuất...','2025-06-24 23:05:37',NULL,'Active','Nguyễn Văn A'),(74,2,2,'Dự báo giá rau củ quả','Những yếu tố ảnh hưởng tới giá...','2025-06-24 23:05:37',NULL,'Active','Trần Thị B'),(75,1,1,'Kinh nghiệm trồng cây ăn trái','Chia sẻ kinh nghiệm thực tế...','2025-06-24 23:05:37',NULL,'Active','Nguyễn Văn A'),(76,2,2,'Xu hướng tiêu dùng nông sản sạch','Lợi ích và nhu cầu thực tế...','2025-06-24 23:05:37',NULL,'Active','Trần Thị B');
+INSERT INTO `blog` VALUES (1,1,1,'Cách chọn giống lúa năng suất cao','Nội dung chi tiết về cách chọn giống lúa năng suất cao, chia sẻ kinh nghiệm thực tế từ các nông dân.','2025-06-26 14:35:21',NULL,'Active','Nguyễn Văn A'),(2,2,2,'Thị trường nông sản tháng 6','Bài viết phân tích thị trường nông sản tháng 6, cập nhật giá và xu hướng.','2025-06-26 14:35:21',NULL,'Active','Trần Thị B'),(3,1,1,'Kỹ thuật tưới tiêu thông minh','Giới thiệu các giải pháp tưới tiêu...','2025-06-26 14:35:21',NULL,'Active','Nguyễn Văn A'),(4,2,2,'Xu hướng phân bón hữu cơ','Bài viết về ưu điểm của phân bón hữu cơ...','2025-06-26 14:35:21',NULL,'Active','Trần Thị B'),(5,1,1,'Bảo quản nông sản sau thu hoạch','Các bước bảo quản nông sản đúng cách...','2025-06-26 14:35:21',NULL,'Active','Nguyễn Văn A'),(6,2,2,'Thị trường lúa gạo xuất khẩu','Phân tích thị trường xuất khẩu lúa gạo...','2025-06-26 14:35:21',NULL,'Active','Trần Thị B'),(7,1,1,'Ứng dụng công nghệ vào nông nghiệp','Ứng dụng IoT, AI vào sản xuất...','2025-06-26 14:35:21',NULL,'Active','Nguyễn Văn A'),(8,2,2,'Dự báo giá rau củ quả','Những yếu tố ảnh hưởng tới giá...','2025-06-26 14:35:21',NULL,'Active','Trần Thị B'),(9,1,1,'Kinh nghiệm trồng cây ăn trái','Chia sẻ kinh nghiệm thực tế...','2025-06-26 14:35:21',NULL,'Active','Nguyễn Văn A'),(10,2,2,'Xu hướng tiêu dùng nông sản sạch','Lợi ích và nhu cầu thực tế...','2025-06-26 14:35:21',NULL,'Active','Trần Thị B'),(11,3,1,'Kỹ thuật nuôi gà thả vườn','Hướng dẫn nuôi gà thả vườn hiệu quả.','2025-06-26 14:35:21',NULL,'Active','Đào Huy Hoàng'),(12,4,2,'Báo cáo thị trường chè tháng 6','Phân tích giá chè và xu hướng hiện tại.','2025-06-26 14:35:21',NULL,'Active','Tập Cận Bình'),(13,5,1,'Cách làm đất trồng khoai lang','Các bước làm đất để trồng khoai lang năng suất cao.','2025-06-26 14:35:21',NULL,'Active','Mát Jacker Bird'),(14,6,2,'Tin tức về xuất khẩu cà phê','Cập nhật tình hình xuất khẩu cà phê Việt Nam.','2025-06-26 14:35:21',NULL,'Active','Đào Huy Hoàng'),(15,3,1,'Nuôi ong lấy mật tự nhiên','Kinh nghiệm nuôi ong lấy mật hiệu quả.','2025-06-26 14:35:21',NULL,'Active','Chien Nguu'),(16,4,2,'Giá cả hạt điều tháng 6','Phân tích giá hạt điều và dự báo.','2025-06-26 14:35:21',NULL,'Active','Đô Nan Chăm'),(17,5,1,'Trồng rau mầm trong nhà','Hướng dẫn trồng rau mầm tại nhà đơn giản.','2025-06-26 14:35:21',NULL,'Active','Đào Huy Hoàng');
 /*!40000 ALTER TABLE `blog` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -148,7 +148,7 @@ CREATE TABLE `blogdetail` (
   PRIMARY KEY (`blogdetailid`),
   KEY `BlogID` (`blogid`),
   CONSTRAINT `blogdetail_ibfk_1` FOREIGN KEY (`blogid`) REFERENCES `blog` (`BlogID`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -157,7 +157,7 @@ CREATE TABLE `blogdetail` (
 
 LOCK TABLES `blogdetail` WRITE;
 /*!40000 ALTER TABLE `blogdetail` DISABLE KEYS */;
-INSERT INTO `blogdetail` VALUES (28,67,'1.jpg','Chi tiết blog về giống lúa năng suất cao...'),(29,68,'2.jpg','Chi tiết phân tích thị trường nông sản tháng 6...'),(30,69,'3.jpg','Các bước lắp đặt hệ thống tưới thông minh...'),(31,70,'4.jpg','Ưu điểm khi sử dụng phân bón hữu cơ...'),(32,71,'5.jpg','Các bước bảo quản nông sản hiệu quả...'),(33,72,'1.jpg','Phân tích tiềm năng xuất khẩu lúa gạo...'),(34,73,'2.jpg','Giới thiệu các công nghệ mới ứng dụng...'),(35,74,'3.jpg','Dự báo giá cả rau củ quả trong mùa hè...'),(36,75,'4.jpg','Kinh nghiệm trồng cây ăn trái cho năng suất cao...'),(37,76,'5.jpg','Nhu cầu tiêu dùng và các lợi ích sức khỏe từ nông sản sạch...');
+INSERT INTO `blogdetail` VALUES (1,1,'1.jpg','Chi tiết blog về giống lúa, các bước chọn lựa, ưu nhược điểm từng loại giống, kinh nghiệm thực tế đã áp dụng thành công.'),(2,2,'2.jpg','Phân tích thị trường nông sản tháng 6, dự đoán xu hướng giá cả, các yếu tố ảnh hưởng và lời khuyên cho nhà nông.'),(3,3,'3.jpg','Các bước lắp đặt hệ thống tưới thông minh...'),(4,4,'4.jpg','Ưu điểm khi sử dụng phân bón hữu cơ...'),(5,5,'5.jpg','Các bước bảo quản nông sản hiệu quả...'),(6,6,'7.jpg','Phân tích tiềm năng xuất khẩu lúa gạo...'),(7,7,'8.jpg','Giới thiệu các công nghệ mới ứng dụng...'),(8,8,'9.jpg','Dự báo giá cả rau củ quả trong mùa hè...'),(9,9,'10.jpg','Kinh nghiệm trồng cây ăn trái cho năng suất cao...'),(10,10,'11.jpg','Nhu cầu tiêu dùng và các lợi ích sức khỏe từ nông sản sạch...'),(11,11,'12.jpg','Hướng dẫn chi tiết nuôi gà thả vườn, chọn giống, và chăm sóc.'),(12,12,'13.jpg','Báo cáo chi tiết về thị trường chè, bao gồm các yếu tố ảnh hưởng.'),(13,13,'14.jpg','Các bước làm đất, chọn giống khoai lang, và thời gian thu hoạch.'),(14,14,'15.jpg','Tin tức về xuất khẩu cà phê, dự báo giá và nhu cầu quốc tế.'),(15,15,'16.jpg','Kinh nghiệm chọn vị trí nuôi ong, chăm sóc và lấy mật an toàn.'),(16,16,'17.jpg','Phân tích giá hạt điều, các yếu tố ảnh hưởng và thị trường.'),(17,17,'18.jpg','Hướng dẫn trồng rau mầm, dụng cụ cần thiết và cách chăm sóc.');
 /*!40000 ALTER TABLE `blogdetail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -267,7 +267,7 @@ CREATE TABLE `commentblog` (
   KEY `UserID` (`UserID`),
   CONSTRAINT `commentblog_ibfk_1` FOREIGN KEY (`BlogID`) REFERENCES `blog` (`BlogID`),
   CONSTRAINT `commentblog_ibfk_2` FOREIGN KEY (`UserID`) REFERENCES `user` (`UserID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -276,6 +276,7 @@ CREATE TABLE `commentblog` (
 
 LOCK TABLES `commentblog` WRITE;
 /*!40000 ALTER TABLE `commentblog` DISABLE KEYS */;
+INSERT INTO `commentblog` VALUES (1,1,2,'Bài viết rất hữu ích, cảm ơn tác giả!',NULL,0,0,'Active',5,'2025-06-26 14:35:21'),(2,2,1,'Thông tin thị trường rất sát thực tế.',NULL,0,0,'Active',4,'2025-06-26 14:35:21'),(3,11,4,'Bài viết rất thực tế, cảm ơn tác giả!',NULL,0,0,'Active',5,'2025-06-26 14:35:21'),(4,12,5,'Thông tin hữu ích, mong có thêm bài mới.',NULL,0,0,'Active',4,'2025-06-26 14:35:21');
 /*!40000 ALTER TABLE `commentblog` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -356,7 +357,7 @@ CREATE TABLE `gallery` (
   PRIMARY KEY (`galleryid`),
   KEY `ProductID` (`ProductID`),
   CONSTRAINT `gallery_ibfk_1` FOREIGN KEY (`ProductID`) REFERENCES `product` (`ProductID`)
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -365,7 +366,7 @@ CREATE TABLE `gallery` (
 
 LOCK TABLES `gallery` WRITE;
 /*!40000 ALTER TABLE `gallery` DISABLE KEYS */;
-INSERT INTO `gallery` VALUES (29,5,'c6334886-37b7-4b64-8220-c6cd6964d8f8.jpg'),(30,5,'e13f2bf7-0051-4499-afad-777e6dd76383.jpg'),(31,5,'bc9df6ea-97c0-4ccc-bfb2-b55b095468d0.webp'),(32,5,'87d170e3-5079-4899-9095-762e570d8586.jpg'),(38,5,'e0d72267-8cbb-4792-b18f-5a13a8642e49.jpg');
+INSERT INTO `gallery` VALUES (29,5,'c6334886-37b7-4b64-8220-c6cd6964d8f8.jpg'),(30,5,'e13f2bf7-0051-4499-afad-777e6dd76383.jpg'),(31,5,'bc9df6ea-97c0-4ccc-bfb2-b55b095468d0.webp'),(32,5,'87d170e3-5079-4899-9095-762e570d8586.jpg');
 /*!40000 ALTER TABLE `gallery` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -519,7 +520,7 @@ CREATE TABLE `product` (
   PRIMARY KEY (`ProductID`),
   KEY `CategoryID` (`CategoryID`),
   CONSTRAINT `product_ibfk_1` FOREIGN KEY (`CategoryID`) REFERENCES `category` (`CategoryID`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -528,7 +529,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (5,2,'Fresh Mango','Sweet mangoes harvested from organic farms.','INACTIVE'),(6,2,'Dragon Fruit','Red-flesh dragon fruit, rich in antioxidants.','INACTIVE'),(7,3,'Jasmine Rice','Fragrant jasmine rice, long grain.','ACTIVE'),(8,3,'Brown Rice','Unpolished brown rice with high fiber.','ACTIVE'),(9,1,'Potatoes','Naturally grown.','OUT_OF_STOCK'),(11,2,'cxxcxcdfdffd','d','INACTIVE');
+INSERT INTO `product` VALUES (5,2,'Fresh Mango','Sweet mangoes harvested from organic farms.','INACTIVE'),(6,2,'Dragon Fruit','Red-flesh dragon fruit, rich in antioxidants.','ACTIVE'),(7,3,'Jasmine Rice','Fragrant jasmine rice, long grain.','ACTIVE'),(8,3,'Brown Rice','Unpolished brown rice with high fiber.','ACTIVE'),(9,1,'Potatoes','Naturally grown.','OUT_OF_STOCK'),(12,8,'Thằng Hoàng FPT','Ngu vcl','OUT_OF_STOCK'),(13,1,'Gạo ST25','Gạo thơm đặc sản Sóc Trăng','ACTIVE'),(14,2,'Mít Thái','Mít ngọt, múi to','ACTIVE'),(15,3,'Cà rốt Đà Lạt','Tươi ngon, ngọt','ACTIVE'),(16,1,'Gạo Lứt','Tốt cho sức khỏe','ACTIVE'),(17,2,'Sầu riêng Ri6','Cơm vàng, hạt lép','INACTIVE'),(18,3,'Khoai lang Nhật','Ruột tím, dẻo','ACTIVE'),(19,1,'Gạo Nàng Hương','Thơm, dẻo mềm','ACTIVE'),(20,2,'Xoài Cát Chu','Ngọt thanh','ACTIVE'),(21,3,'Cải bó xôi','Xanh tươi, sạch','ACTIVE'),(22,1,'Gạo Tám Thái','Dẻo thơm','INACTIVE'),(23,2,'Dưa hấu ruột đỏ','Ngọt mát','ACTIVE'),(24,3,'Củ cải trắng','Trồng theo hướng hữu cơ','ACTIVE'),(25,1,'Gạo nếp cái hoa vàng','Dẻo mềm, dùng làm xôi','ACTIVE'),(26,2,'Cam sành','Ngọt, ít hạt','ACTIVE'),(27,3,'Rau muống','Tươi, không hóa chất','ACTIVE'),(28,1,'Gạo hữu cơ','Không hóa chất, tốt cho sức khỏe','ACTIVE'),(29,2,'Chuối tiêu','Chín cây tự nhiên','ACTIVE'),(30,3,'Bí đỏ','Ngọt, mềm','ACTIVE'),(31,1,'Gạo ST24','Đặc sản miền Tây','INACTIVE'),(32,2,'Táo đỏ','Ngọt, giòn','INACTIVE'),(33,3,'Cải thìa','Tươi, sạch','ACTIVE'),(34,1,'Gạo Hương Lài','Thơm dịu, mềm cơm','ACTIVE'),(35,2,'Ổi không hạt','Ngọt, giòn','ACTIVE'),(36,3,'Rau dền','Màu đẹp, nhiều dinh dưỡng','ACTIVE'),(37,1,'Gạo Thơm Jasmine','Dẻo, mềm, thích hợp cho cơm gia đình','ACTIVE'),(38,2,'Dưa lưới','Ngọt mát, trồng theo công nghệ cao','ACTIVE'),(39,3,'Rau cải xanh','Thu hoạch trong ngày, rau sạch','ACTIVE'),(40,1,'Gạo Tài Nguyên','Đặc sản miền Tây, cơm mềm','ACTIVE'),(41,2,'Lê Hàn Quốc','Giòn ngọt, nhập khẩu chính ngạch','ACTIVE'),(42,3,'Đậu bắp','Giòn, ít xơ, sạch','ACTIVE'),(43,1,'Gạo Bắc Hương','Thơm, mềm, ít nở','ACTIVE'),(44,2,'Nho đỏ Ninh Thuận','Không hạt, ngọt dịu','ACTIVE'),(45,3,'Cà chua bi','Tươi, dùng cho salad','ACTIVE'),(46,1,'Gạo Nhật','Dẻo, hạt tròn, dùng cho sushi','INACTIVE'),(47,2,'Mận hậu','Giòn, vị chua ngọt','ACTIVE'),(48,3,'Cải bẹ xanh','Phù hợp nấu canh, luộc','ACTIVE'),(49,1,'Gạo Campuchia','Hạt dài, thơm nhẹ','ACTIVE'),(50,2,'Thanh long ruột đỏ','Ngọt, đẹp mắt','ACTIVE'),(51,3,'Mồng tơi','Tốt cho tiêu hoá, nhiều chất nhầy','ACTIVE'),(52,1,'Gạo nếp nương','Thơm, dẻo, dùng gói bánh','ACTIVE'),(53,2,'Quýt đường','Ngọt đậm, ít hạt','ACTIVE'),(54,3,'Su hào','Giòn, ngọt, không hóa chất','ACTIVE'),(55,1,'Gạo hữu cơ ST25','Trồng không phân hóa học','ACTIVE'),(56,2,'Đu đủ','Chín cây, ngọt mềm','ACTIVE');
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -964,4 +965,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-06-26  2:49:47
+-- Dump completed on 2025-06-26 15:06:04

@@ -1,5 +1,7 @@
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 
 <head th:replace="FrontEnd/fragments/head::head"></head>
 
@@ -15,6 +17,7 @@
     <span></span>
 </div>
 <!-- Loader End -->
+
 
 <!-- Header Start -->
 <header th:replace="FrontEnd/fragments/header::header"></header>
@@ -39,7 +42,7 @@
 
         <li>
             <a href="search.html" class="search-box">
-                <!--                <i class="iconly-Search icli"></i>-->
+                <i class="iconly-Search icli"></i>
                 <span>Search</span>
             </a>
         </li>
@@ -67,15 +70,15 @@
         <div class="row">
             <div class="col-12">
                 <div class="breadcrumb-contain">
-                    <h2>Blog List</h2>
+                    <h2>404 Page</h2>
                     <nav>
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item">
-                                <a href="home">
+                                <a href="index.html">
                                     <i class="fa-solid fa-house"></i>
                                 </a>
                             </li>
-                            <li class="breadcrumb-item active">Blog List</li>
+                            <li class="breadcrumb-item active">404</li>
                         </ol>
                     </nav>
                 </div>
@@ -85,98 +88,28 @@
 </section>
 <!-- Breadcrumb Section End -->
 
-<!-- Blog Section Start -->
-<section class="blog-section section-b-space">
+<!-- 404 Section Start -->
+<section class="section-404 section-lg-space">
     <div class="container-fluid-lg">
-        <div class="row g-4">
-            <div class="col-xxl-9 col-xl-8 col-lg-7 order-lg-2">
-                <div class="row g-4">
-                    <!-- THÔNG BÁO KHI KHÔNG TÌM THẤY BÀI VIẾT -->
-                    <div class="col-12" th:if="${blogs.isEmpty()}">
-                        <div class="alert alert-warning text-center" role="alert" style="font-size: 18px;">
-                            Không có bài viết nào phù hợp với từ khóa "<span th:text="${keyword}"></span>".
-                        </div>
-                    </div>
-                    <!-- DANH SÁCH BÀI VIẾT -->
-                    <div class="col-12" th:each="blog : ${blogs}">
-                        <div class="blog-box blog-list wow fadeInUp">
-                            <div class="blog-image">
-                                <!--<p th:text="'thumbnail: >' + ${blog.blogDetail.thumbnail} + '<'"></p>-->
-                                <img th:src="@{'/Frontend/assets/images/blog/' + ${blog.blogDetail.thumbnail}}"
-                                     class="blur-up lazyload"
-                                     style="width:309px; height:177px; object-fit:cover;"
-                                     alt="Blog Image">
-
-                            </div>
-                            <div class="blog-contain blog-contain-2">
-                                <div class="blog-label">
-                                    <span class="time"><i data-feather="clock"></i>
-                                        <span th:text="${#dates.format(blog.createdAt, 'dd MMM, yyyy')}"></span>
-                                    </span>
-                                    <span class="super"><i data-feather="user"></i>
-                                        <span th:text="${blog.author}"></span>
-                                    </span>
-                                </div>
-                                <a href="/blog-detail">
-                                    <h3 th:text="${blog.title}"></h3>
-                                </a>
-                                <p th:text="${blog.content}"></p>
-                                <button th:onclick="|location.href='@{/blog-detail(id=${blog.blogID})}'|"
-                                        class="blog-button">Read
-                                    More <i class="fa-solid fa-right-long"></i></button>
-                            </div>
-                        </div>
-                    </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="image-404">
+                    <img th:src="@{/assets/images/inner-page/404.png}" class="img-fluid blur-up lazyload" alt="">
                 </div>
-
-                <nav class="custom-pagination">
-                    <ul class="pagination justify-content-center">
-                        <!-- Nút về Đầu, chỉ hiện nếu không ở trang 1 -->
-                        <li class="page-item" th:if="${currentPage > 1}">
-                            <a class="page-link" th:href="@{/blog-list(page=1, size=${size}, keyword=${keyword})}" title="Trang đầu">
-                                <i class="fa-solid fa-angle-double-left"></i>
-                            </a>
-                        </li>
-                        <!-- Nút về trước, chỉ hiện nếu không ở trang 1 -->
-                        <li class="page-item" th:if="${currentPage > 1}">
-                            <a class="page-link" th:href="@{/blog-list(page=${currentPage - 1}, size=${size}, keyword=${keyword})}" title="Trang trước">
-                                <i class="fa-solid fa-angle-left"></i>
-                            </a>
-                        </li>
-
-                        <!-- Số trang -->
-                        <li th:each="i : ${#numbers.sequence(startPage, endPage)}"
-                            class="page-item"
-                            th:classappend="${currentPage == i} ? 'active'">
-                            <a class="page-link"
-                               th:href="@{/blog-list(page=${i}, size=${size}, keyword=${keyword})}"
-                               th:text="${i}"></a>
-                        </li>
-
-                        <!-- Nút trang sau, chỉ hiện nếu không ở trang cuối -->
-                        <li class="page-item" th:if="${currentPage < totalPages}">
-                            <a class="page-link" th:href="@{/blog-list(page=${currentPage + 1}, size=${size}, keyword=${keyword})}" title="Trang sau">
-                                <i class="fa-solid fa-angle-right"></i>
-                            </a>
-                        </li>
-                        <!-- Nút về Cuối, chỉ hiện nếu không ở trang cuối -->
-                        <li class="page-item" th:if="${currentPage < totalPages}">
-                            <a class="page-link" th:href="@{/blog-list(page=${totalPages}, size=${size}, keyword=${keyword})}" title="Trang cuối">
-                                <i class="fa-solid fa-angle-double-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-
             </div>
 
-            <div class="col-xxl-3 col-xl-4 col-lg-5 order-lg-1">
-                <div th:replace="FrontEnd/fragments/sidebarblog :: sidebarblog"></div>
+            <div class="col-12">
+                <div class="contain-404">
+                    <h3 class="text-content">The page you are looking for could not be found. The link to this
+                        address may be outdated or we may have moved the since you last bookmarked it.</h3>
+                    <button onclick="location.href = 'home';"
+                            class="btn btn-md text-white theme-bg-color mt-4 mx-auto">Back To Home Screen</button>
+                </div>
             </div>
         </div>
     </div>
 </section>
-<!-- Blog Section End -->
+<!-- 404 Section End -->
 
 <!-- Footer Section Start -->
 <footer class="section-t-space">
@@ -308,10 +241,8 @@
                                 </a>
 
                                 <a href="shop-left-sidebar.html" class="deal-contain">
-                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57
-                                        <del>57.62</del>
-                                        <span>500 G</span></h6>
+                                    <h5 class="fw-bold">Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
                                 </a>
                             </div>
                         </li>
@@ -325,9 +256,7 @@
 
                                 <a href="shop-left-sidebar.html" class="deal-contain">
                                     <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57
-                                        <del>57.62</del>
-                                        <span>500 G</span></h6>
+                                    <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
                                 </a>
                             </div>
                         </li>
@@ -341,9 +270,7 @@
 
                                 <a href="shop-left-sidebar.html" class="deal-contain">
                                     <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57
-                                        <del>57.62</del>
-                                        <span>500 G</span></h6>
+                                    <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
                                 </a>
                             </div>
                         </li>
@@ -357,9 +284,7 @@
 
                                 <a href="shop-left-sidebar.html" class="deal-contain">
                                     <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57
-                                        <del>57.62</del>
-                                        <span>500 G</span></h6>
+                                    <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
                                 </a>
                             </div>
                         </li>
@@ -437,9 +362,9 @@
 <script th:src="@{/Frontend/assets/js/jquery-ui.min.js}"></script>
 
 <!-- Bootstrap js-->
-<script th:src="@{/Frontendassets/js/bootstrap/bootstrap.bundle.min.js}"></script>
-<script th:src="@{/Frontend/assets/js/bootstrap/popper.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/Frontend/assets/js/bootstrap/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/bootstrap/popper.min.js}"></script>
 
 <!-- feather icon js-->
 <script th:src="@{/Frontend/assets/js/feather/feather.min.js}"></script>
@@ -450,6 +375,7 @@
 
 <!-- Slick js-->
 <script th:src="@{/Frontend/assets/js/slick/slick.js}"></script>
+<script th:src="@{/Frontend/assets/js/slick/slick-animation.min.js}"></script>
 <script th:src="@{/Frontend/assets/js/slick/custom_slick.js}"></script>
 
 <!-- WOW js -->

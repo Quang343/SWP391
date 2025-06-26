@@ -428,20 +428,17 @@
                                      style="display: flex; justify-content: space-between; align-items: center;">
                                     <div>
                                         <h2>All Product</h2>
+
+                                    </div>
+
+                                    <div style="width: 200px; text-align: center; margin-top: 7px; position: relative; z-index: 0">
                                         <button class="btn btn-success"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#addProductModal"
-                                                style="background-color: #198754; color: white; border: none; padding: 8px 16px; font-weight: 500; border-radius: 4px; margin-left: 950px">
+                                                style="width:100%; background-color: #198754; color: white; border: none; padding: 8px 16px; font-weight: 500; border-radius: 4px">
                                             + Add Product
                                         </button>
                                     </div>
-
-
-                                    <span class="title-leaf">
-                                            <svg class="icon-width bg-gray">
-                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
-                                            </svg>
-                                        </span>
                                 </div>
 
                                 <div class="table-responsive dashboard-bg-box">
@@ -480,19 +477,17 @@
                                      style="display: flex; justify-content: space-between; align-items: center;">
                                     <div>
                                         <h2>All Product Detail</h2>
+
+                                    </div>
+
+                                    <div style="width: 200px; text-align: center; margin-top: 7px; position: relative; z-index: 0">
                                         <button class="btn btn-primary"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#addProductDetailModal"
-                                                style="background-color: #198754; color: white; border: none; padding: 8px 16px; font-weight: 500; border-radius: 4px; margin-left: 900px">
+                                                style="width:100%; background-color: #198754; color: white; border: none; padding: 8px 16px; font-weight: 500; border-radius: 4px">
                                             + Add Product Detail
                                         </button>
                                     </div>
-
-                                    <span class="title-leaf">
-                                        <svg class="icon-width bg-gray">
-                                            <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
-                                        </svg>
-                                    </span>
                                 </div>
 
                                 <div class="table-responsive dashboard-bg-box" id="tableAllDetailContainer">
@@ -1588,6 +1583,17 @@
 
 <!--CSS-->
 <style>
+
+    .custom-pagination .page-item.disabled .page-link {
+        color: #999 !important; /* màu chữ mờ */
+        background-color: #f8f9fa; /* nền nhẹ */
+        border-color: #dee2e6; /* viền mờ */
+        pointer-events: none; /* không cho bấm */
+        cursor: not-allowed; /* hiển thị con trỏ chéo */
+        opacity: 0.6; /* mờ tổng thể */
+        transition: 0.3s;
+    }
+
     .preview-image-box {
         position: relative;
         width: 100px;
@@ -2303,72 +2309,85 @@
         const paginationUl = document.querySelector(".custom-pagination ul");
         paginationUl.innerHTML = "";
 
-        const maxVisiblePages = 5;
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-        let endPage = startPage + maxVisiblePages - 1;
+        if (totalPages <= 1) return;
 
-        if (endPage > totalPages) {
-            endPage = totalPages;
-            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        const maxVisiblePages = 5;
+        const middlePagesCount = maxVisiblePages - 2; // vì luôn hiển thị trang 1 và cuối
+
+        // Điều chỉnh start và end cho phần giữa
+        let startPage = Math.max(2, currentPage - Math.floor(middlePagesCount / 2));
+        let endPage = startPage + middlePagesCount - 1;
+
+        if (endPage >= totalPages) {
+            endPage = totalPages - 1;
+            startPage = Math.max(2, endPage - middlePagesCount + 1);
         }
 
-        // <<< Trang đầu
+        // <<< Về đầu
         const firstLi = document.createElement("li");
-        firstLi.className = "page-item";
+        firstLi.className = "page-item" + (currentPage === 1 ? " disabled" : "");
         firstLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Về trang đầu"><i class="fa-solid fa-angles-left"></i></a>`;
-        firstLi.onclick = () => loadProducts(1);
+        if (currentPage !== 1) firstLi.onclick = () => loadProducts(1);
         paginationUl.appendChild(firstLi);
 
-        // << Lùi 1 trang
+        // << Lùi trang
         const prevLi = document.createElement("li");
-        prevLi.className = "page-item";
+        prevLi.className = "page-item" + (currentPage === 1 ? " disabled" : "");
         prevLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Trang trước"><i class="fa-solid fa-angle-left"></i></a>`;
-        prevLi.onclick = () => {
-            const newPage = currentPage === 1 ? 1 : currentPage - 1;
-            loadProducts(newPage);
-        };
+        if (currentPage !== 1) prevLi.onclick = () => loadProducts(currentPage - 1);
         paginationUl.appendChild(prevLi);
 
+        // Trang 1
+        const page1 = document.createElement("li");
+        page1.className = "page-item" + (currentPage === 1 ? " active" : "");
+        page1.innerHTML = `<a class="page-link" href="javascript:void(0)">1</a>`;
+        if (currentPage !== 1) page1.onclick = () => loadProducts(1);
+        paginationUl.appendChild(page1);
+
         // ... nếu cần
-        if (startPage > 1) {
+        if (startPage > 2) {
             const dots = document.createElement("li");
             dots.className = "page-item disabled";
             dots.innerHTML = `<span class="page-link">...</span>`;
             paginationUl.appendChild(dots);
         }
 
-        // Các trang số
+        // Các trang giữa
         for (let i = startPage; i <= endPage; i++) {
             const li = document.createElement("li");
             li.className = "page-item" + (i === currentPage ? " active" : "");
-            li.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Trang ${i}">${i}</a>`;
-            li.onclick = () => loadProducts(i);
+            li.innerHTML = `<a class="page-link" href="javascript:void(0)">${i}</a>`;
+            if (i !== currentPage) li.onclick = () => loadProducts(i);
             paginationUl.appendChild(li);
         }
 
         // ... nếu cần
-        if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
             const dots = document.createElement("li");
             dots.className = "page-item disabled";
             dots.innerHTML = `<span class="page-link">...</span>`;
             paginationUl.appendChild(dots);
         }
 
-        // >> Tới 1 trang
+        // Trang cuối
+        const lastPageLi = document.createElement("li");
+        lastPageLi.className = "page-item" + (currentPage === totalPages ? " active" : "");
+        lastPageLi.innerHTML = `<a class="page-link" href="javascript:void(0)">${totalPages}</a>`;
+        if (currentPage !== totalPages) lastPageLi.onclick = () => loadProducts(totalPages);
+        paginationUl.appendChild(lastPageLi);
+
+        // >> Trang sau
         const nextLi = document.createElement("li");
-        nextLi.className = "page-item";
+        nextLi.className = "page-item" + (currentPage === totalPages ? " disabled" : "");
         nextLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Trang tiếp theo"><i class="fa-solid fa-angle-right"></i></a>`;
-        nextLi.onclick = () => {
-            const newPage = currentPage === totalPages ? totalPages : currentPage + 1;
-            loadProducts(newPage);
-        };
+        if (currentPage !== totalPages) nextLi.onclick = () => loadProducts(currentPage + 1);
         paginationUl.appendChild(nextLi);
 
-        // >>> Trang cuối
+        // >>> Tới cuối
         const lastLi = document.createElement("li");
-        lastLi.className = "page-item";
+        lastLi.className = "page-item" + (currentPage === totalPages ? " disabled" : "");
         lastLi.innerHTML = `<a class="page-link" href="javascript:void(0)" title="Tới trang cuối"><i class="fa-solid fa-angles-right"></i></a>`;
-        lastLi.onclick = () => loadProducts(totalPages);
+        if (currentPage !== totalPages) lastLi.onclick = () => loadProducts(totalPages);
         paginationUl.appendChild(lastLi);
     }
 </script>
@@ -2497,7 +2516,7 @@
         padding: 12px 10px;
         color: #333;
         text-align: center;
-        border-bottom: 1px solid #eee !important;  /* ✅ CHỈNH LẠI ĐỘ ĐẬM */
+        border-bottom: 1px solid #eee !important; /* ✅ CHỈNH LẠI ĐỘ ĐẬM */
     }
 
     .product-detail-table tbody td {
@@ -2514,6 +2533,7 @@
     .product-detail-table tbody td {
         text-align: center;
     }
+
     /* Dùng chung cho cả unit buttons và available weight buttons */
     .btn.weight-unit-btn,
     #unitButtonGroup .btn {
@@ -2865,10 +2885,29 @@
                     <td>${item.price}</td>
                     <td>${item.expiry}</td>
                     <td>${item.status}</td>
-                    <td><!-- actions --></td>
+                    <td class="text-center align-middle">
+                        <ul class="option-list d-flex justify-content-center gap-2 list-unstyled m-0">
+                            <li>
+                                <button class="btn btn-sm btn-outline-primary btn-edit" title="Edit" data-id="${item.id}">
+                                    <i class="ri-pencil-line"></i>
+                                </button>
+                            </li>
+                            <li>
+                                <button class="btn btn-sm btn-outline-danger btn-delete"
+                                    title="${item.status === 'INACTIVE' ? 'Chi tiết sản phẩm đã ngừng kinh doanh' : 'Soft Delete'}"
+                                    data-id="${item.id}"
+                                    ${item.status === 'INACTIVE' ? 'disabled' : ''}>
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </td>
                 `;
                     tbody.appendChild(row);
                 });
+
+                // Sau khi render xong, gắn lại các event handler nếu cần:
+                setupProductDetailActions();
             })
             .catch(err => {
                 console.error("❌ Lỗi khi load all product details:", err);
@@ -2889,6 +2928,10 @@
 
 <!-- latest jquery-->
 <script th:src="@{/Frontend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- Bg overlay Start -->
+<div class="bg-overlay"></div>
+<!-- Bg overlay End -->
 
 <!-- jquery ui-->
 <script th:src="@{/Frontend/assets/js/jquery-ui.min.js}"></script>
