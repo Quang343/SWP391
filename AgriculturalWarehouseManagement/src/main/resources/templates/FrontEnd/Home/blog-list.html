@@ -101,8 +101,8 @@
                     <div class="col-12" th:each="blog : ${blogs}">
                         <div class="blog-box blog-list wow fadeInUp">
                             <div class="blog-image">
-                                <!--                                <p th:text="'thumbnail: >' + ${blog.blogDetail.thumbnail} + '<'"></p>-->
-                                <img th:src="@{'/assets/images/blog/' + ${blog.blogDetail.thumbnail}}"
+                                <!--<p th:text="'thumbnail: >' + ${blog.blogDetail.thumbnail} + '<'"></p>-->
+                                <img th:src="@{'/Backend/assets/images/' + ${blog.blogDetail.thumbnail}}"
                                      class="blur-up lazyload"
                                      style="width:309px; height:177px; object-fit:cover;"
                                      alt="Blog Image">
@@ -127,56 +127,7 @@
                             </div>
                         </div>
                     </div>
-                    <!--                    <div class="col-12">-->
-                    <!--                        <div class="blog-box blog-list wow fadeInUp">-->
-                    <!--                            <div class="blog-image">-->
-                    <!--                                <img src="/AgriculturalWarehouseManagement/Frontend/assets/images/blog/5.jpg"-->
-                    <!--                                     class="blur-up lazyload" style="width:309px; height:177px; object-fit:cover;"-->
-                    <!--                                     alt="">-->
-                    <!--                            </div>-->
-
-                    <!--                            <div class="blog-contain blog-contain-2">-->
-                    <!--                                <div class="blog-label">-->
-                    <!--                                    <span class="time"><i data-feather="clock"></i> <span>18 Jub, 2025</span></span>-->
-                    <!--                                    <span class="super"><i data-feather="user"></i> <span> Đào Huy Hoàng-->
-                    <!--                                                </span></span>-->
-                    <!--                                </div>-->
-                    <!--                                <a href="blog-detail">-->
-                    <!--                                    <h3> Xuân Hạ Thu Đông rồi lại Xuân</h3>-->
-                    <!--                                </a>-->
-                    <!--                                <p>Thu viết tình thơ , Hạ vẽ lá , em đi trong mắt hoá chiều tà , gió đông hiu hắt xuân-->
-                    <!--                                    buồn bã , truân truất lun hồi hoá phong ba.</p>-->
-                    <!--                                <button onclick="location.href = 'blog-detail';" class="blog-button">Read-->
-                    <!--                                    More <i class="fa-solid fa-right-long"></i></button>-->
-                    <!--                            </div>-->
-                    <!--                        </div>-->
-                    <!--                    </div>-->
                 </div>
-
-                <!--                <nav class="custom-pagination">-->
-                <!--&lt;!&ndash;                     Phân trang&ndash;&gt;-->
-                <!--                    <ul class="pagination justify-content-center">-->
-                <!--                        <li class="page-item disabled">-->
-                <!--                            <a class="page-link" href="javascript:void(0)" tabindex="-1">-->
-                <!--                                <i class="fa-solid fa-angles-left"></i>-->
-                <!--                            </a>-->
-                <!--                        </li>-->
-                <!--                        <li class="page-item active">-->
-                <!--                            <a class="page-link" href="javascript:void(0)">1</a>-->
-                <!--                        </li>-->
-                <!--                        <li class="page-item">-->
-                <!--                            <a class="page-link" href="javascript:void(0)">2</a>-->
-                <!--                        </li>-->
-                <!--                        <li class="page-item">-->
-                <!--                            <a class="page-link" href="javascript:void(0)">3</a>-->
-                <!--                        </li>-->
-                <!--                        <li class="page-item">-->
-                <!--                            <a class="page-link" href="javascript:void(0)">-->
-                <!--                                <i class="fa-solid fa-angles-right"></i>-->
-                <!--                            </a>-->
-                <!--                        </li>-->
-                <!--                    </ul>-->
-                <!--                </nav>-->
 
                 <nav class="custom-pagination">
                     <ul class="pagination justify-content-center">

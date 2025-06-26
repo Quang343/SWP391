@@ -24,7 +24,7 @@ spring:
     resources:
       static-locations:
         - classpath:/static/
-       # - classpath:/static/Frontend/
+        - classpath:/static/Frontend/
         - file:D:/Project SWP391/SWP391/AgriculturalWarehouseManagement/src/main/resources/static/
       #        - file:D:/FU Learning/25-Summer/SWP391/QuanLyKhoNongSan/SWP391/AgriculturalWarehouseManagement/src/main/resources/static/
       cache:

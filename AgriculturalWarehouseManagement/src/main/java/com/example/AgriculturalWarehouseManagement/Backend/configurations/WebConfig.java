@@ -13,10 +13,10 @@ public class WebConfig implements WebMvcConfigurer {
         return new HiddenHttpMethodFilter();
     }
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Nếu dùng Windows, lưu ý đường dẫn phải có "file:" và kết thúc bằng /
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:uploads/");
-    }
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        // Nếu dùng Windows, lưu ý đường dẫn phải có "file:" và kết thúc bằng /
+//        registry.addResourceHandler("/uploads/**")
+//                .addResourceLocations("file:uploads/");
+//    }
 }
