@@ -6,8 +6,10 @@ import com.example.AgriculturalWarehouseManagement.Backend.services.warehousesta
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +23,32 @@ public class ProductBatchController {
 
     @Autowired
     private ProductBatchRepository productBatchRepository;
+
+    @Autowired
+    private ProductBatchService productBatchService;
+
+    // API endpoint for paginated product batches
+    @GetMapping("/paginatedProductBatches")
+    @ResponseBody
+    public Page<ProductBatchDTO> getPaginatedProductBatches(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size) {
+        return productBatchService.getPaginatedProductBatches(page, size);
+    }
+
+    // Thymeleaf view for product batch list with pagination
+    @GetMapping("/warehouse/productBatches")
+    public String listProductBatches(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            Model model) {
+        Page<ProductBatchDTO> productBatchPage = productBatchService.getPaginatedProductBatches(page, size);
+        model.addAttribute("productBatches", productBatchPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productBatchPage.getTotalPages());
+        model.addAttribute("totalItems", productBatchPage.getTotalElements());
+        return "BackEnd/WareHouse/productbatch";
+    }
 
     @PostMapping
     public ResponseEntity<ProductBatchDTO> create(@Valid @RequestBody ProductBatchDTO dto) {

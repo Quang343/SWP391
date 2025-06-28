@@ -18,6 +18,4 @@ public class AdjustmentDTO {
     private LocalDateTime adjustDate;
     private String reason;
     private String adjustmentType;
-
-
 }

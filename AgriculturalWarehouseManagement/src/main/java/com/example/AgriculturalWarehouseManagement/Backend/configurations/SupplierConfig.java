@@ -7,8 +7,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SupplierConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("AgriculturalWarehouseManagement/BackEnd/assets/imgproject/**")
-                .addResourceLocations("file:D:/Uploads/logos/");
+        registry.addResourceHandler("warehouse/**")
+                .addResourceLocations("file:D:/Uploads/Warehouse");
     }
 }
 

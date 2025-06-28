@@ -10,6 +10,9 @@ import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductBa
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductDetailRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -28,6 +31,22 @@ public class ProductBatchService {
 
     @Autowired
     private AdjustmentRepository adjustmentRepository;
+
+    @Autowired
+    private ProductBatchRepository productBatchRepository;
+
+    public Page<ProductBatchDTO> getPaginatedProductBatches(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductBatch> productBatchPage = productBatchRepository.findPaginatedProductBatches(pageable);
+
+        // Debug output to console
+        System.out.println("Debug - Page: " + page + ", Size: " + size +
+                ", Total Pages: " + productBatchPage.getTotalPages() +
+                ", Total Elements: " + productBatchPage.getTotalElements());
+
+        // Use mapper to convert entities to DTOs
+        return productBatchPage.map(mapper::productBatchToProductBatchDTO);
+    }
 
     // Tạo mới ProductBatch
     public ProductBatchDTO create(ProductBatchDTO dto) {

@@ -28,6 +28,10 @@ public class SupplierController {
     @Autowired
     private SupplierService supplierService;
 
+    private static final Logger LOGGER = Logger.getLogger(SupplierController.class.getName());
+
+    private static final String UPLOAD_DIR = "D:/Uploads/Warehouse/";
+
     // Get All Suppliers
     @GetMapping
     @ResponseBody
@@ -47,7 +51,7 @@ public class SupplierController {
     }
 
     // Hiển thị trang danh sách nhà cung cấp với phân trang (Thymeleaf)
-    @GetMapping("/admin/suppliers")
+    @GetMapping("/warehouse/suppliers")
     public String listSuppliers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
@@ -59,10 +63,6 @@ public class SupplierController {
         model.addAttribute("totalItems", supplierPage.getTotalElements());
         return "BackEnd/WareHouse/supplier";
     }
-
-    private static final Logger LOGGER = Logger.getLogger(SupplierController.class.getName());
-
-    private static final String UPLOAD_DIR = "AgriculturalWarehouseManagement/src/main/resources/static/BackEnd/assets/imgproject/";
 
     private String validateContactInfo(String contactInfo) {
         // Kiểm tra số điện thoại: 10 chữ số, bắt đầu bằng 0

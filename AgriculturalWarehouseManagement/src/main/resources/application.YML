@@ -19,13 +19,13 @@ spring:
     restart:
       enabled: true # Bật auto-restart để hỗ trợ hot-reload trong phát triển
 
-  web:
-    resources:
-      static-locations:
-        - file:D:/FU Learning/25-Summer/SWP391/QuanLyKhoNongSan/SWP391/AgriculturalWarehouseManagement/src/main/resources/static/
-        - classpath:/static/
-      cache:
-        period: 0 # Tắt bộ đệm tài nguyên tĩnh
+#  web:
+#    resources:
+#      static-locations:
+#        - file:D:/FU Learning/25-Summer/SWP391/QuanLyKhoNongSan/SWP391/AgriculturalWarehouseManagement/src/main/resources/static/
+#        - classpath:/static/
+#      cache:
+#        period: 0
 
   servlet:
     multipart:

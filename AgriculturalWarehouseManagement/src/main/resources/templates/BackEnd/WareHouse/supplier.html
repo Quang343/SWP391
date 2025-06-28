@@ -30,12 +30,20 @@
                         <div class="card card-table">
                             <div class="card-body">
                                 <div class="title-header option-title">
-                                    <h5>All Supplier</h5>
-                                    <form class="d-inline-flex">
+                                    <!-- Dòng 1: chỉ All Supplier -->
+                                    <div class="first-line">
+                                        <h5>All Supplier</h5>
+                                    </div>
+
+                                    <!-- Dòng 2: Add New và Search bên phải -->
+                                    <div class="second-line" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
                                         <a th:href="@{/warehouse/addsupplier}" class="align-items-center btn btn-theme d-flex">
-                                            <i data-feather="plus"></i>Add New
+                                            <i data-feather="plus"></i>&nbsp;Add New
                                         </a>
-                                    </form>
+                                        <div class="search-bar">
+                                            <input type="text" class="form-control" placeholder="Search..." id="searchInput">
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="table-responsive table-product">
@@ -300,7 +308,7 @@
                             const imageDiv = document.createElement('div');
                             imageDiv.classList.add('table-image');
                             const img = document.createElement('img');
-                            img.src = supplier.logo ? '/BackEnd/assets/imgproject/' + supplier.logo + '?t=' + Date.now() : '/BackEnd/assets/imgproject/default-logo.png';
+                            img.src = supplier.logo ;
                             img.classList.add('img-fluid');
                             img.alt = 'Supplier Logo';
                             imageDiv.appendChild(img);
@@ -361,7 +369,7 @@
             totalPages = typeof totalPages === 'number' && totalPages > 0 ? totalPages : 0;
             currentPage = typeof currentPage === 'number' && currentPage >= 0 ? currentPage : 0;
 
-            // Pre button
+            // Add button helper
             const addBtn = (label, page, disabled = false, active = false) => {
                 const li = document.createElement('li');
                 li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
@@ -369,37 +377,60 @@
                 paginationControls.appendChild(li);
             };
 
+            // Previous button
             addBtn('Previous', currentPage - 1, currentPage === 0);
 
             if (totalPages <= 1) {
                 addBtn(1, 0, false, true);
             } else {
+                // Always show first page
                 addBtn(1, 0, false, currentPage === 0);
 
-                if (currentPage <= 2) {
-                    // Pages 2, 3, 4
-                    for (let i = 1; i < Math.min(4, totalPages - 2); i++) {
-                        addBtn(i + 1, i, false, currentPage === i);
-                    }
-                } else {
-                    // Pages: currentPage -1, currentPage, currentPage +1
-                    if (currentPage - 1 > 1) addBtn(currentPage, currentPage - 1);
-                    addBtn(currentPage + 1, currentPage, true);
-                    if (currentPage + 1 < totalPages - 2) addBtn(currentPage + 2, currentPage + 1);
-                }
-
                 if (currentPage < totalPages - 3) {
-                    const ellipsis = document.createElement('li');
-                    ellipsis.className = 'page-item disabled';
-                    ellipsis.innerHTML = `<a class="page-link">...</a>`;
-                    paginationControls.appendChild(ellipsis);
-                }
+                    // Not in the last 3 pages
+                    if (currentPage <= 2) {
+                        // Show pages 2, 3, 4
+                        for (let i = 1; i < Math.min(4, totalPages - 1); i++) {
+                            addBtn(i + 1, i, false, currentPage === i);
+                        }
+                    } else {
+                        // Show currentPage - 1, currentPage, currentPage + 1
+                        if (currentPage - 1 > 1) addBtn(currentPage, currentPage - 1);
+                        addBtn(currentPage + 1, currentPage, false, true);
+                        if (currentPage + 1 < totalPages - 1) addBtn(currentPage + 2, currentPage + 1);
+                    }
 
-                // Last two pages
-                addBtn(totalPages - 1, totalPages - 2, false, currentPage === totalPages - 2);
-                addBtn(totalPages, totalPages - 1, false, currentPage === totalPages - 1);
+                    if (totalPages > 5 && currentPage < totalPages - 4) {
+                        // Add ellipsis before last two pages
+                        const ellipsis = document.createElement('li');
+                        ellipsis.className = 'page-item disabled';
+                        ellipsis.innerHTML = `<a class="page-link">...</a>`;
+                        paginationControls.appendChild(ellipsis);
+                    }
+
+                    // Last two pages
+                    if (totalPages > 2) addBtn(totalPages - 1, totalPages - 2, false, currentPage === totalPages - 2);
+                    addBtn(totalPages, totalPages - 1, false, currentPage === totalPages - 1);
+                } else {
+                    // In the last 3 pages (currentPage >= totalPages - 3)
+                    if (totalPages > 5) {
+                        // Add ellipsis after page 1
+                        const ellipsis = document.createElement('li');
+                        ellipsis.className = 'page-item disabled';
+                        ellipsis.innerHTML = `<a class="page-link">...</a>`;
+                        paginationControls.appendChild(ellipsis);
+                    }
+
+                    // Show last four pages (e.g., 9, 10, 11, 12)
+                    for (let i = totalPages - 4; i < totalPages; i++) {
+                        if (i > 1) { // Skip if already shown (e.g., page 1)
+                            addBtn(i + 1, i, false, currentPage === i);
+                        }
+                    }
+                }
             }
 
+            // Next button
             addBtn('Next', currentPage + 1, currentPage === totalPages - 1);
 
             // Handle click

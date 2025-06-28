@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JpbDataSourceConfig">
+    <data-source-infos>
+      <data-source-info id="f3ef66f0-6db5-488d-b326-fc3ea3fec769" persistence-unit-name="AgriculturalWarehouseManagement:entityManagerFactory" />
+    </data-source-infos>
+  </component>
+</project>

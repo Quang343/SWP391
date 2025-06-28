@@ -1,8 +1,59 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
-
 <head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
+<style>
+    /* Ensure table is scrollable horizontally if content overflows */
+    .table-responsive {
+        overflow-x: auto;
+        margin-bottom: 0; /* Remove extra margin to keep pagination close */
+        position: relative; /* Context for scrollbar */
+    }
 
+    /* Ensure table takes full width but triggers scrollbar if needed */
+    #table_id {
+        width: 100%;
+        min-width: 1000px; /* Force horizontal scrollbar for wide content */
+    }
+
+    /* Center pagination and style items */
+    #pagination-controls {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        margin-top: 8px; /* Small gap below table/scrollbar */
+        margin-bottom: 20px; /* Space below pagination */
+        position: relative; /* Ensure no overlap */
+        z-index: 1000; /* High z-index to prevent overlap */
+    }
+
+    #pagination-controls .page-item {
+        margin: 0 2.5px; /* 5px gap between items (2.5px each side) */
+    }
+
+    #pagination-controls .page-link {
+        border-radius: 4px;
+        padding: 6px 12px;
+        color: #333;
+        font-size: 14px; /* Match theme typography */
+        cursor: pointer; /* Ensure clickable appearance */
+    }
+
+    #pagination-controls .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: #fff;
+    }
+
+    #pagination-controls .page-item.disabled .page-link {
+        color: #6c757d;
+        pointer-events: none;
+        cursor: default;
+    }
+
+    /* Ensure no modal backdrop overlap */
+    .modal-backdrop {
+        z-index: 900; /* Below pagination */
+    }
+</style>
 <body>
 <!-- tap on top start-->
 <div class="tap-top">
@@ -58,6 +109,8 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                    <!-- Pagination Controls -->
+                                    <ul id="pagination-controls" class="pagination"></ul>
                                 </div>
                             </div>
                         </div>
@@ -230,6 +283,32 @@
 <!-- Custom JS for API call -->
 <script>
     $(document).ready(function() {
+        // Disable DataTables to prevent interference
+        if ($.fn.DataTable && $.fn.DataTable.isDataTable('#table_id')) {
+            $('#table_id').DataTable().destroy();
+            console.log('DataTables disabled for #table_id');
+        }
+
+        let currentPage = 0; // 0-based internally
+        let totalPages = 1; // Global variable to track total pages
+        const pageSize = 5;
+
+        // Bind pagination click events at the document level
+        $(document).off('click.pagination', '#pagination-controls .page-link').on('click.pagination', '#pagination-controls .page-link', function(e) {
+            e.preventDefault();
+            const page = parseInt($(this).data('page'));
+            console.log('Pagination click - page:', page, 'totalPages:', totalPages);
+            if (!isNaN(page) && page >= 0 && page < totalPages) {
+                fetchAdjustments(page);
+            }
+        });
+
+        // Debug pagination DOM
+        function debugPagination() {
+            const paginationItems = $('#pagination-controls .page-link');
+            console.log('Pagination items:', paginationItems.length, 'HTML:', $('#pagination-controls').html());
+        }
+
         // Populate Batch dropdown
         function populateBatchDropdown(selectElement, selectedId) {
             $.ajax({
@@ -257,112 +336,222 @@
             });
         }
 
-        // Load Adjustments
-        function loadAdjustments() {
+        function ensureElements() {
+            let tableBody = $('#adjustmentTableBody');
+            let noDataRow = $('#no-data-row');
+
+            if (!tableBody.length) {
+                const table = $('#table_id');
+                if (table.length) {
+                    tableBody = $('<tbody id="adjustmentTableBody"></tbody>');
+                    table.append(tableBody);
+                } else {
+                    console.error('Table #table_id not found');
+                    return null;
+                }
+            }
+
+            if (!noDataRow.length) {
+                noDataRow = $('<tr id="no-data-row"><td colspan="7" class="text-center">No data available in table</td></tr>');
+                tableBody.append(noDataRow);
+            }
+
+            return { tableBody, noDataRow };
+        }
+
+        function updateURL(page) {
+            history.pushState({}, '', `?page=${page + 1}`); // 1-based for URL
+        }
+
+        function fetchAdjustments(page = 0) {
+            currentPage = page;
+            updateURL(page);
+            const { tableBody, noDataRow } = ensureElements();
+            if (!tableBody || !noDataRow) return;
+
+            console.log('Fetching adjustments for page:', page);
+
             $.ajax({
-                url: '/api/adjustments',
+                url: `/api/adjustments/paginatedAdjustment?page=${page}&size=${pageSize}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    var tbody = $('#adjustmentTableBody');
-                    tbody.empty();
-                    if (!data || data.length === 0) {
-                        tbody.append('<tr><td colspan="7">No data</td></tr>');
+                    console.log('API response:', data);
+                    if (!data || !data.content || typeof data.totalPages === 'undefined' || typeof data.number === 'undefined') {
+                        console.error('Invalid API response:', data);
+                        tableBody.empty();
+                        noDataRow.show();
+                        renderPagination(0, 0);
                         return;
                     }
 
-                    $.ajax({
-                        url: '/api/product-batches',
-                        method: 'GET',
-                        dataType: 'json',
-                        success: function(batches) {
-                            var batchMap = {};
-                            $.each(batches, function(index, batch) {
-                                batchMap[batch.batchId || batch.id] = batch.batchId || 'No ID';
-                            });
+                    totalPages = data.totalPages; // Update global totalPages
+                    tableBody.empty();
 
-                            $.each(data, function(index, adjustment) {
-                                var batchId = adjustment.batch || adjustment.batchId;
-                                var mappedBatchId = batchMap[batchId] || batchId || 'N/A';
+                    if (data.content && data.content.length > 0) {
+                        noDataRow.hide();
+                        $.ajax({
+                            url: '/api/product-batches',
+                            method: 'GET',
+                            dataType: 'json',
+                            success: function(batches) {
+                                var batchMap = {};
+                                $.each(batches, function(index, batch) {
+                                    batchMap[batch.batchId || batch.id] = batch.batchId || 'No ID';
+                                });
 
-                                var row = '<tr>' +
-                                    '<td>' + (adjustment.id || 'N/A') + '</td>' +
-                                    '<td>' + mappedBatchId + '</td>' +
-                                    '<td>' + (adjustment.quantity || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.adjustDate || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.reason || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.adjustmentType || 'N/A') + '</td>' +
-                                    '<td>' +
-                                    '<ul class="action-list">' +
-                                    '<li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="' + (adjustment.id || '') + '" data-batch-id="' + (batchId || '') + '" data-quantity="' + (adjustment.quantity || '') + '" data-reason="' + (adjustment.reason || '') + '" data-adjustment-type="' + (adjustment.adjustmentType || '') + '"><i class="ri-pencil-line"></i></a></li>' +
-                                    '<li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="' + (adjustment.id || '') + '"><i class="ri-delete-bin-line"></i></a></li>' +
-                                    '</ul>' +
-                                    '</td>' +
-                                    '</tr>';
-                                tbody.append(row);
-                            });
+                                $.each(data.content, function(index, adjustment) {
+                                    var batchId = adjustment.batchId;
+                                    var mappedBatchId = batchMap[batchId] || batchId || 'N/A';
 
-                            $('.edit-adjustment').on('click', function() {
-                                var adjustmentId = $(this).data('adjustment-id');
-                                var batchId = $(this).data('batch-id');
-                                var quantity = $(this).data('quantity');
-                                var reason = $(this).data('reason');
-                                var adjustmentType = $(this).data('adjustment-type');
+                                    var row = $('<tr></tr>').attr('data-id', adjustment.id || '');
+                                    row.append(`<td>${adjustment.id || 'N/A'}</td>`);
+                                    row.append(`<td>${mappedBatchId}</td>`);
+                                    row.append(`<td>${adjustment.quantity || 'N/A'}</td>`);
+                                    row.append(`<td>${adjustment.adjustDate || 'N/A'}</td>`);
+                                    row.append(`<td>${adjustment.reason || 'N/A'}</td>`);
+                                    row.append(`<td>${adjustment.adjustmentType || 'N/A'}</td>`);
+                                    row.append(`
+                                        <td>
+                                            <ul class="action-list">
+                                                <li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="${adjustment.id || ''}" data-batch-id="${batchId || ''}" data-quantity="${adjustment.quantity || ''}" data-reason="${adjustment.reason || ''}" data-adjustment-type="${adjustment.adjustmentType || ''}"><i class="ri-pencil-line"></i></a></li>
+                                                <li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="${adjustment.id || ''}"><i class="ri-delete-bin-line"></i></a></li>
+                                            </ul>
+                                        </td>
+                                    `);
+                                    tableBody.append(row);
+                                });
 
-                                if (!adjustmentId) {
-                                    alert('Adjustment ID không hợp lệ.');
-                                    return;
-                                }
+                                bindActionEvents();
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error fetching Batches: ', status, error);
+                                alert('Unable to load Batch list. Check console.');
+                                $.each(data.content, function(index, adjustment) {
+                                    var batchId = adjustment.batchId;
+                                    var row = $('<tr></tr>').attr('data-id', adjustment.id || '');
+                                    row.append(`<td>${adjustment.id || 'N/A'}</td>`);
+                                    row.append(`<td>${batchId || 'N/A'}</td>`);
+                                    row.append(`<td>${adjustment.quantity || 'N/A'}</td>`);
+                                    row.append(`<td>${adjustment.adjustDate || 'N/A'}</td>`);
+                                    row.append(`<td>${adjustment.reason || 'N/A'}</td>`);
+                                    row.append(`<td>${adjustment.adjustmentType || 'N/A'}</td>`);
+                                    row.append(`
+                                        <td>
+                                            <ul class="action-list">
+                                                <li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="${adjustment.id || ''}" data-batch-id="${batchId || ''}" data-quantity="${adjustment.quantity || ''}" data-reason="${adjustment.reason || ''}" data-adjustment-type="${adjustment.adjustmentType || ''}"><i class="ri-pencil-line"></i></a></li>
+                                                <li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="${adjustment.id || ''}"><i class="ri-delete-bin-line"></i></a></li>
+                                            </ul>
+                                        </td>
+                                    `);
+                                    tableBody.append(row);
+                                });
+                                bindActionEvents();
+                            }
+                        });
+                    } else {
+                        noDataRow.show();
+                    }
 
-                                $('#editAdjustmentId').val(adjustmentId);
-                                $('#editQuantity').val(quantity);
-                                $('#editReason').val(reason);
-                                $('#editAdjustmentType').val(adjustmentType);
-                                populateBatchDropdown($('#editBatchId'), batchId);
-
-                                $('#editAdjustmentModal').modal('show');
-                            });
-
-                            $('.delete-adjustment').on('click', function(e) {
-                                e.preventDefault();
-                                var adjustmentId = $(this).data('adjustment-id');
-                                if (!adjustmentId) {
-                                    alert('Adjustment ID không hợp lệ.');
-                                    return;
-                                }
-                                $('.confirm-delete').data('adjustment-id', adjustmentId);
-                                $('#exampleModalToggle').modal('show');
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error fetching Batches: ', status, error);
-                            alert('Unable to load Batch list. Check console.');
-                            $.each(data, function(index, adjustment) {
-                                var batchId = adjustment.batch || adjustment.batchId;
-                                var row = '<tr>' +
-                                    '<td>' + (adjustment.id || 'N/A') + '</td>' +
-                                    '<td>' + (batchId || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.quantity || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.adjustDate || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.reason || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.adjustmentType || 'N/A') + '</td>' +
-                                    '<td>' +
-                                    '<ul class="action-list">' +
-                                    '<li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="' + (adjustment.id || '') + '" data-batch-id="' + (batchId || '') + '" data-quantity="' + (adjustment.quantity || '') + '" data-reason="' + (adjustment.reason || '') + '" data-adjustment-type="' + (adjustment.adjustmentType || '') + '"><i class="ri-pencil-line"></i></a></li>' +
-                                    '<li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="' + (adjustment.id || '') + '"><i class="ri-delete-bin-line"></i></a></li>' +
-                                    '</ul>' +
-                                    '</td>' +
-                                    '</tr>';
-                                tbody.append(row);
-                            });
-                        }
-                    });
+                    renderPagination(data.totalPages, data.number);
+                    debugPagination(); // Debug pagination DOM
                 },
                 error: function(xhr, status, error) {
-                    console.error('Lỗi khi gọi API /api/adjustments: ', status, error);
-                    alert('Lỗi khi tải dữ liệu: ' + error + '. Kiểm tra console.');
+                    console.error('Error fetching Adjustments: ', status, error);
+                    alert('Unable to load Adjustments. Check console.');
+                    tableBody.empty();
+                    noDataRow.show();
+                    renderPagination(0, 0);
+                    debugPagination();
                 }
             });
+        }
+
+        function bindActionEvents() {
+            $('.edit-adjustment').off('click.edit').on('click.edit', function() {
+                var adjustmentId = $(this).data('adjustment-id');
+                var batchId = $(this).data('batch-id');
+                var quantity = $(this).data('quantity');
+                var reason = $(this).data('reason');
+                var adjustmentType = $(this).data('adjustment-type');
+
+                if (!adjustmentId) {
+                    alert('Adjustment ID không hợp lệ.');
+                    return;
+                }
+
+                $('#editAdjustmentId').val(adjustmentId);
+                $('#editQuantity').val(quantity);
+                $('#editReason').val(reason);
+                $('#editAdjustmentType').val(adjustmentType);
+                populateBatchDropdown($('#editBatchId'), batchId);
+
+                $('#editAdjustmentModal').modal('show');
+            });
+
+            $('.delete-adjustment').off('click.delete').on('click.delete', function(e) {
+                e.preventDefault();
+                var adjustmentId = $(this).data('adjustment-id');
+                if (!adjustmentId) {
+                    alert('Adjustment ID không hợp lệ.');
+                    return;
+                }
+                $('.confirm-delete').data('adjustment-id', adjustmentId);
+                $('#exampleModalToggle').modal('show');
+            });
+        }
+
+        function renderPagination(totalPagesInput, currentPageInput) {
+            const paginationControls = $('#pagination-controls');
+            paginationControls.empty();
+
+            totalPages = typeof totalPagesInput === 'number' && totalPagesInput > 0 ? totalPagesInput : 1;
+            currentPage = typeof currentPageInput === 'number' && currentPageInput >= 0 && currentPageInput < totalPages ? currentPageInput : 0;
+
+            console.log('Rendering pagination - totalPages:', totalPages, 'currentPage:', currentPage);
+
+            const addBtn = (label, page, disabled = false, active = false) => {
+                const li = $('<li></li>').addClass('page-item');
+                if (disabled) li.addClass('disabled');
+                if (active) li.addClass('active');
+                li.html(`<a class="page-link" href="javascript:void(0)" data-page="${page}">${label}</a>`);
+                paginationControls.append(li);
+            };
+
+            // Previous button
+            addBtn('Previous', currentPage - 1, currentPage === 0);
+
+            // Always show first page
+            addBtn(1, 0, false, currentPage === 0);
+
+            // If totalPages is 1, only show page 1
+            if (totalPages === 1) {
+                return;
+            }
+
+            // Show up to 3 pages around currentPage, avoiding duplicates
+            const startPage = Math.max(2, currentPage);
+            const endPage = Math.min(totalPages - 1, currentPage + 2);
+
+            if (totalPages > 3 && currentPage > 1) {
+                paginationControls.append('<li class="page-item disabled"><a class="page-link">...</a></li>');
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                addBtn(i, i - 1, false, currentPage === i - 1);
+            }
+
+            if (totalPages > 4 && currentPage < totalPages - 2) {
+                paginationControls.append('<li class="page-item disabled"><a class="page-link">...</a></li>');
+            }
+
+            // Always show last page if totalPages > 1
+            if (totalPages > 1) {
+                addBtn(totalPages, totalPages - 1, false, currentPage === totalPages - 1);
+            }
+
+            // Next button
+            addBtn('Next', currentPage + 1, currentPage === totalPages - 1);
         }
 
         // Save Edited Adjustment
@@ -398,11 +587,16 @@
                 success: function(response) {
                     alert('Cập nhật Adjustment thành công!');
                     $('#editAdjustmentModal').modal('hide');
-                    loadAdjustments();
+                    $('.modal-backdrop').remove(); // Ensure backdrop is removed
+                    $('body').removeClass('modal-open').css('overflow', '');
+                    fetchAdjustments(currentPage);
                 },
                 error: function(xhr, status, error) {
                     console.error('Lỗi khi sửa Adjustment: ', status, error);
                     alert('Lỗi khi sửa Adjustment: ' + (xhr.responseText || 'Kiểm tra console.'));
+                    $('#editAdjustmentModal').modal('hide');
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open').css('overflow', '');
                 }
             });
         });
@@ -422,23 +616,35 @@
                 headers: { 'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content') },
                 success: function() {
                     $('#exampleModalToggle').modal('hide');
+                    $('.modal-backdrop').remove(); // Ensure backdrop is removed
+                    $('body').removeClass('modal-open').css('overflow', '');
                     if ($('#exampleModalToggle2').length > 0) {
-                        $('#exampleModalToggle2').modal('show');
+                        $('#exampleModalToggle2').modal('show').on('hidden.bs.modal', function() {
+                            $(this).off('hidden.bs.modal');
+                            $('.modal-backdrop').remove();
+                            $('body').removeClass('modal-open').css('overflow', '');
+                            fetchAdjustments(currentPage);
+                        });
                     } else {
                         alert('Xóa Adjustment thành công!');
+                        fetchAdjustments(currentPage);
                     }
-                    loadAdjustments();
                 },
                 error: function(xhr, status, error) {
                     console.error('Lỗi khi xóa Adjustment: ', status, error);
                     alert('Lỗi khi xóa Adjustment: ' + (xhr.responseText || 'Kiểm tra console.'));
                     $('#exampleModalToggle').modal('hide');
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open').css('overflow', '');
                 }
             });
         });
 
-        // Load Adjustments initially
-        loadAdjustments();
+        // Initial fetch with URL update
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialPage = parseInt(urlParams.get('page')) || 1;
+        if (initialPage > 0) currentPage = initialPage - 1; // Convert 1-based URL to 0-based
+        fetchAdjustments(currentPage);
     });
 </script>
 
