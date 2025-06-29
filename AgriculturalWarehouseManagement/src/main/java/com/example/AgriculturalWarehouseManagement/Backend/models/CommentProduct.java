@@ -31,17 +31,14 @@ public class CommentProduct {
     @JoinColumn(name = "productid", nullable = false)
     private Product product;
 
-    @Column(name = "parentcommentid")
-    private int parentComment;
-
     @Column(name = "commenttext", columnDefinition = "TEXT")
     private String commentText;
 
     @Column(name = "likes", columnDefinition = "INT DEFAULT 0")
     private int likes = 0;
 
-    @Column(name = "report", columnDefinition = "INT DEFAULT 0")
-    private int report = 0;
+    @Column(name = "dislikes", columnDefinition = "INT DEFAULT 0")
+    private int dislikes = 0;
 
     @Column(name = "status", length = 50)
     private String status = "Active";

@@ -238,5 +238,10 @@ public class ShopDetailController {
         return "redirect:/shopDetail";
     }
 
+    @PostMapping("/shopDetail")
+    public String moveGetshopDetail(){
+        return "redirect:/shopDetail";
+    }
+
 
 }

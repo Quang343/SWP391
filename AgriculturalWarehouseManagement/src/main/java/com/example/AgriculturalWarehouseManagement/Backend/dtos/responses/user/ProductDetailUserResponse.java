@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public class ProductDetailUserResponse {
 
+    private int categoryId;
     private int productId;
     private String productName;
     private String productDescription;
@@ -28,7 +29,8 @@ public class ProductDetailUserResponse {
     public ProductDetailUserResponse() {
     }
 
-    public ProductDetailUserResponse(int productId, String productName, String productDescription, String imageUrl, int productDetailId, String productWeight, int batchId, int importedQuantity, int soldQuantity, LocalDate manufactureDate, int expiry, double price, LocalDate expiryDate, int totalAdjustedRemoveQuantity, int remainQuantity, String status, String expiryStatus, int avgRating, int ratingCount) {
+    public ProductDetailUserResponse(int categoryId,int productId, String productName, String productDescription, String imageUrl, int productDetailId, String productWeight, int batchId, int importedQuantity, int soldQuantity, LocalDate manufactureDate, int expiry, double price, LocalDate expiryDate, int totalAdjustedRemoveQuantity, int remainQuantity, String status, String expiryStatus, int avgRating, int ratingCount) {
+        this.categoryId = categoryId;
         this.productId = productId;
         this.productName = productName;
         this.productDescription = productDescription;
@@ -48,6 +50,14 @@ public class ProductDetailUserResponse {
         this.expiryStatus = expiryStatus;
         this.avgRating = avgRating;
         this.ratingCount = ratingCount;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     public int getProductId() {
@@ -205,7 +215,8 @@ public class ProductDetailUserResponse {
     @Override
     public String toString() {
         return "ProductDetailUserResponse{" +
-                "productId=" + productId +
+                "categoryId=" + categoryId +
+                ", productId=" + productId +
                 ", productName='" + productName + '\'' +
                 ", productDescription='" + productDescription + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +

@@ -8,7 +8,7 @@
     <meta name="description" content="Fastkart">
     <meta name="keywords" content="Fastkart">
     <meta name="author" content="Fastkart">
-    <link rel="icon" href="../assets/images/favicon/1.png" type="image/x-icon">
+    <link rel="icon" th:href="@{FrontEnd/assets/images/favicon/1.png}" type="image/x-icon">
     <title>On-demand last-mile delivery</title>
 
     <!-- Google font -->
@@ -97,7 +97,7 @@
                             <th>Ảnh</th>
                             <td th:each="item : ${productDetailUserResponses}">
                                 <img class="text-title" th:href="@{/productDetail(productId=${item.productId})}"
-                                     th:src="@{${item.imageUrl}}"></img>
+                                     th:src="@{${item.imageUrl}}"  style="width: 100px; height: auto;"></img>
                             </td>
 
                         </tr>

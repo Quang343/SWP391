@@ -38,9 +38,10 @@
                                     class="daily">Nhu cầu hàng ngày</span></h1>
                             <p class="w-58 d-none d-sm-block">Nhiều tổ chức đã đưa ra các tuyên bố chính thức khuyến
                                 khích mọi người giảm lượng đồ uống có đường.</p>
-                            <button onclick="location.href = 'shop-left-sidebar.html';"
-                                    class="btn btn-animation mt-xxl-4 mt-2 home-button mend-auto">Shop Now <i
-                                    class="fa-solid fa-right-long ms-2 icon"></i></button>
+                            <form th:action="@{/shopDetail}" method="post">
+                                <button class="btn btn-animation btn-md fw-bold mend-auto">Shop Now <i
+                                        class="fa-solid fa-arrow-right icon"></i></button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -55,9 +56,10 @@
                             </h2>
                             <h3 class="theme-color">Sự tươi mát đích thực</h3>
                             <h5 class="text-content">Chỉ tuần này thôi, đừng bỏ lỡ nhé..</h5>
-                            <button onclick="location.href = 'shop-left-sidebar.html';"
-                                    class="btn btn-animation mt-xxl-4 mt-2 home-button mend-auto">Shop Now <i
-                                    class="fa-solid fa-right-long ms-2 icon"></i></button>
+                            <form th:action="@{/shopDetail}" method="post">
+                                <button class="btn btn-animation btn-md fw-bold mend-auto">Shop Now <i
+                                        class="fa-solid fa-arrow-right icon"></i></button>
+                            </form>
                         </div>
                     </div>
                 </div>

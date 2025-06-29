@@ -503,7 +503,7 @@
                                                             <h5 th:text="${categoryName1}" class="dropdown-header">Category name</h5>
                                                             <th:block th:each="product : ${session.productMenu1}">
                                                                 <a class="dropdown-item"
-                                                                   th:href="@{'/productDetail'(pid=${product.productId})}"
+                                                                   th:href="@{'/productDetail'(productId=${product.productId})}"
                                                                    th:text="${product.productName}">Product</a>
                                                             </th:block>
                                                             <p>...</p>
@@ -515,7 +515,7 @@
                                                             <h5 th:text="${session.categoryName2}" class="dropdown-header">Category name</h5>
                                                             <th:block th:each="product : ${session.productMenu2}">
                                                                 <a class="dropdown-item"
-                                                                   th:href="@{'/productDetail'(pid=${product.productId})}"
+                                                                   th:href="@{'/productDetail'(productId=${product.productId})}"
                                                                    th:text="${product.productName}">Product</a>
                                                             </th:block>
                                                             <p>...</p>
@@ -527,7 +527,7 @@
                                                             <h5 th:text="${session.categoryName3}" class="dropdown-header">Category name</h5>
                                                             <th:block th:each="product : ${session.productMenu3}">
                                                                 <a class="dropdown-item"
-                                                                   th:href="@{'/productDetail'(pid=${product.productId})}"
+                                                                   th:href="@{'/productDetail'(productId=${product.productId})}"
                                                                    th:text="${product.productName}">Product</a>
                                                             </th:block>
                                                             <p>...</p>
@@ -590,7 +590,7 @@
                                                 </li>
 
                                                 <li>
-                                                    <a class="dropdown-item" href="compare.html">Compare</a>
+                                                    <a class="dropdown-item" href="compareProductDetail">Compare</a>
                                                 </li>
                                                 <li>
                                                     <a class="dropdown-item" href="faq.html">Faq</a>

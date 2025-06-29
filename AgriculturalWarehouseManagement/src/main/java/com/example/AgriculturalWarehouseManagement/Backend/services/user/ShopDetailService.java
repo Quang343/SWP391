@@ -2,22 +2,28 @@ package com.example.AgriculturalWarehouseManagement.Backend.services.user;
 
 import com.example.AgriculturalWarehouseManagement.Backend.components.PageConstant;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.FilterShopDetailRequest;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.GalleryUserResponse;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.OverallRatingProductResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ShopDetailResponse;
+import com.example.AgriculturalWarehouseManagement.Backend.models.CommentProduct;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.CommentProductRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DecimalFormat;
+import java.util.*;
 
 @Service
 public class ShopDetailService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CommentProductRepository commentProductRepository;
 
     @Autowired
     private EntityManager entityManager;
@@ -362,4 +368,82 @@ public class ShopDetailService {
         }
     }
 
+    // Get ProductByProductId return CategoryId
+    public int getProductByProductId(int productId) {
+        Optional<Product> product = productRepository.productByProductID(productId);
+
+        if (product.isEmpty() || product.get().getCategory() == null) {
+            return 0;
+        }
+        return product.get().getCategory().getCategoryId();
+    }
+
+
+    // Get gallery
+    public List<GalleryUserResponse> getGalleryUser(int productId) {
+        List<Object[]> raw = productRepository.rawGalleryUserByProductID(productId);
+
+        return raw.stream().map(row -> new GalleryUserResponse(
+                ((Number) row[0]).intValue(),       // galleryId
+                ((Number) row[1]).intValue(),       // productId
+                (String) row[2]                 // imageUrl
+        )).toList();
+    }
+
+
+    public List<GalleryUserResponse> getGalleryUsers(int productId) {
+        if (getGalleryUser(productId).isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            List<GalleryUserResponse> response = getGalleryUser(productId);
+
+            return response;
+        }
+    }
+
+    // Get Product description
+    public String getProductDescriptionUser(int productId) {
+        Optional<Product> product = productRepository.productByProductID(productId);
+
+        if (product.isEmpty()) {
+            return "";
+        }
+        return product.get().getDescription();
+    }
+
+    public String getProductNameUser(int productId) {
+        Optional<Product> product = productRepository.productByProductID(productId);
+
+        if (product.isEmpty()) {
+            return "";
+        }
+        return product.get().getName();
+    }
+
+    // Get overall rating
+    public List<OverallRatingProductResponse> getOverallRatingProduct(int productId) {
+        List<Object[]> raw = commentProductRepository.rawOverallRatingByProductID(productId);
+
+        DecimalFormat df = new DecimalFormat("#.00");
+
+        return raw.stream().map(row -> new OverallRatingProductResponse(
+                row[0] != null ? df.format(row[0]) : "0.00",
+                row[1] != null ? ((Number) row[1]).intValue() : 0,
+                row[2] != null ? ((Number) row[2]).intValue() : 0,
+                row[3] != null ? ((Number) row[3]).intValue() : 0,
+                row[4] != null ? ((Number) row[4]).intValue() : 0,
+                row[5] != null ? ((Number) row[5]).intValue() : 0
+        )).toList();
+    }
+
+
+    public OverallRatingProductResponse getOverallRatingProducts(int productId) {
+        if (getOverallRatingProduct(productId).isEmpty()) {
+            return new OverallRatingProductResponse();
+        } else {
+            OverallRatingProductResponse response = getOverallRatingProduct(productId).get(0);
+
+            return response;
+        }
+    }
 }

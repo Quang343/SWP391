@@ -1,12 +1,15 @@
 package com.example.AgriculturalWarehouseManagement.Backend.repositorys;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ProductUserHomepageResponse;
+import com.example.AgriculturalWarehouseManagement.Backend.models.CommentProduct;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
+import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     // Lấy ảnh đầu tiên của mỗi sản phẩm (ProductID) trong bảng Gallery, dựa trên GalleryID nhỏ nhất
@@ -46,10 +49,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                             COALESCE(ar.ratingCount,0)AS ratingCount,
                                             cd.DetailName             AS productDetailName,
                                             cd.Price                  AS productPrice,
-                                    
+            
                                             -- Lấy weight + unit thông qua CategoryWeightID
                                             CONCAT(cw.weight, ' ', cw.unit) AS productWeight,
-                                    
+            
                                             p.Description             AS productDescription
                                     FROM       Product         p
                                     JOIN       cheapest_detail cd ON cd.ProductID = p.ProductID AND cd.rn = 1
@@ -93,10 +96,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                             COALESCE(ar.ratingCount,0)AS ratingCount,
                                             cd.DetailName             AS productDetailName,
                                             cd.Price                  AS productPrice,
-                                    
+            
                                             -- Lấy weight + unit thông qua CategoryWeightID
                                             CONCAT(cw.weight, ' ', cw.unit) AS productWeight,
-                                    
+            
                                             p.Description             AS productDescription
                                     FROM       Product         p
                                     JOIN       cheapest_detail cd ON cd.ProductID = p.ProductID AND cd.rn = 1
@@ -141,10 +144,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                         COALESCE(ar.ratingCount,0)AS ratingCount,
                         cd.DetailName             AS productDetailName,
                         cd.Price                  AS productPrice,
-
+            
                         -- Lấy weight + unit thông qua CategoryWeightID
                         CONCAT(cw.weight, ' ', cw.unit) AS productWeight,
-
+            
                         p.Description             AS productDescription
                 FROM       Product         p
                 JOIN       cheapest_detail cd ON cd.ProductID = p.ProductID AND cd.rn = 1
@@ -190,10 +193,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                            COALESCE(ar.ratingCount,0)AS ratingCount,
                                            cd.DetailName             AS productDetailName,
                                            cd.Price                  AS productPrice,
-                                   
+            
                                            -- Lấy weight + unit thông qua CategoryWeightID
                                            CONCAT(cw.weight, ' ', cw.unit) AS productWeight,
-                                   
+            
                                            p.Description             AS productDescription
                                    FROM       Product         p
                                    JOIN       cheapest_detail cd ON cd.ProductID = p.ProductID AND cd.rn = 1
@@ -239,10 +242,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                            COALESCE(ar.ratingCount,0)AS ratingCount,
                                            cd.DetailName             AS productDetailName,
                                            cd.Price                  AS productPrice,
-                                   
+            
                                            -- Lấy weight + unit thông qua CategoryWeightID
                                            CONCAT(cw.weight, ' ', cw.unit) AS productWeight,
-                                   
+            
                                            p.Description             AS productDescription
                                    FROM       Product         p
                                    JOIN       cheapest_detail cd ON cd.ProductID = p.ProductID AND cd.rn = 1
@@ -253,7 +256,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                    ORDER BY ratingProductDetail DESC
                                    LIMIT 9
             """, nativeQuery = true)
-      List<Object[]> top9RatingOfProducts();
+    List<Object[]> top9RatingOfProducts();
 
     // Shop detail product
     @Query(value = """
@@ -288,10 +291,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                             COALESCE(ar.ratingCount,0)AS ratingCount,
                                             cd.DetailName             AS productDetailName,
                                             cd.Price                  AS productPrice,
-                                    
+            
                                             -- Lấy weight + unit thông qua CategoryWeightID
                                             CONCAT(cw.weight, ' ', cw.unit) AS productWeight,
-                                    
+            
                                             p.Description             AS productDescription
                                     FROM       Product         p
                                     JOIN       cheapest_detail cd ON cd.ProductID = p.ProductID AND cd.rn = 1
@@ -335,10 +338,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                             COALESCE(ar.ratingCount,0)AS ratingCount,
                                             cd.DetailName             AS productDetailName,
                                             cd.Price                  AS productPrice,
-                                    
+            
                                             -- Lấy weight + unit thông qua CategoryWeightID
                                             CONCAT(cw.weight, ' ', cw.unit) AS productWeight,
-                                    
+            
                                             p.Description             AS productDescription
                                     FROM       Product         p
                                     JOIN       cheapest_detail cd ON cd.ProductID = p.ProductID AND cd.rn = 1
@@ -349,7 +352,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                     LIMIT :rowStart, 9; -- LIMIT <vị_trí_bắt_đầu>, <số_dòng>
             """, nativeQuery = true)
     List<Object[]> rawShopDetailsOfProductPages(Integer rowStart);
-
 
 
     // Shop detail product by CategoryId
@@ -385,10 +387,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                             COALESCE(ar.ratingCount,0)AS ratingCount,
                                             cd.DetailName             AS productDetailName,
                                             cd.Price                  AS productPrice,
-                                    
+            
                                             -- Lấy weight + unit thông qua CategoryWeightID
                                             CONCAT(cw.weight, ' ', cw.unit) AS productWeight,
-                                    
+            
                                             p.Description             AS productDescription
                                     FROM       Product         p
                                     JOIN       cheapest_detail cd ON cd.ProductID = p.ProductID AND cd.rn = 1
@@ -397,7 +399,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                     LEFT JOIN  avg_rating      ar ON ar.ProductID = p.ProductID
                                     WHERE      p.Status = 'ACTIVE'
                                     AND      p.CategoryID = :categoryId
-                                                 
+            
             """, nativeQuery = true)
     List<Object[]> rawShopDetailsOfProductsByCategoryId(Integer categoryId);
 
@@ -434,10 +436,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                             COALESCE(ar.ratingCount,0)AS ratingCount,
                                             cd.DetailName             AS productDetailName,
                                             cd.Price                  AS productPrice,
-                                    
+            
                                             -- Lấy weight + unit thông qua CategoryWeightID
                                             CONCAT(cw.weight, ' ', cw.unit) AS productWeight,
-                                    
+            
                                             p.Description             AS productDescription
                                     FROM       Product         p
                                     JOIN       cheapest_detail cd ON cd.ProductID = p.ProductID AND cd.rn = 1
@@ -447,7 +449,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                     WHERE      p.Status = 'ACTIVE'
                                     AND      p.CategoryID = :categoryId
                                     LIMIT :rowStart, 9
-                                                 
+            
             """, nativeQuery = true)
     List<Object[]> rawShopDetailsOfProductsByCategoryIdPage(Integer categoryId, Integer rowStart);
 
@@ -484,10 +486,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                             COALESCE(ar.ratingCount,0)AS ratingCount,
                                             cd.DetailName             AS productDetailName,
                                             cd.Price                  AS productPrice,
-                                    
+            
                                             -- Lấy weight + unit thông qua CategoryWeightID
                                             CONCAT(cw.weight, ' ', cw.unit) AS productWeight,
-                                    
+            
                                             p.Description             AS productDescription
                                     FROM       Product         p
                                     JOIN       cheapest_detail cd ON cd.ProductID = p.ProductID AND cd.rn = 1
@@ -496,7 +498,20 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                     LEFT JOIN  avg_rating      ar ON ar.ProductID = p.ProductID
                                     WHERE      p.Status = 'ACTIVE'
                                     AND p.ProductName LIKE CONCAT('%', :keyword, '%')
-                                                 
+            
             """, nativeQuery = true)
     List<Object[]> rawProductsSearchAPIs(@Param("keyword") String keyword);
+
+    @Query(value = """
+                    SELECT * FROM product p
+                    WHERE p.ProductID = :productID
+            """, nativeQuery = true)
+    Optional<Product> productByProductID(Integer productID);
+
+    @Query(value = """
+                    SELECT * FROM gallery g
+                    WHERE g.ProductID = :productID
+            """, nativeQuery = true)
+    List<Object[]> rawGalleryUserByProductID(Integer productID);
+
 }

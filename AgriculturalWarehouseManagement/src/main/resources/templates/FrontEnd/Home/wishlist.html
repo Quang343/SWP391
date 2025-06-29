@@ -27,6 +27,8 @@
 
     <!-- Template css -->
     <link id="color-link" rel="stylesheet" type="text/css" th:href="@{FrontEnd/assets/css/style.css}">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         .glow-btn {
             position: relative;
@@ -157,7 +159,7 @@
                 <div class="product-box-3 h-100">
                     <div class="product-header">
                         <div class="product-image">
-                            <a href="product-left-thumbnail.html">
+                            <a th:href="@{/productDetail(productId=${product.productId})}">
                                 <img th:src="@{${product.imageUrlGallery}}" class="img-fluid blur-up lazyload"
                                      alt="">
                             </a>

@@ -14,7 +14,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
@@ -31,11 +33,21 @@ public class WebSecurityConfig {
 
         return http.build();
     }
+
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        // Cấu hình CORS cho tất cả các endpoint
+//        registry.addMapping("/**")
+//                .allowedOrigins("http://localhost:5173") // Cho phép React frontend ở localhost:5173
+//                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Các phương thức được phép
+//                .allowedHeaders("*") // Cho phép tất cả các header
+//                .allowCredentials(true); // Cho phép gửi cookie (nếu cần)
+//    }
 //
 //    @Bean
 //    public CorsConfigurationSource corsConfigurationSource() {
 //        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // hoặc List.of("*") nếu dev
+//        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Chỉ cho phép từ frontend của bạn
 //        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 //        configuration.setAllowedHeaders(List.of("*"));
 //        configuration.setAllowCredentials(true);
@@ -43,22 +55,6 @@ public class WebSecurityConfig {
 //        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 //        source.registerCorsConfiguration("/**", configuration);
 //        return source;
-//    }
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/login", "/resources/**").permitAll()
-//                        .anyRequest().authenticated()
-//                )
-//                .oauth2Login(oauth2 -> oauth2
-//                        .failureHandler((request, response, exception) -> {
-//                            response.sendRedirect("/loginGG?error=" + exception.getMessage());
-//                        })
-//                );
-//
-//        return http.build();
 //    }
 
 }

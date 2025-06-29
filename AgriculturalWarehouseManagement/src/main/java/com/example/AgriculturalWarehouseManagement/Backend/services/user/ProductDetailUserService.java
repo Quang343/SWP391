@@ -1,8 +1,7 @@
 package com.example.AgriculturalWarehouseManagement.Backend.services.user;
 
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ProductDetailUserResponse;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ProductUserHomepageResponse;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.WeightCompareProductDetailsResponse;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.*;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,7 @@ public class ProductDetailUserService {
     @Autowired
     private ProductDetailRepository productDetailRepository;
 
+    // Get list weight
     public List<WeightCompareProductDetailsResponse> getcompareProductDetail(Integer productId) {
         List<Object[]> raw = productDetailRepository.rawGetWeightCompareProductDetails(productId);
 
@@ -42,29 +42,31 @@ public class ProductDetailUserService {
     }
 
 
+    // Get productDetails
     public List<ProductDetailUserResponse> getProductDetailUser(Integer productDetaiId) {
         List<Object[]> raw = productDetailRepository.rawGetProductDetails(productDetaiId);
 
         return raw.stream().map(row -> new ProductDetailUserResponse(
-                ((Number) row[0]).intValue(),               // productId
-                (String) row[1],                            // productName
-                (String) row[2],                            // productDescription
-                (String) row[3],                            // imageUrl
-                ((Number) row[4]).intValue(),               // productDetailId
-                (String) row[5],                            // productWeight
-                ((Number) row[6]).intValue(),               // batchId
-                ((Number) row[7]).intValue(),               // importedQuantity
-                ((Number) row[8]).intValue(),               // soldQuantity
-                ((java.sql.Date) row[9]).toLocalDate(),     // manufactureDate
-                ((Number) row[10]).intValue(),              // expiry
-                ((Number) row[11]).doubleValue(),              // Price
-                ((java.sql.Date) row[12]).toLocalDate(),    // expiryDate
-                ((Number) row[13]).intValue(),              // totalAdjustedRemoveQuantity
-                ((Number) row[14]).intValue(),              // remainQuantity
-                (String) row[15],                           // status
-                (String) row[16],                            // expiryStatus
-                ((Number) row[17]).intValue(),                  // avgRating
-                ((Number) row[18]).intValue()                   // ratingCount
+                ((Number) row[0]).intValue(),                // categoryId
+                ((Number) row[1]).intValue(),               // productId
+                (String) row[2],                            // productName
+                (String) row[3],                            // productDescription
+                (String) row[4],                            // imageUrl
+                ((Number) row[5]).intValue(),               // productDetailId
+                (String) row[6],                            // productWeight
+                ((Number) row[7]).intValue(),               // batchId
+                ((Number) row[8]).intValue(),               // importedQuantity
+                ((Number) row[9]).intValue(),               // soldQuantity
+                ((java.sql.Date) row[10]).toLocalDate(),     // manufactureDate
+                ((Number) row[11]).intValue(),              // expiry
+                ((Number) row[12]).doubleValue(),              // Price
+                ((java.sql.Date) row[13]).toLocalDate(),    // expiryDate
+                ((Number) row[14]).intValue(),              // totalAdjustedRemoveQuantity
+                ((Number) row[15]).intValue(),              // remainQuantity
+                (String) row[16],                           // status
+                (String) row[17],                            // expiryStatus
+                ((Number) row[18]).intValue(),                  // avgRating
+                ((Number) row[19]).intValue()                   // ratingCount
         )).toList();
 
     }
@@ -78,4 +80,99 @@ public class ProductDetailUserService {
         }
     }
 
+    // Get product by productId
+    public List<ProductDetailUserResponse> getProductUser(Integer productId) {
+        List<Object[]> raw = productDetailRepository.rawGetProductbyIds(productId);
+
+        return raw.stream().map(row -> new ProductDetailUserResponse(
+                ((Number) row[0]).intValue(),                // categoryId
+                ((Number) row[1]).intValue(),               // productId
+                (String) row[2],                            // productName
+                (String) row[3],                            // productDescription
+                (String) row[4],                            // imageUrl
+                ((Number) row[5]).intValue(),               // productDetailId
+                (String) row[6],                            // productWeight
+                ((Number) row[7]).intValue(),               // batchId
+                ((Number) row[8]).intValue(),               // importedQuantity
+                ((Number) row[9]).intValue(),               // soldQuantity
+                ((java.sql.Date) row[10]).toLocalDate(),     // manufactureDate
+                ((Number) row[11]).intValue(),              // expiry
+                ((Number) row[12]).doubleValue(),              // Price
+                ((java.sql.Date) row[13]).toLocalDate(),    // expiryDate
+                ((Number) row[14]).intValue(),              // totalAdjustedRemoveQuantity
+                ((Number) row[15]).intValue(),              // remainQuantity
+                (String) row[16],                           // status
+                (String) row[17],                            // expiryStatus
+                ((Number) row[18]).intValue(),                  // avgRating
+                ((Number) row[19]).intValue()                   // ratingCount
+        )).toList();
+
+    }
+
+    public List<ProductDetailUserResponse> getProductUsers(Integer productId) {
+        if (getProductUser(productId).isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            List<ProductDetailUserResponse> response = getProductUser(productId);
+
+            return response;
+        }
+    }
+
+    // Get trending product sort soldquantity
+    public List<ProductDetailUserResponse> getTrendingProduct() {
+        List<Object[]> raw = productDetailRepository.rawgetTrendingProduct();
+
+        return raw.stream().map(row -> new ProductDetailUserResponse(
+                ((Number) row[0]).intValue(),                // categoryId
+                ((Number) row[1]).intValue(),               // productId
+                (String) row[2],                            // productName
+                (String) row[3],                            // productDescription
+                (String) row[4],                            // imageUrl
+                ((Number) row[5]).intValue(),               // productDetailId
+                (String) row[6],                            // productWeight
+                ((Number) row[7]).intValue(),               // batchId
+                ((Number) row[8]).intValue(),               // importedQuantity
+                ((Number) row[9]).intValue(),               // soldQuantity
+                ((java.sql.Date) row[10]).toLocalDate(),     // manufactureDate
+                ((Number) row[11]).intValue(),              // expiry
+                ((Number) row[12]).doubleValue(),              // Price
+                ((java.sql.Date) row[13]).toLocalDate(),    // expiryDate
+                ((Number) row[14]).intValue(),              // totalAdjustedRemoveQuantity
+                ((Number) row[15]).intValue(),              // remainQuantity
+                (String) row[16],                           // status
+                (String) row[17],                            // expiryStatus
+                ((Number) row[18]).intValue(),                  // avgRating
+                ((Number) row[19]).intValue()                   // ratingCount
+        )).toList();
+
+    }
+
+    public List<ProductDetailUserResponse> getTrendingProducts() {
+
+        if (getTrendingProduct().isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            List<ProductDetailUserResponse> response = getTrendingProduct();
+            return response;
+        }
+    }
+
+    public ResponseResult<ProductDetailUserResponse> checkQuantityProduct(int quantity, int productDetailId) {
+        ProductDetailUserResponse productDetailUserResponse = getProductDetailUsers(productDetailId);
+
+        if (productDetailUserResponse.getStatus().equals("Hết hàng")) {
+            return new ResponseResult<>("ERROR", "Sản phẩm này hiện không còn hàng. Vui lòng chọn sản phẩm khác.",false);
+        }
+
+        if (productDetailUserResponse.getExpiryStatus().equals("Hết hạn")){
+            return new ResponseResult<>("ERROR", "Sản phẩm này hiện hết hạn. Vui lòng chọn sản phẩm khác",false);
+        }
+
+        if (quantity > productDetailUserResponse.getRemainQuantity()) {
+            return new ResponseResult<>("ERROR","Số lượng bạn nhập không được lớn hớn số lượng của Shop",false);
+        }
+
+        return new ResponseResult<>("SUCCESS", "Thêm vào giỏ hàn thành công", true);
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.*;
@@ -34,8 +35,6 @@ public class HomepageUserController {
 
     @GetMapping("/home")
     public String home(Model model) {
-
-
 
         // Homepage All category
         List<CategoryUsersResponse> categoryUsersResponses = categoryUsersService.getAllListCategory();
@@ -124,6 +123,11 @@ public class HomepageUserController {
         model.addAttribute("groupedProductsRatingTop9", groupedProductsRatingTop9);
 
         return "FrontEnd/Home/home";
+    }
+
+    @PostMapping("/home")
+    public String home() {
+        return "redirect:/home";
     }
 
 

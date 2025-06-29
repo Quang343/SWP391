@@ -25,6 +25,7 @@ public class CompareProductDetailController {
 
     @GetMapping("/compareProductDetail")
     public String compareProductDetail(Model model) {
+        model.addAttribute("productDetailUserResponses", productDetailUserResponses);
         return "FrontEnd/Home/compare";
     }
 
@@ -32,6 +33,9 @@ public class CompareProductDetailController {
     public String compareProductDetail(@RequestParam(name = "productId") Integer productId,
                                        @RequestParam(name = "productDetailId") Integer productDetailId,
                                        Model model) {
+        if (productDetailUserResponses == null) {
+            productDetailUserResponses = new ArrayList<>();
+        }
 
         ProductDetailUserResponse productDetailUserResponse = productDetailUserService.getProductDetailUsers(productDetailId);
         boolean exist = true;
@@ -61,6 +65,6 @@ public class CompareProductDetailController {
         }
 
         model.addAttribute("productDetailUserResponses", productDetailUserResponses);
-        return "FrontEnd/Home/compare";
+        return "redirect:/compareProductDetail";
     }
 }
