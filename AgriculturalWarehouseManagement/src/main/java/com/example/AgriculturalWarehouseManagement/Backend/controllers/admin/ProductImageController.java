@@ -4,14 +4,18 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.admin;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductImageDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductImage;
+import com.example.AgriculturalWarehouseManagement.Backend.services.admin.IProductImageService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.admin.IProductService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +34,10 @@ import java.util.UUID;
 public class ProductImageController {
 
     private final ProductService productService;
+
+    @Autowired
+    private IProductImageService productImageService;
+
 
     @PostMapping(value = "/uploads/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadImages(
@@ -100,5 +108,18 @@ public class ProductImageController {
         //Sao chép file vào thư mục đích
         Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
         return uniqueFileName;
+    }
+
+    @GetMapping("/api/products/first/{productId}")
+    public ResponseEntity<String> getFirstImageUrlByProductId(@PathVariable Long productId) {
+        Product product = productService.findById(productId);
+        if (product == null) {
+            return ResponseEntity.notFound().build();
+        }
+        ProductImage firstImage = productImageService.findFirstByProduct(product);
+        if (firstImage == null || firstImage.getImageUrl() == null) {
+            return ResponseEntity.ok("assets/images/default.jpg"); // Ảnh mặc định nếu không có
+        }
+        return ResponseEntity.ok(firstImage.getImageUrl());
     }
 }

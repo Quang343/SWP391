@@ -14,4 +14,6 @@ public interface AdjustmentRepository extends CrudRepository<Adjustment, Integer
     Page<Adjustment> findPaginatedAdjustments(Pageable pageable);
 
     List<Adjustment> findByBatchBatchId(Integer batch_batchId);
+
+
 }

@@ -15,43 +15,121 @@
         min-width: 1000px; /* Force horizontal scrollbar for wide content */
     }
 
+    /* Override gray borders from Bootstrap for table */
+    #table_id.table,
+    #table_id th,
+    #table_id td {
+        border-color: #e6f3f2 !important; /* Light green border */
+    }
+
     /* Center pagination and style items */
     #pagination-controls {
         display: flex;
         justify-content: center; /* Center horizontally */
-        margin-top: 8px; /* Small gap below table/scrollbar */
+        align-items: center;
+        margin-top: 12px; /* Ensure below scrollbar */
         margin-bottom: 20px; /* Space below pagination */
-        position: relative; /* Ensure no overlap */
-        z-index: 1000; /* High z-index to prevent overlap */
+        position: relative; /* Ensure proper stacking */
+        z-index: 10; /* Below footer and sidebar */
+        max-width: 100%; /* Prevent overflow */
     }
 
     #pagination-controls .page-item {
-        margin: 0 2.5px; /* 5px gap between items (2.5px each side) */
+        margin: 0 2.5px; /* 5px gap between items */
     }
 
     #pagination-controls .page-link {
         border-radius: 4px;
         padding: 6px 12px;
-        color: #333;
+        color: #018F84; /* Text color for number pages */
         font-size: 14px; /* Match theme typography */
         cursor: pointer; /* Ensure clickable appearance */
+        border: 1px solid #018F84; /* Border matches theme */
+        background-color: transparent; /* Default background */
+        text-align: center;
+        box-sizing: border-box;
     }
 
+    /* Style for Previous and Next buttons */
+    #pagination-controls .page-item:first-child .page-link,
+    #pagination-controls .page-item:last-child .page-link {
+        background-color: #018F84; /* Green background */
+        color: #fff; /* White text */
+        border-color: #018F84;
+    }
+
+    /* Style for active page */
     #pagination-controls .page-item.active .page-link {
-        background-color: #007bff;
-        border-color: #007bff;
+        background-color: #018F84; /* Green background */
+        border-color: #018F84;
         color: #fff;
+        box-shadow: none; /* No glowing effect */
     }
 
+    /* Style for disabled buttons */
     #pagination-controls .page-item.disabled .page-link {
-        color: #6c757d;
+        color: #018F84; /* Green text */
+        border-color: #e6f3f2; /* Light green border */
+        background-color: #e6f3f2; /* Light green background */
         pointer-events: none;
         cursor: default;
     }
 
-    /* Ensure no modal backdrop overlap */
+    /* Hover effect for non-disabled, non-active number pages */
+    #pagination-controls .page-link:hover:not(.disabled .page-link):not(.active .page-link):not(:first-child .page-link):not(:last-child .page-link) {
+        background-color: #e6f3f2; /* Light green on hover */
+        color: #018F84;
+    }
+
+    /* Hover effect for Previous/Next when not disabled */
+    #pagination-controls .page-item:not(.disabled):first-child .page-link:hover,
+    #pagination-controls .page-item:not(.disabled):last-child .page-link:hover {
+        background-color: #016f6a; /* Darker green on hover */
+        color: #fff;
+    }
+
+    /* Ensure footer is above pagination but below sidebar */
+    .footer {
+
+        z-index: 20 !important; /* Above pagination */
+    }
+
+    /* Ensure sidebar is above footer and pagination */
+    .sidebar-wrapper {
+        position: fixed;
+        z-index: 30 !important; /* Above footer and pagination */
+    }
+
+    /* Ensure modals and offcanvas are above sidebar, footer, and pagination */
+    .modal,
+    .offcanvas {
+        z-index: 1050 !important; /* Above sidebar, footer, and pagination */
+    }
+
     .modal-backdrop {
-        z-index: 900; /* Below pagination */
+        z-index: 1040 !important; /* Below modal/offcanvas, above sidebar and footer */
+    }
+
+    /* Style for search bar and button */
+    .btn-theme {
+        background-color: #018F84;
+        color: #fff;
+        border-color: #018F84;
+    }
+
+    .btn-theme:hover {
+        background-color: #016f6a;
+        color: #fff;
+        border-color: #016f6a;
+    }
+
+    .search-bar input {
+        border: 1px solid #e6f3f2;
+    }
+
+    .search-bar input:focus {
+        border-color: #018F84;
+        box-shadow: 0 0 5px rgba(1, 143, 132, 0.3);
     }
 </style>
 <body>
@@ -80,14 +158,20 @@
                     <div class="col-sm-12">
                         <div class="card card-table">
                             <div class="card-body">
-                                <div class="title-header option-title d-sm-flex d-block">
-                                    <h5>Adjustment List</h5>
-                                    <div class="right-options">
-                                        <ul>
-                                            <li>
-                                                <a class="btn btn-solid" th:href="@{/warehouse/addadjustment}">Add Adjustment</a>
-                                            </li>
-                                        </ul>
+                                <div class="title-header option-title">
+                                    <!-- Dòng 1: chỉ Adjustment List -->
+                                    <div class="first-line">
+                                        <h5>Adjustment List</h5>
+                                    </div>
+
+                                    <!-- Dòng 2: Add Adjustment và Search bên phải -->
+                                    <div class="second-line" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                                        <a th:href="@{/warehouse/addadjustment}" class="align-items-center btn btn-theme d-flex">
+                                            <i data-feather="plus"></i> Add Adjustment
+                                        </a>
+                                        <div class="search-bar">
+                                            <input type="text" class="form-control" placeholder="Search..." id="searchInput">
+                                        </div>
                                     </div>
                                 </div>
                                 <div>

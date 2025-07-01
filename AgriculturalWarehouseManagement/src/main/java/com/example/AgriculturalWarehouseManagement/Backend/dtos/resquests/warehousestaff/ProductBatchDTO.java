@@ -14,6 +14,7 @@ public class ProductBatchDTO
     private LocalDate manufactureDate;
     private Integer importedQuantity;
     private Integer soldQuantity;
+    private Integer totalAdjustment;
 
     public ProductBatchDTO() {
     }
@@ -26,8 +27,11 @@ public class ProductBatchDTO
         this.soldQuantity = soldQuantity;
     }
 
+
     public Integer getRemainingQuantity() {
-        return importedQuantity - (soldQuantity != null ? soldQuantity : 0);
+        return (importedQuantity != null ? importedQuantity : 0) -
+                (soldQuantity != null ? soldQuantity : 0) +
+                (totalAdjustment != null ? totalAdjustment : 0);
     }
 
 

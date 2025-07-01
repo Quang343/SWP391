@@ -13,7 +13,9 @@ import com.example.AgriculturalWarehouseManagement.Backend.repositorys.Warehouse
 import com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff.StockInDetailService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff.StockInService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,6 +43,29 @@ public class StockInController {
     public ResponseEntity<StockInDTO> createStockIn(@RequestBody StockInDTO stockInDTO) {
         StockInDTO createdStockIn = stockInService.createStockIn(stockInDTO);
         return ResponseEntity.ok(createdStockIn);
+    }
+
+    // API endpoint for paginated StockIn
+    @GetMapping("/paginatedStockIn")
+    @ResponseBody
+    public Page<StockIn> getPaginatedStockIn(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        return stockInService.getPaginatedStockIn(page, size);
+    }
+
+    // Thymeleaf view for paginated StockIn
+    @GetMapping("/warehouse/stockin")
+    public String listStockIn(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            Model model) {
+        Page<StockIn> stockInPage = stockInService.getPaginatedStockIn(page, size);
+        model.addAttribute("stockIns", stockInPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", stockInPage.getTotalPages());
+        model.addAttribute("totalItems", stockInPage.getTotalElements());
+        return "BackEnd/WareHouse/stockin";
     }
 
     @GetMapping

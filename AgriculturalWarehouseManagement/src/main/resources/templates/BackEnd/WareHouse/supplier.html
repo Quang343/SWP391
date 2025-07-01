@@ -2,6 +2,139 @@
 <html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
+
+<style>
+    /* Ensure table is scrollable horizontally if content overflows */
+    .table-responsive {
+        overflow-x: auto;
+        margin-bottom: 0; /* Remove extra margin to keep pagination close */
+        position: relative; /* Context for scrollbar */
+    }
+
+    /* Ensure table takes full width but triggers scrollbar if needed */
+    #table_id {
+        width: 100%;
+        min-width: 1000px; /* Force horizontal scrollbar for wide content */
+    }
+
+    /* Override gray borders from Bootstrap for table */
+    #table_id.table,
+    #table_id th,
+    #table_id td {
+        border-color: #e6f3f2 !important; /* Light green border */
+    }
+
+    /* Center pagination and style items */
+    #pagination-controls {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center;
+        margin-top: 12px; /* Ensure below scrollbar */
+        margin-bottom: 20px; /* Space below pagination */
+        position: relative; /* Ensure proper stacking */
+        z-index: 10; /* Below footer and sidebar */
+        max-width: 100%; /* Prevent overflow */
+    }
+
+    #pagination-controls .page-item {
+        margin: 0 2.5px; /* 5px gap between items */
+    }
+
+    #pagination-controls .page-link {
+        border-radius: 4px;
+        padding: 6px 12px;
+        color: #018F84; /* Text color for number pages */
+        font-size: 14px; /* Match theme typography */
+        cursor: pointer; /* Ensure clickable appearance */
+        border: 1px solid #018F84; /* Border matches theme */
+        background-color: transparent; /* Default background */
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    /* Style for Previous and Next buttons */
+    #pagination-controls .page-item:first-child .page-link,
+    #pagination-controls .page-item:last-child .page-link {
+        background-color: #018F84; /* Green background */
+        color: #fff; /* White text */
+        border-color: #018F84;
+    }
+
+    /* Style for active page */
+    #pagination-controls .page-item.active .page-link {
+        background-color: #018F84; /* Green background */
+        border-color: #018F84;
+        color: #fff;
+        box-shadow: none; /* No glowing effect */
+    }
+
+    /* Style for disabled buttons */
+    #pagination-controls .page-item.disabled .page-link {
+        color: #018F84; /* Green text */
+        border-color: #e6f3f2; /* Light green border */
+        background-color: #e6f3f2; /* Light green background */
+        pointer-events: none;
+        cursor: default;
+    }
+
+    /* Hover effect for non-disabled, non-active number pages */
+    #pagination-controls .page-link:hover:not(.disabled .page-link):not(.active .page-link):not(:first-child .page-link):not(:last-child .page-link) {
+        background-color: #e6f3f2; /* Light green on hover */
+        color: #018F84;
+    }
+
+    /* Hover effect for Previous/Next when not disabled */
+    #pagination-controls .page-item:not(.disabled):first-child .page-link:hover,
+    #pagination-controls .page-item:not(.disabled):last-child .page-link:hover {
+        background-color: #016f6a; /* Darker green on hover */
+        color: #fff;
+    }
+
+    /* Ensure footer is above pagination but below sidebar */
+    .footer {
+
+        z-index: 20 !important; /* Above pagination */
+    }
+
+    /* Ensure sidebar is above footer and pagination */
+    .sidebar-wrapper {
+        position: fixed;
+        z-index: 30 !important; /* Above footer and pagination */
+    }
+
+    /* Ensure modals and offcanvas are above sidebar, footer, and pagination */
+    .modal,
+    .offcanvas {
+        z-index: 1050 !important; /* Above sidebar, footer, and pagination */
+    }
+
+    .modal-backdrop {
+        z-index: 1040 !important; /* Below modal/offcanvas, above sidebar and footer */
+    }
+
+    /* Style for search bar and button */
+    .btn-theme {
+        background-color: #018F84;
+        color: #fff;
+        border-color: #018F84;
+    }
+
+    .btn-theme:hover {
+        background-color: #016f6a;
+        color: #fff;
+        border-color: #016f6a;
+    }
+
+    .search-bar input {
+        border: 1px solid #e6f3f2;
+    }
+
+    .search-bar input:focus {
+        border-color: #018F84;
+        box-shadow: 0 0 5px rgba(1, 143, 132, 0.3);
+    }
+</style>
+
 <body>
 <!-- tap on top start -->
 <div class="tap-top">
@@ -58,19 +191,13 @@
                                         </tr>
                                         </thead>
                                         <tbody id="supplier-table-body">
-                                        <tr id="no-data-row">
-                                            <td colspan="5" class="text-center">No data available in table</td>
-                                        </tr>
+                                        <!-- Dữ liệu sẽ được thêm động bởi JavaScript -->
                                         </tbody>
                                     </table>
                                 </div>
 
                                 <!-- Pagination Controls -->
-                                <nav aria-label="Page navigation">
-                                    <ul class="pagination justify-content-center mt-3" id="pagination-controls">
-                                        <!-- Pagination links will be dynamically inserted here -->
-                                    </ul>
-                                </nav>
+                                <ul id="pagination-controls" class="pagination"></ul>
                             </div>
                         </div>
                     </div>
@@ -83,7 +210,7 @@
                 <footer class="footer">
                     <div class="row">
                         <div class="col-md-12 footer-copyright text-center">
-                            <p mb-0>Copyright 2022 © Fastkart theme by pixelstrap</p>
+                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
                         </div>
                     </div>
                 </footer>
@@ -117,19 +244,19 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header d-block text-center">
-                    <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure ?</h5>
+                    <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure?</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="remove-box">
-                        <p>The permission for the use/group, preview is inherited from the object, object will create a new permission for this object</p>
+                        <p>Bạn có chắc chắn muốn xóa nhà cung cấp này?</p>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
-                    <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal">Yes</button>
+                    <button type="button" class="btn btn-animation btn-md fw-bold confirm-delete" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal">Yes</button>
                 </div>
             </div>
         </div>
@@ -156,11 +283,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
+    <!-- Delete Modal Box End -->
 
     <!-- Modal for Product details -->
     <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
@@ -219,7 +347,6 @@
 </div>
 <!-- page-wrapper End-->
 
-<!-- Delete Modal Box End -->
 <!-- latest js -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
 
@@ -265,6 +392,7 @@
                     tableBody.id = 'supplier-table-body';
                     table.appendChild(tableBody);
                 } else {
+                    console.error('Table #table_id not found');
                     return null;
                 }
             }
@@ -272,7 +400,7 @@
             if (!noDataRow) {
                 noDataRow = document.createElement('tr');
                 noDataRow.id = 'no-data-row';
-                noDataRow.innerHTML = '<td colspan="5" class="text-center">No data available in table</td>';
+                noDataRow.innerHTML = '<td colspan="5" class="text-center" style="background-color: #e6f3f2; color: #555;">No data available in table</td>';
                 tableBody.appendChild(noDataRow);
             }
 
@@ -295,9 +423,15 @@
                     return response.json();
                 })
                 .then(data => {
-                    if (!data || !data.content || typeof data.totalPages === 'undefined' || typeof data.number === 'undefined') return;
-                    tableBody.innerHTML = '';
+                    if (!data || !data.content || typeof data.totalPages === 'undefined' || typeof data.number === 'undefined') {
+                        console.error('Invalid API response:', data);
+                        tableBody.innerHTML = '';
+                        noDataRow.style.display = '';
+                        renderPagination(0, 0);
+                        return;
+                    }
 
+                    tableBody.innerHTML = '';
                     if (data.content && data.content.length > 0) {
                         noDataRow.style.display = 'none';
                         data.content.forEach(supplier => {
@@ -308,7 +442,7 @@
                             const imageDiv = document.createElement('div');
                             imageDiv.classList.add('table-image');
                             const img = document.createElement('img');
-                            img.src = supplier.logo ;
+                            img.src = supplier.logo || 'default-logo.png'; // Fallback if no logo
                             img.classList.add('img-fluid');
                             img.alt = 'Supplier Logo';
                             imageDiv.appendChild(img);
@@ -318,12 +452,12 @@
                             const nameCell = document.createElement('td');
                             const nameDiv = document.createElement('div');
                             nameDiv.classList.add('user-name');
-                            nameDiv.innerHTML = `<span>${supplier.supplierName}</span>`;
+                            nameDiv.innerHTML = `<span>${supplier.supplierName || 'N/A'}</span>`;
                             nameCell.appendChild(nameDiv);
                             row.appendChild(nameCell);
 
                             const emailCell = document.createElement('td');
-                            emailCell.innerText = supplier.contactInfo || 'Chưa có email';
+                            emailCell.innerText = supplier.contactInfo || 'Chưa có thông tin liên hệ';
                             row.appendChild(emailCell);
 
                             const productCell = document.createElement('td');
@@ -341,12 +475,12 @@
 
                             const actionsCell = document.createElement('td');
                             actionsCell.innerHTML = `
-                            <ul>
-                                <li><a href="order-detail.html"><i class="ri-eye-line"></i></a></li>
-                                <li><a href="javascript:void(0)" class="edit-btn" data-id="${supplier.supplierID}" data-name="${supplier.supplierName}" data-contact="${supplier.contactInfo || ''}" data-logo="${supplier.logo || ''}"><i class="ri-pencil-line"></i></a></li>
-                                <li><a href="javascript:void(0)" class="delete-btn" data-id="${supplier.supplierID}" data-bs-toggle="modal" data-bs-target="#exampleModalToggle"><i class="ri-delete-bin-line"></i></a></li>
-                            </ul>
-                        `;
+                                <ul>
+                                    <li><a href="order-detail.html"><i class="ri-eye-line"></i></a></li>
+                                    <li><a href="javascript:void(0)" class="edit-btn" data-id="${supplier.supplierID}" data-name="${ supplier.supplierName || ''}" data-contact="${supplier.contactInfo || ''}" data-logo="${supplier.logo || ''}"><i class="ri-pencil-line"></i></a></li>
+                                    <li><a href="javascript:void(0)" class="delete-btn" data-id="${supplier.supplierID}" data-bs-toggle="modal" data-bs-target="#exampleModalToggle"><i class="ri-delete-bin-line"></i></a></li>
+                                </ul>
+                            `;
                             row.appendChild(actionsCell);
 
                             tableBody.appendChild(row);
@@ -358,7 +492,10 @@
                     renderPagination(data.totalPages, data.number);
                 })
                 .catch(error => {
-                    if (error instanceof SyntaxError) console.error('Syntax error in response:', error.message);
+                    console.error('Error fetching suppliers:', error);
+                    tableBody.innerHTML = '';
+                    noDataRow.style.display = '';
+                    renderPagination(0, 0);
                 });
         }
 
@@ -444,11 +581,12 @@
             };
         }
 
-        // Initial fetch with URL update
-        const urlParams = new URLSearchParams(window.location.search);
-        const initialPage = parseInt(urlParams.get('page')) || 1;
-        if (initialPage > 0) currentPage = initialPage - 1; // Convert 1-based URL to 0-based
-        fetchSuppliers(currentPage);
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const searchTerm = this.value.trim().toLowerCase();
+            fetchSuppliers(0); // Reset to first page on search
+            // Note: Server-side search filtering should be implemented in the API
+        });
 
         document.addEventListener('click', function (event) {
             const deleteBtn = event.target.closest('.delete-btn');
@@ -488,15 +626,21 @@
             }
         });
 
-        const confirmDeleteBtn = document.querySelector('#exampleModalToggle .btn.btn-animation.btn-md.fw-bold[data-bs-toggle="modal"]');
+        const confirmDeleteBtn = document.querySelector('#exampleModalToggle .confirm-delete');
         if (confirmDeleteBtn) {
             confirmDeleteBtn.addEventListener('click', function () {
                 const modal = document.getElementById('exampleModalToggle');
                 const supplierID = modal.getAttribute('data-supplier-id');
 
-                if (!supplierID) return;
+                if (!supplierID) {
+                    alert('Supplier ID không hợp lệ.');
+                    return;
+                }
 
-                fetch('/api/suppliers/' + supplierID, { method: 'DELETE' })
+                fetch('/api/suppliers/' + supplierID, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content }
+                })
                     .then(response => {
                         if (response.ok) {
                             document.querySelector(`tr[data-id="${supplierID}"]`)?.remove();
@@ -515,7 +659,10 @@
                             alert('Không thể xóa nhà cung cấp.');
                         }
                     })
-                    .catch(() => {});
+                    .catch(error => {
+                        console.error('Error deleting supplier:', error);
+                        alert('Lỗi khi xóa nhà cung cấp.');
+                    });
             });
         }
 
@@ -535,30 +682,40 @@
 
             fetch('/api/suppliers/' + supplierID, { method: 'PUT', body: formData })
                 .then(response => {
-                    if (!response.ok) throw response.json();
+                    if (!response.ok) return response.json().then(err => { throw err; });
                     return response.json();
                 })
                 .then(() => {
                     bootstrap.Modal.getInstance(document.getElementById('updateSupplierModal')).hide();
+                    document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
                     document.getElementById('logo').value = '';
-                    alert('Cập nhật thành công!');
+                    alert('Cập nhật nhà cung cấp thành công!');
                     fetchSuppliers(currentPage);
                 })
                 .catch(error => {
-                    alert(error.status === 409 ? 'Tên hoặc thông tin đã tồn tại.' :
-                        error.status === 404 ? 'Không tìm thấy nhà cung cấp.' :
-                            error.status === 400 ? 'Dữ liệu không hợp lệ.' : 'Lỗi không xác định.');
+                    console.error('Error updating supplier:', error);
+                    alert(error.message || 'Lỗi khi cập nhật nhà cung cấp.');
                 });
         }
 
         const saveSupplierBtn = document.getElementById('saveSupplierBtn');
-        if (saveSupplierBtn) saveSupplierBtn.addEventListener('click', () => {
-            const supplierID = document.getElementById('supplierID').value;
-            const supplierName = document.getElementById('supplierName').value;
-            const contactInfo = document.getElementById('contactInfo').value;
-            const logoFile = document.getElementById('logo').files[0];
-            updateSupplier(supplierID, supplierName, contactInfo, logoFile);
-        });
+        if (saveSupplierBtn) {
+            saveSupplierBtn.addEventListener('click', () => {
+                const supplierID = document.getElementById('supplierID').value;
+                const supplierName = document.getElementById('supplierName').value;
+                const contactInfo = document.getElementById('contactInfo').value;
+                const logoFile = document.getElementById('logo').files[0];
+                updateSupplier(supplierID, supplierName, contactInfo, logoFile);
+            });
+        }
+
+        // Initial fetch with URL update
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialPage = parseInt(urlParams.get('page')) || 1;
+        if (initialPage > 0) currentPage = initialPage - 1; // Convert 1-based URL to 0-based
+        fetchSuppliers(currentPage);
     });
 </script>
 </body>

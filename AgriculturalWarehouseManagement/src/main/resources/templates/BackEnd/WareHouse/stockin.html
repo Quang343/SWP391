@@ -1,8 +1,137 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
-
 <head th:replace="BackEnd/fragments/WareHouse/head::head"></head>
+<style>
+  /* Ensure table is scrollable horizontally if content overflows */
+  .table-responsive {
+    overflow-x: auto;
+    margin-bottom: 0; /* Remove extra margin to keep pagination close */
+    position: relative; /* Context for scrollbar */
+  }
 
+  /* Ensure table takes full width but triggers scrollbar if needed */
+  #table_id {
+    width: 100%;
+    min-width: 1000px; /* Force horizontal scrollbar for wide content */
+  }
+
+  /* Override gray borders from Bootstrap for table */
+  #table_id.table,
+  #table_id th,
+  #table_id td {
+    border-color: #e6f3f2 !important; /* Light green border */
+  }
+
+  /* Center pagination and style items */
+  #pagination-controls {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;
+    margin-top: 12px; /* Ensure below scrollbar */
+    margin-bottom: 20px; /* Space below pagination */
+    position: relative; /* Ensure proper stacking */
+    z-index: 10; /* Below footer and sidebar */
+    max-width: 100%; /* Prevent overflow */
+  }
+
+  #pagination-controls .page-item {
+    margin: 0 2.5px; /* 5px gap between items */
+  }
+
+  #pagination-controls .page-link {
+    border-radius: 4px;
+    padding: 6px 12px;
+    color: #018F84; /* Text color for number pages */
+    font-size: 14px; /* Match theme typography */
+    cursor: pointer; /* Ensure clickable appearance */
+    border: 1px solid #018F84; /* Border matches theme */
+    background-color: transparent; /* Default background */
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  /* Style for Previous and Next buttons */
+  #pagination-controls .page-item:first-child .page-link,
+  #pagination-controls .page-item:last-child .page-link {
+    background-color: #018F84; /* Green background */
+    color: #fff; /* White text */
+    border-color: #018F84;
+  }
+
+  /* Style for active page */
+  #pagination-controls .page-item.active .page-link {
+    background-color: #018F84; /* Green background */
+    border-color: #018F84;
+    color: #fff;
+    box-shadow: none; /* No glowing effect */
+  }
+
+  /* Style for disabled buttons */
+  #pagination-controls .page-item.disabled .page-link {
+    color: #018F84; /* Green text */
+    border-color: #e6f3f2; /* Light green border */
+    background-color: #e6f3f2; /* Light green background */
+    pointer-events: none;
+    cursor: default;
+  }
+
+  /* Hover effect for non-disabled, non-active number pages */
+  #pagination-controls .page-link:hover:not(.disabled .page-link):not(.active .page-link):not(:first-child .page-link):not(:last-child .page-link) {
+    background-color: #e6f3f2; /* Light green on hover */
+    color: #018F84;
+  }
+
+  /* Hover effect for Previous/Next when not disabled */
+  #pagination-controls .page-item:not(.disabled):first-child .page-link:hover,
+  #pagination-controls .page-item:not(.disabled):last-child .page-link:hover {
+    background-color: #016f6a; /* Darker green on hover */
+    color: #fff;
+  }
+
+  /* Ensure footer is above pagination but below sidebar */
+  .footer {
+
+    z-index: 20 !important; /* Above pagination */
+  }
+
+  /* Ensure sidebar is above footer and pagination */
+  .sidebar-wrapper {
+    position: fixed;
+    z-index: 30 !important; /* Above footer and pagination */
+  }
+
+  /* Ensure modals and offcanvas are above sidebar, footer, and pagination */
+  .modal,
+  .offcanvas {
+    z-index: 1050 !important; /* Above sidebar, footer, and pagination */
+  }
+
+  .modal-backdrop {
+    z-index: 1040 !important; /* Below modal/offcanvas, above sidebar and footer */
+  }
+
+  /* Style for search bar and button */
+  .btn-theme {
+    background-color: #018F84;
+    color: #fff;
+    border-color: #018F84;
+  }
+
+  .btn-theme:hover {
+    background-color: #016f6a;
+    color: #fff;
+    border-color: #016f6a;
+  }
+
+  .search-bar input {
+    border: 1px solid #e6f3f2;
+  }
+
+  .search-bar input:focus {
+    border-color: #018F84;
+    box-shadow: 0 0 5px rgba(1, 143, 132, 0.3);
+  }
+</style>
 <body>
 <!-- tap on top start-->
 <div class="tap-top">
@@ -31,8 +160,20 @@
             <div class="card card-table">
               <div class="card-body">
                 <div class="title-header option-title">
-                  <h5>StockIn List</h5>
-                  <a th:href="@{/warehouse/addstockin}" class="btn btn-solid">Add news StockIn</a>
+                  <!-- Dòng 1: chỉ StockIn List -->
+                  <div class="first-line">
+                    <h5>StockIn List</h5>
+                  </div>
+
+                  <!-- Dòng 2: Add new StockIn và Search bên phải -->
+                  <div class="second-line" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                    <a th:href="@{/warehouse/addstockin}" class="align-items-center btn btn-theme d-flex">
+                      <i data-feather="plus"></i> Add new StockIn
+                    </a>
+                    <div class="search-bar">
+                      <input type="text" class="form-control" placeholder="Search..." id="searchInputStockIn">
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <div class="table-responsive">
@@ -40,8 +181,8 @@
                       <thead>
                       <tr>
                         <th>StockIn ID</th>
-                        <th>Supplier ID</th>
-                        <th>Warehouse ID</th>
+                        <th>Supplier</th>
+                        <th>Warehouse</th>
                         <th>Date</th>
                         <th>Note</th>
                         <th>Option</th>
@@ -52,6 +193,7 @@
                       </tbody>
                     </table>
                   </div>
+                  <ul id="pagination-controls" class="pagination"></ul>
                 </div>
               </div>
             </div>
@@ -59,6 +201,18 @@
         </div>
       </div>
       <!-- Table End -->
+
+      <!-- Container-fluid Ends-->
+      <div class="container-fluid">
+        <!-- footer start-->
+        <footer class="footer">
+          <div class="row">
+            <div class="col-md-12 footer-copyright text-center">
+              <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+            </div>
+          </div>
+        </footer>
+      </div>
     </div>
     <!-- StockIn section End -->
   </div>
@@ -89,7 +243,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header d-block text-center">
-        <h4 class="modal-title w-100" id="exampleModalLabel22">Are You Sure ?</h4>
+        <h4 class="modal-title w-100" id="exampleModalLabel22">Are You Sure?</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
           <i class="fas fa-times"></i>
         </button>
@@ -128,7 +282,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+        <button class="btn btn-primary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -204,7 +358,52 @@
 <!-- Custom JavaScript -->
 <script>
   $(document).ready(function() {
-    // Function to load Suppliers into dropdown
+    // Disable DataTables to prevent interference
+    if ($.fn.DataTable && $.fn.DataTable.isDataTable('#table_id')) {
+      $('#table_id').DataTable().destroy();
+      console.log('DataTables disabled for #table_id');
+    }
+
+    let currentPage = 0; // 0-based internally
+    let totalPages = 1; // Global variable to track total pages
+    const pageSize = 5;
+
+    // Debug pagination DOM
+    function debugPagination() {
+      const paginationItems = $('#pagination-controls .page-link');
+      console.log('Pagination items:', paginationItems.length, 'HTML:', $('#pagination-controls').html() || 'Not found');
+    }
+
+    // Ensure table body and no-data row exist
+    function ensureElements() {
+      let tableBody = $('#stockInTableBody');
+      let noDataRow = $('#no-data-row');
+
+      if (!tableBody.length) {
+        const table = $('#table_id');
+        if (table.length) {
+          tableBody = $('<tbody id="stockInTableBody"></tbody>');
+          table.append(tableBody);
+        } else {
+          console.error('Table #table_id not found');
+          return null;
+        }
+      }
+
+      if (!noDataRow.length) {
+        noDataRow = $('<tr id="no-data-row"><td colspan="6" class="text-center">No data available in table</td></tr>');
+        tableBody.append(noDataRow);
+      }
+
+      return { tableBody, noDataRow };
+    }
+
+    // Update URL with page number (1-based)
+    function updateURL(page) {
+      history.pushState({}, '', `?page=${page + 1}`);
+    }
+
+    // Load Suppliers into dropdown
     function loadSuppliersDropdown(selectElement, selectedId) {
       $.ajax({
         url: 'http://localhost:8080/api/suppliers',
@@ -228,7 +427,7 @@
       });
     }
 
-    // Function to load Warehouses into dropdown
+    // Load Warehouses into dropdown
     function loadWarehousesDropdown(selectElement, selectedId) {
       $.ajax({
         url: 'http://localhost:8080/api/warehouses',
@@ -252,63 +451,197 @@
       });
     }
 
-    // Load StockIn data
-    function loadStockIns() {
+    // Fetch StockIn data and populate table
+    function fetchStockIns(page = 0, searchQuery = '') {
+      currentPage = page;
+      updateURL(page);
+      const { tableBody, noDataRow } = ensureElements();
+      if (!tableBody || !noDataRow) return;
+
+      console.log('Fetching StockIns for page:', page, 'search:', searchQuery);
+
+      let url = `http://localhost:8080/api/stockins/paginatedStockIn?page=${page}&size=${pageSize}`;
+      if (searchQuery) {
+        url += `&search=${encodeURIComponent(searchQuery)}`;
+      }
+
       $.ajax({
-        url: 'http://localhost:8080/api/stockins',
+        url: url,
         method: 'GET',
         dataType: 'json',
         success: function(data) {
-          var tbody = $('#stockInTableBody');
-          tbody.empty();
-          $.each(data, function(index, stockIn) {
-            // Fetch Supplier and Warehouse names
-            $.when(
-                    $.ajax({ url: 'http://localhost:8080/api/suppliers/' + stockIn.supplierID, method: 'GET', dataType: 'json' }),
-                    $.ajax({ url: 'http://localhost:8080/api/warehouses/' + stockIn.warehouseID, method: 'GET', dataType: 'json' })
-            ).done(function(supplierResponse, warehouseResponse) {
-              var supplierName = supplierResponse[0].supplierName || 'N/A';
-              var warehouseName = warehouseResponse[0].warehouseName || 'N/A';
-              var row = '<tr data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="' + stockIn.id + '">' +
-                      '<td>' + stockIn.id + '</td>' +
-                      '<td>' + supplierName + '</td>' +
-                      '<td>' + warehouseName + '</td>' +
-                      '<td>' + (stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleString() : 'N/A') + '</td>' +
-                      '<td>' + (stockIn.note || 'N/A') + '</td>' +
-                      '<td>' +
-                      '<ul>' +
-                      '<li><a href="/warehouse/stockindetail?stockInId=' + stockIn.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
-                      '<li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="' + stockIn.id + '" class="edit-link"><i class="ri-pencil-line"></i></a></li>' +
-                      '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="' + stockIn.id + '"><i class="ri-delete-bin-line"></i></a></li>' +
+          console.log('API response:', data);
+          if (!data || !data.content || typeof data.totalPages === 'undefined' || typeof data.number === 'undefined') {
+            console.error('Invalid response data:', data);
+            tableBody.empty();
+            noDataRow.show();
+            renderPagination(0, 0);
+            debugPagination();
+            return;
+          }
 
-                      '</ul>' +
-                      '</td>' +
-                      '</tr>';
-              tbody.append(row);
-            }).fail(function(jqXHR, textStatus, errorThrown) {
-              console.error('Error fetching supplier or warehouse:', textStatus, errorThrown);
-              var row = '<tr data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="' + stockIn.id + '">' +
-                      '<td>' + stockIn.id + '</td>' +
-                      '<td>N/A</td>' +
-                      '<td>N/A</td>' +
-                      '<td>' + (stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleString() : 'N/A') + '</td>' +
-                      '<td>' + (stockIn.note || 'N/A') + '</td>' +
-                      '<td>' +
-                      '<ul>' +
-                      '<li><a href="/warehouse/stockindetail?stockInId=' + stockIn.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
-                      '<li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="' + stockIn.id + '" class="edit-link"><i class="ri-pencil-line"></i></a></li>' +
-                      '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="' + stockIn.id + '"><i class="ri-delete-bin-line"></i></a></li>' +
-                      '<li><a class="btn btn-sm btn-solid text-white" href="order-tracking.html">Tracking</a></li>' +
-                      '</ul>' +
-                      '</td>' +
-                      '</tr>';
-              tbody.append(row);
+          totalPages = data.totalPages;
+          tableBody.empty();
+
+          if (data.content && data.content.length > 0) {
+            noDataRow.hide();
+            $.each(data.content, function(index, stockIn) {
+              // Validate supplierID and warehouseID
+              const supplierId = stockIn.supplierID && typeof stockIn.supplierID === 'object' ? (stockIn.supplierID.supplierID || stockIn.supplierID.id) : stockIn.supplierID;
+              const warehouseId = stockIn.warehouseID && typeof stockIn.warehouseID === 'object' ? (stockIn.warehouseID.warehouseId || stockIn.warehouseID.id) : stockIn.warehouseID;
+
+              console.log('Processing stockIn ID:', stockIn.id, 'supplierID:', supplierId, 'warehouseID:', warehouseId);
+
+              // Check if IDs are valid numbers
+              if (!supplierId || !warehouseId || isNaN(parseInt(supplierId)) || isNaN(parseInt(warehouseId))) {
+                console.warn('Invalid supplierID or warehouseID for stockIn:', JSON.stringify(stockIn));
+                var row = $('<tr></tr>')
+                        .attr('data-bs-toggle', 'offcanvas')
+                        .attr('data-bs-target', '#order-details')
+                        .attr('data-stockin-id', stockIn.id);
+                row.append(`<td>${stockIn.id || 'N/A'}</td>`);
+                row.append(`<td>N/A (Invalid Supplier ID: ${JSON.stringify(stockIn.supplierID)})</td>`);
+                row.append(`<td>N/A (Invalid Warehouse ID: ${JSON.stringify(stockIn.warehouseID)})</td>`);
+                row.append(`<td>${stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleString() : 'N/A'}</td>`);
+                row.append(`<td>${stockIn.note || 'N/A'}</td>`);
+                row.append(`
+                  <td>
+                    <ul>
+                      <li><a href="/warehouse/stockindetail?stockInId=${stockIn.id}" class="view-detail"><i class="ri-eye-line"></i></a></li>
+                      <li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="${stockIn.id}" class="edit-link"><i class="ri-pencil-line"></i></a></li>
+                      <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="${stockIn.id}"><i class="ri-delete-bin-line"></i></a></li>
+                    </ul>
+                  </td>
+                `);
+                tableBody.append(row);
+                return;
+              }
+
+              // Fetch supplier and warehouse names
+              $.when(
+                      $.ajax({ url: `http://localhost:8080/api/suppliers/${supplierId}`, method: 'GET', dataType: 'json' }),
+                      $.ajax({ url: `http://localhost:8080/api/warehouses/${warehouseId}`, method: 'GET', dataType: 'json' })
+              ).done(function(supplierResponse, warehouseResponse) {
+                var supplierName = supplierResponse[0].supplierName || 'N/A';
+                var warehouseName = warehouseResponse[0].warehouseName || 'N/A';
+                var row = $('<tr></tr>')
+                        .attr('data-bs-toggle', 'offcanvas')
+                        .attr('data-bs-target', '#order-details')
+                        .attr('data-stockin-id', stockIn.id);
+                row.append(`<td>${stockIn.id || 'N/A'}</td>`);
+                row.append(`<td>${supplierName} (ID: ${supplierId})</td>`);
+                row.append(`<td>${warehouseName} (ID: ${warehouseId})</td>`);
+                row.append(`<td>${stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleString() : 'N/A'}</td>`);
+                row.append(`<td>${stockIn.note || 'N/A'}</td>`);
+                row.append(`
+                  <td>
+                    <ul>
+                      <li><a href="/warehouse/stockindetail?stockInId=${stockIn.id}" class="view-detail"><i class="ri-eye-line"></i></a></li>
+                      <li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="${stockIn.id}" class="edit-link"><i class="ri-pencil-line"></i></a></li>
+                      <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="${stockIn.id}"><i class="ri-delete-bin-line"></i></a></li>
+                    </ul>
+                  </td>
+                `);
+                tableBody.append(row);
+              }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.error('Error fetching supplier or warehouse:', textStatus, errorThrown, 'SupplierID:', supplierId, 'WarehouseID:', warehouseId);
+                var row = $('<tr></tr>')
+                        .attr('data-bs-toggle', 'offcanvas')
+                        .attr('data-bs-target', '#order-details')
+                        .attr('data-stockin-id', stockIn.id);
+                row.append(`<td>${stockIn.id || 'N/A'}</td>`);
+                row.append(`<td>N/A (Error fetching Supplier ID: ${supplierId})</td>`);
+                row.append(`<td>N/A (Error fetching Warehouse ID: ${warehouseId})</td>`);
+                row.append(`<td>${stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleString() : 'N/A'}</td>`);
+                row.append(`<td>${stockIn.note || 'N/A'}</td>`);
+                row.append(`
+                  <td>
+                    <ul>
+                      <li><a href="/warehouse/stockindetail?stockInId=${stockIn.id}" class="view-detail"><i class="ri-eye-line"></i></a></li>
+                      <li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="${stockIn.id}" class="edit-link"><i class="ri-pencil-line"></i></a></li>
+                      <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="${stockIn.id}"><i class="ri-delete-bin-line"></i></a></li>
+                    </ul>
+                  </td>
+                `);
+                tableBody.append(row);
+              });
             });
-          });
+          } else {
+            noDataRow.show();
+          }
+
+          renderPagination(data.totalPages, data.number);
+          debugPagination();
         },
         error: function(xhr, status, error) {
-          console.error('Error loading StockIns:', status, error);
-          $('#stockInTableBody').html('<tr><td colspan="6">Failed to load data. Check console.</td></tr>');
+          console.error('Error fetching StockIns:', status, error, 'Response:', xhr.responseText);
+          alert('Failed to load StockIns. Check console.');
+          tableBody.empty();
+          noDataRow.show();
+          renderPagination(0, 0);
+          debugPagination();
+        }
+      });
+    }
+
+    // Pagination rendering
+    function renderPagination(totalPagesInput, currentPageInput) {
+      const paginationControls = $('#pagination-controls');
+      paginationControls.empty();
+
+      totalPages = typeof totalPagesInput === 'number' && totalPagesInput > 0 ? totalPagesInput : 1;
+      currentPage = typeof currentPageInput === 'number' && currentPageInput >= 0 && currentPageInput < totalPages ? currentPageInput : 0;
+
+      console.log('Rendering pagination - totalPages:', totalPages, 'currentPage:', currentPage);
+
+      const addBtn = (label, page, disabled = false, active = false) => {
+        const li = $('<li></li>').addClass('page-item');
+        if (disabled) li.addClass('disabled');
+        if (active) li.addClass('active');
+        li.html(`<a class="page-link" href="javascript:void(0)" data-page="${page}">${label}</a>`);
+        paginationControls.append(li);
+      };
+
+      // Previous button
+      addBtn('Previous', currentPage - 1, currentPage === 0);
+
+      // Show up to 5 pages, centered around currentPage
+      const maxPagesToShow = 5;
+      let startPage = Math.max(0, currentPage - Math.floor(maxPagesToShow / 2));
+      let endPage = Math.min(totalPages, startPage + maxPagesToShow);
+
+      if (endPage - startPage < maxPagesToShow) {
+        startPage = Math.max(0, endPage - maxPagesToShow);
+      }
+
+      if (startPage > 0) {
+        addBtn(1, 0, false, currentPage === 0);
+        if (startPage > 1) {
+          paginationControls.append('<li class="page-item disabled"><a class="page-link">...</a></li>');
+        }
+      }
+
+      for (let i = startPage; i < endPage; i++) {
+        addBtn(i + 1, i, false, currentPage === i);
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          paginationControls.append('<li class="page-item disabled"><a class="page-link">...</a></li>');
+        }
+        addBtn(totalPages, totalPages - 1, false, currentPage === totalPages - 1);
+      }
+
+      // Next button
+      addBtn('Next', currentPage + 1, currentPage === totalPages - 1);
+
+      // Bind click events
+      paginationControls.off('click.pagination').on('click.pagination', '.page-link', function(e) {
+        e.preventDefault();
+        const page = parseInt($(this).data('page'));
+        console.log('Pagination click - page:', page, 'totalPages:', totalPages);
+        if (!isNaN(page) && page >= 0 && page < totalPages) {
+          fetchStockIns(page, $('#searchInputStockIn').val());
         }
       });
     }
@@ -320,16 +653,21 @@
       $('#offcanvasStockInIdInput').val(stockInId);
 
       $.ajax({
-        url: 'http://localhost:8080/api/stockins/' + stockInId,
+        url: `http://localhost:8080/api/stockins/${stockInId}`,
         method: 'GET',
         dataType: 'json',
         success: function(stockIn) {
           var dateTime = stockIn.stockInDate ? new Date(stockIn.stockInDate) : null;
           $('#offcanvasStockInDate').text(dateTime ? dateTime.toLocaleString() : 'N/A');
 
-          // Load suppliers and warehouses into dropdowns
-          loadSuppliersDropdown($('#offcanvasSupplierId'), stockIn.supplierID);
-          loadWarehousesDropdown($('#offcanvasWarehouseId'), stockIn.warehouseID);
+          // Use validated supplierID and warehouseID
+          const supplierId = stockIn.supplierID && typeof stockIn.supplierID === 'object' ? (stockIn.supplierID.supplierID || stockIn.supplierID.id) : stockIn.supplierID;
+          const warehouseId = stockIn.warehouseID && typeof stockIn.warehouseID === 'object' ? (stockIn.warehouseID.warehouseId || stockIn.warehouseID.id) : stockIn.warehouseID;
+
+          console.log('Loading offcanvas for stockIn ID:', stockInId, 'supplierID:', supplierId, 'warehouseID:', warehouseId);
+
+          loadSuppliersDropdown($('#offcanvasSupplierId'), supplierId);
+          loadWarehousesDropdown($('#offcanvasWarehouseId'), warehouseId);
 
           $('#offcanvasStockInDateInput').val(dateTime ? dateTime.toISOString().split('T')[0] : '');
           $('#offcanvasStockInTimeInput').val(dateTime ? dateTime.toTimeString().slice(0, 5) : '00:00');
@@ -348,7 +686,7 @@
       var stockInId = $('#offcanvasStockInIdInput').val();
       var date = $('#offcanvasStockInDateInput').val();
       var time = $('#offcanvasStockInTimeInput').val();
-      var stockInDate = date + 'T' + (time || '00:00') + ':00'; // Combine date and time
+      var stockInDate = date + 'T' + (time || '00:00') + ':00';
 
       var formData = {
         id: stockInId,
@@ -359,18 +697,22 @@
       };
 
       $.ajax({
-        url: 'http://localhost:8080/api/stockins/' + stockInId,
+        url: `http://localhost:8080/api/stockins/${stockInId}`,
         method: 'PUT',
         contentType: 'application/json',
         data: JSON.stringify(formData),
         success: function(response) {
           alert('StockIn updated successfully!');
           $('#order-details').offcanvas('hide');
-          loadStockIns(); // Reload table
+          $('.modal-backdrop').remove();
+          $('body').removeClass('modal-open').css('overflow', '');
+          fetchStockIns(currentPage, $('#searchInputStockIn').val());
         },
         error: function(xhr, status, error) {
           console.error('Error updating StockIn:', status, error);
           alert('Error updating StockIn: ' + (xhr.responseText || 'Unknown error'));
+          $('.modal-backdrop').remove();
+          $('body').removeClass('modal-open').css('overflow', '');
         }
       });
     });
@@ -391,23 +733,41 @@
       }
 
       $.ajax({
-        url: 'http://localhost:8080/api/stockins/' + stockInId,
+        url: `http://localhost:8080/api/stockins/${stockInId}`,
         method: 'DELETE',
+        headers: { 'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content') },
         success: function() {
           $('#exampleModalToggle').modal('hide');
-          $('#exampleModalToggle2').modal('show');
-          loadStockIns(); // Reload table
+          $('.modal-backdrop').remove();
+          $('body').removeClass('modal-open').css('overflow', '');
+          $('#exampleModalToggle2').modal('show').on('hidden.bs.modal', function() {
+            $(this).off('hidden.bs.modal');
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open').css('overflow', '');
+            fetchStockIns(currentPage, $('#searchInputStockIn').val());
+          });
         },
         error: function(xhr, status, error) {
           console.error('Error deleting StockIn:', status, error);
           alert('Failed to delete StockIn: ' + (xhr.responseText || 'Unknown error'));
           $('#exampleModalToggle').modal('hide');
+          $('.modal-backdrop').remove();
+          $('body').removeClass('modal-open').css('overflow', '');
         }
       });
     });
 
-    // Initialize table
-    loadStockIns();
+    // Search functionality
+    $('#searchInputStockIn').on('input', function() {
+      const searchQuery = $(this).val().trim();
+      fetchStockIns(0, searchQuery); // Reset to page 0 on search
+    });
+
+    // Initial fetch with URL page parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialPage = parseInt(urlParams.get('page')) || 1;
+    if (initialPage > 0) currentPage = initialPage - 1; // Convert 1-based URL to 0-based
+    fetchStockIns(currentPage);
   });
 </script>
 

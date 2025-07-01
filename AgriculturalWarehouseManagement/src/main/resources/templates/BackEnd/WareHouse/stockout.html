@@ -3,6 +3,119 @@
 
 <head th:replace="BackEnd/fragments/WareHouse/head::head"></head>
 
+<style>
+    /* Ensure table is scrollable horizontally if content overflows */
+    .table-responsive {
+        overflow-x: auto;
+        margin-bottom: 0; /* Remove extra margin to keep pagination close */
+        position: relative; /* Context for scrollbar */
+    }
+
+    /* Ensure table takes full width but triggers scrollbar if needed */
+    #table_id {
+        width: 100%;
+        min-width: 1000px; /* Force horizontal scrollbar for wide content */
+    }
+
+    /* Override gray borders from Bootstrap for table */
+    #table_id.table,
+    #table_id th,
+    #table_id td {
+        border-color: #e6f3f2 !important; /* Replace gray (e.g., #dee2e6) with light green */
+    }
+
+    /* Center pagination and style items */
+    #pagination-controls {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center;
+        margin-top: 8px; /* Small gap below table/scrollbar */
+        margin-bottom: 20px; /* Space below pagination */
+        position: relative; /* Ensure proper stacking */
+        z-index: 10; /* Lower than modal backdrop and footer */
+        max-width: 100%; /* Ensure it doesn't overflow container */
+    }
+
+    #pagination-controls .page-item {
+        margin: 0 2.5px; /* 5px gap between items (2.5px each side) */
+    }
+
+    #pagination-controls .page-link {
+        border-radius: 4px;
+        padding: 6px 12px;
+        color: #018F84; /* Text color for number pages */
+        font-size: 14px; /* Match theme typography */
+        cursor: pointer; /* Ensure clickable appearance */
+        border: 1px solid #018F84; /* Border color matches theme */
+        background-color: transparent; /* Default background for number pages */
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    /* Style for Previous and Next buttons */
+    #pagination-controls .page-item:first-child .page-link,
+    #pagination-controls .page-item:last-child .page-link {
+        background-color: #018F84; /* Green background for Previous/Next */
+        color: #fff; /* White text for contrast */
+        border-color: #018F84;
+    }
+
+    /* Style for active page */
+    #pagination-controls .page-item.active .page-link {
+        background-color: #018F84; /* Green background matches theme */
+        border-color: #018F84; /* Border matches theme */
+        color: #fff; /* White text for contrast */
+    }
+
+    /* Style for disabled buttons */
+    #pagination-controls .page-item.disabled .page-link {
+        color: #018F84; /* Green text instead of gray (#6c757d) */
+        border-color: #e6f3f2; /* Light green border instead of gray */
+        background-color: #e6f3f2; /* Light green background instead of gray (#f8f9fa) */
+        pointer-events: none;
+        cursor: default;
+    }
+
+    /* Hover effect for non-disabled, non-active number pages */
+    #pagination-controls .page-link:hover:not(.disabled .page-link):not(.active .page-link):not(:first-child .page-link):not(:last-child .page-link) {
+        background-color: #e6f3f2; /* Light green background on hover for number pages */
+        color: #018F84;
+    }
+
+    /* Hover effect for Previous/Next when not disabled */
+    #pagination-controls .page-item:not(.disabled):first-child .page-link:hover,
+    #pagination-controls .page-item:not(.disabled):last-child .page-link:hover {
+        background-color: #016f6a; /* Slightly darker green on hover */
+        color: #fff;
+    }
+
+
+
+    /* Style for search bar and button */
+    .btn-theme {
+        background-color: #018F84; /* Match theme color */
+        color: #fff;
+        border-color: #018F84;
+    }
+
+    .btn-theme:hover {
+        background-color: #016f6a; /* Darker green on hover */
+        color: #fff;
+        border-color: #016f6a;
+    }
+
+    .search-bar input {
+        border: 1px solid #e6f3f2; /* Light green border */
+    }
+
+    .search-bar input:focus {
+        border-color: #018F84; /* Darker green on focus */
+        box-shadow: 0 0 5px rgba(1, 143, 132, 0.3);
+    }
+
+
+</style>
+
 <body>
 <!-- tap on top start-->
 <div class="tap-top">
@@ -31,10 +144,21 @@
                         <div class="card card-table">
                             <div class="card-body">
                                 <div class="title-header option-title">
-                                    <h5>StockOut List</h5>
-                                    <a th:href="@{/warehouse/addstockout}" class="btn btn-solid">Add new StockOut</a>
+                                    <!-- Dòng 1: chỉ StockOut List -->
+                                    <div class="first-line">
+                                        <h5>StockOut List</h5>
+                                    </div>
+
+                                    <!-- Dòng 2: Add new StockOut và Search bên phải -->
+                                    <div class="second-line" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                                        <a th:href="@{/warehouse/addstockout}" class="align-items-center btn btn-theme d-flex">
+                                            <i data-feather="plus"></i> Add new StockOut
+                                        </a>
+                                        <div class="search-bar">
+                                            <input type="text" class="form-control" placeholder="Search..." id="searchInputStockOut">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
                                     <div class="table-responsive">
                                         <table class="table all-package order-table theme-table" id="table_id">
                                             <thead>
@@ -248,7 +372,6 @@
                                     '<li><a href="/warehouse/stockoutdetail?stockOutId=' + stockOut.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
                                     '<li><a href="javascript:void(0)"><i class="ri-pencil-line"></i></a></li>' +
                                     '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockout-id="' + stockOut.id + '"><i class="ri-delete-bin-line"></i></a></li>' +
-                                    '<li><a class="btn btn-sm btn-solid text-white" href="order-tracking.html">Theo dõi</a></li>' +
                                     '</ul>' +
                                     '</td>' +
                                     '</tr>';
@@ -268,7 +391,6 @@
                                     '<li><a href="/warehouse/stockoutdetail?stockOutId=' + stockOut.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
                                     '<li><a href="javascript:void(0)"><i class="ri-pencil-line"></i></a></li>' +
                                     '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockout-id="' + stockOut.id + '"><i class="ri-delete-bin-line"></i></a></li>' +
-                                    '<li><a class="btn btn-sm btn-solid text-white" href="order-tracking.html">Theo dõi</a></li>' +
                                     '</ul>' +
                                     '</td>' +
                                     '</tr>';

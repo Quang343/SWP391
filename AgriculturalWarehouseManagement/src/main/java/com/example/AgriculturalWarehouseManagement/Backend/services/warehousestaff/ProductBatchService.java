@@ -32,31 +32,65 @@ public class ProductBatchService {
     @Autowired
     private AdjustmentRepository adjustmentRepository;
 
-    @Autowired
-    private ProductBatchRepository productBatchRepository;
-
     public Page<ProductBatchDTO> getPaginatedProductBatches(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ProductBatch> productBatchPage = productBatchRepository.findPaginatedProductBatches(pageable);
+        Page<ProductBatch> productBatchPage = repository.findPaginatedProductBatches(pageable);
 
         // Debug output to console
         System.out.println("Debug - Page: " + page + ", Size: " + size +
                 ", Total Pages: " + productBatchPage.getTotalPages() +
                 ", Total Elements: " + productBatchPage.getTotalElements());
 
-        // Use mapper to convert entities to DTOs
-        return productBatchPage.map(mapper::productBatchToProductBatchDTO);
+        // Map entities to DTOs with adjustments
+        return productBatchPage.map(this::mapToDTOWithAdjustments);
     }
 
-    // Tạo mới ProductBatch
+    public List<ProductBatchDTO> getProductBatchesByProductDetailId(Long productDetailId) {
+        if (productDetailId == null) {
+            throw new RuntimeException("ProductDetailId cannot be null");
+        }
+        List<ProductBatch> batches = repository.findByProductDetailIdOrderByManufactureDateAsc(productDetailId);
+        if (batches.isEmpty()) {
+            throw new RuntimeException("No ProductBatches found for productDetailId: " + productDetailId);
+        }
+        return batches.stream()
+                .map(this::mapToDTOWithAdjustments)
+                .collect(Collectors.toList());
+    }
+
+    private ProductBatchDTO mapToDTOWithAdjustments(ProductBatch productBatch) {
+        ProductBatchDTO dto = mapper.productBatchToProductBatchDTO(productBatch);
+        List<Adjustment> adjustments = adjustmentRepository.findByBatchBatchId(productBatch.getBatchId());
+        System.out.println("Debug - Batch ID: " + productBatch.getBatchId() + ", Adjustments found: " + (adjustments != null ? adjustments.size() : 0));
+        int totalAdjustment = 0;
+        if (adjustments != null && !adjustments.isEmpty()) {
+            for (Adjustment adj : adjustments) {
+                String adjustmentType = String.valueOf(adj.getAdjustmentType());
+                int quantity = adj.getQuantity() != null ? adj.getQuantity() : 0;
+                System.out.println("Debug - Adjustment: Batch ID: " + productBatch.getBatchId() +
+                        ", Type: '" + adjustmentType + "', Quantity: " + quantity);
+                if (adjustmentType.equalsIgnoreCase("Add")) {
+                    totalAdjustment += quantity;
+                } else if (adjustmentType.equalsIgnoreCase("Remove")) {
+                    totalAdjustment -= quantity;
+                } else {
+                    System.out.println("Warn - Unknown adjustment type: '" + adjustmentType + "' for Batch ID: " + productBatch.getBatchId());
+                }
+            }
+        }
+        System.out.println("Debug - Batch ID: " + productBatch.getBatchId() + ", Total Adjustment: " + totalAdjustment);
+        dto.setTotalAdjustment(totalAdjustment);
+        return dto;
+    }
+
     public ProductBatchDTO create(ProductBatchDTO dto) {
         validateDto(dto);
         ProductBatch entity = mapper.productBatchDTOToProductBatch(dto);
-        entity.setSoldQuantity(0); // Mặc định
-        return mapper.productBatchToProductBatchDTO(repository.save(entity));
+        entity.setSoldQuantity(0); // Default
+        ProductBatch savedEntity = repository.save(entity);
+        return mapToDTOWithAdjustments(savedEntity);
     }
 
-    // Cập nhật ProductBatch
     public ProductBatchDTO update(Integer id, ProductBatchDTO dto) {
         ProductBatch entity = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ProductBatch not found with ID: " + id));
@@ -65,10 +99,10 @@ public class ProductBatchService {
         entity.setProductDetail(updatedEntity.getProductDetail());
         entity.setManufactureDate(updatedEntity.getManufactureDate());
         entity.setImportedQuantity(updatedEntity.getImportedQuantity());
-        return mapper.productBatchToProductBatchDTO(repository.save(entity));
+        ProductBatch savedEntity = repository.save(entity);
+        return mapToDTOWithAdjustments(savedEntity);
     }
 
-    // Validate DTO
     private void validateDto(ProductBatchDTO dto) {
         if (dto == null) {
             throw new IllegalArgumentException("ProductBatchDTO cannot be null");
@@ -83,7 +117,6 @@ public class ProductBatchService {
                 .orElseThrow(() -> new EntityNotFoundException("ProductDetail not found with ID: " + dto.getProductDetailID()));
     }
 
-    // Xóa ProductBatch
     public void delete(Integer id) {
         if (!repository.existsById(id)) {
             throw new EntityNotFoundException("ProductBatch not found with ID: " + id);
@@ -92,62 +125,45 @@ public class ProductBatchService {
     }
 
     public Map<String, Object> getAdjustmentsByBatchId(Integer batchId) {
-        // Kiểm tra batchId không null
         if (batchId == null) {
             throw new IllegalArgumentException("Batch ID cannot be null");
         }
-
-        // Truy vấn danh sách adjustments dựa trên batchId
         List<Adjustment> adjustments = adjustmentRepository.findByBatchBatchId(batchId);
-        if (adjustments == null || adjustments.isEmpty()) {
-            return new HashMap<>(); // Trả về map rỗng nếu không có dữ liệu
-        }
-
-        // Chuyển đổi sang DTO
         List<AdjustmentDTO> adjustmentDTOs = adjustments.stream()
                 .map(this::adjustmentToAdjustmentDTO)
                 .collect(Collectors.toList());
-
-        // Tính tổng và đếm
         int totalAdjustment = adjustments.stream()
-                .mapToInt(adj -> adj.getQuantity() != null ? adj.getQuantity() : 0)
+                .mapToInt(adj -> adj.getQuantity() != null ? -adj.getQuantity() : 0)
                 .sum();
         int adjustmentCount = adjustments.size();
-
-        // Tạo map kết quả
         Map<String, Object> result = new HashMap<>();
         result.put("adjustments", adjustmentDTOs);
         result.put("totalAdjustment", totalAdjustment);
         result.put("adjustmentCount", adjustmentCount);
-
         return result;
     }
 
-    // Phương thức ánh xạ từ Adjustment sang AdjustmentDTO (cần đảm bảo đầy đủ các trường)
     private AdjustmentDTO adjustmentToAdjustmentDTO(Adjustment adjustment) {
         AdjustmentDTO dto = new AdjustmentDTO();
         dto.setId(adjustment.getId());
-        dto.setBatchId(adjustment.getBatch() != null ? adjustment.getBatch().getBatchId() : null); // Lấy batchId từ Batch entity
+        dto.setBatchId(adjustment.getBatch() != null ? adjustment.getBatch().getBatchId() : null);
         dto.setQuantity(adjustment.getQuantity());
-        dto.setAdjustDate(adjustment.getAdjustDate()); // Đảm bảo không null
-        dto.setReason(adjustment.getReason()); // Đảm bảo không null
-        dto.setAdjustmentType(adjustment.getAdjustmentType().name()); // Đảm bảo không null
+        dto.setAdjustDate(adjustment.getAdjustDate());
+        dto.setReason(adjustment.getReason());
+        dto.setAdjustmentType(String.valueOf(adjustment.getAdjustmentType()));
         return dto;
     }
 
-    // Tìm ProductBatch theo ID
     public ProductBatchDTO findById(Integer id) {
-        return repository.findById(id)
-                .map(mapper::productBatchToProductBatchDTO)
+        ProductBatch entity = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ProductBatch not found with ID: " + id));
+        return mapToDTOWithAdjustments(entity);
     }
 
     public List<ProductBatchDTO> findAll() {
-        List<ProductBatchDTO> result = new ArrayList<>();
-        Iterable<ProductBatch> entities = repository.findAll();
-        for (ProductBatch batch : entities) {
-            result.add(mapper.productBatchToProductBatchDTO(batch));
-        }
-        return result;
+        List<ProductBatch> entities = (List<ProductBatch>) repository.findAll();
+        return entities.stream()
+                .map(this::mapToDTOWithAdjustments)
+                .collect(Collectors.toList());
     }
 }

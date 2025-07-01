@@ -44,7 +44,7 @@
                                 </div>
                                 <div class="bg-inner cart-section order-details-table">
                                     <div class="row g-4">
-                                        <div class="col-xl-8">
+                                        <div class="col-xl-12">
                                             <div class="table-responsive table-details">
                                                 <table class="table cart-table table-borderless">
                                                     <thead>
@@ -93,32 +93,6 @@
                                                     </tr>
                                                     </tfoot>
                                                 </table>
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-4">
-                                            <div class="order-success">
-                                                <div class="row g-4">
-                                                    <h4>Tóm tắt</h4>
-                                                    <ul class="order-details">
-                                                        <li>Mã nhập kho: <span id="stockInIdSummary"></span></li>
-                                                        <li>Ngày nhập kho: <span id="stockInDateSummary"></span></li>
-                                                        <li>Tổng đơn: <span id="totalAmountSummary"></span> VND</li>
-                                                    </ul>
-                                                    <h4>Địa chỉ kho</h4>
-                                                    <ul class="order-details">
-                                                        <li id="warehouseName">Tên kho</li>
-                                                        <li>Thạch Thất, Hòa Lạc, Hà Nội</li>
-                                                        <li>Việt Nam, Số liên lạc: 0123456789</li>
-                                                    </ul>
-                                                    <div class="payment-mode">
-                                                        <h4>Phương thức thanh toán</h4>
-                                                        <p>Thanh toán khi nhận hàng (Tiền mặt/Thẻ). Thanh toán khi nhận hàng (COD) có sẵn. Chấp nhận thẻ/Chuyển khoản ngân hàng tùy thuộc vào phương thức.</p>
-                                                    </div>
-                                                    <div class="delivery-sec">
-                                                        <h3>Ngày giao hàng dự kiến: <span id="expectedDeliveryDate"></span></h3>
-                                                        <a href="order-tracking.html">Theo dõi đơn hàng</a>
-                                                    </div>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -241,7 +215,6 @@
 
         // Hiển thị Mã nhập kho
         $('#stockInId').text(stockInId);
-        $('#stockInIdSummary').text(stockInId);
 
         // Biến trạng thái chế độ chỉnh sửa
         let isEditMode = false;
@@ -318,12 +291,10 @@
                     minute: '2-digit'
                 }) : 'N/A';
                 $('#stockInDate').text(stockInDate);
-                $('#stockInDateSummary').text(stockInDate);
             },
             error: function(xhr, status, error) {
                 console.error('Lỗi khi tải StockIn:', { status, error, response: xhr.responseText });
                 $('#stockInDate').text('N/A');
-                $('#stockInDateSummary').text('N/A');
             }
         });
 
@@ -340,13 +311,14 @@
                 let itemCount = data.length;
 
                 $.each(data, function(index, detail) {
-                    const unitPrice = parseInt(detail.unitPrice) || 0; // Giá trị Long (e.g., 1000000)
+                    const unitPrice = parseInt(detail.unitPrice) || 0;
                     const quantity = parseInt(detail.quantity) || 0;
                     const subTotal = unitPrice * quantity;
                     totalAmount += subTotal;
-                    let detailName = 'N/A';
+                    let displayName = 'N/A';
+                    let imageUrl = '/seller/default.jpg'; // Ảnh mặc định với prefix /seller/
 
-                    // Lấy tên sản phẩm từ batchID
+                    // Lấy tên sản phẩm, detailName và ảnh đầu tiên từ batchID
                     if (detail.batchID) {
                         $.ajax({
                             url: `http://localhost:8080/api/product-batches/${detail.batchID}`,
@@ -361,10 +333,46 @@
                                         method: 'GET',
                                         async: false,
                                         success: function(productDetail) {
-                                            detailName = productDetail.detailName || 'N/A';
+                                            const productId = productDetail.productID || 'N/A';
+                                            const detailName = productDetail.detailName || 'N/A';
+                                            if (productId !== 'N/A') {
+                                                // Lấy tên sản phẩm
+                                                $.ajax({
+                                                    url: `http://localhost:8080/api/products/${productId}/name`,
+                                                    method: 'GET',
+                                                    async: false,
+                                                    success: function(productName) {
+                                                        displayName = `${productName} (${detailName})`;
+                                                        console.log(`Sản phẩm ID: ${productId}, Tên: ${displayName}`);
+                                                    },
+                                                    error: function(xhr, status, error) {
+                                                        displayName = `N/A (${detailName})`;
+                                                        console.error(`Lỗi khi lấy tên sản phẩm cho ID ${productId}:`, { status, error });
+                                                    }
+                                                });
+                                                // Lấy ảnh đầu tiên từ API mới
+                                                $.ajax({
+                                                    url: `http://localhost:8080/api/products/first/${productId}`,
+                                                    method: 'GET',
+                                                    async: false,
+                                                    dataType: 'text',
+                                                    success: function(response) {
+                                                        imageUrl = response && response.trim() !== '' ? `/seller/${response}` : '/seller/default.jpg';
+                                                        console.log(`Sản phẩm ID: ${productId}, Ảnh: ${imageUrl}`);
+                                                    },
+                                                    error: function(xhr, status, error) {
+                                                        imageUrl = '/seller/default.jpg';
+                                                        console.error(`Lỗi khi lấy ảnh cho sản phẩm ID ${productId}:`, { status, error });
+                                                    }
+                                                });
+                                            } else {
+                                                displayName = `N/A (${detailName})`;
+                                                console.log(`Sản phẩm ID không hợp lệ cho ProductDetail ${productDetailId}`);
+                                            }
                                         },
-                                        error: function() {
-                                            detailName = 'N/A';
+                                        error: function(xhr, status, error) {
+                                            displayName = 'N/A';
+                                            console.error(`Lỗi khi lấy ProductDetail ${productDetailId}:`, { status, error });
                                         }
                                     });
                                 }
@@ -376,30 +384,30 @@
                     }
 
                     const row = `
-                    <tr class="table-order" data-detail-id="${detail.id || index}" data-batch-id="${detail.batchID || ''}">
-                        <td>
-                            <a href="javascript:void(0)">
-                                <img src="assets/images/profile/${index + 1}.jpg" class="img-fluid blur-up lazyload" alt="">
-                            </a>
-                        </td>
-                        <td>
-                            <p>Tên sản phẩm</p>
-                            <h5>${detailName}</h5>
-                        </td>
-                        <td>
-                            <p>Số lượng</p>
-                            <h5>${quantity}</h5>
-                        </td>
-                        <td>
-                            <p>Đơn giá</p>
-                            <h5>${formatPrice(unitPrice)}</h5>
-                        </td>
-                        <td>
-                            <p>Batch ID</p>
-                            <h5>${detail.batchID || 'N/A'}</h5>
-                        </td>
-                    </tr>
-                    `;
+                <tr class="table-order" data-detail-id="${detail.id || index}" data-batch-id="${detail.batchID || ''}">
+                    <td>
+                        <a href="javascript:void(0)">
+                            <img src="${imageUrl}" class="img-fluid blur-up lazyload" alt="">
+                        </a>
+                    </td>
+                    <td>
+                        <p>Tên sản phẩm</p>
+                        <h5>${displayName}</h5>
+                    </td>
+                    <td>
+                        <p>Số lượng</p>
+                        <h5>${quantity}</h5>
+                    </td>
+                    <td>
+                        <p>Đơn giá</p>
+                        <h5>${formatPrice(unitPrice)}</h5>
+                    </td>
+                    <td>
+                        <p>Batch ID</p>
+                        <h5>${detail.batchID || 'N/A'}</h5>
+                    </td>
+                </tr>
+                `;
                     tbody.append(row);
                 });
 
@@ -413,12 +421,9 @@
                 // Cập nhật thông tin tổng quan
                 $('#itemCount').text(`${itemCount} mục`);
                 $('#totalAmount').text(formatPrice(totalAmount));
-                $('#totalAmountSummary').text(totalAmount.toLocaleString('vi-VN'));
                 $('#subtotal').text(formatPrice(totalAmount));
                 $('#gstTax').text(formatPrice(gstTax));
                 $('#totalPrice').text(formatPrice(totalWithShippingAndTax));
-                $('#expectedDeliveryDate').text(new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }));
-                $('#warehouseName').text(`Kho ${stockInId}`);
             },
             error: function(xhr, status, error) {
                 console.error('Lỗi khi tải StockInDetail:', { status, error, response: xhr.responseText });
@@ -437,7 +442,7 @@
                 const batchId = $(this).data('batch-id');
                 const productName = $(this).find('td:eq(1) h5').text();
                 const quantity = $(this).find('td:eq(2) h5').text();
-                const unitPrice = parseInt($(this).find('td:eq(3) h5').text().replace(/[^\d]/g, '')) || 0; // Long value (e.g., 1000000)
+                const unitPrice = parseInt($(this).find('td:eq(3) h5').text().replace(/[^\d]/g, '')) || 0;
 
                 // Điền dữ liệu vào modal
                 $('#editDetailId').val(detailId);
@@ -460,7 +465,6 @@
             const detailId = $('#editDetailId').val();
             const stockInId = $('#editStockInId').val();
             const batchId = $('#editBatchId').val();
-            // Lấy giá trị đơn giá (Long)
             let unitPrice = parseInt($('#editUnitPrice').val()) || 0;
 
             // Validate Long: max 10 digits
@@ -491,10 +495,11 @@
                 data: JSON.stringify(updatedDetail),
                 success: function(response) {
                     console.log('Cập nhật StockInDetail thành công:', response);
-                    let detailName = 'N/A';
+                    let displayName = 'N/A';
+                    let imageUrl = '/seller/default.jpg'; // Ảnh mặc định với prefix /seller/
                     const batchId = response.batchID;
 
-                    // Lấy tên sản phẩm từ batchID
+                    // Lấy tên sản phẩm, detailName và ảnh đầu tiên từ batchID
                     if (batchId) {
                         $.ajax({
                             url: `http://localhost:8080/api/product-batches/${batchId}`,
@@ -509,23 +514,60 @@
                                         method: 'GET',
                                         async: false,
                                         success: function(productDetail) {
-                                            detailName = productDetail.detailName || 'N/A';
+                                            const productId = productDetail.productID || 'N/A';
+                                            const detailName = productDetail.detailName || 'N/A';
+                                            if (productId !== 'N/A') {
+                                                // Lấy tên sản phẩm
+                                                $.ajax({
+                                                    url: `http://localhost:8080/api/products/${productId}/name`,
+                                                    method: 'GET',
+                                                    async: false,
+                                                    success: function(productName) {
+                                                        displayName = `${productName} (${detailName})`;
+                                                        console.log(`Cập nhật - Sản phẩm ID: ${productId}, Tên: ${displayName}`);
+                                                    },
+                                                    error: function(xhr, status, error) {
+                                                        displayName = `N/A (${detailName})`;
+                                                        console.error(`Cập nhật - Lỗi khi lấy tên sản phẩm cho ID ${productId}:`, { status, error });
+                                                    }
+                                                });
+                                                // Lấy ảnh đầu tiên từ API mới
+                                                $.ajax({
+                                                    url: `http://localhost:8080/api/products/first/${productId}`,
+                                                    method: 'GET',
+                                                    async: false,
+                                                    dataType: 'text',
+                                                    success: function(response) {
+                                                        imageUrl = response && response.trim() !== '' ? `/seller/${response}` : '/seller/default.jpg';
+                                                        console.log(`Cập nhật - Sản phẩm ID: ${productId}, Ảnh: ${imageUrl}`);
+                                                    },
+                                                    error: function(xhr, status, error) {
+                                                        imageUrl = '/seller/default.jpg';
+                                                        console.error(`Cập nhật - Lỗi khi lấy ảnh cho sản phẩm ID ${productId}:`, { status, error });
+                                                    }
+                                                });
+                                            } else {
+                                                displayName = `N/A (${detailName})`;
+                                                console.log(`Cập nhật - Sản phẩm ID không hợp lệ cho ProductDetail ${productDetailId}`);
+                                            }
                                         },
-                                        error: function() {
-                                            detailName = 'N/A';
+                                        error: function(xhr, status, error) {
+                                            displayName = 'N/A';
+                                            console.error(`Cập nhật - Lỗi khi lấy ProductDetail ${productDetailId}:`, { status, error });
                                         }
                                     });
                                 }
                             },
                             error: function(xhr, status, error) {
-                                console.error(`Lỗi khi lấy ProductBatch ${batchId}:`, { status, error });
+                                console.error(`Cập nhật - Lỗi khi lấy ProductBatch ${batchId}:`, { status, error });
                             }
                         });
                     }
 
                     // Cập nhật hàng trong bảng
                     const row = $(`#stockInDetailTable tr[data-detail-id="${detailId}"]`);
-                    row.find('td:eq(1) h5').text(detailName);
+                    row.find('td:eq(0) img').attr('src', imageUrl); // Cập nhật ảnh
+                    row.find('td:eq(1) h5').text(displayName);
                     row.find('td:eq(2) h5').text(response.quantity);
                     row.find('td:eq(3) h5').text(formatPrice(response.unitPrice));
                     row.data('batch-id', response.batchID || '');
@@ -546,7 +588,6 @@
                     const totalWithShippingAndTax = totalAmount + 50000 + gstTax;
 
                     $('#totalAmount').text(formatPrice(totalAmount));
-                    $('#totalAmountSummary').text(totalAmount.toLocaleString('vi-VN'));
                     $('#subtotal').text(formatPrice(totalAmount));
                     $('#gstTax').text(formatPrice(gstTax));
                     $('#totalPrice').text(formatPrice(totalWithShippingAndTax));
@@ -597,7 +638,27 @@
     #editUnitPrice {
         text-align: right;
     }
+    /* Tùy chỉnh cột Tên sản phẩm */
+    .table.cart-table.table-borderless tbody tr td:nth-child(2) {
+        width: 40% !important; /* Rộng hơn các cột khác */
+        min-width: 250px !important; /* Chiều rộng tối thiểu */
+        max-width: 450px !important; /* Giới hạn tối đa */
+        white-space: normal !important; /* Bắt buộc xuống dòng */
+        word-break: break-all !important; /* Ngắt từ dài */
+        padding: 12px !important; /* Khoảng cách nội dung */
+    }
+    /* Các cột khác */
+    .table.cart-table.table-borderless tbody tr td:nth-child(1),
+    .table.cart-table.table-borderless tbody tr td:nth-child(3),
+    .table.cart-table.table-borderless tbody tr td:nth-child(4),
+    .table.cart-table.table-borderless tbody tr td:nth-child(5) {
+        width: 15% !important; /* Cột nhỏ hơn */
+        min-width: 120px !important; /* Không quá hẹp */
+        white-space: nowrap !important; /* Không xuống dòng */
+        overflow: hidden !important; /* Ẩn nội dung tràn */
+        text-overflow: ellipsis !important; /* Thêm dấu ... */
+        padding: 12px !important;
+    }
 </style>
-
 </body>
 </html>

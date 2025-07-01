@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -18,4 +19,7 @@ public interface ProductBatchRepository extends CrudRepository<ProductBatch, Int
 
     @Query("SELECT p FROM ProductBatch p ORDER BY p.batchId ASC")
     Page<ProductBatch> findPaginatedProductBatches(Pageable pageable);
+
+    @Query("SELECT b FROM ProductBatch b WHERE b.productDetail.productDetailId = :productDetailId ORDER BY b.manufactureDate ASC")
+    List<ProductBatch> findByProductDetailIdOrderByManufactureDateAsc(@Param("productDetailId") Long productDetailId);
 }

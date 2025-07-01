@@ -4,12 +4,15 @@ package com.example.AgriculturalWarehouseManagement.Backend.services.admin;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.OrderDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Order;
+import com.example.AgriculturalWarehouseManagement.Backend.models.OrderDetail;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 
 import java.util.List;
 
 public interface IOrderService {
     Order createOrder(OrderDTO orderDTO);
+
+    List<Order> findByStatus(String status);
 
     Order findById(Long id);
 
@@ -27,5 +30,4 @@ public interface IOrderService {
 
     boolean isExistsByOrderCode(String orderCode);
 
-    //List<Order> findByStatus(String status);
 }

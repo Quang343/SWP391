@@ -9,6 +9,10 @@ public class SupplierConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("warehouse/**")
                 .addResourceLocations("file:D:/Uploads/Warehouse");
+
+        registry
+                .addResourceHandler("/seller/**")
+                .addResourceLocations("file:D:/Uploads/Seller/");
     }
 }
 

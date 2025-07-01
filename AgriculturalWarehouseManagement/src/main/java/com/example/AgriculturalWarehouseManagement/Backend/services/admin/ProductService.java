@@ -40,6 +40,12 @@ public class ProductService implements IProductService {
         return productRepository.save(product);
     }
 
+    public String getProductNameById(Integer productId) {
+        return productRepository.findById(Long.valueOf(productId))
+                .map(product -> product.getName())
+                .orElse(null);
+    }
+
     @Override
     public Product updateProduct(Long id, ProductDTO productDTO) {
         Category category = categoryRepository.findById(productDTO.getCategoryId())

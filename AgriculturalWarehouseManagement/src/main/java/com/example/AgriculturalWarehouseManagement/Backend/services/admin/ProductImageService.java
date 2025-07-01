@@ -28,4 +28,12 @@ public class ProductImageService implements  IProductImageService{
     public void deleteAllByProduct(Product product) {
         productImageRepository.deleteAllByProduct(product);
     }
+
+    @Override
+    public ProductImage findFirstByProduct(Product product) {
+        return productImageRepository.findAllByProduct(product)
+                .stream()
+                .findFirst()
+                .orElse(null);
+    }
 }

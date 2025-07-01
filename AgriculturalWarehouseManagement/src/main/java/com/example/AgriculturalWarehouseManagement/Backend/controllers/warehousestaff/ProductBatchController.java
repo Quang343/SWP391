@@ -36,6 +36,15 @@ public class ProductBatchController {
         return productBatchService.getPaginatedProductBatches(page, size);
     }
 
+    @GetMapping("/productdetail/{productDetailId}")
+    public ResponseEntity<List<ProductBatchDTO>> getProductBatchesByProductDetailId(@PathVariable Long productDetailId) {
+        if (productDetailId == null) {
+            throw new RuntimeException("ProductDetailId cannot be null");
+        }
+        List<ProductBatchDTO> productBatches = productBatchService.getProductBatchesByProductDetailId(productDetailId);
+        return ResponseEntity.ok(productBatches);
+    }
+
     // Thymeleaf view for product batch list with pagination
     @GetMapping("/warehouse/productBatches")
     public String listProductBatches(
