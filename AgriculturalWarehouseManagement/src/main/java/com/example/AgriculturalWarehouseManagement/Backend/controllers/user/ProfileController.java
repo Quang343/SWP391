@@ -106,6 +106,11 @@ public class ProfileController {
     @PostMapping("/profileUserEdit")
     public String editProfileUser(@ModelAttribute ProfileRequest profileRequest) {
 
+        if (profileRequest == null) {
+            return "FrontEnd/Home/userDashboard";
+        }
+
+
         System.out.println(profileRequest.toString());
 
         ResponseResult<ProfileResponse> result = userService.editProfileUser(profileRequest);

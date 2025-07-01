@@ -22,7 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Service
@@ -93,6 +95,7 @@ public class UserService {
 
         user.setRole(role);
         user.setUserName(registerRequestDTO.getUsername());
+        user.setImage("https://jbagy.me/wp-content/uploads/2025/03/Hinh-anh-avatar-nam-cute-2.jpg");
         user.setEmail(registerRequestDTO.getEmail());
         user.setPassword(encodedPassword);
         user.setStatus("Active");
@@ -184,7 +187,7 @@ public class UserService {
     public UserResponse getUser(User userEntity) {
 
         UserResponse userResponse = new UserResponse();
-        userResponse.setUserID(userEntity.getUserID());
+        userResponse.setUserID(userEntity.getUserId());
         userResponse.setRole(userEntity.getRole());
         userResponse.setUserName(userEntity.getUserName());
         userResponse.setFullName(userEntity.getFullName());
@@ -196,11 +199,11 @@ public class UserService {
         userResponse.setStatus(userEntity.getStatus());
 
         if (userEntity.getDob() != null) {
-            Date dob = userEntity.getDob(); // kiểu Date
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String formattedDob = sdf.format(dob);
+            LocalDate dob = userEntity.getDob();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String formattedDob = dob.format(formatter);
             userResponse.setDob(formattedDob);
-        } else {
+        }else {
             userResponse.setDob(null);
         }
         userResponse.setCreateAt(userEntity.getCreatedAt());
@@ -306,7 +309,7 @@ public class UserService {
 
         // Check ProfileResponse
         ProfileResponse profileResponse = new ProfileResponse();
-        profileResponse.setUserID(user.getUserID());
+        profileResponse.setUserID(user.getUserId());
         profileResponse.setEmail(user.getEmail());
         profileResponse.setUserName(user.getFullName());
         profileResponse.setFullName(user.getFullName());
@@ -314,11 +317,10 @@ public class UserService {
         profileResponse.setAddress(user.getAddress());
         profileResponse.setGender(user.getGender());
 
-
         if (user.getDob() != null) {
-            Date dob = user.getDob(); // kiểu Date
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String formattedDob = sdf.format(dob);
+            LocalDate dob = user.getDob(); // kiểu Date
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String formattedDob = dob.format(formatter);
             profileResponse.setDob(formattedDob);
         } else {
             profileResponse.setDob(null);

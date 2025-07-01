@@ -90,7 +90,7 @@ public class CommentProductUserService {
             return new ViewCommentProductUserResponse(
                     commentProduct.get().getCommentProductId(),
                     commentProduct.get().getProduct().getId(),
-                    commentProduct.get().getUser().getUserID(),
+                    commentProduct.get().getUser().getUserId(),
                     commentProduct.get().getUser().getUserName(),
                     commentProduct.get().getUser().getUserName(),
                     commentProduct.get().getCreatedAt(),
@@ -118,7 +118,7 @@ public class CommentProductUserService {
             return new ViewCommentProductUserResponse(
                     commentProduct.get().getCommentProductId(),
                     commentProduct.get().getProduct().getId(),
-                    commentProduct.get().getUser().getUserID(),
+                    commentProduct.get().getUser().getUserId(),
                     commentProduct.get().getUser().getUserName(),
                     commentProduct.get().getUser().getUserName(),
                     commentProduct.get().getCreatedAt(),

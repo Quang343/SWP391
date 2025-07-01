@@ -1,10 +1,12 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.CartUserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ProductUserHomepageResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ResponseResult;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.WishlistResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilter;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.CartUserService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.WishlistServices;
 import io.jsonwebtoken.Claims;
@@ -32,6 +34,9 @@ public class WishListProductController {
     @Autowired
     private WishlistServices wishlistServices;
 
+    @Autowired
+    private CartUserService cartUserService;
+
     @GetMapping("/wishlist")
     public String wishlist(Model model) {
         String token = (String) session.getAttribute("auth_token");
@@ -54,12 +59,37 @@ public class WishListProductController {
             return "redirect:/login";
         } else {
 
-            List<ProductUserHomepageResponse> wishlistResponses = wishlistServices.getListOfWishlist(userEntity.getUserID());
+            List<ProductUserHomepageResponse> wishlistResponses = wishlistServices.getListOfWishlist(userEntity.getUserId());
 
             for (ProductUserHomepageResponse wishlistResponse : wishlistResponses) {
                 System.out.println("wishlistResponse: " + wishlistResponse.toString());
             }
             model.addAttribute("wishlistOfProductResponses", wishlistResponses);
+
+            // View cart
+            Object accountIdObj = session.getAttribute("accountId");
+            if (accountIdObj != null) {
+                int accountId = (int) accountIdObj;
+
+                List<CartUserResponse> cartUserResponses = cartUserService.getCartByUserIds(accountId);
+
+                int limit = Math.min(cartUserResponses.size(), 3);
+
+                List<CartUserResponse> limitedCartUserResponses = cartUserResponses.subList(0, limit);
+
+                model.addAttribute("sizeCart", cartUserResponses.size());
+                model.addAttribute("cartUserResponses", limitedCartUserResponses);
+                model.addAttribute("sizeCartBelow", Math.max(cartUserResponses.size() - 3, 0));
+
+
+                double totalCart = 0;
+                for (CartUserResponse cartUserResponse : cartUserResponses) {
+                    totalCart += cartUserResponse.getTotalPrice();
+                }
+
+                model.addAttribute("totalCart", totalCart);
+            }
+
             return "FrontEnd/Home/wishlist";
         }
     }
@@ -86,7 +116,7 @@ public class WishListProductController {
             return "redirect:/login";
         } else {
 
-            ResponseResult<WishlistResponse> result = wishlistServices.deleteWishlistByProductIdAndUserId(userEntity.getUserID(), productId);
+            ResponseResult<WishlistResponse> result = wishlistServices.deleteWishlistByProductIdAndUserId(userEntity.getUserId(), productId);
 
             return "redirect:/wishlist";
         }
@@ -115,7 +145,7 @@ public class WishListProductController {
             return "redirect:/login";
         } else {
 
-            ResponseResult<WishlistResponse> result = wishlistServices.deleteAllWishlist(userEntity.getUserID());
+            ResponseResult<WishlistResponse> result = wishlistServices.deleteAllWishlist(userEntity.getUserId());
 
             return "redirect:/wishlist";
         }

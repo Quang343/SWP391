@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class UserResponse {
@@ -118,6 +119,14 @@ public class UserResponse {
 
     public LocalDateTime getCreateAt() {
         return createAt;
+    }
+
+    public String formatCreateAt() {
+        if (createAt != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            return createAt.format(formatter);  // Format without the "T"
+        }
+        return null;  // Return null if createAt is null
     }
 
     public void setCreateAt(LocalDateTime createAt) {

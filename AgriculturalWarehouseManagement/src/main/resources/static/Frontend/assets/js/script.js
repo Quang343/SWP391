@@ -291,7 +291,7 @@ $(".notifi-wishlist").on("click", function () {
         offset: 20,
         spacing: 10,
         z_index: 1031,
-        delay: 5000,
+        delay: 2000,
         animate: {
             enter: "animated fadeInDown",
             exit: "animated fadeOutUp",
@@ -309,6 +309,7 @@ $(".notifi-wishlist").on("click", function () {
             "</div>",
     });
 });
+
 
 /*=====================
    14. Loader Js

@@ -343,7 +343,7 @@
                                             <div class="total-contain">
                                                 <img th:src="@{FrontEnd/assets/images/svg/order.svg}"
                                                      class="img-1 blur-up lazyload" alt="">
-                                                <img src="../assets/images/svg/order.svg" class="blur-up lazyload"
+                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}" class="blur-up lazyload"
                                                      alt="">
                                                 <div class="total-detail">
                                                     <h5>Total Order</h5>
@@ -924,7 +924,7 @@
                                                 <div class="location-box">
                                                     <i data-feather="check-square"></i>
                                                     <h6>Create At</h6>
-                                                    <h6 th:text="${session.account.getCreateAt}">Your create at</h6>
+                                                    <h6 th:text="${session.account.formatCreateAt}">Your create at</h6>
                                                 </div>
                                             </li>
                                         </ul>
@@ -1231,13 +1231,13 @@
                 </div>
 
                 <div class="form-floating mb-4 theme-form-floating">
-                    <input type="email" class="form-control" id="note" placeholder="Enter note" required>
+                    <textarea type="text" class="form-control" id="note" placeholder="Enter note" required></textarea>
                     <label for="note">Note</label>
                 </div>
 
                 <div class="form-floating mb-4 theme-form-floating">
-                            <textarea class="form-control" placeholder="Leave a comment here" id="settoaddress"
-                                      style="height: 100px" required></textarea>
+                            <input class="form-control" placeholder="Leave a comment here" id="settoaddress"
+                                       required/>
                     <label for="settoaddress">Set To Address</label>
                 </div>
 

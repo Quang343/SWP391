@@ -6,7 +6,7 @@
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="title title-border d-block">
-                            <h3>NEW PRODUCTS</h3>
+                            <h3>SẢN PHẨM MỚI</h3>
                         </div>
 
                         <div class="product-category-1 arrow-slider-2">
@@ -36,9 +36,13 @@
                                                 <ul class="option">
                                                     <li th:if="${session.account != null}" data-bs-toggle="tooltip" data-bs-placement="top"
                                                         title="Add to Cart">
-                                                        <a href="cart.html">
-                                                            <i class="iconly-Buy icli"></i>
-                                                        </a>
+                                                        <div class="price-qty">
+                                                            <button class="buy-button buy-button-2 btn btn-cart notifi-addtocart"
+                                                                    th:data-productcartid="${product.productId}"
+                                                            >
+                                                                <i class="iconly-Buy icli"></i>
+                                                            </button>
+                                                        </div>
                                                     </li>
                                                     <li th:if="${session.account != null}" data-bs-toggle="tooltip"
                                                         data-bs-placement="top"
@@ -75,7 +79,7 @@
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="title title-border d-block">
-                            <h3>TOP PRICE PRODUCTS</h3>
+                            <h3>SẢN PHẨM GIÁ CAO NHẤT</h3>
                         </div>
 
                         <div class="product-category-1 arrow-slider-2">
@@ -105,9 +109,13 @@
                                                 <ul class="option">
                                                     <li th:if="${session.account != null}" data-bs-toggle="tooltip" data-bs-placement="top"
                                                         title="Add to Cart">
-                                                        <a href="cart.html">
-                                                            <i class="iconly-Buy icli"></i>
-                                                        </a>
+                                                        <div class="price-qty">
+                                                            <button class="buy-button buy-button-2 btn btn-cart notifi-addtocart"
+                                                                    th:data-productcartid="${product.productId}"
+                                                            >
+                                                                <i class="iconly-Buy icli"></i>
+                                                            </button>
+                                                        </div>
                                                     </li>
 
                                                     <li th:if="${session.account != null}" data-bs-toggle="tooltip"
@@ -143,7 +151,7 @@
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="title title-border d-block">
-                            <h3>TOP RATING</h3>
+                            <h3>ĐÁNH GIÁ HÀNG ĐẦU</h3>
                         </div>
 
                         <div class="product-category-1 arrow-slider-2">
@@ -173,9 +181,13 @@
                                                 <ul class="option">
                                                     <li th:if="${session.account != null}" data-bs-toggle="tooltip" data-bs-placement="top"
                                                         title="Add to Cart">
-                                                        <a href="cart.html">
-                                                            <i class="iconly-Buy icli"></i>
-                                                        </a>
+                                                        <div class="price-qty">
+                                                            <button class="buy-button buy-button-2 btn btn-cart notifi-addtocart"
+                                                                    th:data-productcartid="${product.productId}"
+                                                            >
+                                                                <i class="iconly-Buy icli"></i>
+                                                            </button>
+                                                        </div>
                                                     </li>
                                                     <li th:if="${session.account != null}" data-bs-toggle="tooltip"
                                                         data-bs-placement="top" title="Wishlist">

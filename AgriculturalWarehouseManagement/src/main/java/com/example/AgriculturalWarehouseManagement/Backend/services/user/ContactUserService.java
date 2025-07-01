@@ -27,7 +27,7 @@ public class ContactUserService {
         CapitalizedEachWord capitalizedEachWord = new CapitalizedEachWord();
 
         if (!capitalizedEachWord.isCapitalizedEachWord(contactUsUserRequests.getFullName())) {
-            return new ResponseResult<>("ERROR", "FullName cannot be capitalized Each Word", false);
+            return new ResponseResult<>("ERROR", "Tên đầy đủ không được viết hoa Mỗi từ", false);
         }
 
         String address = contactUsUserRequests.getAddress();
@@ -35,14 +35,14 @@ public class ContactUserService {
         String addressWithoutSpaces = address.replaceAll("\\s+", "");
 
         if (addressWithoutSpaces.length() < 9){
-            return new ResponseResult<>("ERROR", "Address cannot be less than 9 characters", false);
+            return new ResponseResult<>("ERROR", "Địa chỉ không được ít hơn 9 ký tự", false);
         }
 
         String message = contactUsUserRequests.getMessage();
         String messageWithoutSpaces = message.replaceAll("\\s+", "");
 
         if (messageWithoutSpaces.length() < 9){
-            return new ResponseResult<>("ERROR", "Message cannot be less than 9 characters", false);
+            return new ResponseResult<>("ERROR", "Tin nhắn không được ít hơn 9 ký tự", false);
         }
 
         Optional<User> user = userRepository.findByUserIdNative(userID);

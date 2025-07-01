@@ -2,6 +2,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class ProfileRequest {
@@ -14,12 +15,12 @@ public class ProfileRequest {
     private String gender;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date dob;
+    private LocalDate dob;
 
     public ProfileRequest() {
     }
 
-    public ProfileRequest(int userID,String email, String userName, String fullName, String phone, String address, String gender, Date dob) {
+    public ProfileRequest(int userID,String email, String userName, String fullName, String phone, String address, String gender, LocalDate dob) {
         this.userID = userID;
         this.email = email;
         this.userName = userName;
@@ -86,14 +87,13 @@ public class ProfileRequest {
         this.gender = gender;
     }
 
-    public Date getDob() {
+    public LocalDate getDob() {
         return dob;
     }
 
-    public void setDob(Date dob) {
+    public void setDob(LocalDate dob) {
         this.dob = dob;
     }
-
 
     @Override
     public String toString() {

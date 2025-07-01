@@ -7,6 +7,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserSer
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,7 +25,7 @@ public class MovePageRoleLoginController {
     private UserService userService;
 
     @GetMapping("/movePageRole")
-    public String MovePageRole() {
+    public String MovePageRole(Model model) {
 
         String token = (String) session.getAttribute("auth_token");
 
@@ -53,11 +54,14 @@ public class MovePageRoleLoginController {
                 session.setAttribute("account", userResponse);
                 session.setAttribute("accountId", userResponse.getUserID());
                 System.out.println(session.getAttribute("accountId").toString());
+
                 return "redirect:/home";
             } else if (userEntity.getRole().getRoleName().equals("blogger")) {
                 return "redirect:/login";
             } else if (userEntity.getRole().getRoleName().equals("seller")) {
-                return "redirect:/login";
+                UserResponse userResponse = userService.getUser(userEntity);
+                session.setAttribute("account", userResponse);
+                return "redirect:/seller-dashboard";
             } else if (userEntity.getRole().getRoleName().equals("warehourestaff")) {
                 return "redirect:/login";
             }

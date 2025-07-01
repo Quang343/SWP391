@@ -30,6 +30,75 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+    <style>
+        .glow-btn {
+            position: relative;
+            isolation: isolate;
+            border-radius: 10px;
+            z-index: 1;
+            padding: 10px 12px;
+            color: black;
+            background-color: #f8f9fe;
+            border: none;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Lớp nền mờ bên dưới */
+        .glow-btn::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-color: #f8f9fe; /* giống nền gốc */
+            border-radius: inherit;
+            z-index: -2;
+        }
+
+        /* Viền phát sáng mở rộng rõ ràng */
+        .glow-btn::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            background: linear-gradient(
+                    45deg,
+                    #FF0000, #FF7300, #FFFB00, #48FF00,
+                    #00FFD5, #002BFF, #FF00C8, #FF0000
+            );
+            background-size: 600%;
+            filter: blur(8px); /* tăng độ lan */
+            border-radius: inherit;
+            z-index: -3;
+            opacity: 1;
+            animation: glowing 20s linear infinite, pulseGlow 4s ease-in-out infinite;
+        }
+
+        /* Gradient di chuyển liên tục */
+        @keyframes glowing {
+            0% {
+                background-position: 0 0;
+            }
+            50% {
+                background-position: 400% 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
+
+        /* Nhịp sáng giãn–thu */
+        @keyframes pulseGlow {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -59,6 +128,7 @@
             <div class="col-12">
                 <div class="breadcrumb-contain">
                     <h2 class="mb-2">Compare</h2>
+                    <h6 class="glow-btn" style="margin-left: 10px" th:if="${productDetailUserResponses.isEmpty()}">Hãy chọn sản phẩm và so sánh </h6>
                     <nav>
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item">
@@ -83,7 +153,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="table-responsive">
-                    <table class="table compare-table">
+                    <table class="table compare-table" th:if="${!productDetailUserResponses.isEmpty()}" >
                         <tbody>
                         <tr>
                             <th>Sản phẩm</th>
@@ -111,15 +181,15 @@
                         </tr>
 
                         <tr>
-                            <th>Trạng thái Sản phẩm</th>
+                            <th>Trạng thái sản phẩm</th>
                             <td th:each="item : ${productDetailUserResponses}" class="text-content">
-                                <span th:text="${item.status}">Status Remaining quantity</span>
+                                <span th:if="${item.expiryStatus != 'Hết hạn'}" th:text="${item.status}">Status Remaining quantity</span>
                             </td>
 
                         </tr>
 
                         <tr>
-                            <th>Trạng thái ngày Sản phẩm</th>
+                            <th>Trạng thái ngày sản phẩm</th>
                             <td th:each="item : ${productDetailUserResponses}" class="text-content">
                                 <span th:text="${item.expiryStatus}">Status quantity</span>
                             </td>
@@ -150,21 +220,137 @@
                         </tr>
 
                         <tr>
-                            <th>Weight</th>
+                            <th>Cân nặng</th>
                             <td th:each="item: ${productDetailUserResponses}" class="text-content">
                                 <span th:text="${item.productWeight}"></span>
                             </td>
                         </tr>
 
 
-                        <tr th:if="${session.account == null}">
+                        <tr th:if="${session.account != null}">
                             <th>Mua</th>
                             <td th:each="item : ${productDetailUserResponses}">
                                 <button type="submit"
-                                        class="btn btn-animation btn-sm w-100"!
+                                        class="buy-button buy-button-2 btn btn-cart btn-animation btn-sm notifi-addtocart w-100 notifi-addtocart"
+                                        th:data-productdetailcartid="${item.productDetailId}"
                                         th:if="${item.expiryStatus != 'Hết hạn' and item.status != 'Hết hàng'}">
-                                    Add To Cart
+                                        Thêm giỏ hàng
                                 </button>
+                                <script>
+
+                                    $(function () {
+                                        $(document).on('click', '.notifi-addtocart', async function () {
+                                            const btn = $(this);
+                                            const userId = "[[${session.accountId}]]";
+                                            const productDetailId = btn.data('productdetailcartid');  // Lấy productId từ data attribute
+                                            console.log(userId)
+                                            console.log(productDetailId)
+
+                                            if (!userId || !productDetailId || btn.prop('disabled')) return;  // Kiểm tra nếu không có userId hoặc productId
+
+                                            btn.prop('disabled', true);  // Vô hiệu hóa nút để tránh click nhiều lần
+
+                                            try {
+
+                                                const response = await axios.post(`http://localhost:8080/AgriculturalWarehouseManagement/addToCartProductDetail/${productDetailId}/${userId}`);
+
+                                                if (response.data.status === "SUCCESS") {
+                                                    const message = response.data.message;
+
+                                                    // Tạo thông báo thành công
+                                                    $.notify({
+                                                        icon: "fa fa-check",
+                                                        title: "Success!",  // Tùy chỉnh title, ví dụ "Thành công" hoặc "Thêm vào giỏ hàng"
+                                                        message: message,  // Lấy thông báo từ API
+                                                    }, {
+                                                        element: "body",
+                                                        position: null,
+                                                        type: "info",  // Tùy chỉnh loại thông báo, ví dụ: success, error, info
+                                                        allow_dismiss: true,
+                                                        newest_on_top: false,
+                                                        showProgressbar: true,
+                                                        placement: {
+                                                            from: "top",
+                                                            align: "right",
+                                                        },
+                                                        offset: 20,
+                                                        spacing: 10,
+                                                        z_index: 1031,
+                                                        delay: 2000,
+                                                        animate: {
+                                                            enter: "animated fadeInDown",
+                                                            exit: "animated fadeOutUp",
+                                                        },
+                                                        icon_type: "class",
+                                                        template: '<div data-notify="container" class="col-xxl-3 col-lg-5 col-md-6 col-sm-7 col-12 alert alert-{0}" role="alert">' +
+                                                            '<button type="button" aria-hidden="true" class="btn-close" data-notify="dismiss"></button>' +
+                                                            '<span data-notify="icon"></span> ' +
+                                                            '<span data-notify="title">{1}</span> ' +
+                                                            '<span data-notify="message">{2}</span>' +
+                                                            '<div class="progress" data-notify="progressbar">' +
+                                                            '<div class="progress-bar progress-bar-info progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                            "</div>" +
+                                                            '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                            "</div>",
+                                                    });
+                                                } else {
+                                                    const message = response.data.message;
+
+                                                    // Tạo thông báo lỗi
+                                                    $.notify({
+                                                        icon: "fa fa-exclamation-circle",
+                                                        title: "Error!",  // Tùy chỉnh title cho lỗi
+                                                        message: message,  // Lấy thông báo lỗi từ API
+                                                    }, {
+                                                        element: "body",
+                                                        position: null,
+                                                        type: "danger",  // Loại thông báo lỗi
+                                                        allow_dismiss: true,
+                                                        newest_on_top: false,
+                                                        showProgressbar: true,
+                                                        placement: {
+                                                            from: "top",
+                                                            align: "right",
+                                                        },
+                                                        offset: 20,
+                                                        spacing: 10,
+                                                        z_index: 1031,
+                                                        delay: 2000,
+                                                        animate: {
+                                                            enter: "animated fadeInDown",
+                                                            exit: "animated fadeOutUp",
+                                                        },
+                                                        icon_type: "class",
+                                                        template: '<div data-notify="container" class="col-xxl-3 col-lg-5 col-md-6 col-sm-7 col-12 alert alert-{0}" role="alert">' +
+                                                            '<button type="button" aria-hidden="true" class="btn-close" data-notify="dismiss"></button>' +
+                                                            '<span data-notify="icon"></span> ' +
+                                                            '<span data-notify="title">{1}</span> ' +
+                                                            '<span data-notify="message">{2}</span>' +
+                                                            '<div class="progress" data-notify="progressbar">' +
+                                                            '<div class="progress-bar progress-bar-info progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                            "</div>" +
+                                                            '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                            "</div>",
+                                                    });
+                                                }
+
+                                            } catch (e) {
+                                                console.error(e);
+                                                toast('❌ Error');
+                                            } finally {
+                                                btn.prop('disabled', false);  // Bật lại nút khi kết thúc
+                                            }
+                                        });
+
+                                        function toast(m) {
+                                            alert(m);  // Thay bằng thông báo đẹp nếu cần
+                                        }
+                                    });
+
+
+
+                                </script>
+
                             </td>
                         </tr>
 
@@ -175,7 +361,7 @@
                                     <input type="number" name="productDetailId" th:value="${item.productDetailId}" hidden>
                                     <button type="submit"
                                             class="btn btn-animation btn-sm w-100">
-                                        Remove
+                                        Xóa
                                     </button>
 
                                 </form>
@@ -260,6 +446,33 @@
 <!-- Bg overlay Start -->
 <div class="bg-overlay"></div>
 <!-- Bg overlay End -->
+
+<!-- Items section Start -->
+<div class="button-item">
+    <button class="item-btn btn text-white">
+        <i class="iconly-Bag-2 icli"></i>
+    </button>
+</div>
+<div class="item-section">
+    <button class="close-button">
+        <i class="fas fa-times"></i>
+    </button>
+    <h6>
+        <i class="iconly-Bag-2 icli"></i>
+        <span>5 Items</span>
+    </h6>
+    <ul class="items-image">
+        <li>
+            <img th:src="@{FrontEnd/assets/images/veg-3/cate1/1.png}" alt="">
+        </li>
+        <li>
+            <img th:src="@{FrontEnd/assets/images/veg-3/cate1/2.png}" alt="">
+        </li>
+        <li>+3</li>
+    </ul>
+    <button onclick="location.href = 'cart';" class="btn item-button btn-sm fw-bold">$ 20.70</button>
+</div>
+<!-- Items section End -->
 
 <!-- latest jquery-->
 <script th:src="@{FrontEnd/assets/js/jquery-3.6.0.min.js}"></script>

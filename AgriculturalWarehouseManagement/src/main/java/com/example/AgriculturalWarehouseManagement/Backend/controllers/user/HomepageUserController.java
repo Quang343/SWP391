@@ -1,8 +1,10 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.CartUserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.CategoryUsersResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ProductUserHomepageResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.CartUserService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.CategoryUsersService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.ProductUsersHomepageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class HomepageUserController {
 
     @Autowired
     private jakarta.servlet.http.HttpSession session;
+
+    @Autowired
+    private CartUserService cartUserService;
 
 
     @GetMapping("/")
@@ -84,8 +89,6 @@ public class HomepageUserController {
         session.setAttribute("productMenu3", productMenu3);
 
 
-
-
         // HomePage Product user can view
         List<ProductUserHomepageResponse> productView = productUsersService.getProductUsersHomepages();
         List<List<ProductUserHomepageResponse>> groupedProducts = new ArrayList<>();
@@ -121,6 +124,31 @@ public class HomepageUserController {
             groupedProductsRatingTop9.add(productRatingTop9.subList(i, end));
         }
         model.addAttribute("groupedProductsRatingTop9", groupedProductsRatingTop9);
+
+        // View list Cart
+        Object accountIdObj = session.getAttribute("accountId");
+        if (accountIdObj != null) {
+            int accountId = (int) accountIdObj;
+
+            List<CartUserResponse> cartUserResponses = cartUserService.getCartByUserIds(accountId);
+
+            int limit = Math.min(cartUserResponses.size(), 3);
+
+            List<CartUserResponse> limitedCartUserResponses = cartUserResponses.subList(0, limit);
+
+            model.addAttribute("sizeCart", cartUserResponses.size());
+            model.addAttribute("cartUserResponses", limitedCartUserResponses);
+            model.addAttribute("sizeCartBelow", Math.max(cartUserResponses.size() - 3, 0));
+
+
+            double totalCart = 0;
+            for (CartUserResponse cartUserResponse : cartUserResponses) {
+                totalCart += cartUserResponse.getTotalPrice();
+            }
+
+            model.addAttribute("totalCart", totalCart);
+        }
+
 
         return "FrontEnd/Home/home";
     }

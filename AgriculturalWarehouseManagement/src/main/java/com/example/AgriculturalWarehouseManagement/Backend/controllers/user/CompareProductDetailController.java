@@ -33,9 +33,6 @@ public class CompareProductDetailController {
     public String compareProductDetail(@RequestParam(name = "productId") Integer productId,
                                        @RequestParam(name = "productDetailId") Integer productDetailId,
                                        Model model) {
-        if (productDetailUserResponses == null) {
-            productDetailUserResponses = new ArrayList<>();
-        }
 
         ProductDetailUserResponse productDetailUserResponse = productDetailUserService.getProductDetailUsers(productDetailId);
         boolean exist = true;

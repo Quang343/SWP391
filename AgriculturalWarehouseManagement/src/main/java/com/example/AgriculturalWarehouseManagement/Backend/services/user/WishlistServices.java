@@ -41,7 +41,7 @@ public class WishlistServices {
 
         WishlistAPIResponse wishlistAPIResponse = new WishlistAPIResponse();
         wishlistAPIResponse.setWishlistId(wishlist.getWishlistId());
-        wishlistAPIResponse.setUserId(user.get().getUserID());
+        wishlistAPIResponse.setUserId(user.get().getUserId());
         wishlistAPIResponse.setProductId(productId);
 
         return wishlistAPIResponse;

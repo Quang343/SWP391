@@ -52,7 +52,7 @@ public class AddressBookService {
 
             AddressBookResponse addressBookResponse = new AddressBookResponse();
 
-            addressBookResponse.setUserId(myAddressBook.getUser().getUserID());
+            addressBookResponse.setUserId(myAddressBook.getUser().getUserId());
             addressBookResponse.setFullName(myAddressBook.getFullName());
             addressBookResponse.setPhone(myAddressBook.getPhone());
             addressBookResponse.setAddress(myAddressBook.getAddress());
@@ -78,7 +78,7 @@ public class AddressBookService {
 
             AddressBookResponse addressBookResponse = new AddressBookResponse();
             addressBookResponse.setAddressBookId(myAddressBook.getAddressBookID());
-            addressBookResponse.setUserId(myAddressBook.getUser().getUserID());
+            addressBookResponse.setUserId(myAddressBook.getUser().getUserId());
             addressBookResponse.setFullName(myAddressBook.getFullName());
             addressBookResponse.setPhone(myAddressBook.getPhone());
             addressBookResponse.setAddress(myAddressBook.getAddress());
@@ -116,7 +116,7 @@ public class AddressBookService {
                 AddressBookResponse addressBookResponse = new AddressBookResponse();
 
                 addressBookResponse.setAddressBookId(myAddressBook.getAddressBookID());
-                addressBookResponse.setUserId(myAddressBook.getUser().getUserID());
+                addressBookResponse.setUserId(myAddressBook.getUser().getUserId());
                 addressBookResponse.setFullName(myAddressBook.getFullName());
                 addressBookResponse.setPhone(myAddressBook.getPhone());
                 addressBookResponse.setAddress(myAddressBook.getAddress());
@@ -134,7 +134,7 @@ public class AddressBookService {
     public String deleteAddressBook(Long userid, Long addressbookid) {
         Optional<User> userOptional = userRepository.findByUserIdNative(Math.toIntExact(userid));
 
-        if (userOptional.get() == null) {
+        if (!userOptional.isPresent()) {
             return null;
         } else {
 

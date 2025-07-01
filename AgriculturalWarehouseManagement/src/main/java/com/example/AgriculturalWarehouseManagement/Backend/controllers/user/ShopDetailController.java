@@ -2,9 +2,11 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 
 import com.example.AgriculturalWarehouseManagement.Backend.components.PageConstant;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.FilterShopDetailRequest;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.CartUserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.CategoryShopDetailsResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.CategoryUsersResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ShopDetailResponse;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.CartUserService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.CategoryUsersService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.ShopDetailService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +31,9 @@ public class ShopDetailController {
 
     @Autowired
     private CategoryUsersService categoryUsersService;
+
+    @Autowired
+    private CartUserService cartUserService;
 
     @Autowired
     private jakarta.servlet.http.HttpSession session;
@@ -142,6 +147,30 @@ public class ShopDetailController {
         List<CategoryShopDetailsResponse> categoryShopDetailsResponses = categoryUsersService.getAllCategoriesAndCountProducts();
         model.addAttribute("categoryShopDetailsResponse", categoryShopDetailsResponses);
 
+        // View cart
+        Object accountIdObj = session.getAttribute("accountId");
+        if (accountIdObj != null) {
+            int accountId = (int) accountIdObj;
+
+            List<CartUserResponse> cartUserResponses = cartUserService.getCartByUserIds(accountId);
+
+            int limit = Math.min(cartUserResponses.size(), 3);
+
+            List<CartUserResponse> limitedCartUserResponses = cartUserResponses.subList(0, limit);
+
+            model.addAttribute("sizeCart", cartUserResponses.size());
+            model.addAttribute("cartUserResponses", limitedCartUserResponses);
+            model.addAttribute("sizeCartBelow", Math.max(cartUserResponses.size() - 3, 0));
+
+
+            double totalCart = 0;
+            for (CartUserResponse cartUserResponse : cartUserResponses) {
+                totalCart += cartUserResponse.getTotalPrice();
+            }
+
+            model.addAttribute("totalCart", totalCart);
+        }
+
 
         return "FrontEnd/Home/shop";
     }
@@ -225,6 +254,30 @@ public class ShopDetailController {
         // Shop detail all category and count product
         List<CategoryShopDetailsResponse> categoryShopDetailsResponses = categoryUsersService.getAllCategoriesAndCountProducts();
         model.addAttribute("categoryShopDetailsResponse", categoryShopDetailsResponses);
+
+        // View cart
+        Object accountIdObj = session.getAttribute("accountId");
+        if (accountIdObj != null) {
+            int accountId = (int) accountIdObj;
+
+            List<CartUserResponse> cartUserResponses = cartUserService.getCartByUserIds(accountId);
+
+            int limit = Math.min(cartUserResponses.size(), 3);
+
+            List<CartUserResponse> limitedCartUserResponses = cartUserResponses.subList(0, limit);
+
+            model.addAttribute("sizeCart", cartUserResponses.size());
+            model.addAttribute("cartUserResponses", limitedCartUserResponses);
+            model.addAttribute("sizeCartBelow", Math.max(cartUserResponses.size() - 3, 0));
+
+
+            double totalCart = 0;
+            for (CartUserResponse cartUserResponse : cartUserResponses) {
+                totalCart += cartUserResponse.getTotalPrice();
+            }
+
+            model.addAttribute("totalCart", totalCart);
+        }
 
         return "FrontEnd/Home/shop";
     }

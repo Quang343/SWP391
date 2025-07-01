@@ -78,15 +78,25 @@
 
         /* Gradient di chuyển */
         @keyframes glowing {
-            0%   { background-position: 0 0; }
-            50%  { background-position: 400% 0; }
-            100% { background-position: 0 0; }
+            0% {
+                background-position: 0 0;
+            }
+            50% {
+                background-position: 400% 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
         }
 
         /* Nhịp giãn–thu */
         @keyframes pulseGlow {
-            0%, 100% { transform: scale(1); }
-            50%      { transform: scale(1.05); }
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         /* Hover: đổi nền sang đỏ */
@@ -124,12 +134,13 @@
         <div class="row">
             <div class="col-12">
                 <div class="breadcrumb-contain">
-                    <h2>Wishlist</h2>
+                    <h2>Yêu thích</h2>
                     <form th:action="@{/deleteAllWishlistProduct}" method="post">
                         <button class="btn btn-outline-danger glow-btn"
-                                type="submit" style="margin-left: 20px" th:if="${!wishlistOfProductResponses.isEmpty()}">
+                                type="submit" style="margin-left: 20px"
+                                th:if="${!wishlistOfProductResponses.isEmpty()}">
                             <h3>
-                                Remove All Wishlist
+                                Xóa tất cả
                             </h3>
                         </button>
                     </form>
@@ -140,7 +151,7 @@
                                     <i class="fa-solid fa-house"></i>
                                 </a>
                             </li>
-                            <li class="breadcrumb-item active">Wishlist</li>
+                            <li class="breadcrumb-item active">Yêu thích</li>
                         </ol>
                     </nav>
                 </div>
@@ -181,18 +192,135 @@
                                 <h5 th:text="${product.productDescription}" class="name">Product Description</h5>
                             </a>
                             <h6 th:text="${product.productWeight}" class="unit mt-1">Product weight</h6>
-
-                            <div class="add-to-cart-box bg-white mt-2">
-                                <button class="btn btn-outline-success btn-add-cart addcart-button"
-                                        type="submit"
-                                >Add
+                            <!--                            class="btn btn-outline-success btn-add-cart addcart-button"-->
+                            <div th:if="${session.account != null}" class="price-qty">
+                                <button class="btn btn-cart btn-success notifi-addtocart"
+                                        style="border: 2px solid green; margin-top: 20px"
+                                        th:data-productcartid="${product.productId}"
+                                >
+                                    Thêm giỏ hàng
                                 </button>
+
+                                <script>
+
+                                    $(function () {
+                                        $(document).on('click', '.notifi-addtocart', async function () {
+                                            const btn = $(this);
+                                            const userId = "[[${session.accountId}]]";
+                                            const productId = btn.data('productcartid');  // Lấy productId từ data attribute
+                                            console.log(userId)
+                                            console.log(productId)
+
+                                            if (!userId || !productId || btn.prop('disabled')) return;  // Kiểm tra nếu không có userId hoặc productId
+
+                                            btn.prop('disabled', true);  // Vô hiệu hóa nút để tránh click nhiều lần
+
+                                            try {
+
+                                                const response = await axios.post(`http://localhost:8080/AgriculturalWarehouseManagement/addToCart/${productId}/${userId}`);
+
+                                                if (response.data.status === "SUCCESS") {
+                                                    const message = response.data.message;
+                                                    await loadCart();
+                                                    // Tạo thông báo thành công
+                                                    $.notify({
+                                                        icon: "fa fa-check",
+                                                        title: "Success!",  // Tùy chỉnh title, ví dụ "Thành công" hoặc "Thêm vào giỏ hàng"
+                                                        message: message,  // Lấy thông báo từ API
+                                                    }, {
+                                                        element: "body",
+                                                        position: null,
+                                                        type: "info",  // Tùy chỉnh loại thông báo, ví dụ: success, error, info
+                                                        allow_dismiss: true,
+                                                        newest_on_top: false,
+                                                        showProgressbar: true,
+                                                        placement: {
+                                                            from: "top",
+                                                            align: "right",
+                                                        },
+                                                        offset: 20,
+                                                        spacing: 10,
+                                                        z_index: 1031,
+                                                        delay: 2000,
+                                                        animate: {
+                                                            enter: "animated fadeInDown",
+                                                            exit: "animated fadeOutUp",
+                                                        },
+                                                        icon_type: "class",
+                                                        template: '<div data-notify="container" class="col-xxl-3 col-lg-5 col-md-6 col-sm-7 col-12 alert alert-{0}" role="alert">' +
+                                                            '<button type="button" aria-hidden="true" class="btn-close" data-notify="dismiss"></button>' +
+                                                            '<span data-notify="icon"></span> ' +
+                                                            '<span data-notify="title">{1}</span> ' +
+                                                            '<span data-notify="message">{2}</span>' +
+                                                            '<div class="progress" data-notify="progressbar">' +
+                                                            '<div class="progress-bar progress-bar-info progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                            "</div>" +
+                                                            '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                            "</div>",
+                                                    });
+                                                } else {
+                                                    const message = response.data.message;
+
+                                                    // Tạo thông báo lỗi
+                                                    $.notify({
+                                                        icon: "fa fa-exclamation-circle",
+                                                        title: "Error!",  // Tùy chỉnh title cho lỗi
+                                                        message: message,  // Lấy thông báo lỗi từ API
+                                                    }, {
+                                                        element: "body",
+                                                        position: null,
+                                                        type: "danger",  // Loại thông báo lỗi
+                                                        allow_dismiss: true,
+                                                        newest_on_top: false,
+                                                        showProgressbar: true,
+                                                        placement: {
+                                                            from: "top",
+                                                            align: "right",
+                                                        },
+                                                        offset: 20,
+                                                        spacing: 10,
+                                                        z_index: 1031,
+                                                        delay: 2000,
+                                                        animate: {
+                                                            enter: "animated fadeInDown",
+                                                            exit: "animated fadeOutUp",
+                                                        },
+                                                        icon_type: "class",
+                                                        template: '<div data-notify="container" class="col-xxl-3 col-lg-5 col-md-6 col-sm-7 col-12 alert alert-{0}" role="alert">' +
+                                                            '<button type="button" aria-hidden="true" class="btn-close" data-notify="dismiss"></button>' +
+                                                            '<span data-notify="icon"></span> ' +
+                                                            '<span data-notify="title">{1}</span> ' +
+                                                            '<span data-notify="message">{2}</span>' +
+                                                            '<div class="progress" data-notify="progressbar">' +
+                                                            '<div class="progress-bar progress-bar-info progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                            "</div>" +
+                                                            '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                            "</div>",
+                                                    });
+                                                }
+
+                                            } catch (e) {
+                                                console.error(e);
+                                                toast('❌ Error');
+                                            } finally {
+                                                btn.prop('disabled', false);  // Bật lại nút khi kết thúc
+                                            }
+                                        });
+
+                                        function toast(m) {
+                                            alert(m);  // Thay bằng thông báo đẹp nếu cần
+                                        }
+                                    });
+
+
+                                </script>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </section>
 <!-- Wishlist Section End -->
@@ -205,92 +333,7 @@
 <!-- Location Modal End -->
 
 <!-- Deal Box Modal Start -->
-<div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div>
-                    <h5 class="modal-title w-100" id="deal_today">Deal Today</h5>
-                    <p class="mt-1 text-content">Recommended deals for you.</p>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="deal-offer-box">
-                    <ul class="deal-offer-list">
-                        <li class="list-1">
-                            <div class="deal-offer-contain">
-                                <a href="shop-left-sidebar.html" class="deal-image">
-                                    <img th:src="@{FrontEnd/assets/images/vegetable/product/10.png}"
-                                         class="blur-up lazyload"
-                                         alt="">
-                                </a>
 
-                                <a href="shop-left-sidebar.html" class="deal-contain">
-                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57
-                                        <del>57.62</del>
-                                        <span>500 G</span></h6>
-                                </a>
-                            </div>
-                        </li>
-
-                        <li class="list-2">
-                            <div class="deal-offer-contain">
-                                <a href="shop-left-sidebar.html" class="deal-image">
-                                    <img src="../assets/images/vegetable/product/11.png" class="blur-up lazyload"
-                                         alt="">
-                                </a>
-
-                                <a href="shop-left-sidebar.html" class="deal-contain">
-                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57
-                                        <del>57.62</del>
-                                        <span>500 G</span></h6>
-                                </a>
-                            </div>
-                        </li>
-
-                        <li class="list-3">
-                            <div class="deal-offer-contain">
-                                <a href="shop-left-sidebar.html" class="deal-image">
-                                    <img th:src="@{FrontEnd/assets/images/vegetable/product/12.png}"
-                                         class="blur-up lazyload"
-                                         alt="">
-                                </a>
-
-                                <a href="shop-left-sidebar.html" class="deal-contain">
-                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57
-                                        <del>57.62</del>
-                                        <span>500 G</span></h6>
-                                </a>
-                            </div>
-                        </li>
-
-                        <li class="list-1">
-                            <div class="deal-offer-contain">
-                                <a href="shop-left-sidebar.html" class="deal-image">
-                                    <img src="../assets/images/vegetable/product/13.png" class="blur-up lazyload"
-                                         alt="">
-                                </a>
-
-                                <a href="shop-left-sidebar.html" class="deal-contain">
-                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57
-                                        <del>57.62</del>
-                                        <span>500 G</span></h6>
-                                </a>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <!-- Deal Box Modal End -->
 
 <!-- Tap to top and theme setting button start -->
@@ -348,40 +391,152 @@
 </div>
 <!-- Tap to top and theme setting button end -->
 
+<!-- Items section Start -->
+<div th:if="${session.account != null}" class="button-item">
+    <button class="item-btn btn text-white">
+        <i class="iconly-Bag-2 icli"></i>
+    </button>
+</div>
+<div th:if="${session.account != null}" class="item-section">
+    <button class="close-button">
+        <i class="fas fa-times"></i>
+    </button>
+    <h6>
+        <i class="iconly-Bag-2 icli"></i>
+        <span id="sizeCart" th:text="${sizeCart} + 'Items'">Items</span>
+        <span id="sizeCartBelow" style="position: absolute; margin-top: 80px; margin-left: 90px"></span>
+    </h6>
+
+    <ul class="items-image">
+
+        <li id="image" th:each="cart : ${cartUserResponses}">
+            <img th:src="${cart.imageUrl}" alt="">
+        </li>
+        <h6>
+            <span th:if="${sizeCart > 3}">...</span>
+        </h6>
+
+        <script>
+            async function loadCart() {
+                const userId = "[[${session.accountId}]]";
+                console.log("home" + userId)
+                try {
+                    // Gọi API lấy giỏ hàng bằng axios
+                    const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/listCart/${userId}`);
+
+                    const cartUserResponses = response.data.active;
+                    let sizeListCart = 0;
+
+                    if (cartUserResponses) {
+                        sizeListCart = response.data.data.length; // Lấy số lượng sản phẩm
+                    }
+
+                    console.log("home " + sizeListCart);
+
+                    const sizeCartElement = document.getElementById('sizeCart');
+                    const sizeCartHeadElement = document.getElementById('sizeCartHead');
+                    const cartSizeBelowElement = document.getElementById('sizeCartBelow');
+
+
+                    if (sizeListCart > 3) {
+                        if (sizeCartElement) {
+                            sizeCartElement.innerText = `${sizeListCart} Items`;
+
+                        }
+
+                        if (cartSizeBelowElement) {
+                            cartSizeBelowElement.innerText = '...';
+                        }
+
+                        if (sizeCartHeadElement) {
+                            sizeCartHeadElement.innerText = `${sizeListCart}`
+                        }
+
+                    } else {
+                        if (sizeCartElement) {
+                            sizeCartElement.innerText = `${sizeListCart} Items`;
+                        }
+
+                        if (sizeCartHeadElement) {
+                            sizeCartHeadElement.innerText = `${sizeListCart}`
+                        }
+                    }
+
+                    const cartUserResponsesI = response.data.data; // Mảng chứa dữ liệu giỏ hàng
+                    console.log(cartUserResponsesI); // Kiểm tra dữ liệu API trả về
+
+                    const ulElement = document.querySelector('.items-image');
+
+                    const firstThreeItems = cartUserResponsesI.slice(0, 3); // Lấy 3 phần tử đầu tiên
+
+                    ulElement.innerHTML = '';
+
+                    firstThreeItems.forEach((cart, index) => {
+                        const liElement = document.createElement('li');
+                        liElement.setAttribute('data-index', index);  // Gán data-index mới
+                        liElement.innerHTML = `<img src="${cart.imageUrl}" alt="Product Image ${index}">`;
+                        ulElement.appendChild(liElement);
+                    });
+
+                    await updateTotalCart(userId);
+                } catch (error) {
+                    console.error('Có lỗi xảy ra khi gọi API giỏ hàng:', error);
+                }
+            }
+
+            async function updateTotalCart(userId) {
+                try {
+                    let response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/totalCart/${userId}`);
+                    if (response.data.status === "SUCCESS") {
+                        document.getElementById(`total-cart`).innerText = `${response.data.data.totalCart.toLocaleString()}₫`;
+                    } else {
+                        console.error("Không thể lấy tổng giỏ hàng");
+                    }
+                } catch (error) {
+                    console.error("Lỗi kết nối khi lấy tổng giỏ hàng:", error);
+                }
+            }
+        </script>
+
+    </ul>
+    <button id="total-cart" onclick="location.href = 'cart';" class="btn item-button btn-sm fw-bold"
+            th:text="${#numbers.formatInteger(totalCart, 0, 'POINT') + '₫'}"></button>
+</div>
+<!-- Items section End -->
+
 <!-- Bg overlay Start -->
 <div class="bg-overlay"></div>
 <!-- Bg overlay End -->
 
 <!-- latest jquery-->
-<script th:src="@{FrontEnd/assets/js/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/jquery-3.6.0.min.js}"></script>
 
 <!-- jquery ui-->
-<script th:src="@{FrontEnd/assets/js/jquery-ui.min.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/jquery-ui.min.js}"></script>
 
 <!-- Bootstrap js-->
-<script th:src="@{FrontEnd/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
-<script th:src="@{FrontEnd/assets/js/bootstrap/popper.min.js}"></script>
-<script th:src="@{FrontEnd/assets/js/bootstrap/bootstrap-notify.min.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/bootstrap/popper.min.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/bootstrap/bootstrap-notify.min.js}"></script>
 
 <!-- feather icon js-->
-<script th:src="@{FrontEnd/assets/js/feather/feather.min.js}"></script>
-<script th:src="@{FrontEnd/assets/js/feather/feather-icon.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/feather/feather.min.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/feather/feather-icon.js}"></script>
 
 <!-- Lazyload Js -->
-<script th:src="@{FrontEnd/assets/js/lazysizes.min.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/lazysizes.min.js}"></script>
 
 <!-- Slick js-->
-<script th:src="@{FrontEnd/assets/js/slick/slick.js}"></script>
-<script th:src="@{FrontEnd/assets/js/slick/custom_slick.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/slick/slick.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/slick/custom_slick.js}"></script>
 
 <!-- Quantity js -->
-<script th:src="@{FrontEnd/assets/js/quantity-2.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/quantity-2.js}"></script>
 
 <!-- script js -->
-<script th:src="@{FrontEnd/assets/js/script.js}"></script>
-
+<script th:src="@{/Frontend/assets/js/script.js}"></script>
 <!-- theme setting js -->
-<script th:src="@{FrontEnd/assets/js/theme-setting.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/theme-setting.js}"></script>
 </body>
 
 </html>

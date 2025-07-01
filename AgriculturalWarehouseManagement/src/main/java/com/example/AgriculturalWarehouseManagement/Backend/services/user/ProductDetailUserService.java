@@ -80,7 +80,7 @@ public class ProductDetailUserService {
         }
     }
 
-    // Get product by productId
+    // Get productdetail by productId
     public List<ProductDetailUserResponse> getProductUser(Integer productId) {
         List<Object[]> raw = productDetailRepository.rawGetProductbyIds(productId);
 

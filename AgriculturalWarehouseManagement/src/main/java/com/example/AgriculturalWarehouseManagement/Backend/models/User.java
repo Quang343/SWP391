@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -19,7 +18,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userID")
-    private int userID;
+    private int userId;
 
     @ManyToOne()
     @JoinColumn(name = "roleid")
@@ -53,7 +52,7 @@ public class User {
     private String status; // e.g. Active, Inactive
 
     @Column(name = "dob")
-    private Date dob;
+    private LocalDate dob;
 
     @Column(name = "createdat")
     private LocalDateTime createdAt;

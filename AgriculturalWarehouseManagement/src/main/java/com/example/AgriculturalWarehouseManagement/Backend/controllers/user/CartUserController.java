@@ -1,12 +1,18 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.CartUserResponse;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ResponseResult;
 import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilter;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.CartUserService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 @Controller
 public class CartUserController {
@@ -20,8 +26,11 @@ public class CartUserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private CartUserService cartUserService;
+
     @GetMapping("/cart")
-    public String cart() {
+    public String cart(Model model) {
 
         String token = (String) session.getAttribute("auth_token");
 
@@ -43,13 +52,39 @@ public class CartUserController {
             return "redirect:/login";
         } else {
 
-            int accountId = userEntity.getUserID();
-            int productDetailIdCart = session.getAttribute("productDetailIdCart") == null ? 0 : Integer.parseInt(session.getAttribute("productDetailIdCart").toString());
-            int quantityCart = session.getAttribute("quantityCart") == null ? 0 : Integer.parseInt(session.getAttribute("quantityCart").toString());
+            int accountId = userEntity.getUserId();
+            int productDetailIdCart = session.getAttribute("productDetailIdCart") == null ? -1 : Integer.parseInt(session.getAttribute("productDetailIdCart").toString());
+            int quantityCart = session.getAttribute("quantityCart") == null ? -1 : Integer.parseInt(session.getAttribute("quantityCart").toString());
 
+            // View cart
+            if (productDetailIdCart == -1 || quantityCart == -1) {
+                List<CartUserResponse> cartUserReponses = cartUserService.getCartByUserIds(accountId);
+                double totalCart = 0;
+                for (CartUserResponse cartUserReponse : cartUserReponses) {
+                     totalCart += cartUserReponse.getTotalPrice();
+                }
+                model.addAttribute("totalCart", totalCart);
+                model.addAttribute("cartUserReponses", cartUserReponses);
+                return "FrontEnd/Home/cart";
+            }
+
+            // Add to cart in product detail
+            ResponseResult<CartUserResponse> result =  cartUserService.insertCart(accountId,productDetailIdCart,quantityCart);
+            if (result.isActive()){
+                List<CartUserResponse> cartUserReponses = cartUserService.getCartByUserIds(accountId);
+                double totalCart = 0;
+                for (CartUserResponse cartUserReponse : cartUserReponses) {
+                    totalCart += cartUserReponse.getTotalPrice();
+                }
+                model.addAttribute("totalCart", totalCart);
+                model.addAttribute("cartUserReponses", cartUserReponses);
+                session.removeAttribute("productDetailIdCart");
+                session.removeAttribute("quantityCart");
+
+                return "FrontEnd/Home/cart";
+            }
 
         }
-
 
         return "FrontEnd/Home/cart";
     }
