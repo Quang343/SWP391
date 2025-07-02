@@ -74,15 +74,4 @@ public class StockOutController {
     public ResponseEntity<StockOutDTO> getStockOutById(@PathVariable Integer id) {
         return ResponseEntity.ok(stockOutService.getStockOutById(id));
     }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<StockOutDTO> updateStockOut(@PathVariable Integer id, @RequestBody StockOutDTO stockOutDTO) {
-        return ResponseEntity.ok(stockOutService.updateStockOut(id, stockOutDTO));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStockOut(@PathVariable Integer id) {
-        stockOutService.deleteStockOut(id);
-        return ResponseEntity.noContent().build();
-    }
 }

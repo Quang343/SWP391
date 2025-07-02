@@ -378,9 +378,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p><strong>Tên chi tiết:</strong> <span id="modalDetailName">N/A</span></p>
                 <p><strong>Product ID:</strong> <span id="modalProductId">N/A</span></p>
-                <p><strong>Giá:</strong> <span id="modalPrice">N/A</span></p>
+                <p><strong>Giá Nhập:</strong> <span id="modalImportPrice">N/A</span></p>
+                <p><strong>Giá Bán:</strong> <span id="modalPrice">N/A</span></p>
                 <p><strong>Khối lượng:</strong> <span id="modalWeight">N/A</span></p>
                 <p><strong>Thời hạn sử dụng (tháng):</strong> <span id="modalExpiry">N/A</span></p>
             </div>
@@ -467,6 +467,7 @@
 <script th:src="@{/Backend/assets/js/script.js}"></script>
 
 <!-- Custom JS for API call -->
+<!-- Assuming this is part of a larger Thymeleaf template with table_id and productBatchTableBody -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Disable DataTables to prevent interference
@@ -646,11 +647,27 @@
                         }
 
                         let expiry = 'N/A';
+                        let productName = 'N/A';
                         try {
                             const detailResponse = await fetch(`/api/product-details/${batch.productDetailID}`);
                             if (detailResponse.ok) {
                                 const detail = await detailResponse.json();
                                 expiry = detail.expiry || 'N/A';
+                                const detailName = detail.detailName || 'N/A';
+                                const productId = detail.productID || detail.productId || 'N/A';
+                                if (productId !== 'N/A') {
+                                    const productResponse = await fetch(`/api/products/${productId}/name`);
+                                    if (productResponse.ok) {
+                                        const name = await productResponse.text();
+                                        productName = `${name} (${detailName})`;
+                                        console.log(`[DEBUG] Product ID: ${productId}, Name: ${productName}`);
+                                    } else {
+                                        productName = `N/A (${detailName})`;
+                                        console.error(`[ERROR] Failed to fetch product name for ID ${productId}`);
+                                    }
+                                } else {
+                                    productName = `N/A (${detailName})`;
+                                }
                             }
                         } catch (error) {
                             console.error(`Error fetching Product Detail for ID ${batch.productDetailID}:`, error);
@@ -678,22 +695,22 @@
                         }
 
                         row.innerHTML = `
-                            <td>${batch.batchID || 'N/A'}</td>
-                            <td><a href="javascript:void(0)" class="detail-link" data-id="${batch.productDetailID}">${batch.productDetailID || 'N/A'}</a></td>
-                            <td>${batch.manufactureDate || 'N/A'}</td>
-                            <td>${temporaryImported || importedQuantity || 'N/A'}${shortageAlert}</td>
-                            <td>${soldQuantity || 0}</td>
-                            <td>${remainingQuantity}</td>
-                            <td>${adjustmentCount > 0 ? `<a href="javascript:void(0)" class="view-adjustment-detail" data-batch-id="${batch.batchID}">${totalAdjustment}</a>` : `<span style="pointer-events: none; opacity: 0.5;">${totalAdjustment}</span>`}</td>
-                            <td>
-                                <ul class="action-list">
-                                    <li><a href="javascript:void(0)" class="view-detail" data-id="${batch.productDetailID}"><i class="ri-eye-line"></i></a></li>
-                                    <li><a href="javascript:void(0)" class="edit-batch" data-batch-id="${batch.batchID}" data-product-detail-id="${batch.productDetailID}" data-manufacture-date="${batch.manufactureDate || ''}" data-imported-quantity="${importedQuantity || ''}"><i class="ri-pencil-line"></i></a></li>
-                                    <li><a href="javascript:void(0)" class="delete-batch" data-batch-id="${batch.batchID}"><i class="ri-delete-bin-line"></i></a></li>
-                                    <li><a href="javascript:void(0)" class="add-adjustment" data-batch-id="${batch.batchID}"><i class="ri-add-line"></i></a></li>
-                                </ul>
-                            </td>
-                        `;
+                        <td>${batch.batchID || 'N/A'}</td>
+                        <td><a href="javascript:void(0)" class="detail-link" data-id="${batch.productDetailID}">${productName}</a></td>
+                        <td>${batch.manufactureDate || 'N/A'}</td>
+                        <td>${temporaryImported || importedQuantity || 'N/A'}${shortageAlert}</td>
+                        <td>${soldQuantity || 0}</td>
+                        <td>${remainingQuantity}</td>
+                        <td>${adjustmentCount > 0 ? `<a href="javascript:void(0)" class="view-adjustment-detail" data-batch-id="${batch.batchID}">${totalAdjustment}</a>` : `<span style="pointer-events: none; opacity: 0.5;">${totalAdjustment}</span>`}</td>
+                        <td>
+                            <ul class="action-list">
+                                <li><a href="javascript:void(0)" class="view-detail" data-id="${batch.productDetailID}" data-batch-id="${batch.batchID}"><i class="ri-eye-line"></i></a></li>
+                                <li><a href="javascript:void(0)" class="edit-batch" data-batch-id="${batch.batchID}" data-product-detail-id="${batch.productDetailID}" data-manufacture-date="${batch.manufactureDate || ''}" data-imported-quantity="${importedQuantity || ''}"><i class="ri-pencil-line"></i></a></li>
+                                <li><a href="javascript:void(0)" class="delete-batch" data-batch-id="${batch.batchID}"><i class="ri-delete-bin-line"></i></a></li>
+                                <li><a href="javascript:void(0)" class="add-adjustment" data-batch-id="${batch.batchID}"><i class="ri-add-line"></i></a></li>
+                            </ul>
+                        </td>
+                    `;
                         tableBody.appendChild(row);
                     }
                 } else {
@@ -841,36 +858,41 @@
 
             if (viewDetailBtn) {
                 const productDetailId = viewDetailBtn.getAttribute('data-id');
-                if (productDetailId === 'N/A') {
+                const batchId = viewDetailBtn.getAttribute('data-batch-id');
+
+                if (productDetailId === 'N/A' || !productDetailId) {
                     alert('Không có ProductDetail để hiển thị.');
                     return;
                 }
-                fetch(`/api/product-details/${productDetailId}`)
-                    .then(response => {
-                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                        return response.json();
-                    })
-                    .then(detail => {
-                        document.getElementById('modalDetailName').textContent = detail.detailName || 'N/A';
+                if (batchId === 'N/A' || !batchId) {
+                    alert('Batch ID không hợp lệ.');
+                    return;
+                }
+
+                Promise.all([
+                    fetch(`/api/product-details/${productDetailId}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error(`Lỗi khi lấy ProductDetail: ${response.status}`);
+                            return response.json();
+                        }),
+                    fetch(`/api/stockindetails/importprice/${batchId}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error(`Lỗi khi lấy giá nhập: ${response.status}`);
+                            return response.json();
+                        })
+                ])
+                    .then(([detail, importPrice]) => {
                         document.getElementById('modalProductId').textContent = detail.productID || 'N/A';
                         document.getElementById('modalPrice').textContent = detail.price ? detail.price.toFixed(2) : 'N/A';
-                        document.getElementById('modalWeight').textContent = detail.categoryWeight || 'N/A';
+                        document.getElementById('modalWeight').textContent = detail.detailName || 'N/A';
                         document.getElementById('modalExpiry').textContent = detail.expiry || 'N/A';
-
-                        if (detail.categoryWeight) {
-                            fetch(`/api/categoryweights/${detail.categoryWeight}`)
-                                .then(res => res.ok ? res.json() : Promise.reject())
-                                .then(categoryWeight => {
-                                    document.getElementById('modalWeight').textContent = categoryWeight.unit ? `${detail.categoryWeight} ${categoryWeight.unit}` : detail.categoryWeight;
-                                })
-                                .catch(() => {});
-                        }
+                        document.getElementById('modalImportPrice').textContent = importPrice ? importPrice.toFixed(2) : 'N/A';
 
                         new bootstrap.Modal(document.getElementById('productDetailModal')).show();
                     })
                     .catch(error => {
-                        console.error('Error fetching Product Detail:', error);
-                        alert('Không thể tải chi tiết sản phẩm. Kiểm tra console.');
+                        console.error('Lỗi khi lấy chi tiết sản phẩm hoặc giá nhập:', error);
+                        alert('Không thể tải chi tiết sản phẩm hoặc giá nhập. Kiểm tra console.');
                     });
             }
 
@@ -919,14 +941,14 @@
                                 const displayQuantity = adjustmentType === 'Remove' && quantity !== 'N/A' ? `-${quantity}` : quantity;
 
                                 tbody.innerHTML += `
-                                    <tr>
-                                        <td>${id}</td>
-                                        <td>${displayQuantity}</td>
-                                        <td>${reason}</td>
-                                        <td>${adjustDate}</td>
-                                        <td>${adjustmentType}</td>
-                                    </tr>
-                                `;
+                                <tr>
+                                    <td>${id}</td>
+                                    <td>${displayQuantity}</td>
+                                    <td>${reason}</td>
+                                    <td>${adjustDate}</td>
+                                    <td>${adjustmentType}</td>
+                                </tr>
+                            `;
                             });
                         }
                         new bootstrap.Modal(document.getElementById('adjustmentDetailModal')).show();

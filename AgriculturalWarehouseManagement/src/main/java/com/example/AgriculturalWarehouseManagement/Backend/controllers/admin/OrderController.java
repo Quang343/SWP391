@@ -40,7 +40,7 @@ public class OrderController {
 
     @GetMapping("/warehouse/api/addstockout")
     public ResponseEntity<List<Order>> getPendingOrdersForStockOut() {
-        List<Order> pendingOrders = orderService.findByStatus(OrderStatus.PENDING.name());
+        List<Order> pendingOrders = orderService.findByStatus(OrderStatus.CONFIRMED.name());
         return ResponseEntity.ok(pendingOrders);
     }
 

@@ -366,6 +366,31 @@
 
 <!-- Custom JS for API call -->
 <script>
+    function formatDateToVietnamese(dateString) {
+        if (!dateString || dateString === 'N/A') {
+            return 'N/A';
+        }
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) {
+                console.warn('[WARN] Invalid date:', dateString);
+                return 'N/A';
+            }
+            // Cộng 7 tiếng nếu dữ liệu trả về là UTC
+            const vnTime = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+            const day = String(vnTime.getDate()).padStart(2, '0');
+            const month = String(vnTime.getMonth() + 1).padStart(2, '0');
+            const year = vnTime.getFullYear();
+            const hours = String(vnTime.getHours()).padStart(2, '0');
+            const minutes = String(vnTime.getMinutes()).padStart(2, '0');
+            const seconds = String(vnTime.getSeconds()).padStart(2, '0');
+            return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
+        } catch (error) {
+            console.error('[ERROR] Error parsing date:', dateString, error);
+            return 'N/A';
+        }
+    }
+
     $(document).ready(function() {
         // Disable DataTables to prevent interference
         if ($.fn.DataTable && $.fn.DataTable.isDataTable('#table_id')) {
@@ -492,7 +517,7 @@
                                     row.append(`<td>${adjustment.id || 'N/A'}</td>`);
                                     row.append(`<td>${mappedBatchId}</td>`);
                                     row.append(`<td>${adjustment.quantity || 'N/A'}</td>`);
-                                    row.append(`<td>${adjustment.adjustDate || 'N/A'}</td>`);
+                                    row.append(`<td>${formatDateToVietnamese(adjustment.adjustDate)}</td>`);
                                     row.append(`<td>${adjustment.reason || 'N/A'}</td>`);
                                     row.append(`<td>${adjustment.adjustmentType || 'N/A'}</td>`);
                                     row.append(`
@@ -517,7 +542,7 @@
                                     row.append(`<td>${adjustment.id || 'N/A'}</td>`);
                                     row.append(`<td>${batchId || 'N/A'}</td>`);
                                     row.append(`<td>${adjustment.quantity || 'N/A'}</td>`);
-                                    row.append(`<td>${adjustment.adjustDate || 'N/A'}</td>`);
+                                    row.append(`<td>${formatDateToVietnamese(adjustment.adjustDate)}</td>`);
                                     row.append(`<td>${adjustment.reason || 'N/A'}</td>`);
                                     row.append(`<td>${adjustment.adjustmentType || 'N/A'}</td>`);
                                     row.append(`

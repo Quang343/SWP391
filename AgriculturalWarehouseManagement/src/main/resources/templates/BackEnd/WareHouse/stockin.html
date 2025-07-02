@@ -357,6 +357,31 @@
 
 <!-- Custom JavaScript -->
 <script>
+  function formatDateToVietnamese(dateString) {
+    if (!dateString || dateString === 'N/A') {
+      return 'N/A';
+    }
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        console.warn('[WARN] Invalid date:', dateString);
+        return 'N/A';
+      }
+      // Add 7 hours to convert UTC to Vietnam time (UTC+07:00)
+      const vnTime = new Date(date.getTime());
+      const day = String(vnTime.getDate()).padStart(2, '0');
+      const month = String(vnTime.getMonth() + 1).padStart(2, '0');
+      const year = vnTime.getFullYear();
+      const hours = String(vnTime.getHours()).padStart(2, '0');
+      const minutes = String(vnTime.getMinutes()).padStart(2, '0');
+      const seconds = String(vnTime.getSeconds()).padStart(2, '0');
+      return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
+    } catch (error) {
+      console.error('[ERROR] Error parsing date:', dateString, error);
+      return 'N/A';
+    }
+  }
+
   $(document).ready(function() {
     // Disable DataTables to prevent interference
     if ($.fn.DataTable && $.fn.DataTable.isDataTable('#table_id')) {
@@ -502,7 +527,7 @@
                 row.append(`<td>${stockIn.id || 'N/A'}</td>`);
                 row.append(`<td>N/A (Invalid Supplier ID: ${JSON.stringify(stockIn.supplierID)})</td>`);
                 row.append(`<td>N/A (Invalid Warehouse ID: ${JSON.stringify(stockIn.warehouseID)})</td>`);
-                row.append(`<td>${stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleString() : 'N/A'}</td>`);
+                row.append(`<td>${formatDateToVietnamese(stockIn.stockInDate)}</td>`);
                 row.append(`<td>${stockIn.note || 'N/A'}</td>`);
                 row.append(`
                   <td>
@@ -531,7 +556,7 @@
                 row.append(`<td>${stockIn.id || 'N/A'}</td>`);
                 row.append(`<td>${supplierName} (ID: ${supplierId})</td>`);
                 row.append(`<td>${warehouseName} (ID: ${warehouseId})</td>`);
-                row.append(`<td>${stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleString() : 'N/A'}</td>`);
+                row.append(`<td>${formatDateToVietnamese(stockIn.stockInDate)}</td>`);
                 row.append(`<td>${stockIn.note || 'N/A'}</td>`);
                 row.append(`
                   <td>
@@ -552,7 +577,7 @@
                 row.append(`<td>${stockIn.id || 'N/A'}</td>`);
                 row.append(`<td>N/A (Error fetching Supplier ID: ${supplierId})</td>`);
                 row.append(`<td>N/A (Error fetching Warehouse ID: ${warehouseId})</td>`);
-                row.append(`<td>${stockIn.stockInDate ? new Date(stockIn.stockInDate).toLocaleString() : 'N/A'}</td>`);
+                row.append(`<td>${formatDateToVietnamese(stockIn.stockInDate)}</td>`);
                 row.append(`<td>${stockIn.note || 'N/A'}</td>`);
                 row.append(`
                   <td>
@@ -657,20 +682,40 @@
         method: 'GET',
         dataType: 'json',
         success: function(stockIn) {
-          var dateTime = stockIn.stockInDate ? new Date(stockIn.stockInDate) : null;
-          $('#offcanvasStockInDate').text(dateTime ? dateTime.toLocaleString() : 'N/A');
-
           // Use validated supplierID and warehouseID
           const supplierId = stockIn.supplierID && typeof stockIn.supplierID === 'object' ? (stockIn.supplierID.supplierID || stockIn.supplierID.id) : stockIn.supplierID;
           const warehouseId = stockIn.warehouseID && typeof stockIn.warehouseID === 'object' ? (stockIn.warehouseID.warehouseId || stockIn.warehouseID.id) : stockIn.warehouseID;
 
           console.log('Loading offcanvas for stockIn ID:', stockInId, 'supplierID:', supplierId, 'warehouseID:', warehouseId);
 
+          // Load dropdowns
           loadSuppliersDropdown($('#offcanvasSupplierId'), supplierId);
           loadWarehousesDropdown($('#offcanvasWarehouseId'), warehouseId);
 
-          $('#offcanvasStockInDateInput').val(dateTime ? dateTime.toISOString().split('T')[0] : '');
-          $('#offcanvasStockInTimeInput').val(dateTime ? dateTime.toTimeString().slice(0, 5) : '00:00');
+          // Format stockInDate using formatDateToVietnamese
+          const formattedDate = formatDateToVietnamese(stockIn.stockInDate);
+          $('#offcanvasStockInDate').text(formattedDate || 'N/A');
+
+          // Populate input fields for editing
+          if (stockIn.stockInDate) {
+            const date = new Date(stockIn.stockInDate);
+            // Add 7 hours to convert UTC to Vietnam time
+            const vnTime = new Date(date.getTime());
+            const year = vnTime.getFullYear();
+            const month = String(vnTime.getMonth() + 1).padStart(2, '0');
+            const day = String(vnTime.getDate()).padStart(2, '0');
+            const hours = String(vnTime.getHours()).padStart(2, '0');
+            const minutes = String(vnTime.getMinutes()).padStart(2, '0');
+
+            // Set date input as YYYY-MM-DD
+            $('#offcanvasStockInDateInput').val(`${year}-${month}-${day}`);
+            // Set time input as HH:mm
+            $('#offcanvasStockInTimeInput').val(`${hours}:${minutes}`);
+          } else {
+            $('#offcanvasStockInDateInput').val('');
+            $('#offcanvasStockInTimeInput').val('00:00');
+          }
+
           $('#offcanvasNote').val(stockIn.note || '');
         },
         error: function(jqXHR, textStatus, errorThrown) {
@@ -684,9 +729,23 @@
     $('#updateStockInForm').on('submit', function(e) {
       e.preventDefault();
       var stockInId = $('#offcanvasStockInIdInput').val();
-      var date = $('#offcanvasStockInDateInput').val();
-      var time = $('#offcanvasStockInTimeInput').val();
-      var stockInDate = date + 'T' + (time || '00:00') + ':00';
+      var date = $('#offcanvasStockInDateInput').val(); // YYYY-MM-DD
+      var time = $('#offcanvasStockInTimeInput').val(); // HH:mm
+
+      // Combine date and time, convert to UTC for backend
+      let stockInDate;
+      if (date && time) {
+        // Parse as Vietnam time (UTC+07:00)
+        const [year, month, day] = date.split('-').map(Number);
+        const [hours, minutes] = time.split(':').map(Number);
+        const vnDate = new Date(year, month - 1, day, hours, minutes, 0);
+        // Convert to UTC by subtracting 7 hours
+        const utcDate = new Date(vnDate.getTime() + 7 * 60 * 60 * 1000);
+        // Format as ISO UTC
+        stockInDate = utcDate.toISOString(); // e.g., 2025-07-02T13:00:00.000Z
+      } else {
+        stockInDate = new Date().toISOString(); // Fallback to current UTC time
+      }
 
       var formData = {
         id: stockInId,
@@ -695,6 +754,8 @@
         stockInDate: stockInDate,
         note: $('#offcanvasNote').val()
       };
+
+      console.log('Submitting update for StockIn:', formData);
 
       $.ajax({
         url: `http://localhost:8080/api/stockins/${stockInId}`,
@@ -770,6 +831,5 @@
     fetchStockIns(currentPage);
   });
 </script>
-
 </body>
 </html>

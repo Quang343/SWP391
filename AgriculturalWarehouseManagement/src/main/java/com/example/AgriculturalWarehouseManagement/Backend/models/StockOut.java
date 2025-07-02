@@ -10,6 +10,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -32,7 +33,7 @@ public class StockOut {
 
 
     @Column(name = "stockoutdate")
-    private LocalDate stockOutDate;
+    private LocalDateTime stockOutDate;
 
     @Lob
     @Column(name = "note")

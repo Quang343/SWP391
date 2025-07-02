@@ -3,6 +3,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.wareh
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Setter
@@ -14,6 +15,6 @@ public class StockOutDTO {
     private Integer id;
     private Integer warehouseID;
     private Integer orderID;
-    private LocalDate stockOutDate;
+    private LocalDateTime stockOutDate;
     private String note;
 }

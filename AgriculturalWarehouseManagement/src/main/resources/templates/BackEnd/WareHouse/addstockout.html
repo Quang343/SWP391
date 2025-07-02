@@ -91,7 +91,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="modalStockOutDate" class="form-label">Ngày Xuất kho</label>
-                    <input id="modalStockOutDate" class="form-control" type="date" required>
+                    <input id="modalStockOutDate" class="form-control" type="text" readonly>
                 </div>
                 <div class="mb-3">
                     <label for="modalNote" class="form-label">Ghi chú</label>
@@ -176,23 +176,18 @@
 
         // Update Modal Submit Button State
         function updateModalSubmitButtonState() {
-            const isValid = modalWarehouseId.value && modalStockOutDate.value;
+            const isValid = modalWarehouseId.value;
             modalSubmitButton.disabled = !isValid;
             console.log('[DEBUG] Modal submit button state:', {
                 isValid: isValid,
-                warehouseId: modalWarehouseId.value,
-                stockOutDate: modalStockOutDate.value
+                warehouseId: modalWarehouseId.value
             });
         }
 
-        // Add change listeners for modal validation
-        console.log('[DEBUG] Adding event listeners for modal inputs');
+        // Add change listener for modal validation
+        console.log('[DEBUG] Adding event listener for warehouse input');
         modalWarehouseId.addEventListener('change', function() {
             console.log('[DEBUG] Warehouse ID changed:', modalWarehouseId.value);
-            updateModalSubmitButtonState();
-        });
-        modalStockOutDate.addEventListener('change', function() {
-            console.log('[DEBUG] StockOutDate changed:', modalStockOutDate.value);
             updateModalSubmitButtonState();
         });
 
@@ -299,7 +294,13 @@
                 const orderID = parseInt($(this).data('order-id'));
                 console.log('[DEBUG] Create StockOut button clicked for Order ID:', orderID);
                 modalOrderId.value = orderID;
-                modalStockOutDate.value = new Date().toISOString().split('T')[0]; // Default to current date
+                modalStockOutDate.value = new Date().toLocaleString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }); // Display current date and time in VN format
                 modalNote.value = `Xuất kho nhanh cho đơn hàng #${orderID}`;
                 modalWarehouseId.value = ''; // Reset warehouse selection
                 console.log('[DEBUG] Modal initialized:', {
@@ -322,7 +323,7 @@
             const data = {
                 warehouseID: parsedWarehouseID,
                 orderID: parsedOrderID,
-                stockOutDate: modalStockOutDate.value,
+                stockOutDate: new Date().toISOString(), // Send current date and time in ISO format
                 note: modalNote.value.trim() || null
             };
             console.log('[DEBUG] StockOut data prepared for submission:', JSON.stringify(data, null, 2));
@@ -335,11 +336,6 @@
             if (!data.orderID || isNaN(data.orderID)) {
                 console.warn('[WARN] Invalid orderID:', orderValue);
                 alert('Lỗi: Đơn hàng không hợp lệ.');
-                return;
-            }
-            if (!data.stockOutDate) {
-                console.warn('[WARN] Invalid stockOutDate:', modalStockOutDate.value);
-                alert('Vui lòng chọn ngày xuất kho.');
                 return;
             }
 
