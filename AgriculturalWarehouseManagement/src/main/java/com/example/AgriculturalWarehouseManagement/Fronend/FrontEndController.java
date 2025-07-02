@@ -36,10 +36,6 @@ public class FrontEndController {
         return "FrontEnd/Home/cart";
     }
 
-    @RequestMapping("/seller-dashboard")
-    public String sellerDashboard() {
-        return "FrontEnd/Seller/seller-dashboard";
-    }
 
     @RequestMapping("/seller-become")
     public String sellerBecome() {

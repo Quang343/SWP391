@@ -1,6 +1,7 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.Seller;
 
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller.ProductDetailEditResponseDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller.ProductDetailResponseDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller.ProductDetail_SellerDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.CategoryWeight;
@@ -64,12 +65,24 @@ public class ProductDetail_SellerController {
         return ResponseEntity.ok(list);
     }
 
-    // ✅ Lấy chi tiết theo id
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         ProductDetail detail = productDetailService.findById(id);
-        return ResponseEntity.ok(detail);
+
+        ProductDetailEditResponseDTO dto = ProductDetailEditResponseDTO.builder()
+                .id(detail.getProductDetailId())
+                .productName(detail.getProductID().getName())
+                .weight(detail.getCategoryWeightID().getWeight()) // ✅ đóng ngoặc ()
+                .unit(detail.getCategoryWeightID().getUnit())     // ✅ đóng ngoặc ()
+                .price(detail.getPrice())
+                .expiry(detail.getExpiry())
+                .status(detail.getStatus().name())
+                .build();
+
+        return ResponseEntity.ok(dto);
     }
+
+
 
     // ✅ Lấy danh sách status để load dropdown
     @GetMapping("/statuses")

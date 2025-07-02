@@ -233,7 +233,7 @@
         // Populate Batch dropdown
         function populateBatchDropdown(selectElement, selectedId) {
             $.ajax({
-                url: '/api/product-batches',
+                url: '/AgriculturalWarehouseManagementApplication/api/product-batches',
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -260,7 +260,7 @@
         // Load Adjustments
         function loadAdjustments() {
             $.ajax({
-                url: '/api/adjustments',
+                url: '/AgriculturalWarehouseManagementApplication/api/adjustments',
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -272,7 +272,7 @@
                     }
 
                     $.ajax({
-                        url: '/api/product-batches',
+                        url: '/AgriculturalWarehouseManagementApplication/api/product-batches',
                         method: 'GET',
                         dataType: 'json',
                         success: function(batches) {
@@ -390,7 +390,7 @@
             };
 
             $.ajax({
-                url: '/api/adjustments/' + adjustmentId,
+                url: '/AgriculturalWarehouseManagementApplication/api/adjustments/' + adjustmentId,
                 method: 'PUT',
                 contentType: 'application/json',
                 data: JSON.stringify(formData),
@@ -417,7 +417,7 @@
             }
 
             $.ajax({
-                url: '/api/adjustments/' + adjustmentId,
+                url: '/AgriculturalWarehouseManagementApplication/api/adjustments/' + adjustmentId,
                 method: 'DELETE',
                 headers: { 'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content') },
                 success: function() {

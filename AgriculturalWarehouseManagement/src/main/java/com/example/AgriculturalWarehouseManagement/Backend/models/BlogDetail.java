@@ -1,6 +1,7 @@
 package com.example.AgriculturalWarehouseManagement.Backend.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "blogdetail")
@@ -18,6 +19,7 @@ public class BlogDetail {
     @Column(name = "thumbnail")
     private String thumbnail;
 
+    @NotBlank(message = "Nội dung chi tiết không được để trống")
     @Column(name = "detailcontent")
     private String detailContent;
 

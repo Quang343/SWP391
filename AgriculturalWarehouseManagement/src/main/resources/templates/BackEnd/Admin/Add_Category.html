@@ -316,7 +316,7 @@
         errorDiv.textContent = '';
 
         try {
-            const response = await axios.post("/admin/saveCategory", formData, {
+            const response = await axios.post("/AgriculturalWarehouseManagementApplication/admin/saveCategory", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -326,7 +326,7 @@
             const successMsg = response.data.message || "Thêm thành công";
             showModal('success', successMsg);
             setTimeout(() => {
-                window.location.href = '/admin/categories';
+                window.location.href = '/AgriculturalWarehouseManagementApplication/admin/categories';
             }, 2000);
 
         } catch (error) {

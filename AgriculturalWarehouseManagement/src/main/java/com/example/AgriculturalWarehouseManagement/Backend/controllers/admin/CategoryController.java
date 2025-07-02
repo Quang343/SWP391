@@ -5,6 +5,10 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.
 import com.example.AgriculturalWarehouseManagement.Backend.models.Category;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
@@ -24,10 +29,28 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping("/admin/categories")
-    public String adminCategory(Model model) {
-        List<String> status = new ArrayList<>(Arrays.asList("ACTIVE", "INACTIVE"));
-        List<Category> categories = categoryService.findCategoryByStatusIn(status);
+    public String adminCategory(Model model,
+                                @RequestParam("page") Optional<String> page) {
+//        List<String> status = new ArrayList<>(Arrays.asList("ACTIVE", "INACTIVE"));
+//        List<Category> categories = categoryService.findCategoryByStatusIn(status);
+        int pageNumber = 1;
+        try{
+            if (page.isPresent()) {
+                pageNumber = Integer.parseInt(page.get());
+            }
+            else{
+                //pageNumber = 1
+            }
+        }catch (Exception e){
+            //pageNumber = 1
+            //Handle exception
+        }
+        Pageable pageable = PageRequest.of(pageNumber - 1, 1);
+        Page<Category> categoryPage = categoryService.findAll(pageable);
+        List<Category> categories = categoryPage.getContent();
         model.addAttribute("categories", categories);
+        model.addAttribute("currentPage", pageNumber);
+        model.addAttribute("totalPages", categoryPage.getTotalPages());
         return "BackEnd/Admin/Category";
     }
 
@@ -85,7 +108,7 @@ public class CategoryController {
 
     public void deleteFile(String fileName){
         try{
-            java.nio.file.Path filePath = Paths.get("uploads/category").resolve(fileName);
+            Path filePath = Paths.get(uploadDir, "Admin").resolve(fileName);
             Files.deleteIfExists(filePath);
         }catch (Exception e){
             System.err.println("Failed to delete old file: " + e.getMessage());
@@ -120,6 +143,9 @@ public class CategoryController {
         return ResponseEntity.ok(Map.of("message", "Category created successfully"));
     }
 
+    @Value("${app.upload.product-dir}")
+    private String uploadDir;
+
     private String storeFile(MultipartFile file) throws IOException {
         if (file.getOriginalFilename() == null) {
             throw new IOException("Empty file name");
@@ -130,12 +156,12 @@ public class CategoryController {
         //Đường dẫn đến thư mục mà bạn muốn lưu file
 //        java.nio.file.Path uploadDir = Paths.get("src/main/resources/static/Backend/assets/images/category");
         //Kiểm tra và tạo nếu thư mục chưa tồn tại
-        java.nio.file.Path uploadDir = Paths.get("uploads/category");
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectories(uploadDir);
+        Path uploadPath = Paths.get(uploadDir, "Admin");
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
         }
         //Đường dẫn đầy đủ đến file
-        java.nio.file.Path destination = Paths.get(uploadDir.toString(), uniqueFileName);
+        Path destination = uploadPath.resolve(uniqueFileName);
         //Sao chép file vào thư mục đích
         Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
         return uniqueFileName;

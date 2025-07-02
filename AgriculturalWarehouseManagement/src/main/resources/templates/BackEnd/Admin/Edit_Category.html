@@ -109,7 +109,7 @@
                                                                 <div id="preview-image-container">
                                                                     <img id="preview-image"
                                                                          th:if="${categoryDTO.getImageUrl() != null}"
-                                                                         th:src="@{'/uploads/category/' + ${categoryDTO.getImageUrl()}}"
+                                                                         th:src="@{'/admin/' + ${categoryDTO.getImageUrl()}}"
                                                                          class="img-thumbnail" alt="Current Image"
                                                                          style="width: 150px; height: 150px; object-fit: cover;">
                                                                 </div>
@@ -358,7 +358,7 @@
             const successMsg = response.data.message || "Cập nhật thành công";
             showModal('success', successMsg);
             setTimeout(() => {
-                window.location.href = '/admin/categories';
+                window.location.href = '/AgriculturalWarehouseManagementApplication/admin/categories';
             }, 2000);
 
         } catch (error) {

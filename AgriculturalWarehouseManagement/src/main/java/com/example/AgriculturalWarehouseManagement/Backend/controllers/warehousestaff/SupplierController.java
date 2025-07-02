@@ -5,8 +5,12 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.wareho
 import com.example.AgriculturalWarehouseManagement.Backend.models.Suppliers;
 import com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.Files;
@@ -32,7 +36,33 @@ public class SupplierController {
 
     private static final Logger LOGGER = Logger.getLogger(SupplierController.class.getName());
 
-    private static final String UPLOAD_DIR = "AgriculturalWarehouseManagement/src/main/resources/static/BackEnd/assets/imgproject/";
+    private static final String UPLOAD_DIR = "D:/Uploads/Warehouse/";
+
+
+    // Lấy tất cả nhà cung cấp với phân trang (API mới)
+    @GetMapping("/paginated")
+    @ResponseBody
+    public Page<Suppliers> getPaginatedSuppliers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Suppliers> supplierPage = supplierService.getPaginatedSuppliers(page, size); // Use service method directly
+        return supplierPage;
+    }
+
+    // Hiển thị trang danh sách nhà cung cấp với phân trang (Thymeleaf)
+    @GetMapping("/admin/suppliers")
+    public String listSuppliers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            Model model) {
+        Page<Suppliers> supplierPage = supplierService.getPaginatedSuppliers(page, size);
+        model.addAttribute("suppliers", supplierPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", supplierPage.getTotalPages());
+        model.addAttribute("totalItems", supplierPage.getTotalElements());
+        return "BackEnd/WareHouse/supplier";
+    }
 
     private String validateContactInfo(String contactInfo) {
         // Kiểm tra số điện thoại: 10 chữ số, bắt đầu bằng 0

@@ -1,14 +1,11 @@
 package com.example.AgriculturalWarehouseManagement.Backend.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -17,10 +14,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Table(name = "User")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userid")
-    private Long userId;
+    @Column(name = "userID")
+    private int userId;
 
     @ManyToOne()
     @JoinColumn(name = "roleid")
@@ -32,16 +30,16 @@ public class User {
     @Column(name = "fullname", length = 255)
     private String fullName;
 
-    @Column(length = 255)
+    @Column(name = "image", length = 255)
     private String image;
 
-    @Column(length = 255, nullable = false)
+    @Column(length = 255)
     private String password;
 
     @Column(length = 100)
     private String email;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 20)
     private String phone;
 
     @Column(length = 255)
@@ -50,30 +48,38 @@ public class User {
     @Column(length = 10)
     private String gender;
 
-    @Column(length = 20, nullable = false)
-    private String status; // e.g., Ban, Active, Inactive
+    @Column(length = 20)
+    private String status; // e.g. Active, Inactive
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "dob")
     private LocalDate dob;
 
     @Column(name = "createdat")
     private LocalDateTime createdAt;
 
-    @Column(length = 10, nullable = false)
+    @Column(length = 10)
     private String otp;
 
     @Column(name = "lasttimeupdatepass")
     private LocalDateTime lastTimeUpdatePass;
 
+    @Column(name = "googleid", length = 255)
+    private String googleID;
+
+    @Column(name = "statusgg", length = 255)
+    private String statusGG;
+
     @PrePersist
-    protected void onCreate() {
+    protected void onCreate(){
         this.createdAt = LocalDateTime.now();
-        this.lastTimeUpdatePass = LocalDateTime.now();
     }
 
     @PreUpdate
-    protected void onUpdate() {
+    protected void onUpdate(){
         this.lastTimeUpdatePass = LocalDateTime.now();
     }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MyAddressBook> myAddressBooks;
 
 }

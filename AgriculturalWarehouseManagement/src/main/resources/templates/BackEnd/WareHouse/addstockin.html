@@ -245,7 +245,7 @@
 
         // Load Suppliers
         $.ajax({
-            url: 'http://localhost:8080/api/suppliers',
+            url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/suppliers',
             method: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -267,7 +267,7 @@
 
         // Load Warehouses
         $.ajax({
-            url: 'http://localhost:8080/api/warehouses',
+            url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/warehouses',
             method: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -290,7 +290,7 @@
         // Load Product Details for dropdown
         function loadProductDetails(selectElement, rowIndex) {
             $.ajax({
-                url: '/api/product-details',
+                url: '/AgriculturalWarehouseManagementApplication/api/product-details',
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -318,7 +318,7 @@
         // Load Batches for dropdown (chỉ lấy batch chưa liên kết với StockIn)
         function loadAvailableBatches(selectElement, rowIndex) {
             $.ajax({
-                url: '/api/product-batches/available',
+                url: '/AgriculturalWarehouseManagementApplication/api/product-batches/available',
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -559,7 +559,7 @@
             console.log('Dữ liệu Details chuẩn bị gửi:', stockInDetails);
             console.log('Dữ liệu New Batches chuẩn bị gửi:', newBatches);
 
-            fetch('http://localhost:8080/api/stockins/with-details', {
+            fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/with-details', {
                 method: 'POST',
                 body: formData
             })

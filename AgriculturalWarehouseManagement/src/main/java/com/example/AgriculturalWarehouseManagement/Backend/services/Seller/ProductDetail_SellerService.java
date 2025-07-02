@@ -40,13 +40,14 @@ public class ProductDetail_SellerService implements IProductDetail_SellerService
                 });
 
         // Kiểm tra nếu ProductDetail với Product + Weight này đã tồn tại
+        String formattedWeight = dto.getWeight() % 1 == 0
+                ? String.valueOf(dto.getWeight().intValue())
+                : dto.getWeight().toString();
+
         boolean existsDetail = productDetailRepository.existsByProductIDAndCategoryWeightID(product, weight);
         if (existsDetail) {
-            String formattedWeight = dto.getWeight() % 1 == 0 ? String.valueOf(dto.getWeight().intValue()) : dto.getWeight().toString();
-
             throw new RuntimeException("Đã tồn tại Product Detail với trọng lượng "
                     + formattedWeight + " " + dto.getUnit() + " cho sản phẩm này.");
-
         }
 
         // Tạo ProductDetail mới
@@ -55,9 +56,10 @@ public class ProductDetail_SellerService implements IProductDetail_SellerService
                 .categoryWeightID(weight)
                 .price(dto.getPrice())
                 .expiry(dto.getExpiry())
-                .detailName(dto.getWeight() + dto.getUnit())
+                .detailName(formattedWeight + " " + dto.getUnit())
                 .status(ProductDetailStatus.valueOf(dto.getStatus()))
                 .build();
+
 
         return productDetailRepository.save(detail);
     }
@@ -76,8 +78,14 @@ public class ProductDetail_SellerService implements IProductDetail_SellerService
         weight.setUnit(dto.getUnit());
         categoryWeightRepository.save(weight);
 
-        detail.setDetailName(dto.getWeight() + dto.getUnit());
+        // Format lại chi tiết tên
+        String formattedWeight = dto.getWeight() % 1 == 0
+                ? String.valueOf(dto.getWeight().intValue())
+                : dto.getWeight().toString();
+        detail.setDetailName(formattedWeight + " " + dto.getUnit());
+
         return productDetailRepository.save(detail);
+
     }
 
     @Override

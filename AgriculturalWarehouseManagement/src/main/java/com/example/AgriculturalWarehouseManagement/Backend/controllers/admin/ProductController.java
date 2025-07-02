@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,9 @@ import java.util.*;
 //@RestController
 @RequiredArgsConstructor
 public class ProductController {
+
+    @Value("${app.upload.product-dir}")
+    private String uploadDir;
 
     private final ProductService productService;
     private final CategoryService categoryService;
@@ -201,6 +205,8 @@ public class ProductController {
 //        return ResponseEntity.ok(products);
 //    }
 
+
+
     @PostMapping(value = "/admin/update_product/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateProductWithImages(
             @PathVariable Long id,
@@ -286,7 +292,8 @@ public class ProductController {
 
     public void deleteFile(String fileName){
         try{
-            Path filePath = Paths.get("uploads/product").resolve(fileName);
+            Path filePath = Paths.get(uploadDir, "Admin").resolve(fileName);
+            System.out.println("Deleting file: " + filePath.toAbsolutePath());
             Files.deleteIfExists(filePath);
         }catch (Exception e){
             System.err.println("Failed to delete old file: " + e.getMessage());
@@ -299,11 +306,11 @@ public class ProductController {
         }
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         String uniqueFileName = UUID.randomUUID().toString() + "." + fileName;
-        Path uploadDir = Paths.get("uploads/product");
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectories(uploadDir);
+        Path uploadPath = Paths.get(uploadDir, "Admin");
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
         }
-        Path destination = uploadDir.resolve(uniqueFileName);
+        Path destination = uploadPath.resolve(uniqueFileName);
         Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
         return uniqueFileName;
     }

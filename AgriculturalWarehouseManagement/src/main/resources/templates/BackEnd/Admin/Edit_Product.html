@@ -197,11 +197,11 @@
                                                            id="fileInput" multiple accept="image/*">
                                                     <div id="previewContainer" class="d-flex flex-wrap">
                                                         <div th:each="i : ${images}" class="previewImageItem position-relative m-2"
-                                                             th:data-url="@{'/uploads/product/' + ${i.imageUrl}}"
+                                                             th:data-url="@{'/admin/' + ${i.imageUrl}}"
                                                              style="width: 100px; height: 100px;">
                                                             <!-- Ảnh sản phẩm -->
                                                             <img class="img-thumbnail w-100 h-100"
-                                                                 th:src="@{'/uploads/product/' + ${i.imageUrl}}"
+                                                                 th:src="@{'/admin/' + ${i.imageUrl}}"
                                                                  style="object-fit: cover; border-radius: 8px;"/>
 
                                                             <!-- Nút xoá -->
@@ -477,7 +477,7 @@
             }
 
             showModal('success', 'Cập nhật thành công!');
-            setTimeout(() => window.location.href = '/admin/products', 2000);
+            setTimeout(() => window.location.href = '/AgriculturalWarehouseManagementApplication/admin/products', 2000);
 
         } catch (err) {
             console.error("Lỗi khi gửi:", err);
