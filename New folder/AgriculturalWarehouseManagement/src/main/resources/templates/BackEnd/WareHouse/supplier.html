@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
+<body>
+<!-- tap on top start -->
+<div class="tap-top">
+    <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <!-- Page Header Start-->
+    <div th:replace="~{BackEnd/fragments/WareHouse/header::header}"></div>
+    <!-- Page Header Ends-->
+
+    <!-- Page Body Start -->
+    <div class="page-body-wrapper">
+        <!-- Page Sidebar Start-->
+        <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
+        <!-- Page Sidebar Ends-->
+
+        <!-- Container-fluid starts-->
+        <div class="page-body">
+            <!-- All User Table Start -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card card-table">
+                            <div class="card-body">
+                                <div class="title-header option-title">
+                                    <h5>All Supplier</h5>
+                                    <form class="d-inline-flex">
+                                        <a th:href="@{/warehouse/addsupplier}" class="align-items-center btn btn-theme d-flex">
+                                            <i data-feather="plus"></i>Add New
+                                        </a>
+                                    </form>
+                                </div>
+
+                                <div class="table-responsive table-product">
+                                    <table class="table all-package theme-table" id="table_id">
+                                        <thead>
+                                        <tr>
+                                            <th>Logo</th>
+                                            <th>Name</th>
+                                            <th>ContactInformation</th>
+                                            <th>Product</th>
+                                            <th>Option</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="supplier-table-body">
+                                        <tr id="no-data-row">
+                                            <td colspan="5" class="text-center">No data available in table</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Pagination Controls -->
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination justify-content-center mt-3" id="pagination-controls">
+                                        <!-- Pagination links will be dynamically inserted here -->
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- All User Table Ends-->
+
+            <div class="container-fluid">
+                <!-- footer start-->
+                <footer class="footer">
+                    <div class="row">
+                        <div class="col-md-12 footer-copyright text-center">
+                            <p mb-0>Copyright 2022 © Fastkart theme by pixelstrap</p>
+                        </div>
+                    </div>
+                </footer>
+                <!-- footer end-->
+            </div>
+        </div>
+        <!-- Container-fluid end -->
+    </div>
+    <!-- Page Body End -->
+
+    <!-- Modal Start -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                    <p>Are you sure you want to log out?</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="button-box">
+                        <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                        <button type="button" th:onclick="|window.location='@{/backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal End -->
+
+    <!-- Delete Modal Box Start -->
+    <div class="modal fade theme-modal remove-coupon" id="exampleModalToggle" aria-hidden="true" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header d-block text-center">
+                    <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure ?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="remove-box">
+                        <p>The permission for the use/group, preview is inherited from the object, object will create a new permission for this object</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade theme-modal remove-coupon" id="exampleModalToggle2" aria-hidden="true" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="exampleModalLabel12">Done!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="remove-box text-center">
+                        <div class="wrapper">
+                            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                            </svg>
+                        </div>
+                        <h4 class="text-content">It's Removed.</h4>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Product details -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalLabel">Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="product-info">
+                        <p><strong>Product Name:</strong> <span id="product-name">Example Product</span></p>
+                        <p><strong>Product Price:</strong> <span id="product-price">$100.00</span></p>
+                        <p><strong>Product Description:</strong> <span id="product-description">This is a sample description.</span></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Supplier Modal -->
+    <div class="modal fade" id="updateSupplierModal" tabindex="-1" aria-labelledby="updateSupplierModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateSupplierModalLabel">Update Supplier</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateSupplierForm">
+                        <input type="hidden" id="supplierID">
+                        <div class="mb-3">
+                            <label for="supplierName" class="form-label">Supplier Name</label>
+                            <input type="text" class="form-control" id="supplierName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactInfo" class="form-label">Contact Information</label>
+                            <input type="text" class="form-control" id="contactInfo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="logo" class="form-label">Logo</label>
+                            <input type="file" class="form-control" id="logo" accept="image/*">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveSupplierBtn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- page-wrapper End-->
+
+<!-- Delete Modal Box End -->
+<!-- latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- Bootstrap js -->
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+
+<!-- feather icon js -->
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+
+<!-- scrollbar simplebar js -->
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+
+<!-- Sidebar js -->
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+
+<!-- customizer js -->
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+
+<!-- Plugins js -->
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+
+<!-- Data table js -->
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let currentPage = 0; // 0-based internally
+        const pageSize = 5;
+
+        function ensureElements() {
+            let tableBody = document.querySelector('#supplier-table-body');
+            let noDataRow = document.querySelector('#no-data-row');
+
+            if (!tableBody) {
+                const table = document.querySelector('#table_id');
+                if (table) {
+                    tableBody = document.createElement('tbody');
+                    tableBody.id = 'supplier-table-body';
+                    table.appendChild(tableBody);
+                } else {
+                    return null;
+                }
+            }
+
+            if (!noDataRow) {
+                noDataRow = document.createElement('tr');
+                noDataRow.id = 'no-data-row';
+                noDataRow.innerHTML = '<td colspan="5" class="text-center">No data available in table</td>';
+                tableBody.appendChild(noDataRow);
+            }
+
+            return { tableBody, noDataRow };
+        }
+
+        function updateURL(page) {
+            history.pushState({}, '', `?page=${page + 1}`); // 1-based for URL
+        }
+
+        function fetchSuppliers(page = 0) {
+            currentPage = page;
+            updateURL(page);
+            const { tableBody, noDataRow } = ensureElements();
+            if (!tableBody || !noDataRow) return;
+
+            fetch(`/AgriculturalWarehouseManagementApplication/api/suppliers/paginated?page=${page}&size=${pageSize}`)
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data || !data.content || typeof data.totalPages === 'undefined' || typeof data.number === 'undefined') return;
+                    tableBody.innerHTML = '';
+
+                    if (data.content && data.content.length > 0) {
+                        noDataRow.style.display = 'none';
+                        data.content.forEach(supplier => {
+                            const row = document.createElement('tr');
+                            row.setAttribute('data-id', supplier.supplierID);
+
+                            const imageCell = document.createElement('td');
+                            const imageDiv = document.createElement('div');
+                            imageDiv.classList.add('table-image');
+                            const img = document.createElement('img');
+                            img.src = supplier.logo ;
+                            img.classList.add('img-fluid');
+                            img.alt = 'Supplier Logo';
+                            imageDiv.appendChild(img);
+                            imageCell.appendChild(imageDiv);
+                            row.appendChild(imageCell);
+
+                            const nameCell = document.createElement('td');
+                            const nameDiv = document.createElement('div');
+                            nameDiv.classList.add('user-name');
+                            nameDiv.innerHTML = `<span>${supplier.supplierName}</span>`;
+                            nameCell.appendChild(nameDiv);
+                            row.appendChild(nameCell);
+
+                            const emailCell = document.createElement('td');
+                            emailCell.innerText = supplier.contactInfo || 'Chưa có email';
+                            row.appendChild(emailCell);
+
+                            const productCell = document.createElement('td');
+                            const productIcon = document.createElement('i');
+                            productIcon.classList.add('ri-product-hunt-line');
+                            productIcon.style.cursor = 'pointer';
+                            productIcon.addEventListener('click', function () {
+                                document.getElementById('product-name').innerText = 'Example Product';
+                                document.getElementById('product-price').innerText = '$100.00';
+                                document.getElementById('product-description').innerText = 'This is a sample description.';
+                                new bootstrap.Modal(document.getElementById('productModal')).show();
+                            });
+                            productCell.appendChild(productIcon);
+                            row.appendChild(productCell);
+
+                            const actionsCell = document.createElement('td');
+                            actionsCell.innerHTML = `
+                            <ul>
+                                <li><a href="order-detail.html"><i class="ri-eye-line"></i></a></li>
+                                <li><a href="javascript:void(0)" class="edit-btn" data-id="${supplier.supplierID}" data-name="${supplier.supplierName}" data-contact="${supplier.contactInfo || ''}" data-logo="${supplier.logo || ''}"><i class="ri-pencil-line"></i></a></li>
+                                <li><a href="javascript:void(0)" class="delete-btn" data-id="${supplier.supplierID}" data-bs-toggle="modal" data-bs-target="#exampleModalToggle"><i class="ri-delete-bin-line"></i></a></li>
+                            </ul>
+                        `;
+                            row.appendChild(actionsCell);
+
+                            tableBody.appendChild(row);
+                        });
+                    } else {
+                        noDataRow.style.display = '';
+                    }
+
+                    renderPagination(data.totalPages, data.number);
+                })
+                .catch(error => {
+                    if (error instanceof SyntaxError) console.error('Syntax error in response:', error.message);
+                });
+        }
+
+        function renderPagination(totalPages, currentPage) {
+            const paginationControls = document.querySelector('#pagination-controls');
+            paginationControls.innerHTML = '';
+
+            totalPages = typeof totalPages === 'number' && totalPages > 0 ? totalPages : 0;
+            currentPage = typeof currentPage === 'number' && currentPage >= 0 ? currentPage : 0;
+
+            // Pre button
+            const addBtn = (label, page, disabled = false, active = false) => {
+                const li = document.createElement('li');
+                li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
+                li.innerHTML = `<a class="page-link" href="javascript:void(0)" data-page="${page}">${label}</a>`;
+                paginationControls.appendChild(li);
+            };
+
+            addBtn('Previous', currentPage - 1, currentPage === 0);
+
+            if (totalPages <= 1) {
+                addBtn(1, 0, false, true);
+            } else {
+                addBtn(1, 0, false, currentPage === 0);
+
+                if (currentPage <= 2) {
+                    // Pages 2, 3, 4
+                    for (let i = 1; i < Math.min(4, totalPages - 2); i++) {
+                        addBtn(i + 1, i, false, currentPage === i);
+                    }
+                } else {
+                    // Pages: currentPage -1, currentPage, currentPage +1
+                    if (currentPage - 1 > 1) addBtn(currentPage, currentPage - 1);
+                    addBtn(currentPage + 1, currentPage, true);
+                    if (currentPage + 1 < totalPages - 2) addBtn(currentPage + 2, currentPage + 1);
+                }
+
+                if (currentPage < totalPages - 3) {
+                    const ellipsis = document.createElement('li');
+                    ellipsis.className = 'page-item disabled';
+                    ellipsis.innerHTML = `<a class="page-link">...</a>`;
+                    paginationControls.appendChild(ellipsis);
+                }
+
+                // Last two pages
+                addBtn(totalPages - 1, totalPages - 2, false, currentPage === totalPages - 2);
+                addBtn(totalPages, totalPages - 1, false, currentPage === totalPages - 1);
+            }
+
+            addBtn('Next', currentPage + 1, currentPage === totalPages - 1);
+
+            // Handle click
+            paginationControls.onclick = (e) => {
+                const target = e.target.closest('.page-link');
+                if (!target) return;
+                const page = parseInt(target.getAttribute('data-page'));
+                if (!isNaN(page) && page >= 0 && page < totalPages) {
+                    fetchSuppliers(page);
+                }
+            };
+        }
+
+        // Initial fetch with URL update
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialPage = parseInt(urlParams.get('page')) || 1;
+        if (initialPage > 0) currentPage = initialPage - 1; // Convert 1-based URL to 0-based
+        fetchSuppliers(currentPage);
+
+        document.addEventListener('click', function (event) {
+            const deleteBtn = event.target.closest('.delete-btn');
+            const editBtn = event.target.closest('.edit-btn');
+
+            if (deleteBtn) {
+                const supplierID = deleteBtn.getAttribute('data-id');
+                const modal = document.getElementById('exampleModalToggle');
+                if (modal) modal.setAttribute('data-supplier-id', supplierID);
+            }
+
+            if (editBtn) {
+                const supplierID = editBtn.getAttribute('data-id');
+                const supplierName = editBtn.getAttribute('data-name');
+                const contactInfo = editBtn.getAttribute('data-contact');
+                const logo = editBtn.getAttribute('data-logo');
+
+                const supplierIdInput = document.getElementById('supplierID');
+                const supplierNameInput = document.getElementById('supplierName');
+                const contactInfoInput = document.getElementById('contactInfo');
+                const logoInput = document.getElementById('logo');
+
+                if (supplierIdInput && supplierNameInput && contactInfoInput && logoInput) {
+                    supplierIdInput.value = supplierID;
+                    supplierNameInput.value = supplierName;
+                    contactInfoInput.value = contactInfo || '';
+                    logoInput.value = '';
+                } else {
+                    alert('Không thể mở modal cập nhật.');
+                }
+
+                try {
+                    new bootstrap.Modal(document.getElementById('updateSupplierModal')).show();
+                } catch (error) {
+                    alert('Không thể mở modal cập nhật.');
+                }
+            }
+        });
+
+        const confirmDeleteBtn = document.querySelector('#exampleModalToggle .btn.btn-animation.btn-md.fw-bold[data-bs-toggle="modal"]');
+        if (confirmDeleteBtn) {
+            confirmDeleteBtn.addEventListener('click', function () {
+                const modal = document.getElementById('exampleModalToggle');
+                const supplierID = modal.getAttribute('data-supplier-id');
+
+                if (!supplierID) return;
+
+                fetch('/AgriculturalWarehouseManagementApplication/api/suppliers/' + supplierID, { method: 'DELETE' })
+                    .then(response => {
+                        if (response.ok) {
+                            document.querySelector(`tr[data-id="${supplierID}"]`)?.remove();
+                            const doneModal = new bootstrap.Modal(document.getElementById('exampleModalToggle2'));
+                            doneModal.show();
+                            doneModal._element.addEventListener('hidden.bs.modal', function () {
+                                document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                                document.body.classList.remove('modal-open');
+                                document.body.style.overflow = '';
+                                if (!document.querySelector('#supplier-table-body tr')) {
+                                    document.getElementById('no-data-row').style.display = '';
+                                }
+                                fetchSuppliers(currentPage);
+                            }, { once: true });
+                        } else {
+                            alert('Không thể xóa nhà cung cấp.');
+                        }
+                    })
+                    .catch(() => {});
+            });
+        }
+
+        function updateSupplier(supplierID, supplierName, contactInfo, logoFile) {
+            const normalizedName = supplierName.trim().replace(/\s+/g, ' ');
+            const normalizedContact = contactInfo.trim();
+
+            if (!normalizedName || !normalizedName.match(/^[a-zA-Z\s\u00C0-\u00FF\u1EA0-\u1EFF]+$/) || !normalizedContact) {
+                alert('Vui lòng nhập thông tin hợp lệ.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('supplierName', normalizedName);
+            formData.append('contactInfo', normalizedContact);
+            if (logoFile) formData.append('logo', logoFile);
+
+            fetch('/AgriculturalWarehouseManagementApplication/api/suppliers/' + supplierID, { method: 'PUT', body: formData })
+                .then(response => {
+                    if (!response.ok) throw response.json();
+                    return response.json();
+                })
+                .then(() => {
+                    bootstrap.Modal.getInstance(document.getElementById('updateSupplierModal')).hide();
+                    document.getElementById('logo').value = '';
+                    alert('Cập nhật thành công!');
+                    fetchSuppliers(currentPage);
+                })
+                .catch(error => {
+                    alert(error.status === 409 ? 'Tên hoặc thông tin đã tồn tại.' :
+                        error.status === 404 ? 'Không tìm thấy nhà cung cấp.' :
+                            error.status === 400 ? 'Dữ liệu không hợp lệ.' : 'Lỗi không xác định.');
+                });
+        }
+
+        const saveSupplierBtn = document.getElementById('saveSupplierBtn');
+        if (saveSupplierBtn) saveSupplierBtn.addEventListener('click', () => {
+            const supplierID = document.getElementById('supplierID').value;
+            const supplierName = document.getElementById('supplierName').value;
+            const contactInfo = document.getElementById('contactInfo').value;
+            const logoFile = document.getElementById('logo').files[0];
+            updateSupplier(supplierID, supplierName, contactInfo, logoFile);
+        });
+    });
+</script>
+</body>
+</html>
