@@ -52,5 +52,11 @@ public class Blog {
     @OneToOne(mappedBy = "blog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private BlogDetail blogDetail;
 
+    // Thêm sau
+//    @ManyToOne
+//    @JoinColumn(name = "userid")
+//    private User user;
+
+
 }
 

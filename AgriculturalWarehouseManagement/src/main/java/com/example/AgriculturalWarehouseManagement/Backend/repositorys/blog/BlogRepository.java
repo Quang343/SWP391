@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface BlogRepository extends JpaRepository<Blog, Integer> {
 
-List<Blog> findAllByStatus(BlogStatus status);
+    List<Blog> findAllByStatus(BlogStatus status);
 
     @Query("SELECT b FROM Blog b LEFT JOIN FETCH b.blogDetail WHERE b.blogID = :id")
     Blog findByIdWithDetail(@Param("id") Integer id);
@@ -28,8 +28,8 @@ List<Blog> findAllByStatus(BlogStatus status);
             nativeQuery = true)
     List<Object[]> findTopNByStatus(@Param("status") BlogStatus status, @Param("count") int count);
 
-@Query("SELECT b FROM Blog b LEFT JOIN FETCH b.blogDetail WHERE b.status = :status")
-List<Blog> findAllActiveWithDetail(@Param("status") BlogStatus status);
+    @Query("SELECT b FROM Blog b LEFT JOIN FETCH b.blogDetail WHERE b.status = :status")
+    List<Blog> findAllActiveWithDetail(@Param("status") BlogStatus status);
 
 
     Page<Blog> findAllByStatus(BlogStatus status, Pageable pageable);
@@ -47,5 +47,15 @@ List<Blog> findAllActiveWithDetail(@Param("status") BlogStatus status);
                                        @Param("keyword") String keyword,
                                        Pageable pageable);
 
+    // User CRUD
+    // Lấy blog của 1 user cụ thể (kèm status nếu muốn)
+    @Query("SELECT b FROM Blog b LEFT JOIN FETCH b.blogDetail WHERE b.userID = :userId")
+    List<Blog> findByUserIdWithDetail(@Param("userId") Long userId);
+
+    // Nếu muốn phân trang + filter status
+    Page<Blog> findByUserIDAndStatusOrderByCreatedAtDesc(Long userId, BlogStatus status, Pageable pageable);
+
+    // Nếu chỉ cần lấy tất cả blog cá nhân (không phân trang)
+    List<Blog> findByUserID(Long userId);
 
 }

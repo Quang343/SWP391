@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +62,24 @@ public class BlogService {
     public Page<Blog> searchBlogs(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return blogRepository.searchByAuthorOrContent(BlogStatus.ACTIVE, keyword, pageable);
+    }
+
+
+    // User CRUD
+    // Lấy blog cá nhân (không phân trang)
+    public List<Blog> getBlogsByUser(Long userId) {
+        return blogRepository.findByUserIdWithDetail(userId);
+        // hoặc: return blogRepository.findByUserID(userId);
+    }
+
+    // Nếu muốn phân trang
+    public Page<Blog> getBlogsByUserPage(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return blogRepository.findByUserIDAndStatusOrderByCreatedAtDesc(userId, BlogStatus.ACTIVE, pageable);
+    }
+
+    public List<Blog> findByUserId(Long userId) {
+        return blogRepository.findByUserID(userId);
     }
 
 

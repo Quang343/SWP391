@@ -99,4 +99,14 @@ public class UserService implements IUserService{
     public List<User> findByStatusIsNot(String status) {
         return  userRepository.findByStatusIsNot(status);
     }
+
+
+    // Hoàng thêm
+    @Override
+    public User findByUsername(String username) {
+        // --- ADD: Hàm lấy User theo username (userName trong DB) ---
+        return userRepository.findByUserName(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+    }
+
 }

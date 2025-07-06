@@ -16,4 +16,9 @@ public interface IUserService {
     List<User> findAll();
     List<User> findByStatusIsNot(String status);
     boolean existsByPhone(String phone);
+
+    // Hoàng thêm
+    // --- ADD: Hàm tìm User theo username (userName) ---
+    User findByUsername(String username);
+
 }

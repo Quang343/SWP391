@@ -11,4 +11,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByPhone(String phone);
     Optional<User> findByPhone(String phone);
     List<User> findByStatusIsNot(String status);
+
+    // Hoàng Thêm
+    // --- ADD: Hàm tìm User theo username (userName) ---
+    Optional<User> findByUserName(String userName);
+
 }
