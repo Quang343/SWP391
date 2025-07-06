@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+
 @Controller
 //@RestController
 public class BlogController {
@@ -122,5 +123,8 @@ public class BlogController {
         return "FrontEnd/Home/blog-grid";
     }
 
-
+ @RequestMapping(path = {"/my-blog" , "/api/my-blog"})
+    public String myblog(){
+        return "FrontEnd/Home/my-blog";
+ }
 }

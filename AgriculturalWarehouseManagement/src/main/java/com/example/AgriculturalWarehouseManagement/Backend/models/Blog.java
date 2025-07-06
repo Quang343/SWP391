@@ -3,14 +3,16 @@ package com.example.AgriculturalWarehouseManagement.Backend.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
+@Getter
+@Setter
 @Table(name = "blog")
 public class Blog {
     @Id
@@ -38,95 +40,17 @@ public class Blog {
     @Column(name = "blogdateupdate")
     private Date blogDateUpdate;
 
+
+    @Enumerated(EnumType.STRING) // Sử dụng EnumType.STRING để lưu tên trạng thái dưới dạng chuỗi
     @Column(name = "status")
-    private String status;
+    private BlogStatus status;
 
     @Column(name = "author")
     private String author;
-
-
-    public Integer getBlogID() {
-        return blogID;
-    }
-
-    public void setBlogID(Integer blogID) {
-        this.blogID = blogID;
-    }
-
-    public Integer getUserID() {
-        return userID;
-    }
-
-    public void setUserID(Integer userID) {
-        this.userID = userID;
-    }
-
-    public Integer getBlogCategoryID() {
-        return blogCategoryID;
-    }
-
-    public void setBlogCategoryID(Integer blogCategoryID) {
-        this.blogCategoryID = blogCategoryID;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getBlogDateUpdate() {
-        return blogDateUpdate;
-    }
-
-    public void setBlogDateUpdate(Date blogDateUpdate) {
-        this.blogDateUpdate = blogDateUpdate;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
 
     // Liên kết 1-1 với BlogDetail (mappedBy phía BlogDetail)
     @OneToOne(mappedBy = "blog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private BlogDetail blogDetail;
 
-    public BlogDetail getBlogDetail() {
-        return blogDetail;
-    }
-
-    public void setBlogDetail(BlogDetail blogDetail) {
-        this.blogDetail = blogDetail;
-    }
 }
 

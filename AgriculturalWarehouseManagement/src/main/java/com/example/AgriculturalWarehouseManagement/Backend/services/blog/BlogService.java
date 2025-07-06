@@ -2,6 +2,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.services.blog;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.response.blog.BlogRecentDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Blog;
+import com.example.AgriculturalWarehouseManagement.Backend.models.BlogStatus;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.blog.BlogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,22 +26,19 @@ public class BlogService {
     }
 
     public List<Blog> getAllActiveBlogs() {
-        return blogRepository.findAllActiveWithDetail("Active");
+        return blogRepository.findAllActiveWithDetail(BlogStatus.ACTIVE);
     }
 
-//    public Blog getBlogById(Integer id) {
-//        return blogRepository.findById(id).orElse(null);
-//    }
 
     @Transactional(readOnly = true)
     public Blog getBlogById(Integer id) {
-        return blogRepository.findByIdWithDetail(id); // Chỉ cần gọi hàm này
+        return blogRepository.findByIdWithDetail(id);
     }
 
 
     // Thêm method này để lấy N bài viết mới nhất, ví dụ 4 bài
     public List<BlogRecentDTO> getRecentBlogs(int count) {
-        List<Object[]> results = blogRepository.findTopNByStatusOrderByCreatedAtDescWithThumbnail("Active", count);
+        List<Object[]> results = blogRepository.findTopNByStatus(BlogStatus.ACTIVE, count);
         List<BlogRecentDTO> dtos = new ArrayList<>();
         for (Object[] row : results) {
             BlogRecentDTO dto = new BlogRecentDTO();
@@ -57,11 +55,12 @@ public class BlogService {
 
     public Page<Blog> getActiveBlogsPage(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return blogRepository.findAllByStatusOrderByCreatedAtDesc("Active", pageable);
+        return blogRepository.findAllByStatusOrderByCreatedAtDesc(BlogStatus.ACTIVE, pageable);
     }
+
     public Page<Blog> searchBlogs(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return blogRepository.searchByAuthorOrContent("Active", keyword, pageable);
+        return blogRepository.searchByAuthorOrContent(BlogStatus.ACTIVE, keyword, pageable);
     }
 
 
