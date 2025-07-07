@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
 <style>
     /* Ensure table is scrollable horizontally if content overflows */
@@ -90,7 +90,6 @@
 
     /* Ensure footer is above pagination but below sidebar */
     .footer {
-
         z-index: 20 !important; /* Above pagination */
     }
 
@@ -148,7 +147,7 @@
     <!-- Page Body Start-->
     <div class="page-body-wrapper">
         <!-- Page Sidebar Start-->
-        <div th:replace="BackEnd/fragments/WareHouse/sidebar::sidebar"></div>
+        <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
         <!-- Page Sidebar Ends-->
 
         <!-- Container-fluid starts-->
@@ -159,18 +158,18 @@
                         <div class="card card-table">
                             <div class="card-body">
                                 <div class="title-header option-title">
-                                    <!-- Dòng 1: chỉ Adjustment List -->
+                                    <!-- Dòng 1: chỉ Danh Sách Điều Chỉnh -->
                                     <div class="first-line">
-                                        <h5>Adjustment List</h5>
+                                        <h5>Danh Sách Điều Chỉnh</h5>
                                     </div>
 
-                                    <!-- Dòng 2: Add Adjustment và Search bên phải -->
+                                    <!-- Dòng 2: Thêm Điều Chỉnh và Tìm Kiếm bên phải -->
                                     <div class="second-line" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
                                         <a th:href="@{/warehouse/addadjustment}" class="align-items-center btn btn-theme d-flex">
-                                            <i data-feather="plus"></i> Add Adjustment
+                                            <i data-feather="plus"></i> Thêm Điều Chỉnh
                                         </a>
                                         <div class="search-bar">
-                                            <input type="text" class="form-control" placeholder="Search..." id="searchInput">
+                                            <input type="text" class="form-control" placeholder="Tìm kiếm..." id="searchInput">
                                         </div>
                                     </div>
                                 </div>
@@ -179,13 +178,13 @@
                                         <table class="table all-package theme-table table-product" id="table_id">
                                             <thead>
                                             <tr>
-                                                <th>Adjustment ID</th>
-                                                <th>Batch ID</th>
-                                                <th>Quantity</th>
-                                                <th>Adjust Date</th>
-                                                <th>Reason</th>
-                                                <th>Type</th>
-                                                <th>Action</th>
+                                                <th>Mã Điều Chỉnh</th>
+                                                <th>Mã Lô Hàng</th>
+                                                <th>Số Lượng</th>
+                                                <th>Ngày Điều Chỉnh</th>
+                                                <th>Lý Do</th>
+                                                <th>Loại</th>
+                                                <th>Hành Động</th>
                                             </tr>
                                             </thead>
                                             <tbody id="adjustmentTableBody">
@@ -203,32 +202,23 @@
             </div>
             <!-- Container-fluid Ends-->
 
-            <div class="container-fluid">
-                <!-- footer start-->
-                <footer class="footer">
-                    <div class="row">
-                        <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+            <div th:replace="~{BackEnd/fragments/WareHouse/footer::footer}"></div>
         </div>
     </div>
 </div>
 <!-- page-wrapper End-->
 
-<!-- Modal Start -->
+<!-- Modal Đăng Xuất -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
-                <p>Are you sure you want to log out?</p>
+                <h5 class="modal-title" id="staticBackdropLabel">Đăng Xuất</h5>
+                <p>Bạn có chắc chắn muốn đăng xuất?</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="button-box">
-                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-                    <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">Không</button>
+                    <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Có</button>
                 </div>
             </div>
         </div>
@@ -236,43 +226,43 @@
 </div>
 <!-- Modal End -->
 
-<!-- Edit Adjustment Modal -->
+<!-- Modal Sửa Điều Chỉnh -->
 <div class="modal fade" id="editAdjustmentModal" tabindex="-1" aria-labelledby="editAdjustmentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editAdjustmentModalLabel">Edit Adjustment</h5>
+                <h5 class="modal-title" id="editAdjustmentModalLabel">Sửa Điều Chỉnh</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="editAdjustmentForm">
                     <input type="hidden" id="editAdjustmentId">
                     <div class="mb-3">
-                        <label for="editBatchId" class="form-label">Batch (Optional)</label>
+                        <label for="editBatchId" class="form-label">Lô Sản Phẩm (Tùy Chọn)</label>
                         <select class="form-select" id="editBatchId">
-                            <option value="">None</option>
+                            <option value="">Không chọn</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="editQuantity" class="form-label">Adjustment Quantity</label>
+                        <label for="editQuantity" class="form-label">Số Lượng Điều Chỉnh</label>
                         <input type="number" class="form-control" id="editQuantity" required>
                     </div>
                     <div class="mb-3">
-                        <label for="editReason" class="form-label">Reason</label>
+                        <label for="editReason" class="form-label">Lý Do</label>
                         <textarea class="form-control" id="editReason" rows="3"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="editAdjustmentType" class="form-label">Adjustment Type</label>
+                        <label for="editAdjustmentType" class="form-label">Loại Điều Chỉnh</label>
                         <select class="form-select" id="editAdjustmentType" required>
-                            <option value="Add">Add</option>
-                            <option value="Remove">Remove</option>
+                            <option value="Add">Nhập Thêm</option>
+                            <option value="Remove">Hao Hụt</option>
                         </select>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="saveEditAdjustment">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="saveEditAdjustment">Lưu Thay Đổi</button>
             </div>
         </div>
     </div>
@@ -283,19 +273,19 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header d-block text-center">
-                <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure?</h5>
+                <h5 class="modal-title w-100" id="exampleModalLabel22">Bạn Có Chắc Chắn?</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="remove-box">
-                    <p>Bạn có chắc chắn muốn xóa Adjustment này?</p>
+                    <p>Bạn có chắc chắn muốn xóa Điều Chỉnh này?</p>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
-                <button type="button" class="btn btn-animation btn-md fw-bold confirm-delete">Yes</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Không</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold confirm-delete">Có</button>
             </div>
         </div>
     </div>
@@ -305,7 +295,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel12">Done!</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel12">Hoàn Thành!</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
@@ -318,16 +308,19 @@
                             <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
                         </svg>
                     </div>
-                    <h4 class="text-content">It's Removed.</h4>
+                    <h4 class="text-content">Đã Xóa.</h4>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
 </div>
 <!-- Delete Modal Box End -->
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <!-- latest js -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
@@ -373,11 +366,11 @@
         try {
             const date = new Date(dateString);
             if (isNaN(date.getTime())) {
-                console.warn('[WARN] Invalid date:', dateString);
+                console.warn('[CẢNH BÁO] Ngày không hợp lệ:', dateString);
                 return 'N/A';
             }
             // Cộng 7 tiếng nếu dữ liệu trả về là UTC
-            const vnTime = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+            const vnTime = new Date(date.getTime());
             const day = String(vnTime.getDate()).padStart(2, '0');
             const month = String(vnTime.getMonth() + 1).padStart(2, '0');
             const year = vnTime.getFullYear();
@@ -386,7 +379,7 @@
             const seconds = String(vnTime.getSeconds()).padStart(2, '0');
             return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
         } catch (error) {
-            console.error('[ERROR] Error parsing date:', dateString, error);
+            console.error('[LỖI] Lỗi phân tích ngày:', dateString, error);
             return 'N/A';
         }
     }
@@ -406,7 +399,7 @@
         $(document).off('click.pagination', '#pagination-controls .page-link').on('click.pagination', '#pagination-controls .page-link', function(e) {
             e.preventDefault();
             const page = parseInt($(this).data('page'));
-            console.log('Pagination click - page:', page, 'totalPages:', totalPages);
+            console.log('Nhấn phân trang - trang:', page, 'tổng số trang:', totalPages);
             if (!isNaN(page) && page >= 0 && page < totalPages) {
                 fetchAdjustments(page);
             }
@@ -415,7 +408,7 @@
         // Debug pagination DOM
         function debugPagination() {
             const paginationItems = $('#pagination-controls .page-link');
-            console.log('Pagination items:', paginationItems.length, 'HTML:', $('#pagination-controls').html());
+            console.log('Số mục phân trang:', paginationItems.length, 'HTML:', $('#pagination-controls').html());
         }
 
         // Populate Batch dropdown
@@ -426,7 +419,7 @@
                 dataType: 'json',
                 success: function(data) {
                     selectElement.empty();
-                    selectElement.append('<option value="">None</option>');
+                    selectElement.append('<option value="">Không chọn</option>');
                     if (!data || data.length === 0) {
                         return;
                     }
@@ -434,13 +427,13 @@
                         var id = batch.batchID || batch.id;
                         if (id) {
                             var selected = id == selectedId ? 'selected' : '';
-                            selectElement.append(`<option value="${id}" ${selected}>Batch ID: ${id}</option>`);
+                            selectElement.append(`<option value="${id}" ${selected}>Lô ID: ${id}</option>`);
                         }
                     });
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error fetching Batches: ', status, error);
-                    alert('Unable to load Batch list. Check console.');
+                    console.error('Lỗi khi tải danh sách Lô:', status, error);
+                    alert('Không thể tải danh sách Lô. Vui lòng kiểm tra console.');
                 }
             });
         }
@@ -461,7 +454,7 @@
             }
 
             if (!noDataRow.length) {
-                noDataRow = $('<tr id="no-data-row"><td colspan="7" class="text-center">No data available in table</td></tr>');
+                noDataRow = $('<tr id="no-data-row"><td colspan="7" class="text-center">Không có dữ liệu trong bảng</td></tr>');
                 tableBody.append(noDataRow);
             }
 
@@ -478,16 +471,16 @@
             const { tableBody, noDataRow } = ensureElements();
             if (!tableBody || !noDataRow) return;
 
-            console.log('Fetching adjustments for page:', page);
+            console.log('Đang tải điều chỉnh cho trang:', page);
 
             $.ajax({
                 url: `/api/adjustments/paginatedAdjustment?page=${page}&size=${pageSize}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    console.log('API response:', data);
+                    console.log('Phản hồi API:', data);
                     if (!data || !data.content || typeof data.totalPages === 'undefined' || typeof data.number === 'undefined') {
-                        console.error('Invalid API response:', data);
+                        console.error('Dữ liệu phản hồi không hợp lệ:', data);
                         tableBody.empty();
                         noDataRow.show();
                         renderPagination(0, 0);
@@ -519,23 +512,23 @@
                                     row.append(`<td>${adjustment.quantity || 'N/A'}</td>`);
                                     row.append(`<td>${formatDateToVietnamese(adjustment.adjustDate)}</td>`);
                                     row.append(`<td>${adjustment.reason || 'N/A'}</td>`);
-                                    row.append(`<td>${adjustment.adjustmentType || 'N/A'}</td>`);
+                                    row.append(`<td>${adjustment.adjustmentType === 'Add' ? 'Nhập Thêm' : adjustment.adjustmentType === 'Remove' ? 'Hao Hụt' : 'N/A'}</td>`);
                                     row.append(`
-                                        <td>
-                                            <ul class="action-list">
-                                                <li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="${adjustment.id || ''}" data-batch-id="${batchId || ''}" data-quantity="${adjustment.quantity || ''}" data-reason="${adjustment.reason || ''}" data-adjustment-type="${adjustment.adjustmentType || ''}"><i class="ri-pencil-line"></i></a></li>
-                                                <li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="${adjustment.id || ''}"><i class="ri-delete-bin-line"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    `);
+                                    <td>
+                                        <ul class="action-list">
+                                            <li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="${adjustment.id || ''}" data-batch-id="${batchId || ''}" data-quantity="${adjustment.quantity || ''}" data-reason="${adjustment.reason || ''}" data-adjustment-type="${adjustment.adjustmentType || ''}"><i class="ri-pencil-line"></i></a></li>
+                                            <li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="${adjustment.id || ''}"><i class="ri-delete-bin-line"></i></a></li>
+                                        </ul>
+                                    </td>
+                                `);
                                     tableBody.append(row);
                                 });
 
                                 bindActionEvents();
                             },
                             error: function(xhr, status, error) {
-                                console.error('Error fetching Batches: ', status, error);
-                                alert('Unable to load Batch list. Check console.');
+                                console.error('Lỗi khi tải danh sách Lô:', status, error);
+                                alert('Không thể tải danh sách Lô. Vui lòng kiểm tra console.');
                                 $.each(data.content, function(index, adjustment) {
                                     var batchId = adjustment.batchId;
                                     var row = $('<tr></tr>').attr('data-id', adjustment.id || '');
@@ -544,15 +537,15 @@
                                     row.append(`<td>${adjustment.quantity || 'N/A'}</td>`);
                                     row.append(`<td>${formatDateToVietnamese(adjustment.adjustDate)}</td>`);
                                     row.append(`<td>${adjustment.reason || 'N/A'}</td>`);
-                                    row.append(`<td>${adjustment.adjustmentType || 'N/A'}</td>`);
+                                    row.append(`<td>${adjustment.adjustmentType === 'Add' ? 'Thêm' : adjustment.adjustmentType === 'Remove' ? 'Trừ' : 'N/A'}</td>`);
                                     row.append(`
-                                        <td>
-                                            <ul class="action-list">
-                                                <li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="${adjustment.id || ''}" data-batch-id="${batchId || ''}" data-quantity="${adjustment.quantity || ''}" data-reason="${adjustment.reason || ''}" data-adjustment-type="${adjustment.adjustmentType || ''}"><i class="ri-pencil-line"></i></a></li>
-                                                <li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="${adjustment.id || ''}"><i class="ri-delete-bin-line"></i></a></li>
-                                            </ul>
-                                        </td>
-                                    `);
+                                    <td>
+                                        <ul class="action-list">
+                                            <li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="${adjustment.id || ''}" data-batch-id="${batchId || ''}" data-quantity="${adjustment.quantity || ''}" data-reason="${adjustment.reason || ''}" data-adjustment-type="${adjustment.adjustmentType || ''}"><i class="ri-pencil-line"></i></a></li>
+                                            <li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="${adjustment.id || ''}"><i class="ri-delete-bin-line"></i></a></li>
+                                        </ul>
+                                    </td>
+                                `);
                                     tableBody.append(row);
                                 });
                                 bindActionEvents();
@@ -563,11 +556,11 @@
                     }
 
                     renderPagination(data.totalPages, data.number);
-                    debugPagination(); // Debug pagination DOM
+                    debugPagination();
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error fetching Adjustments: ', status, error);
-                    alert('Unable to load Adjustments. Check console.');
+                    console.error('Lỗi khi tải Điều Chỉnh:', status, error);
+                    alert('Không thể tải danh sách Điều Chỉnh. Vui lòng kiểm tra console.');
                     tableBody.empty();
                     noDataRow.show();
                     renderPagination(0, 0);
@@ -585,7 +578,7 @@
                 var adjustmentType = $(this).data('adjustment-type');
 
                 if (!adjustmentId) {
-                    alert('Adjustment ID không hợp lệ.');
+                    alert('ID Điều Chỉnh không hợp lệ.');
                     return;
                 }
 
@@ -602,7 +595,7 @@
                 e.preventDefault();
                 var adjustmentId = $(this).data('adjustment-id');
                 if (!adjustmentId) {
-                    alert('Adjustment ID không hợp lệ.');
+                    alert('ID Điều Chỉnh không hợp lệ.');
                     return;
                 }
                 $('.confirm-delete').data('adjustment-id', adjustmentId);
@@ -617,7 +610,7 @@
             totalPages = typeof totalPagesInput === 'number' && totalPagesInput > 0 ? totalPagesInput : 1;
             currentPage = typeof currentPageInput === 'number' && currentPageInput >= 0 && currentPageInput < totalPages ? currentPageInput : 0;
 
-            console.log('Rendering pagination - totalPages:', totalPages, 'currentPage:', currentPage);
+            console.log('Đang hiển thị phân trang - tổng số trang:', totalPages, 'trang hiện tại:', currentPage);
 
             const addBtn = (label, page, disabled = false, active = false) => {
                 const li = $('<li></li>').addClass('page-item');
@@ -628,7 +621,7 @@
             };
 
             // Previous button
-            addBtn('Previous', currentPage - 1, currentPage === 0);
+            addBtn('Trước', currentPage - 1, currentPage === 0);
 
             // Always show first page
             addBtn(1, 0, false, currentPage === 0);
@@ -660,7 +653,7 @@
             }
 
             // Next button
-            addBtn('Next', currentPage + 1, currentPage === totalPages - 1);
+            addBtn('Tiếp', currentPage + 1, currentPage === totalPages - 1);
         }
 
         // Save Edited Adjustment
@@ -676,7 +669,7 @@
                 return;
             }
             if (!adjustmentType) {
-                alert('Vui lòng chọn loại Adjustment.');
+                alert('Vui lòng chọn loại Điều Chỉnh.');
                 return;
             }
 
@@ -694,15 +687,15 @@
                 data: JSON.stringify(formData),
                 dataType: 'json',
                 success: function(response) {
-                    alert('Cập nhật Adjustment thành công!');
+                    alert('Cập nhật Điều Chỉnh thành công!');
                     $('#editAdjustmentModal').modal('hide');
                     $('.modal-backdrop').remove(); // Ensure backdrop is removed
                     $('body').removeClass('modal-open').css('overflow', '');
                     fetchAdjustments(currentPage);
                 },
                 error: function(xhr, status, error) {
-                    console.error('Lỗi khi sửa Adjustment: ', status, error);
-                    alert('Lỗi khi sửa Adjustment: ' + (xhr.responseText || 'Kiểm tra console.'));
+                    console.error('Lỗi khi sửa Điều Chỉnh:', status, error);
+                    alert('Lỗi khi sửa Điều Chỉnh: ' + (xhr.responseText || 'Vui lòng kiểm tra console.'));
                     $('#editAdjustmentModal').modal('hide');
                     $('.modal-backdrop').remove();
                     $('body').removeClass('modal-open').css('overflow', '');
@@ -715,7 +708,7 @@
             e.preventDefault();
             var adjustmentId = $(this).data('adjustment-id');
             if (!adjustmentId) {
-                alert('Adjustment ID không hợp lệ.');
+                alert('ID Điều Chỉnh không hợp lệ.');
                 return;
             }
 
@@ -735,13 +728,13 @@
                             fetchAdjustments(currentPage);
                         });
                     } else {
-                        alert('Xóa Adjustment thành công!');
+                        alert('Xóa Điều Chỉnh thành công!');
                         fetchAdjustments(currentPage);
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('Lỗi khi xóa Adjustment: ', status, error);
-                    alert('Lỗi khi xóa Adjustment: ' + (xhr.responseText || 'Kiểm tra console.'));
+                    console.error('Lỗi khi xóa Điều Chỉnh:', status, error);
+                    alert('Lỗi khi xóa Điều Chỉnh: ' + (xhr.responseText || 'Vui lòng kiểm tra console.'));
                     $('#exampleModalToggle').modal('hide');
                     $('.modal-backdrop').remove();
                     $('body').removeClass('modal-open').css('overflow', '');

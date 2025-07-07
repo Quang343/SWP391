@@ -1,137 +1,167 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="BackEnd/fragments/WareHouse/head::head"></head>
-<style>
-  /* Ensure table is scrollable horizontally if content overflows */
-  .table-responsive {
-    overflow-x: auto;
-    margin-bottom: 0; /* Remove extra margin to keep pagination close */
-    position: relative; /* Context for scrollbar */
-  }
+<html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
-  /* Ensure table takes full width but triggers scrollbar if needed */
-  #table_id {
-    width: 100%;
-    min-width: 1000px; /* Force horizontal scrollbar for wide content */
-  }
+<head th:replace="BackEnd/fragments/WareHouse/head::head">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- CSS Pikaday -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+  <style>
+    /* Ensure table is scrollable horizontally if content overflows */
+    .table-responsive {
+      overflow-x: auto;
+      margin-bottom: 0;
+      position: relative;
+    }
 
-  /* Override gray borders from Bootstrap for table */
-  #table_id.table,
-  #table_id th,
-  #table_id td {
-    border-color: #e6f3f2 !important; /* Light green border */
-  }
+    #table_id {
+      width: 100%;
+      min-width: 1000px;
+    }
 
-  /* Center pagination and style items */
-  #pagination-controls {
-    display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center;
-    margin-top: 12px; /* Ensure below scrollbar */
-    margin-bottom: 20px; /* Space below pagination */
-    position: relative; /* Ensure proper stacking */
-    z-index: 10; /* Below footer and sidebar */
-    max-width: 100%; /* Prevent overflow */
-  }
+    #table_id.table,
+    #table_id th,
+    #table_id td {
+      border-color: #e6f3f2 !important;
+    }
 
-  #pagination-controls .page-item {
-    margin: 0 2.5px; /* 5px gap between items */
-  }
+    #pagination-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 12px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 10;
+      max-width: 100%;
+    }
 
-  #pagination-controls .page-link {
-    border-radius: 4px;
-    padding: 6px 12px;
-    color: #018F84; /* Text color for number pages */
-    font-size: 14px; /* Match theme typography */
-    cursor: pointer; /* Ensure clickable appearance */
-    border: 1px solid #018F84; /* Border matches theme */
-    background-color: transparent; /* Default background */
-    text-align: center;
-    box-sizing: border-box;
-  }
+    #pagination-controls .page-item {
+      margin: 0 2.5px;
+    }
 
-  /* Style for Previous and Next buttons */
-  #pagination-controls .page-item:first-child .page-link,
-  #pagination-controls .page-item:last-child .page-link {
-    background-color: #018F84; /* Green background */
-    color: #fff; /* White text */
-    border-color: #018F84;
-  }
+    #pagination-controls .page-link {
+      border-radius: 4px;
+      padding: 6px 12px;
+      color: #018F84;
+      font-size: 14px;
+      cursor: pointer;
+      border: 1px solid #018F84;
+      background-color: transparent;
+      text-align: center;
+      box-sizing: border-box;
+    }
 
-  /* Style for active page */
-  #pagination-controls .page-item.active .page-link {
-    background-color: #018F84; /* Green background */
-    border-color: #018F84;
-    color: #fff;
-    box-shadow: none; /* No glowing effect */
-  }
+    #pagination-controls .page-item:first-child .page-link,
+    #pagination-controls .page-item:last-child .page-link {
+      background-color: #018F84;
+      color: #fff;
+      border-color: #018F84;
+    }
 
-  /* Style for disabled buttons */
-  #pagination-controls .page-item.disabled .page-link {
-    color: #018F84; /* Green text */
-    border-color: #e6f3f2; /* Light green border */
-    background-color: #e6f3f2; /* Light green background */
-    pointer-events: none;
-    cursor: default;
-  }
+    #pagination-controls .page-item.active .page-link {
+      background-color: #018F84;
+      border-color: #018F84;
+      color: #fff;
+      box-shadow: none;
+    }
 
-  /* Hover effect for non-disabled, non-active number pages */
-  #pagination-controls .page-link:hover:not(.disabled .page-link):not(.active .page-link):not(:first-child .page-link):not(:last-child .page-link) {
-    background-color: #e6f3f2; /* Light green on hover */
-    color: #018F84;
-  }
+    #pagination-controls .page-item.disabled .page-link {
+      color: #018F84;
+      border-color: #e6f3f2;
+      background-color: #e6f3f2;
+      pointer-events: none;
+      cursor: default;
+    }
 
-  /* Hover effect for Previous/Next when not disabled */
-  #pagination-controls .page-item:not(.disabled):first-child .page-link:hover,
-  #pagination-controls .page-item:not(.disabled):last-child .page-link:hover {
-    background-color: #016f6a; /* Darker green on hover */
-    color: #fff;
-  }
+    #pagination-controls .page-link:hover:not(.disabled .page-link):not(.active .page-link):not(:first-child .page-link):not(:last-child .page-link) {
+      background-color: #e6f3f2;
+      color: #018F84;
+    }
 
-  /* Ensure footer is above pagination but below sidebar */
-  .footer {
+    #pagination-controls .page-item:not(.disabled):first-child .page-link:hover,
+    #pagination-controls .page-item:not(.disabled):last-child .page-link:hover {
+      background-color: #016f6a;
+      color: #fff;
+    }
 
-    z-index: 20 !important; /* Above pagination */
-  }
+    .footer {
+      z-index: 20 !important;
+    }
 
-  /* Ensure sidebar is above footer and pagination */
-  .sidebar-wrapper {
-    position: fixed;
-    z-index: 30 !important; /* Above footer and pagination */
-  }
+    .sidebar-wrapper {
+      position: fixed;
+      z-index: 30 !important;
+    }
 
-  /* Ensure modals and offcanvas are above sidebar, footer, and pagination */
-  .modal,
-  .offcanvas {
-    z-index: 1050 !important; /* Above sidebar, footer, and pagination */
-  }
+    .modal,
+    .offcanvas {
+      z-index: 1050 !important;
+    }
 
-  .modal-backdrop {
-    z-index: 1040 !important; /* Below modal/offcanvas, above sidebar and footer */
-  }
+    .modal-backdrop {
+      z-index: 1040 !important;
+    }
 
-  /* Style for search bar and button */
-  .btn-theme {
-    background-color: #018F84;
-    color: #fff;
-    border-color: #018F84;
-  }
+    .btn-theme {
+      background-color: #018F84;
+      color: #fff;
+      border-color: #018F84;
+    }
 
-  .btn-theme:hover {
-    background-color: #016f6a;
-    color: #fff;
-    border-color: #016f6a;
-  }
+    .btn-theme:hover {
+      background-color: #016f6a;
+      color: #fff;
+      border-color: #016f6a;
+    }
 
-  .search-bar input {
-    border: 1px solid #e6f3f2;
-  }
+    .search-bar input {
+      border: 1px solid #e6f3f2;
+    }
 
-  .search-bar input:focus {
-    border-color: #018F84;
-    box-shadow: 0 0 5px rgba(1, 143, 132, 0.3);
-  }
-</style>
+    .search-bar input:focus {
+      border-color: #018F84;
+      box-shadow: 0 0 5px rgba(1, 143, 132, 0.3);
+    }
+
+    /* CSS tùy chỉnh cho Pikaday */
+    .pika-select {
+      padding: 4px 8px;
+      font-size: 14px;
+      max-width: 90px;
+    }
+
+    .pika-single {
+      z-index: 9999 !important;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .pika-button.pika-selected,
+    .pika-button:hover.pika-selected {
+      background-color: #28a745 !important;
+      color: white !important;
+      border-radius: 6px;
+    }
+
+    .pika-button:hover {
+      background-color: #a3d9a5 !important;
+      color: black !important;
+      border-radius: 6px;
+    }
+
+    .pika-button.is-today {
+      border-bottom: 2px solid #28a745 !important;
+    }
+
+    .pika-button {
+      border-radius: 6px;
+      transition: background-color 0.2s ease;
+    }
+  </style>
+</head>
+
 <body>
 <!-- tap on top start-->
 <div class="tap-top">
@@ -142,13 +172,13 @@
 <!-- page-wrapper Start-->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
   <!-- Page Header Start-->
-  <div th:replace="BackEnd/fragments/WareHouse/header::header"></div>
+  <div th:replace="~{BackEnd/fragments/WareHouse/header::header}"></div>
   <!-- Page Header Ends-->
 
   <!-- Page Body Start-->
   <div class="page-body-wrapper">
     <!-- Page Sidebar Start-->
-    <div th:replace="BackEnd/fragments/WareHouse/sidebar::sidebar"></div>
+    <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
     <!-- Page Sidebar Ends-->
 
     <!-- StockIn section Start -->
@@ -162,16 +192,16 @@
                 <div class="title-header option-title">
                   <!-- Dòng 1: chỉ StockIn List -->
                   <div class="first-line">
-                    <h5>StockIn List</h5>
+                    <h5>Danh sách nhập kho</h5>
                   </div>
 
                   <!-- Dòng 2: Add new StockIn và Search bên phải -->
                   <div class="second-line" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
                     <a th:href="@{/warehouse/addstockin}" class="align-items-center btn btn-theme d-flex">
-                      <i data-feather="plus"></i> Add new StockIn
+                      <i data-feather="plus"></i> Tạo phiếu nhập
                     </a>
                     <div class="search-bar">
-                      <input type="text" class="form-control" placeholder="Search..." id="searchInputStockIn">
+                      <input type="text" class="form-control" placeholder="Tìm kiếm..." id="searchInputStockIn">
                     </div>
                   </div>
                 </div>
@@ -180,12 +210,12 @@
                     <table class="table all-package order-table theme-table" id="table_id">
                       <thead>
                       <tr>
-                        <th>StockIn ID</th>
-                        <th>Supplier</th>
-                        <th>Warehouse</th>
-                        <th>Date</th>
-                        <th>Note</th>
-                        <th>Option</th>
+                        <th>Mã nhập kho</th>
+                        <th>Nhà cung cấp</th>
+                        <th>Kho</th>
+                        <th>Ngày nhập</th>
+                        <th>Ghi chú</th>
+                        <th>Tuỳ chọn</th>
                       </tr>
                       </thead>
                       <tbody id="stockInTableBody">
@@ -203,34 +233,26 @@
       <!-- Table End -->
 
       <!-- Container-fluid Ends-->
-      <div class="container-fluid">
-        <!-- footer start-->
-        <footer class="footer">
-          <div class="row">
-            <div class="col-md-12 footer-copyright text-center">
-              <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-            </div>
-          </div>
-        </footer>
-      </div>
+      <div th:replace="~{BackEnd/fragments/WareHouse/footer::footer}"></div>
+
     </div>
     <!-- StockIn section End -->
   </div>
   <!-- Page Body End-->
 </div>
-<!-- page-wrapper End -->
+<!-- page-wrapper End-->
 
 <!-- Modal start -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-body">
-        <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
-        <p>Are you sure you want to log out?</p>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="staticBackdropLabel">Đăng xuất</h5>
+        <p>Bạn có chắc chắn muốn đăng xuất?</p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
         <div class="button-box">
-          <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-          <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
+          <button type="button" class="btn btn--no" data-bs-dismiss="modal">Không</button>
+          <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Có</button>
         </div>
       </div>
     </div>
@@ -243,19 +265,19 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header d-block text-center">
-        <h4 class="modal-title w-100" id="exampleModalLabel22">Are You Sure?</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        <h4 class="modal-title w-100" id="exampleModalLabel22">Bạn có chắc?</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng">
           <i class="fas fa-times"></i>
         </button>
       </div>
       <div class="modal-body">
         <div class="remove-box">
-          <p>Are you sure you want to delete this StockIn?</p>
+          <p>Bạn có chắc muốn xóa phiếu nhập kho này?</p>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
-        <button type="button" class="btn btn-animation btn-md fw-bold" id="confirmDeleteBtn">Yes</button>
+        <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Không</button>
+        <button type="button" class="btn btn-animation btn-md fw-bold" id="confirmDeleteBtn">Có</button>
       </div>
     </div>
   </div>
@@ -265,8 +287,8 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title text-center" id="exampleModalLabel12">Done!</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        <h4 class="modal-title text-center" id="exampleModalLabel12">Hoàn tất!</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng">
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -278,11 +300,11 @@
               <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
             </svg>
           </div>
-          <h4 class="text-content">StockIn removed successfully.</h4>
+          <h4 class="text-content">Phiếu nhập kho đã được xóa thành công.</h4>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+        <button class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
       </div>
     </div>
   </div>
@@ -293,8 +315,8 @@
 <div class="offcanvas offcanvas-end order-offcanvas" tabindex="-1" id="order-details"
      aria-labelledby="offcanvasExampleLabel" aria-expanded="false">
   <div class="offcanvas-header">
-    <h4 class="offcanvas-title" id="offcanvasExampleLabel">StockIn #<span id="offcanvasStockInId"></span></h4>
-    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
+    <h4 class="offcanvas-title" id="offcanvasExampleLabel">Phiếu nhập kho #<span id="offcanvasStockInId"></span></h4>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Đóng">
       <i class="fas fa-times"></i>
     </button>
   </div>
@@ -306,56 +328,68 @@
     <form id="updateStockInForm">
       <input type="hidden" id="offcanvasStockInIdInput" />
       <div class="mb-3">
-        <label for="offcanvasSupplierId">Supplier</label>
+        <label for="offcanvasSupplierId">Nhà cung cấp</label>
         <select class="form-control" id="offcanvasSupplierId" name="supplierId">
-          <option value="">Select Supplier</option>
+          <option value="">Chọn nhà cung cấp</option>
           <!-- Options will be populated by JavaScript -->
         </select>
       </div>
       <div class="mb-3">
-        <label for="offcanvasWarehouseId">Warehouse</label>
+        <label for="offcanvasWarehouseId">Kho</label>
         <select class="form-control" id="offcanvasWarehouseId" name="warehouseId">
-          <option value="">Select Warehouse</option>
+          <option value="">Chọn kho</option>
           <!-- Options will be populated by JavaScript -->
         </select>
       </div>
       <div class="mb-3">
-        <label for="offcanvasStockInDateInput">Date</label>
-        <input type="date" class="form-control" id="offcanvasStockInDateInput" />
+        <label for="offcanvasStockInDateInput">Ngày</label>
+        <input type="text" class="form-control" id="offcanvasStockInDateInput" placeholder="Chọn ngày (DD-MM-YYYY)" required />
       </div>
       <div class="mb-3">
-        <label for="offcanvasStockInTimeInput">Time</label>
-        <input type="time" class="form-control" id="offcanvasStockInTimeInput" />
+        <label for="offcanvasStockInTimeInput">Giờ</label>
+        <input type="text" class="form-control" id="offcanvasStockInTimeInput" placeholder="Chọn giờ (HH:MM)" required />
       </div>
       <div class="mb-3">
-        <label for="offcanvasNote">Note</label>
+        <label for="offcanvasNote">Ghi chú</label>
         <input type="text" class="form-control" id="offcanvasNote" />
       </div>
-      <button type="submit" class="btn btn-primary">Save Changes</button>
+      <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
     </form>
   </div>
 </div>
 <!-- Offcanvas Box End -->
 
-<!-- Latest js -->
+<!-- latest js -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+<!-- Bootstrap js -->
 <script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<!-- feather icon js -->
 <script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
 <script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+<!-- scrollbar simplebar js -->
 <script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
 <script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+<!-- Sidebar js -->
 <script th:src="@{/Backend/assets/js/config.js}"></script>
+<!-- customizer js -->
 <script th:src="@{/Backend/assets/js/customizer.js}"></script>
+<!-- Plugins js -->
 <script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
 <script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
 <script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+<!-- Data table js -->
 <script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
 <script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+<!-- sidebar effect -->
 <script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+<!-- Theme js -->
 <script th:src="@{/Backend/assets/js/script.js}"></script>
-<script th:src="@{/Backend/assets/js/checkbox-all-check.js}"></script>
 
-<!-- Custom JavaScript -->
+<!-- Pikaday và Moment JS -->
+<script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+
+<!-- Custom JS for API call -->
 <script>
   function formatDateToVietnamese(dateString) {
     if (!dateString || dateString === 'N/A') {
@@ -368,7 +402,7 @@
         return 'N/A';
       }
       // Add 7 hours to convert UTC to Vietnam time (UTC+07:00)
-      const vnTime = new Date(date.getTime());
+      const vnTime = new Date(date.getTime() + 7 * 60 * 60 * 1000);
       const day = String(vnTime.getDate()).padStart(2, '0');
       const month = String(vnTime.getMonth() + 1).padStart(2, '0');
       const year = vnTime.getFullYear();
@@ -380,6 +414,11 @@
       console.error('[ERROR] Error parsing date:', dateString, error);
       return 'N/A';
     }
+  }
+
+  function isValidDate(day, month, year) {
+    const date = new Date(year, month - 1, day);
+    return date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day;
   }
 
   $(document).ready(function() {
@@ -416,7 +455,7 @@
       }
 
       if (!noDataRow.length) {
-        noDataRow = $('<tr id="no-data-row"><td colspan="6" class="text-center">No data available in table</td></tr>');
+        noDataRow = $('<tr id="no-data-row"><td colspan="6" class="text-center">Không có dữ liệu trong bảng</td></tr>');
         tableBody.append(noDataRow);
       }
 
@@ -435,7 +474,7 @@
         method: 'GET',
         dataType: 'json',
         success: function(data) {
-          selectElement.empty().append('<option value="">Select Supplier</option>');
+          selectElement.empty().append('<option value="">Chọn nhà cung cấp</option>');
           $.each(data, function(index, supplier) {
             const supplierId = supplier.supplierID || supplier.id;
             const supplierName = supplier.supplierName || supplier.name;
@@ -446,8 +485,8 @@
           });
         },
         error: function(xhr, status, error) {
-          console.error('Error loading Suppliers:', status, error);
-          selectElement.empty().append('<option value="">Error loading Suppliers</option>');
+          console.error('Lỗi khi tải nhà cung cấp:', status, error);
+          selectElement.empty().append('<option value="">Lỗi tải nhà cung cấp</option>');
         }
       });
     }
@@ -459,7 +498,7 @@
         method: 'GET',
         dataType: 'json',
         success: function(data) {
-          selectElement.empty().append('<option value="">Select Warehouse</option>');
+          selectElement.empty().append('<option value="">Chọn kho</option>');
           $.each(data, function(index, warehouse) {
             const warehouseId = warehouse.warehouseId || warehouse.id;
             const warehouseName = warehouse.warehouseName || warehouse.name;
@@ -470,8 +509,8 @@
           });
         },
         error: function(xhr, status, error) {
-          console.error('Error loading Warehouses:', status, error);
-          selectElement.empty().append('<option value="">Error loading Warehouses</option>');
+          console.error('Lỗi khi tải kho:', status, error);
+          selectElement.empty().append('<option value="">Lỗi tải kho</option>');
         }
       });
     }
@@ -483,7 +522,7 @@
       const { tableBody, noDataRow } = ensureElements();
       if (!tableBody || !noDataRow) return;
 
-      console.log('Fetching StockIns for page:', page, 'search:', searchQuery);
+      console.log('Đang tải danh sách nhập kho cho trang:', page, 'tìm kiếm:', searchQuery);
 
       let url = `http://localhost:8080/api/stockins/paginatedStockIn?page=${page}&size=${pageSize}`;
       if (searchQuery) {
@@ -495,9 +534,9 @@
         method: 'GET',
         dataType: 'json',
         success: function(data) {
-          console.log('API response:', data);
+          console.log('Phản hồi từ API:', data);
           if (!data || !data.content || typeof data.totalPages === 'undefined' || typeof data.number === 'undefined') {
-            console.error('Invalid response data:', data);
+            console.error('Dữ liệu phản hồi không hợp lệ:', data);
             tableBody.empty();
             noDataRow.show();
             renderPagination(0, 0);
@@ -511,22 +550,20 @@
           if (data.content && data.content.length > 0) {
             noDataRow.hide();
             $.each(data.content, function(index, stockIn) {
-              // Validate supplierID and warehouseID
               const supplierId = stockIn.supplierID && typeof stockIn.supplierID === 'object' ? (stockIn.supplierID.supplierID || stockIn.supplierID.id) : stockIn.supplierID;
               const warehouseId = stockIn.warehouseID && typeof stockIn.warehouseID === 'object' ? (stockIn.warehouseID.warehouseId || stockIn.warehouseID.id) : stockIn.warehouseID;
 
-              console.log('Processing stockIn ID:', stockIn.id, 'supplierID:', supplierId, 'warehouseID:', warehouseId);
+              console.log('Xử lý phiếu nhập kho ID:', stockIn.id, 'supplierID:', supplierId, 'warehouseID:', warehouseId);
 
-              // Check if IDs are valid numbers
               if (!supplierId || !warehouseId || isNaN(parseInt(supplierId)) || isNaN(parseInt(warehouseId))) {
-                console.warn('Invalid supplierID or warehouseID for stockIn:', JSON.stringify(stockIn));
+                console.warn('ID nhà cung cấp hoặc kho không hợp lệ cho phiếu nhập kho:', JSON.stringify(stockIn));
                 var row = $('<tr></tr>')
                         .attr('data-bs-toggle', 'offcanvas')
                         .attr('data-bs-target', '#order-details')
                         .attr('data-stockin-id', stockIn.id);
                 row.append(`<td>${stockIn.id || 'N/A'}</td>`);
-                row.append(`<td>N/A (Invalid Supplier ID: ${JSON.stringify(stockIn.supplierID)})</td>`);
-                row.append(`<td>N/A (Invalid Warehouse ID: ${JSON.stringify(stockIn.warehouseID)})</td>`);
+                row.append(`<td>N/A (ID nhà cung cấp không hợp lệ: ${JSON.stringify(stockIn.supplierID)})</td>`);
+                row.append(`<td>N/A (ID kho không hợp lệ: ${JSON.stringify(stockIn.warehouseID)})</td>`);
                 row.append(`<td>${formatDateToVietnamese(stockIn.stockInDate)}</td>`);
                 row.append(`<td>${stockIn.note || 'N/A'}</td>`);
                 row.append(`
@@ -542,7 +579,6 @@
                 return;
               }
 
-              // Fetch supplier and warehouse names
               $.when(
                       $.ajax({ url: `http://localhost:8080/api/suppliers/${supplierId}`, method: 'GET', dataType: 'json' }),
                       $.ajax({ url: `http://localhost:8080/api/warehouses/${warehouseId}`, method: 'GET', dataType: 'json' })
@@ -569,14 +605,14 @@
                 `);
                 tableBody.append(row);
               }).fail(function(jqXHR, textStatus, errorThrown) {
-                console.error('Error fetching supplier or warehouse:', textStatus, errorThrown, 'SupplierID:', supplierId, 'WarehouseID:', warehouseId);
+                console.error('Lỗi khi lấy thông tin nhà cung cấp hoặc kho:', textStatus, errorThrown, 'SupplierID:', supplierId, 'WarehouseID:', warehouseId);
                 var row = $('<tr></tr>')
                         .attr('data-bs-toggle', 'offcanvas')
                         .attr('data-bs-target', '#order-details')
                         .attr('data-stockin-id', stockIn.id);
                 row.append(`<td>${stockIn.id || 'N/A'}</td>`);
-                row.append(`<td>N/A (Error fetching Supplier ID: ${supplierId})</td>`);
-                row.append(`<td>N/A (Error fetching Warehouse ID: ${warehouseId})</td>`);
+                row.append(`<td>N/A (Lỗi lấy ID nhà cung cấp: ${supplierId})</td>`);
+                row.append(`<td>N/A (Lỗi lấy ID kho: ${warehouseId})</td>`);
                 row.append(`<td>${formatDateToVietnamese(stockIn.stockInDate)}</td>`);
                 row.append(`<td>${stockIn.note || 'N/A'}</td>`);
                 row.append(`
@@ -599,8 +635,8 @@
           debugPagination();
         },
         error: function(xhr, status, error) {
-          console.error('Error fetching StockIns:', status, error, 'Response:', xhr.responseText);
-          alert('Failed to load StockIns. Check console.');
+          console.error('Lỗi khi tải danh sách nhập kho:', status, error, 'Phản hồi:', xhr.responseText);
+          alert('Không thể tải danh sách nhập kho. Vui lòng kiểm tra console.');
           tableBody.empty();
           noDataRow.show();
           renderPagination(0, 0);
@@ -617,20 +653,16 @@
       totalPages = typeof totalPagesInput === 'number' && totalPagesInput > 0 ? totalPagesInput : 1;
       currentPage = typeof currentPageInput === 'number' && currentPageInput >= 0 && currentPageInput < totalPages ? currentPageInput : 0;
 
-      console.log('Rendering pagination - totalPages:', totalPages, 'currentPage:', currentPage);
+      console.log('Đang hiển thị phân trang - tổng số trang:', totalPages, 'trang hiện tại:', currentPage);
 
       const addBtn = (label, page, disabled = false, active = false) => {
-        const li = $('<li></li>').addClass('page-item');
-        if (disabled) li.addClass('disabled');
-        if (active) li.addClass('active');
+        const li = $('<li></li>').addClass('page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : ''));
         li.html(`<a class="page-link" href="javascript:void(0)" data-page="${page}">${label}</a>`);
         paginationControls.append(li);
       };
 
-      // Previous button
-      addBtn('Previous', currentPage - 1, currentPage === 0);
+      addBtn('Trước', currentPage - 1, currentPage === 0);
 
-      // Show up to 5 pages, centered around currentPage
       const maxPagesToShow = 5;
       let startPage = Math.max(0, currentPage - Math.floor(maxPagesToShow / 2));
       let endPage = Math.min(totalPages, startPage + maxPagesToShow);
@@ -657,14 +689,13 @@
         addBtn(totalPages, totalPages - 1, false, currentPage === totalPages - 1);
       }
 
-      // Next button
-      addBtn('Next', currentPage + 1, currentPage === totalPages - 1);
+      addBtn('Sau', currentPage + 1, currentPage === totalPages - 1);
 
       // Bind click events
       paginationControls.off('click.pagination').on('click.pagination', '.page-link', function(e) {
         e.preventDefault();
         const page = parseInt($(this).data('page'));
-        console.log('Pagination click - page:', page, 'totalPages:', totalPages);
+        console.log('Nhấp phân trang - trang:', page, 'tổng số trang:', totalPages);
         if (!isNaN(page) && page >= 0 && page < totalPages) {
           fetchStockIns(page, $('#searchInputStockIn').val());
         }
@@ -672,7 +703,7 @@
     }
 
     // Load StockIn details into offcanvas
-    $(document).on('show.bs.offcanvas', '#order-details', function(event) {
+    $(document).on('shown.bs.offcanvas', '#order-details', function(event) {
       var stockInId = $(event.relatedTarget).data('stockin-id');
       $('#offcanvasStockInId').text(stockInId);
       $('#offcanvasStockInIdInput').val(stockInId);
@@ -686,7 +717,7 @@
           const supplierId = stockIn.supplierID && typeof stockIn.supplierID === 'object' ? (stockIn.supplierID.supplierID || stockIn.supplierID.id) : stockIn.supplierID;
           const warehouseId = stockIn.warehouseID && typeof stockIn.warehouseID === 'object' ? (stockIn.warehouseID.warehouseId || stockIn.warehouseID.id) : stockIn.warehouseID;
 
-          console.log('Loading offcanvas for stockIn ID:', stockInId, 'supplierID:', supplierId, 'warehouseID:', warehouseId);
+          console.log('Đang tải chi tiết phiếu nhập kho ID:', stockInId, 'supplierID:', supplierId, 'warehouseID:', warehouseId);
 
           // Load dropdowns
           loadSuppliersDropdown($('#offcanvasSupplierId'), supplierId);
@@ -696,21 +727,25 @@
           const formattedDate = formatDateToVietnamese(stockIn.stockInDate);
           $('#offcanvasStockInDate').text(formattedDate || 'N/A');
 
-          // Populate input fields for editing
+          // Populate input fields for editing, splitting date and time
           if (stockIn.stockInDate) {
             const date = new Date(stockIn.stockInDate);
             // Add 7 hours to convert UTC to Vietnam time
-            const vnTime = new Date(date.getTime());
-            const year = vnTime.getFullYear();
-            const month = String(vnTime.getMonth() + 1).padStart(2, '0');
+            const vnTime = new Date(date.getTime() + 7 * 60 * 60 * 1000);
             const day = String(vnTime.getDate()).padStart(2, '0');
+            const month = String(vnTime.getMonth() + 1).padStart(2, '0');
+            const year = vnTime.getFullYear();
             const hours = String(vnTime.getHours()).padStart(2, '0');
             const minutes = String(vnTime.getMinutes()).padStart(2, '0');
 
-            // Set date input as YYYY-MM-DD
-            $('#offcanvasStockInDateInput').val(`${year}-${month}-${day}`);
-            // Set time input as HH:mm
-            $('#offcanvasStockInTimeInput').val(`${hours}:${minutes}`);
+            // Set date input as DD-MM-YYYY for Pikaday
+            const dateStr = `${day}-${month}-${year}`;
+            $('#offcanvasStockInDateInput').val(dateStr);
+            console.log('Filled date:', dateStr);
+            // Set time input as HH:MM
+            const timeStr = `${hours}:${minutes}`;
+            $('#offcanvasStockInTimeInput').val(timeStr);
+            console.log('Filled time:', timeStr);
           } else {
             $('#offcanvasStockInDateInput').val('');
             $('#offcanvasStockInTimeInput').val('00:00');
@@ -719,8 +754,8 @@
           $('#offcanvasNote').val(stockIn.note || '');
         },
         error: function(jqXHR, textStatus, errorThrown) {
-          console.error('Error loading StockIn details:', textStatus, errorThrown);
-          alert('Failed to load StockIn details.');
+          console.error('Lỗi khi tải chi tiết phiếu nhập kho:', textStatus, errorThrown);
+          alert('Không thể tải chi tiết phiếu nhập kho.');
         }
       });
     });
@@ -729,22 +764,32 @@
     $('#updateStockInForm').on('submit', function(e) {
       e.preventDefault();
       var stockInId = $('#offcanvasStockInIdInput').val();
-      var date = $('#offcanvasStockInDateInput').val(); // YYYY-MM-DD
-      var time = $('#offcanvasStockInTimeInput').val(); // HH:mm
+      var dateInput = $('#offcanvasStockInDateInput').val(); // DD-MM-YYYY from Pikaday
+      var timeInput = $('#offcanvasStockInTimeInput').val(); // HH:MM
 
-      // Combine date and time, convert to UTC for backend
+      console.log('Submitted date:', dateInput, 'Submitted time:', timeInput);
+
+      // Validate and combine date and time
       let stockInDate;
-      if (date && time) {
-        // Parse as Vietnam time (UTC+07:00)
-        const [year, month, day] = date.split('-').map(Number);
-        const [hours, minutes] = time.split(':').map(Number);
-        const vnDate = new Date(year, month - 1, day, hours, minutes, 0);
-        // Convert to UTC by subtracting 7 hours
+      if (dateInput && timeInput) {
+        const [day, month, year] = dateInput.split('-').map(Number);
+        const [hours, minutes] = timeInput.split(':').map(Number);
+
+        // Check if date is valid
+        if (!isValidDate(day, month, year)) {
+          console.error('Invalid date format:', dateInput);
+          alert('Ngày không hợp lệ. Vui lòng chọn lại.');
+          return;
+        }
+
+        const vnDate = new Date(year, month - 1, day, hours, minutes, 0); // Month is 0-based
+        // Convert to UTC by adding 7 hours (since vnDate is already in Vietnam time)
         const utcDate = new Date(vnDate.getTime() + 7 * 60 * 60 * 1000);
-        // Format as ISO UTC
-        stockInDate = utcDate.toISOString(); // e.g., 2025-07-02T13:00:00.000Z
+        stockInDate = utcDate.toISOString();
+        console.log('Combined stockInDate (UTC):', stockInDate);
       } else {
         stockInDate = new Date().toISOString(); // Fallback to current UTC time
+        console.log('No date/time provided, using current UTC:', stockInDate);
       }
 
       var formData = {
@@ -755,7 +800,7 @@
         note: $('#offcanvasNote').val()
       };
 
-      console.log('Submitting update for StockIn:', formData);
+      console.log('Đang gửi cập nhật cho phiếu nhập kho:', formData);
 
       $.ajax({
         url: `http://localhost:8080/api/stockins/${stockInId}`,
@@ -763,15 +808,15 @@
         contentType: 'application/json',
         data: JSON.stringify(formData),
         success: function(response) {
-          alert('StockIn updated successfully!');
+          alert('Cập nhật phiếu nhập kho thành công!');
           $('#order-details').offcanvas('hide');
           $('.modal-backdrop').remove();
           $('body').removeClass('modal-open').css('overflow', '');
           fetchStockIns(currentPage, $('#searchInputStockIn').val());
         },
         error: function(xhr, status, error) {
-          console.error('Error updating StockIn:', status, error);
-          alert('Error updating StockIn: ' + (xhr.responseText || 'Unknown error'));
+          console.error('Lỗi khi cập nhật phiếu nhập kho:', status, error);
+          alert('Lỗi khi cập nhật phiếu nhập kho: ' + (xhr.responseText || 'Lỗi không xác định'));
           $('.modal-backdrop').remove();
           $('body').removeClass('modal-open').css('overflow', '');
         }
@@ -788,8 +833,8 @@
     $('#confirmDeleteBtn').on('click', function() {
       var stockInId = $('#exampleModalToggle').data('stockin-id');
       if (!stockInId) {
-        console.error('No StockIn ID found for deletion.');
-        alert('Error: No StockIn selected for deletion.');
+        console.error('Không tìm thấy ID phiếu nhập kho để xóa.');
+        alert('Lỗi: Không có phiếu nhập kho nào được chọn để xóa.');
         return;
       }
 
@@ -809,8 +854,8 @@
           });
         },
         error: function(xhr, status, error) {
-          console.error('Error deleting StockIn:', status, error);
-          alert('Failed to delete StockIn: ' + (xhr.responseText || 'Unknown error'));
+          console.error('Lỗi khi xóa phiếu nhập kho:', status, error);
+          alert('Không thể xóa phiếu nhập kho: ' + (xhr.responseText || 'Lỗi không xác định'));
           $('#exampleModalToggle').modal('hide');
           $('.modal-backdrop').remove();
           $('body').removeClass('modal-open').css('overflow', '');
@@ -829,6 +874,46 @@
     const initialPage = parseInt(urlParams.get('page')) || 1;
     if (initialPage > 0) currentPage = initialPage - 1; // Convert 1-based URL to 0-based
     fetchStockIns(currentPage);
+
+    // Khởi tạo Pikaday cho offcanvasStockInDateInput
+    const offcanvasDateInput = document.getElementById('offcanvasStockInDateInput');
+    if (offcanvasDateInput) {
+      if (typeof Pikaday === 'undefined' || typeof moment === 'undefined') {
+        console.error("Lỗi: Pikaday hoặc Moment không tải được. Kiểm tra CDN.");
+        alert('Lỗi: Không tải được thư viện lịch. Vui lòng kiểm tra console.');
+      } else {
+        try {
+          const picker = new Pikaday({
+            field: offcanvasDateInput,
+            format: 'DD-MM-YYYY',
+            yearRange: 10,
+            minDate: new Date(2015, 0, 1),
+            maxDate: new Date(),
+            defaultDate: new Date(),
+            setDefaultDate: true,
+            firstDay: 1,
+            i18n: {
+              previousMonth: 'Tháng trước',
+              nextMonth: 'Tháng sau',
+              months: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+              weekdays: ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'],
+              weekdaysShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']
+            },
+            onSelect: function(date) {
+              const formattedDate = moment(date).format('DD-MM-YYYY');
+              offcanvasDateInput.value = formattedDate;
+              console.log("Ngày được chọn trong offcanvas:", formattedDate);
+            }
+          });
+          console.log("Pikaday khởi tạo thành công cho #offcanvasStockInDateInput");
+        } catch (error) {
+          console.error("Lỗi khởi tạo Pikaday:", error);
+          alert('Lỗi khởi tạo lịch. Vui lòng kiểm tra console.');
+        }
+      }
+    } else {
+      console.error("Lỗi: Không tìm thấy input #offcanvasStockInDateInput");
+    }
   });
 </script>
 </body>

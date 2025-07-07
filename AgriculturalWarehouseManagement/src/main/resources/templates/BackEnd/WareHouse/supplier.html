@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
 
@@ -92,7 +92,6 @@
 
     /* Ensure footer is above pagination but below sidebar */
     .footer {
-
         z-index: 20 !important; /* Above pagination */
     }
 
@@ -163,18 +162,18 @@
                         <div class="card card-table">
                             <div class="card-body">
                                 <div class="title-header option-title">
-                                    <!-- Dòng 1: chỉ All Supplier -->
+                                    <!-- Dòng 1: chỉ Danh Sách Nhà Cung Cấp -->
                                     <div class="first-line">
-                                        <h5>All Supplier</h5>
+                                        <h5>Danh Sách Nhà Cung Cấp</h5>
                                     </div>
 
-                                    <!-- Dòng 2: Add New và Search bên phải -->
+                                    <!-- Dòng 2: Thêm Mới và Tìm Kiếm bên phải -->
                                     <div class="second-line" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
                                         <a th:href="@{/warehouse/addsupplier}" class="align-items-center btn btn-theme d-flex">
-                                            <i data-feather="plus"></i>&nbsp;Add New
+                                            <i data-feather="plus"></i> Thêm Mới
                                         </a>
                                         <div class="search-bar">
-                                            <input type="text" class="form-control" placeholder="Search..." id="searchInput">
+                                            <input type="text" class="form-control" placeholder="Tìm kiếm..." id="searchInput">
                                         </div>
                                     </div>
                                 </div>
@@ -184,10 +183,10 @@
                                         <thead>
                                         <tr>
                                             <th>Logo</th>
-                                            <th>Name</th>
-                                            <th>ContactInformation</th>
-                                            <th>Product</th>
-                                            <th>Option</th>
+                                            <th>Tên Nhà Cung Cấp</th>
+                                            <th>Thông Tin Liên Hệ</th>
+                                            <th>Sản Phẩm</th>
+                                            <th>Hành Động</th>
                                         </tr>
                                         </thead>
                                         <tbody id="supplier-table-body">
@@ -205,33 +204,23 @@
             </div>
             <!-- All User Table Ends-->
 
-            <div class="container-fluid">
-                <!-- footer start-->
-                <footer class="footer">
-                    <div class="row">
-                        <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-                        </div>
-                    </div>
-                </footer>
-                <!-- footer end-->
-            </div>
+            <div th:replace="BackEnd/fragments/WareHouse/footer::footer"></div>
         </div>
         <!-- Container-fluid end -->
     </div>
     <!-- Page Body End -->
 
-    <!-- Modal Start -->
+    <!-- Modal Đăng Xuất -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body">
-                    <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
-                    <p>Are you sure you want to log out?</p>
+                    <h5 class="modal-title" id="staticBackdropLabel">Đăng Xuất</h5>
+                    <p>Bạn có chắc chắn muốn đăng xuất?</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     <div class="button-box">
-                        <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-                        <button type="button" th:onclick="|window.location='@{/backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
+                        <button type="button" class="btn btn--no" data-bs-dismiss="modal">Không</button>
+                        <button type="button" th:onclick="|window.location='@{/backend/login}'|" class="btn btn--yes btn-primary">Có</button>
                     </div>
                 </div>
             </div>
@@ -244,19 +233,19 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header d-block text-center">
-                    <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure?</h5>
+                    <h5 class="modal-title w-100" id="exampleModalLabel22">Bạn Có Chắc Chắn?</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="remove-box">
-                        <p>Bạn có chắc chắn muốn xóa nhà cung cấp này?</p>
+                        <p>Bạn có chắc chắn muốn xóa Nhà Cung Cấp này?</p>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
-                    <button type="button" class="btn btn-animation btn-md fw-bold confirm-delete" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal">Yes</button>
+                    <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Không</button>
+                    <button type="button" class="btn btn-animation btn-md fw-bold confirm-delete" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal">Có</button>
                 </div>
             </div>
         </div>
@@ -266,7 +255,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-center" id="exampleModalLabel12">Done!</h5>
+                    <h5 class="modal-title text-center" id="exampleModalLabel12">Hoàn Thành!</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <i class="fas fa-times"></i>
                     </button>
@@ -279,11 +268,11 @@
                                 <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
                             </svg>
                         </div>
-                        <h4 class="text-content">It's Removed.</h4>
+                        <h4 class="text-content">Đã Xóa.</h4>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
                 </div>
             </div>
         </div>
@@ -295,40 +284,40 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="productModalLabel">Product Details</h5>
+                    <h5 class="modal-title" id="productModalLabel">Chi Tiết Sản Phẩm</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="product-info">
-                        <p><strong>Product Name:</strong> <span id="product-name">Example Product</span></p>
-                        <p><strong>Product Price:</strong> <span id="product-price">$100.00</span></p>
-                        <p><strong>Product Description:</strong> <span id="product-description">This is a sample description.</span></p>
+                        <p><strong>Tên Sản Phẩm:</strong> <span id="product-name">Sản Phẩm Mẫu</span></p>
+                        <p><strong>Giá Sản Phẩm:</strong> <span id="product-price">100.000 VNĐ</span></p>
+                        <p><strong>Mô Tả Sản Phẩm:</strong> <span id="product-description">Đây là mô tả mẫu.</span></p>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Update Supplier Modal -->
+    <!-- Modal Cập Nhật Nhà Cung Cấp -->
     <div class="modal fade" id="updateSupplierModal" tabindex="-1" aria-labelledby="updateSupplierModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="updateSupplierModalLabel">Update Supplier</h5>
+                    <h5 class="modal-title" id="updateSupplierModalLabel">Cập Nhật Nhà Cung Cấp</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="updateSupplierForm">
                         <input type="hidden" id="supplierID">
                         <div class="mb-3">
-                            <label for="supplierName" class="form-label">Supplier Name</label>
+                            <label for="supplierName" class="form-label">Tên Nhà Cung Cấp</label>
                             <input type="text" class="form-control" id="supplierName" required>
                         </div>
                         <div class="mb-3">
-                            <label for="contactInfo" class="form-label">Contact Information</label>
+                            <label for="contactInfo" class="form-label">Thông Tin Liên Hệ</label>
                             <input type="text" class="form-control" id="contactInfo" required>
                         </div>
                         <div class="mb-3">
@@ -338,8 +327,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="saveSupplierBtn">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="saveSupplierBtn">Lưu</button>
                 </div>
             </div>
         </div>
@@ -392,7 +381,7 @@
                     tableBody.id = 'supplier-table-body';
                     table.appendChild(tableBody);
                 } else {
-                    console.error('Table #table_id not found');
+                    console.error('Bảng #table_id không tìm thấy');
                     return null;
                 }
             }
@@ -400,7 +389,7 @@
             if (!noDataRow) {
                 noDataRow = document.createElement('tr');
                 noDataRow.id = 'no-data-row';
-                noDataRow.innerHTML = '<td colspan="5" class="text-center" style="background-color: #e6f3f2; color: #555;">No data available in table</td>';
+                noDataRow.innerHTML = '<td colspan="5" class="text-center" style="background-color: #e6f3f2; color: #555;">Không có dữ liệu trong bảng</td>';
                 tableBody.appendChild(noDataRow);
             }
 
@@ -419,12 +408,12 @@
 
             fetch(`/api/suppliers/paginated?page=${page}&size=${pageSize}`)
                 .then(response => {
-                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    if (!response.ok) throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
                     return response.json();
                 })
                 .then(data => {
                     if (!data || !data.content || typeof data.totalPages === 'undefined' || typeof data.number === 'undefined') {
-                        console.error('Invalid API response:', data);
+                        console.error('Phản hồi API không hợp lệ:', data);
                         tableBody.innerHTML = '';
                         noDataRow.style.display = '';
                         renderPagination(0, 0);
@@ -444,7 +433,7 @@
                             const img = document.createElement('img');
                             img.src = supplier.logo || 'default-logo.png'; // Fallback if no logo
                             img.classList.add('img-fluid');
-                            img.alt = 'Supplier Logo';
+                            img.alt = 'Logo Nhà Cung Cấp';
                             imageDiv.appendChild(img);
                             imageCell.appendChild(imageDiv);
                             row.appendChild(imageCell);
@@ -465,9 +454,9 @@
                             productIcon.classList.add('ri-product-hunt-line');
                             productIcon.style.cursor = 'pointer';
                             productIcon.addEventListener('click', function () {
-                                document.getElementById('product-name').innerText = 'Example Product';
-                                document.getElementById('product-price').innerText = '$100.00';
-                                document.getElementById('product-description').innerText = 'This is a sample description.';
+                                document.getElementById('product-name').innerText = 'Sản Phẩm Mẫu';
+                                document.getElementById('product-price').innerText = '100.000 VNĐ';
+                                document.getElementById('product-description').innerText = 'Đây là mô tả mẫu.';
                                 new bootstrap.Modal(document.getElementById('productModal')).show();
                             });
                             productCell.appendChild(productIcon);
@@ -477,7 +466,7 @@
                             actionsCell.innerHTML = `
                                 <ul>
                                     <li><a href="order-detail.html"><i class="ri-eye-line"></i></a></li>
-                                    <li><a href="javascript:void(0)" class="edit-btn" data-id="${supplier.supplierID}" data-name="${ supplier.supplierName || ''}" data-contact="${supplier.contactInfo || ''}" data-logo="${supplier.logo || ''}"><i class="ri-pencil-line"></i></a></li>
+                                    <li><a href="javascript:void(0)" class="edit-btn" data-id="${supplier.supplierID}" data-name="${supplier.supplierName || ''}" data-contact="${supplier.contactInfo || ''}" data-logo="${supplier.logo || ''}"><i class="ri-pencil-line"></i></a></li>
                                     <li><a href="javascript:void(0)" class="delete-btn" data-id="${supplier.supplierID}" data-bs-toggle="modal" data-bs-target="#exampleModalToggle"><i class="ri-delete-bin-line"></i></a></li>
                                 </ul>
                             `;
@@ -492,7 +481,7 @@
                     renderPagination(data.totalPages, data.number);
                 })
                 .catch(error => {
-                    console.error('Error fetching suppliers:', error);
+                    console.error('Lỗi khi tải danh sách Nhà Cung Cấp:', error);
                     tableBody.innerHTML = '';
                     noDataRow.style.display = '';
                     renderPagination(0, 0);
@@ -515,7 +504,7 @@
             };
 
             // Previous button
-            addBtn('Previous', currentPage - 1, currentPage === 0);
+            addBtn('Trước', currentPage - 1, currentPage === 0);
 
             if (totalPages <= 1) {
                 addBtn(1, 0, false, true);
@@ -568,7 +557,7 @@
             }
 
             // Next button
-            addBtn('Next', currentPage + 1, currentPage === totalPages - 1);
+            addBtn('Tiếp', currentPage + 1, currentPage === totalPages - 1);
 
             // Handle click
             paginationControls.onclick = (e) => {
@@ -615,13 +604,13 @@
                     contactInfoInput.value = contactInfo || '';
                     logoInput.value = '';
                 } else {
-                    alert('Không thể mở modal cập nhật.');
+                    alert('Không thể mở cửa sổ cập nhật.');
                 }
 
                 try {
                     new bootstrap.Modal(document.getElementById('updateSupplierModal')).show();
                 } catch (error) {
-                    alert('Không thể mở modal cập nhật.');
+                    alert('Không thể mở cửa sổ cập nhật.');
                 }
             }
         });
@@ -633,7 +622,7 @@
                 const supplierID = modal.getAttribute('data-supplier-id');
 
                 if (!supplierID) {
-                    alert('Supplier ID không hợp lệ.');
+                    alert('ID Nhà Cung Cấp không hợp lệ.');
                     return;
                 }
 
@@ -656,12 +645,12 @@
                                 fetchSuppliers(currentPage);
                             }, { once: true });
                         } else {
-                            alert('Không thể xóa nhà cung cấp.');
+                            alert('Không thể xóa Nhà Cung Cấp.');
                         }
                     })
                     .catch(error => {
-                        console.error('Error deleting supplier:', error);
-                        alert('Lỗi khi xóa nhà cung cấp.');
+                        console.error('Lỗi khi xóa Nhà Cung Cấp:', error);
+                        alert('Lỗi khi xóa Nhà Cung Cấp.');
                     });
             });
         }
@@ -691,12 +680,12 @@
                     document.body.classList.remove('modal-open');
                     document.body.style.overflow = '';
                     document.getElementById('logo').value = '';
-                    alert('Cập nhật nhà cung cấp thành công!');
+                    alert('Cập nhật Nhà Cung Cấp thành công!');
                     fetchSuppliers(currentPage);
                 })
                 .catch(error => {
-                    console.error('Error updating supplier:', error);
-                    alert(error.message || 'Lỗi khi cập nhật nhà cung cấp.');
+                    console.error('Lỗi khi cập nhật Nhà Cung Cấp:', error);
+                    alert(error.message || 'Lỗi khi cập nhật Nhà Cung Cấp.');
                 });
         }
 
