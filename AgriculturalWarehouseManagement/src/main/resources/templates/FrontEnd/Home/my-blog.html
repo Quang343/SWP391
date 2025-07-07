@@ -1,7 +1,33 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="FrontEnd/fragments/head::head"></head>
+<head th:replace="FrontEnd/fragments/head::head">
+
+    <style>
+        ul.custom-pagination li.page-item.active > a.page-link,
+        ul.custom-pagination li.page-item.active > span.page-link {
+            background-color: #198754 !important;
+            color: #fff !important;
+            border: none !important;
+        }
+
+        ul.custom-pagination .page-link, ul.custom-pagination .page-link:focus {
+            color: #198754 !important;
+            border-radius: 6px !important;
+            min-width: 38px;
+            text-align: center;
+            box-shadow: none !important;
+        }
+
+        ul.custom-pagination .page-link:hover {
+            background-color: #e5f6ee !important;
+            color: #198754 !important;
+        }
+
+
+    </style>
+</head>
+
 
 <body>
 
@@ -175,10 +201,10 @@
                                 <div class="title">
                                     <h2>My Dashboard</h2>
                                     <span class="title-leaf">
-                                            <svg class="icon-width bg-gray">
-                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
-                                            </svg>
-                                        </span>
+            <svg class="icon-width bg-gray">
+                <use xlink:href="@{/assets/svg/leaf.svg#leaf}"></use>
+            </svg>
+        </span>
                                 </div>
 
                                 <div class="dashboard-user-name">
@@ -192,9 +218,9 @@
                                     <div class="row g-sm-4 g-3">
                                         <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
                                             <div class="total-contain">
-                                                <img src="../assets/images/svg/order.svg"
+                                                <img th:src="@{/assets/images/svg/order.svg}"
                                                      class="img-1 blur-up lazyload" alt="">
-                                                <img src="../assets/images/svg/order.svg" class="blur-up lazyload"
+                                                <img th:src="@{/assets/images/svg/order.svg}" class="blur-up lazyload"
                                                      alt="">
                                                 <div class="total-detail">
                                                     <h5>Total Products</h5>
@@ -205,9 +231,9 @@
 
                                         <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
                                             <div class="total-contain">
-                                                <img src="../assets/images/svg/pending.svg"
+                                                <img th:src="@{/assets/images/svg/pending.svg}"
                                                      class="img-1 blur-up lazyload" alt="">
-                                                <img src="../assets/images/svg/pending.svg" class="blur-up lazyload"
+                                                <img th:src="@{/assets/images/svg/pending.svg}" class="blur-up lazyload"
                                                      alt="">
                                                 <div class="total-detail">
                                                     <h5>Total Sales</h5>
@@ -218,9 +244,9 @@
 
                                         <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
                                             <div class="total-contain">
-                                                <img src="../assets/images/svg/wishlist.svg"
+                                                <img th:src="@{/assets/images/svg/wishlist.svg}"
                                                      class="img-1 blur-up lazyload" alt="">
-                                                <img src="../assets/images/svg/wishlist.svg"
+                                                <img th:src="@{/assets/images/svg/wishlist.svg}"
                                                      class="blur-up lazyload" alt="">
                                                 <div class="total-detail">
                                                     <h5>Order Pending</h5>
@@ -231,6 +257,7 @@
                                     </div>
                                 </div>
 
+                                <!-- Charts -->
                                 <div class="row g-4">
                                     <div class="col-xxl-6">
                                         <div class="dashboard-bg-box">
@@ -244,6 +271,7 @@
                                         </div>
                                     </div>
 
+                                    <!-- Trending Products -->
                                     <div class="col-xxl-6">
                                         <div class="table-responsive dashboard-bg-box">
                                             <div class="dashboard-title mb-4">
@@ -262,72 +290,49 @@
                                                 <tbody>
                                                 <tr>
                                                     <td class="product-image">
-                                                        <img src="../assets/images/vegetable/product/1.png"
+                                                        <img th:src="@{/assets/images/vegetable/product/1.png}"
                                                              class="img-fluid" alt="">
                                                     </td>
-                                                    <td>
-                                                        <h6>Fantasy Crunchy Choco Chip Cookies</h6>
-                                                    </td>
-                                                    <td>
-                                                        <h6>$25.69</h6>
-                                                    </td>
-                                                    <td>
-                                                        <h6>152</h6>
-                                                    </td>
+                                                    <td><h6>Fantasy Crunchy Choco Chip Cookies</h6></td>
+                                                    <td><h6>$25.69</h6></td>
+                                                    <td><h6>152</h6></td>
                                                 </tr>
 
                                                 <tr>
                                                     <td class="product-image">
-                                                        <img src="../assets/images/vegetable/product/2.png"
+                                                        <img th:src="@{/assets/images/vegetable/product/2.png}"
                                                              class="img-fluid" alt="">
                                                     </td>
-                                                    <td>
-                                                        <h6>Peanut Butter Bite Premium Butter Cookies 600 g</h6>
-                                                    </td>
-                                                    <td>
-                                                        <h6>$35.36</h6>
-                                                    </td>
-                                                    <td>
-                                                        <h6>34</h6>
-                                                    </td>
+                                                    <td><h6>Peanut Butter Bite Premium Butter Cookies 600 g</h6></td>
+                                                    <td><h6>$35.36</h6></td>
+                                                    <td><h6>34</h6></td>
                                                 </tr>
 
                                                 <tr>
                                                     <td class="product-image">
-                                                        <img src="../assets/images/vegetable/product/3.png"
+                                                        <img th:src="@{/assets/images/vegetable/product/3.png}"
                                                              class="img-fluid" alt="">
                                                     </td>
-                                                    <td>
-                                                        <h6>Yumitos Chilli Sprinkled Potato Chips 100 g</h6>
-                                                    </td>
-                                                    <td>
-                                                        <h6>$78.55</h6>
-                                                    </td>
-                                                    <td>
-                                                        <h6>78</h6>
-                                                    </td>
+                                                    <td><h6>Yumitos Chilli Sprinkled Potato Chips 100 g</h6></td>
+                                                    <td><h6>$78.55</h6></td>
+                                                    <td><h6>78</h6></td>
                                                 </tr>
 
                                                 <tr>
                                                     <td class="product-image">
-                                                        <img src="../assets/images/vegetable/product/4.png"
+                                                        <img th:src="@{/assets/images/vegetable/product/4.png}"
                                                              class="img-fluid" alt="">
                                                     </td>
-                                                    <td>
-                                                        <h6>healthy Long Life Toned Milk 1 L</h6>
-                                                    </td>
-                                                    <td>
-                                                        <h6>$32.98</h6>
-                                                    </td>
-                                                    <td>
-                                                        <h6>135</h6>
-                                                    </td>
+                                                    <td><h6>healthy Long Life Toned Milk 1 L</h6></td>
+                                                    <td><h6>$32.98</h6></td>
+                                                    <td><h6>135</h6></td>
                                                 </tr>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
 
+                                    <!-- Recent Orders -->
                                     <div class="col-xxl-6">
                                         <div class="order-tab dashboard-bg-box">
                                             <div class="dashboard-title mb-4">
@@ -346,73 +351,20 @@
                                                     <tbody>
                                                     <tr>
                                                         <td class="product-image">#254834</td>
-                                                        <td>
-                                                            <h6>Choco Chip Cookies</h6>
-                                                        </td>
-                                                        <td>
-                                                            <label class="success">Shipped</label>
-                                                        </td>
+                                                        <td><h6>Choco Chip Cookies</h6></td>
+                                                        <td><label class="success">Shipped</label></td>
                                                     </tr>
-
                                                     <tr>
                                                         <td class="product-image">#355678</td>
-                                                        <td>
-                                                            <h6>Premium Butter Cookies</h6>
-                                                        </td>
-                                                        <td>
-                                                            <label class="danger">Pending</label>
-                                                        </td>
+                                                        <td><h6>Premium Butter Cookies</h6></td>
+                                                        <td><label class="danger">Pending</label></td>
                                                     </tr>
-
                                                     <tr>
                                                         <td class="product-image">#647536</td>
-                                                        <td>
-                                                            <h6>Sprinkled Potato Chips</h6>
-                                                        </td>
-                                                        <td>
-                                                            <label class="success">Shipped</label>
-                                                        </td>
+                                                        <td><h6>Sprinkled Potato Chips</h6></td>
+                                                        <td><label class="success">Shipped</label></td>
                                                     </tr>
 
-                                                    <tr>
-                                                        <td class="product-image">#125689</td>
-                                                        <td>
-                                                            <h6>Milk 1 L</h6>
-                                                        </td>
-                                                        <td>
-                                                            <label class="danger">Pending</label>
-                                                        </td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <td class="product-image">#215487</td>
-                                                        <td>
-                                                            <h6>Raw Mutton Leg</h6>
-                                                        </td>
-                                                        <td>
-                                                            <label class="danger">Pending</label>
-                                                        </td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <td class="product-image">#365474</td>
-                                                        <td>
-                                                            <h6>Instant Coffee</h6>
-                                                        </td>
-                                                        <td>
-                                                            <label class="success">Shipped</label>
-                                                        </td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <td class="product-image">#368415</td>
-                                                        <td>
-                                                            <h6>Jowar Stick and Jowar Chips</h6>
-                                                        </td>
-                                                        <td>
-                                                            <label class="danger">Pending</label>
-                                                        </td>
-                                                    </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -420,6 +372,7 @@
                                     </div>
                                 </div>
                             </div>
+
                         </div>
 
                         <div class="tab-pane fade" id="pills-product" role="tabpanel">
@@ -455,75 +408,63 @@
                                             <th scope="col">Edit / Delete</th>
                                         </tr>
                                         </thead>
-                                        <tbody>
-                                        <tr th:each="blog, iterStat : ${blogs}">
-                                            <!-- Number (STT) -->
-                                            <td th:text="${iterStat.index + 1}"></td>
+                                        <!--                                        <tbody>-->
+                                        <!--                                        <tr th:each="blog, iterStat : ${blogs}">-->
+                                        <!--                                            &lt;!&ndash; Number (STT) &ndash;&gt;-->
+                                        <!--                                            <td th:text="${iterStat.index + 1}"></td>-->
 
-                                            <!-- Images -->
-                                            <td>
-                                                <img th:src="@{'/Frontend/assets/images/blog/' + ${blog.blogDetail.thumbnail}}"
-                                                     style="max-width: 120px; max-height: 70px; object-fit: cover; border-radius: 6px;"
-                                                     class="img-fluid" alt="">
-                                            </td>
+                                        <!--                                            &lt;!&ndash; Images &ndash;&gt;-->
+                                        <!--                                            <td>-->
+                                        <!--                                                <img th:src="@{'/Frontend/assets/images/blog/' + ${blog.blogDetail.thumbnail}}"-->
+                                        <!--                                                     style="max-width: 120px; max-height: 70px; object-fit: cover; border-radius: 6px;"-->
+                                        <!--                                                     class="img-fluid" alt="">-->
+                                        <!--                                            </td>-->
 
-                                            <!-- Content (Show ngắn gọn, ví dụ 40 ký tự đầu) -->
-                                            <td>
-                                                <h6 th:text="${#strings.length(blog.content) > 40 ? #strings.substring(blog.content, 0, 40) + '...' : blog.content}"></h6>
-                                            </td>
+                                        <!--                                            &lt;!&ndash; Content (Show ngắn gọn, ví dụ 40 ký tự đầu) &ndash;&gt;-->
+                                        <!--                                            <td>-->
+                                        <!--                                                <h6 th:text="${#strings.length(blog.content) > 40 ? #strings.substring(blog.content, 0, 40) + '...' : blog.content}"></h6>-->
+                                        <!--                                            </td>-->
 
-                                            <!-- Title -->
-                                            <td>
-                                                <h6 th:text="${blog.title}"></h6>
-                                            </td>
+                                        <!--                                            &lt;!&ndash; Title &ndash;&gt;-->
+                                        <!--                                            <td>-->
+                                        <!--                                                <h6 th:text="${blog.title}"></h6>-->
+                                        <!--                                            </td>-->
 
-                                            <!-- Status -->
-                                            <td>
-                                                <h6 th:text="${blog.status}"></h6>
-                                            </td>
+                                        <!--                                            &lt;!&ndash; Status &ndash;&gt;-->
+                                        <!--                                            <td>-->
+                                        <!--                                                <h6 th:text="${blog.status}"></h6>-->
+                                        <!--                                            </td>-->
 
-                                            <!-- Created At -->
-                                            <td>
-                                                <h6 th:text="${#dates.format(blog.createdAt, 'dd/MM/yyyy')}"></h6>
-                                            </td>
+                                        <!--                                            &lt;!&ndash; Created At &ndash;&gt;-->
+                                        <!--                                            <td>-->
+                                        <!--                                                <h6 th:text="${#dates.format(blog.createdAt, 'dd/MM/yyyy')}"></h6>-->
+                                        <!--                                            </td>-->
 
-                                            <!-- Edit/Delete (chỉ là icon, bạn cần gắn link js hoặc url cho action này) -->
-                                            <td class="edit-delete">
-                                                <a th:href="@{'/blog/edit?id=' + ${blog.blogID}}"><i data-feather="edit"
-                                                                                                     class="edit"></i></a>
-                                                <a th:href="@{'/blog/delete?id=' + ${blog.blogID}}"
-                                                   onclick="return confirm('Bạn chắc chắn muốn xóa?')">
-                                                    <i data-feather="trash-2" class="delete"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
+                                        <!--                                            &lt;!&ndash; Edit/Delete (chỉ là icon, bạn cần gắn link js hoặc url cho action này) &ndash;&gt;-->
+                                        <!--                                            <td class="edit-delete">-->
+                                        <!--                                                <a th:href="@{'/blog/edit?id=' + ${blog.blogID}}"><i data-feather="edit"-->
+                                        <!--                                                                                                     class="edit"></i></a>-->
+                                        <!--                                                <a th:href="@{'/blog/delete?id=' + ${blog.blogID}}"-->
+                                        <!--                                                   onclick="return confirm('Bạn chắc chắn muốn xóa?')">-->
+                                        <!--                                                    <i data-feather="trash-2" class="delete"></i>-->
+                                        <!--                                                </a>-->
+                                        <!--                                            </td>-->
+                                        <!--                                        </tr>-->
+                                        <!--                                        </tbody>-->
+
+                                        <tbody id="blogTableBody">
+                                        <!-- Blog rows sẽ được JS thêm vào đây -->
                                         </tbody>
                                     </table>
-
-
-                                    <nav class="custom-pagination">
-                                        <ul class="pagination justify-content-center">
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="javascript:void(0)" tabindex="-1">
-                                                    <i class="fa-solid fa-angles-left"></i>
-                                                </a>
-                                            </li>
-                                            <li class="page-item active">
-                                                <a class="page-link" href="javascript:void(0)">1</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="javascript:void(0)">2</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="javascript:void(0)">3</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="javascript:void(0)">
-                                                    <i class="fa-solid fa-angles-right"></i>
-                                                </a>
-                                            </li>
+                                    <!-- Pagination -->
+                                    <nav>
+                                        <ul class="pagination justify-content-center custom-pagination" id="pagination">
+                                            <!-- JS sẽ render ra các nút ở đây -->
                                         </ul>
+
                                     </nav>
+
+
                                 </div>
                             </div>
                         </div>
@@ -1123,22 +1064,7 @@
                                     <option selected>Choose Your Country</option>
                                     <option value="kingdom">United Kingdom</option>
                                     <option value="states">United States</option>
-                                    <option value="fra">France</option>
-                                    <option value="china">China</option>
-                                    <option value="spain">Spain</option>
-                                    <option value="italy">Italy</option>
-                                    <option value="turkey">Turkey</option>
-                                    <option value="germany">Germany</option>
-                                    <option value="russian">Russian Federation</option>
-                                    <option value="malay">Malaysia</option>
-                                    <option value="mexico">Mexico</option>
-                                    <option value="austria">Austria</option>
-                                    <option value="hong">Hong Kong SAR, China</option>
-                                    <option value="ukraine">Ukraine</option>
-                                    <option value="thailand">Thailand</option>
-                                    <option value="saudi">Saudi Arabia</option>
-                                    <option value="canada">Canada</option>
-                                    <option value="singa">Singapore</option>
+
                                 </select>
                                 <label for="floatingSelect">Country</label>
                             </div>
@@ -1152,9 +1078,8 @@
                                     <option selected>Choose Your City</option>
                                     <option value="kingdom">India</option>
                                     <option value="states">Canada</option>
-                                    <option value="fra">Dubai</option>
-                                    <option value="china">Los Angeles</option>
-                                    <option value="spain">Thailand</option>
+                                    <option value="fra">Ha Noi</option>
+
                                 </select>
                                 <label for="floatingSelect">City</label>
                             </div>
@@ -1386,6 +1311,141 @@
 
 <!-- theme setting js -->
 <script th:src="@{/Frontend/assets/js/theme-setting.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    const pageSize = 3;
+    const CONTEXT_PATH = "/AgriculturalWarehouseManagementApplication";
+
+    function loadBlogPage(page = 1) {
+        axios.get(`${CONTEXT_PATH}/api/my-blog/page?page=${page}&size=${pageSize}`)
+            .then(res => {
+                console.log("API data:", res.data); // THÊM LOG NÀY!
+                // Bảo vệ code, nếu không có blogs thì trả về mảng rỗng
+                const data = res.data || {};
+                renderBlogs(data.blogs, data.currentPage, pageSize);
+                renderPagination(data.currentPage, data.totalPages);
+            })
+            .catch(err => {
+                console.error('Lỗi lấy dữ liệu:', err);
+            });
+    }
+
+    function renderBlogs(blogs, currentPage, pageSize) {
+        const tbody = document.getElementById("blogTableBody");
+        tbody.innerHTML = "";
+        blogs.forEach((blog, idx) => {
+            const tr = document.createElement("tr");
+            // Nếu dùng DTO thì blog.thumbnail là đủ, nếu vẫn là entity thì blog.blogDetail.thumbnail
+            const thumbnail = blog.thumbnail || (blog.blogDetail && blog.blogDetail.thumbnail) || "no-image.png";
+            const imageSrc = `${CONTEXT_PATH}/Frontend/assets/images/blog/${thumbnail}`; // <-- Sửa ở đây
+            const color = getStatusColor(blog.status);
+            tr.innerHTML = `
+            <td>${(currentPage - 1) * pageSize + idx + 1}</td>
+            <td><img src="${imageSrc}" style="max-width:100px; max-height:60px;" alt=""></td>
+            <td>${blog.content && blog.content.length > 40 ? blog.content.substring(0, 40) + '...' : blog.content || ''}</td>
+            <td>${blog.title || ""}</td>
+            <td><span style="font-weight:bold;color:${color}">${blog.status}</span></td>
+            <td>${formatDate(blog.createdAt)}</td>
+            <td>
+                <a href="/blog/edit?id=${blog.blogID}"><i data-feather="edit"></i></a>
+                <a href="/blog/delete?id=${blog.blogID}"><i data-feather="trash-2"></i></a>
+            </td>
+        `;
+            tbody.appendChild(tr);
+        });
+        if (window.feather) feather.replace();
+    }
+
+
+    function renderPagination(currentPage, totalPages) {
+        let html = '';
+        // Nút về Đầu (<<)
+        if (currentPage > 1) {
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(1);return false;" title="Trang đầu"><i class="fa-solid fa-angle-double-left"></i></a></li>`;
+        }
+        // Nút về trước (<)
+        if (currentPage > 1) {
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage - 1});return false;" title="Trang trước"><i class="fa-solid fa-angle-left"></i></a></li>`;
+        }
+        // Tính sliding window
+        let range = 2;
+        let start = Math.max(1, currentPage - range);
+        let end = Math.min(totalPages, currentPage + range);
+        // ... trái nếu cần
+        if (start > 1) {
+            html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+        // Các số trang
+        for (let i = start; i <= end; i++) {
+            if (i === currentPage) {
+                html += `<li class="page-item active">
+            <a class="page-link" href="#" style="background-color:#198754;color:#fff;border:none;" onclick="gotoPage(${i});return false;">${i}</a>
+        </li>`;
+            } else {
+                html += `<li class="page-item">
+            <a class="page-link" href="#" onclick="gotoPage(${i});return false;">${i}</a>
+        </li>`;
+            }
+        }
+        // ... phải nếu cần
+        if (end < totalPages) {
+            html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+        // Nút sau (>)
+        if (currentPage < totalPages) {
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage + 1});return false;" title="Trang sau"><i class="fa-solid fa-angle-right"></i></a></li>`;
+        }
+        // Nút cuối (>>)
+        if (currentPage < totalPages) {
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${totalPages});return false;" title="Trang cuối"><i class="fa-solid fa-angle-double-right"></i></a></li>`;
+        }
+
+        document.getElementById("pagination").innerHTML = html;
+    }
+
+
+    function gotoPage(page) {
+        loadBlogPage(page);
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('vi-VN');
+    }
+
+    function getStatusColor(status) {
+        switch (status) {
+            case 'ACTIVE':
+                return '#198754';
+            case 'INACTIVE':
+                return '#6c757d';
+            case 'DRAFT':
+                return '#f39c12';
+            case 'PENDING':
+                return '#0dcaf0';
+            case 'PUBLISHED':
+                return '#20c997';
+            case 'DELETED':
+                return '#dc3545';
+            default:
+                return '#212529';
+        }
+    }
+
+    // Gọi lại khi tab My Blog được click hoặc trang load vào tab đó!
+    document.addEventListener('DOMContentLoaded', function () {
+        if (document.querySelector("#pills-product").classList.contains("show")) {
+            loadBlogPage(1);
+        }
+        document.getElementById("pills-product-tab").addEventListener('click', function () {
+            loadBlogPage(1);
+        });
+    });
+</script>
+
+
 </body>
 
 </html>

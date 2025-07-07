@@ -24,12 +24,6 @@ public class BlogController {
     private final BlogService blogService;
     private final UserService userService; // Để lấy thông tin user
 
-//    @Autowired
-//    public BlogController(BlogService blogService, UserService userService) {
-//        this.blogService = blogService;
-//        this.userService = userService;
-//    }
-
     @RequestMapping("/blog-list")
     public String bloglist(
             @RequestParam(defaultValue = "1") int page,
@@ -134,15 +128,39 @@ public class BlogController {
 
     // CRUD
 
+//    @RequestMapping("/my-blog")
+//    public String myBlog(Model model) {
+//        // User user = userService.findByUsername("daohuyhoang507@gmail.com"); // hoặc username/email test
+//        User user = userService.findById(1L); // lấy user id = 1
+//        List<Blog> myBlogs = blogService.getBlogsByUser(user.getUserId());
+//        model.addAttribute("blogs", myBlogs);
+//        model.addAttribute("user", user);
+//        return "FrontEnd/Home/my-blog";
+//    }
+
+    // Tạm k dùng thymleaf
+//    @RequestMapping("/my-blog")
+//    public String myBlog(
+//            @RequestParam(defaultValue = "1") int page,
+//            @RequestParam(defaultValue = "3") int size,
+//            Model model) {
+//        User user = userService.findById(1L); // Lấy user tạm thời
+//        Page<Blog> blogPage = blogService.getBlogsByUserPage(user.getUserId(), page - 1, size); // page-1 cho PageRequest
+//
+//        int totalPages = blogPage.getTotalPages();
+//        model.addAttribute("blogs", blogPage.getContent());
+//        model.addAttribute("currentPage", page);
+//        model.addAttribute("totalPages", totalPages);
+//        model.addAttribute("user", user);
+//        return "FrontEnd/Home/my-blog";
+//    }
+
     @RequestMapping("/my-blog")
-    public String myBlog(Model model) {
-        // User user = userService.findByUsername("daohuyhoang507@gmail.com"); // hoặc username/email test
-        User user = userService.findById(1L); // lấy user id = 1
-        List<Blog> myBlogs = blogService.getBlogsByUser(user.getUserId());
-        model.addAttribute("blogs", myBlogs);
-        model.addAttribute("user", user);
+    public String myBlog() {
         return "FrontEnd/Home/my-blog";
     }
+
+
 
     // Lấy thông tin blog của user / Cách 1
 //    @RequestMapping("/my-blog")

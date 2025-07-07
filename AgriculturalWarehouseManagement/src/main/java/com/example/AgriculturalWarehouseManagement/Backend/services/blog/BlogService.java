@@ -4,6 +4,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.response.blog.Bl
 import com.example.AgriculturalWarehouseManagement.Backend.models.Blog;
 import com.example.AgriculturalWarehouseManagement.Backend.models.BlogStatus;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.blog.BlogRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,19 +18,14 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class BlogService {
 
     private final BlogRepository blogRepository;
 
-    @Autowired
-    public BlogService(BlogRepository blogRepository) {
-        this.blogRepository = blogRepository;
-    }
-
     public List<Blog> getAllActiveBlogs() {
         return blogRepository.findAllActiveWithDetail(BlogStatus.ACTIVE);
     }
-
 
     @Transactional(readOnly = true)
     public Blog getBlogById(Integer id) {
@@ -53,7 +49,6 @@ public class BlogService {
         return dtos;
     }
 
-
     public Page<Blog> getActiveBlogsPage(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return blogRepository.findAllByStatusOrderByCreatedAtDesc(BlogStatus.ACTIVE, pageable);
@@ -64,7 +59,6 @@ public class BlogService {
         return blogRepository.searchByAuthorOrContent(BlogStatus.ACTIVE, keyword, pageable);
     }
 
-
     // User CRUD
     // Lấy blog cá nhân (không phân trang)
     public List<Blog> getBlogsByUser(Long userId) {
@@ -72,15 +66,13 @@ public class BlogService {
         // hoặc: return blogRepository.findByUserID(userId);
     }
 
-    // Nếu muốn phân trang
     public Page<Blog> getBlogsByUserPage(Long userId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return blogRepository.findByUserIDAndStatusOrderByCreatedAtDesc(userId, BlogStatus.ACTIVE, pageable);
     }
 
     public List<Blog> findByUserId(Long userId) {
         return blogRepository.findByUserID(userId);
     }
-
 
 }
