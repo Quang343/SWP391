@@ -1,166 +1,167 @@
 <!DOCTYPE html>
 <html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="BackEnd/fragments/WareHouse/head::head">
-  <!-- Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- CSS Pikaday -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
-  <style>
-    /* Ensure table is scrollable horizontally if content overflows */
-    .table-responsive {
-      overflow-x: auto;
-      margin-bottom: 0;
-      position: relative;
-    }
+<head th:replace="BackEnd/fragments/WareHouse/head::head"></head>
 
-    #table_id {
-      width: 100%;
-      min-width: 1000px;
-    }
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- CSS Pikaday -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
 
-    #table_id.table,
-    #table_id th,
-    #table_id td {
-      border-color: #e6f3f2 !important;
-    }
+<style>
+  /* Ensure table is scrollable horizontally if content overflows */
+  .table-responsive {
+    overflow-x: auto;
+    margin-bottom: 0;
+    position: relative;
+  }
 
-    #pagination-controls {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 12px;
-      margin-bottom: 20px;
-      position: relative;
-      z-index: 10;
-      max-width: 100%;
-    }
+  #table_id {
+    width: 100%;
+    min-width: 1000px;
+  }
 
-    #pagination-controls .page-item {
-      margin: 0 2.5px;
-    }
+  #table_id.table,
+  #table_id th,
+  #table_id td {
+    border-color: #e6f3f2 !important;
+  }
 
-    #pagination-controls .page-link {
-      border-radius: 4px;
-      padding: 6px 12px;
-      color: #018F84;
-      font-size: 14px;
-      cursor: pointer;
-      border: 1px solid #018F84;
-      background-color: transparent;
-      text-align: center;
-      box-sizing: border-box;
-    }
+  #pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 12px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 10;
+    max-width: 100%;
+  }
 
-    #pagination-controls .page-item:first-child .page-link,
-    #pagination-controls .page-item:last-child .page-link {
-      background-color: #018F84;
-      color: #fff;
-      border-color: #018F84;
-    }
+  #pagination-controls .page-item {
+    margin: 0 2.5px;
+  }
 
-    #pagination-controls .page-item.active .page-link {
-      background-color: #018F84;
-      border-color: #018F84;
-      color: #fff;
-      box-shadow: none;
-    }
+  #pagination-controls .page-link {
+    border-radius: 4px;
+    padding: 6px 12px;
+    color: #018F84;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid #018F84;
+    background-color: transparent;
+    text-align: center;
+    box-sizing: border-box;
+  }
 
-    #pagination-controls .page-item.disabled .page-link {
-      color: #018F84;
-      border-color: #e6f3f2;
-      background-color: #e6f3f2;
-      pointer-events: none;
-      cursor: default;
-    }
+  #pagination-controls .page-item:first-child .page-link,
+  #pagination-controls .page-item:last-child .page-link {
+    background-color: #018F84;
+    color: #fff;
+    border-color: #018F84;
+  }
 
-    #pagination-controls .page-link:hover:not(.disabled .page-link):not(.active .page-link):not(:first-child .page-link):not(:last-child .page-link) {
-      background-color: #e6f3f2;
-      color: #018F84;
-    }
+  #pagination-controls .page-item.active .page-link {
+    background-color: #018F84;
+    border-color: #018F84;
+    color: #fff;
+    box-shadow: none;
+  }
 
-    #pagination-controls .page-item:not(.disabled):first-child .page-link:hover,
-    #pagination-controls .page-item:not(.disabled):last-child .page-link:hover {
-      background-color: #016f6a;
-      color: #fff;
-    }
+  #pagination-controls .page-item.disabled .page-link {
+    color: #018F84;
+    border-color: #e6f3f2;
+    background-color: #e6f3f2;
+    pointer-events: none;
+    cursor: default;
+  }
 
-    .footer {
-      z-index: 20 !important;
-    }
+  #pagination-controls .page-link:hover:not(.disabled .page-link):not(.active .page-link):not(:first-child .page-link):not(:last-child .page-link) {
+    background-color: #e6f3f2;
+    color: #018F84;
+  }
 
-    .sidebar-wrapper {
-      position: fixed;
-      z-index: 30 !important;
-    }
+  #pagination-controls .page-item:not(.disabled):first-child .page-link:hover,
+  #pagination-controls .page-item:not(.disabled):last-child .page-link:hover {
+    background-color: #016f6a;
+    color: #fff;
+  }
 
-    .modal,
-    .offcanvas {
-      z-index: 1050 !important;
-    }
+  .footer {
+    z-index: 20 !important;
+  }
 
-    .modal-backdrop {
-      z-index: 1040 !important;
-    }
+  .sidebar-wrapper {
+    position: fixed;
+    z-index: 30 !important;
+  }
 
-    .btn-theme {
-      background-color: #018F84;
-      color: #fff;
-      border-color: #018F84;
-    }
+  .modal,
+  .offcanvas {
+    z-index: 1050 !important;
+  }
 
-    .btn-theme:hover {
-      background-color: #016f6a;
-      color: #fff;
-      border-color: #016f6a;
-    }
+  .modal-backdrop {
+    z-index: 1040 !important;
+  }
 
-    .search-bar input {
-      border: 1px solid #e6f3f2;
-    }
+  .btn-theme {
+    background-color: #018F84;
+    color: #fff;
+    border-color: #018F84;
+  }
 
-    .search-bar input:focus {
-      border-color: #018F84;
-      box-shadow: 0 0 5px rgba(1, 143, 132, 0.3);
-    }
+  .btn-theme:hover {
+    background-color: #016f6a;
+    color: #fff;
+    border-color: #016f6a;
+  }
 
-    /* CSS tùy chỉnh cho Pikaday */
-    .pika-select {
-      padding: 4px 8px;
-      font-size: 14px;
-      max-width: 90px;
-    }
+  .search-bar input {
+    border: 1px solid #e6f3f2;
+  }
 
-    .pika-single {
-      z-index: 9999 !important;
-      border-radius: 8px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-      font-family: 'Segoe UI', sans-serif;
-    }
+  .search-bar input:focus {
+    border-color: #018F84;
+    box-shadow: 0 0 5px rgba(1, 143, 132, 0.3);
+  }
 
-    .pika-button.pika-selected,
-    .pika-button:hover.pika-selected {
-      background-color: #28a745 !important;
-      color: white !important;
-      border-radius: 6px;
-    }
+  /* CSS tùy chỉnh cho Pikaday (y hệt như batch) */
+  .pika-select {
+    padding: 4px 8px;
+    font-size: 14px;
+    max-width: 90px;
+  }
 
-    .pika-button:hover {
-      background-color: #a3d9a5 !important;
-      color: black !important;
-      border-radius: 6px;
-    }
+  .pika-single {
+    z-index: 9999 !important;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    font-family: 'Segoe UI', sans-serif;
+  }
 
-    .pika-button.is-today {
-      border-bottom: 2px solid #28a745 !important;
-    }
+  .pika-button.pika-selected,
+  .pika-button:hover.pika-selected {
+    background-color: #28a745 !important;
+    color: white !important;
+    border-radius: 6px;
+  }
 
-    .pika-button {
-      border-radius: 6px;
-      transition: background-color 0.2s ease;
-    }
-  </style>
-</head>
+  .pika-button:hover {
+    background-color: #a3d9a5 !important;
+    color: black !important;
+    border-radius: 6px;
+  }
+
+  .pika-button.is-today {
+    border-bottom: 2px solid #28a745 !important;
+  }
+
+  .pika-button {
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+  }
+</style>
 
 <body>
 <!-- tap on top start-->
@@ -172,13 +173,13 @@
 <!-- page-wrapper Start-->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
   <!-- Page Header Start-->
-  <div th:replace="~{BackEnd/fragments/WareHouse/header::header}"></div>
+  <div th:replace="BackEnd/fragments/WareHouse/header::header"></div>
   <!-- Page Header Ends-->
 
   <!-- Page Body Start-->
   <div class="page-body-wrapper">
     <!-- Page Sidebar Start-->
-    <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
+    <div th:replace="BackEnd/fragments/WareHouse/sidebar::sidebar"></div>
     <!-- Page Sidebar Ends-->
 
     <!-- StockIn section Start -->
@@ -233,7 +234,7 @@
       <!-- Table End -->
 
       <!-- Container-fluid Ends-->
-      <div th:replace="~{BackEnd/fragments/WareHouse/footer::footer}"></div>
+      <div th:replace="BackEnd/fragments/WareHouse/footer::footer"></div>
 
     </div>
     <!-- StockIn section End -->
@@ -359,7 +360,7 @@
 </div>
 <!-- Offcanvas Box End -->
 
-<!-- latest js -->
+<!-- Latest js -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
 <!-- Bootstrap js -->
 <script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
@@ -384,12 +385,13 @@
 <script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
 <!-- Theme js -->
 <script th:src="@{/Backend/assets/js/script.js}"></script>
+<script th:src="@{/Backend/assets/js/checkbox-all-check.js}"></script>
 
 <!-- Pikaday và Moment JS -->
 <script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
 
-<!-- Custom JS for API call -->
+<!-- Custom JavaScript -->
 <script>
   function formatDateToVietnamese(dateString) {
     if (!dateString || dateString === 'N/A') {
@@ -402,7 +404,7 @@
         return 'N/A';
       }
       // Add 7 hours to convert UTC to Vietnam time (UTC+07:00)
-      const vnTime = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+      const vnTime = new Date(date.getTime() );
       const day = String(vnTime.getDate()).padStart(2, '0');
       const month = String(vnTime.getMonth() + 1).padStart(2, '0');
       const year = vnTime.getFullYear();
@@ -414,11 +416,6 @@
       console.error('[ERROR] Error parsing date:', dateString, error);
       return 'N/A';
     }
-  }
-
-  function isValidDate(day, month, year) {
-    const date = new Date(year, month - 1, day);
-    return date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day;
   }
 
   $(document).ready(function() {
@@ -656,13 +653,17 @@
       console.log('Đang hiển thị phân trang - tổng số trang:', totalPages, 'trang hiện tại:', currentPage);
 
       const addBtn = (label, page, disabled = false, active = false) => {
-        const li = $('<li></li>').addClass('page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : ''));
+        const li = $('<li></li>').addClass('page-item');
+        if (disabled) li.addClass('disabled');
+        if (active) li.addClass('active');
         li.html(`<a class="page-link" href="javascript:void(0)" data-page="${page}">${label}</a>`);
         paginationControls.append(li);
       };
 
+      // Previous button
       addBtn('Trước', currentPage - 1, currentPage === 0);
 
+      // Show up to 5 pages, centered around currentPage
       const maxPagesToShow = 5;
       let startPage = Math.max(0, currentPage - Math.floor(maxPagesToShow / 2));
       let endPage = Math.min(totalPages, startPage + maxPagesToShow);
@@ -689,6 +690,7 @@
         addBtn(totalPages, totalPages - 1, false, currentPage === totalPages - 1);
       }
 
+      // Next button
       addBtn('Sau', currentPage + 1, currentPage === totalPages - 1);
 
       // Bind click events
@@ -702,7 +704,7 @@
       });
     }
 
-    // Load StockIn details into offcanvas
+    // Load StockIn details into offcanvas và cập nhật ngày (giống batch)
     $(document).on('shown.bs.offcanvas', '#order-details', function(event) {
       var stockInId = $(event.relatedTarget).data('stockin-id');
       $('#offcanvasStockInId').text(stockInId);
@@ -717,7 +719,7 @@
           const supplierId = stockIn.supplierID && typeof stockIn.supplierID === 'object' ? (stockIn.supplierID.supplierID || stockIn.supplierID.id) : stockIn.supplierID;
           const warehouseId = stockIn.warehouseID && typeof stockIn.warehouseID === 'object' ? (stockIn.warehouseID.warehouseId || stockIn.warehouseID.id) : stockIn.warehouseID;
 
-          console.log('Đang tải chi tiết phiếu nhập kho ID:', stockInId, 'supplierID:', supplierId, 'warehouseID:', warehouseId);
+          console.log('Đang tải chi tiết phiếu nhập kho ID:', stockInId, 'supplierID:', supplierId, 'warehouseID:', warehouseId, 'stockInDate:', stockIn.stockInDate);
 
           // Load dropdowns
           loadSuppliersDropdown($('#offcanvasSupplierId'), supplierId);
@@ -727,25 +729,16 @@
           const formattedDate = formatDateToVietnamese(stockIn.stockInDate);
           $('#offcanvasStockInDate').text(formattedDate || 'N/A');
 
-          // Populate input fields for editing, splitting date and time
+          // Populate input fields for editing (giống cách batch xử lý manufactureDate)
           if (stockIn.stockInDate) {
             const date = new Date(stockIn.stockInDate);
-            // Add 7 hours to convert UTC to Vietnam time
-            const vnTime = new Date(date.getTime() + 7 * 60 * 60 * 1000);
-            const day = String(vnTime.getDate()).padStart(2, '0');
-            const month = String(vnTime.getMonth() + 1).padStart(2, '0');
-            const year = vnTime.getFullYear();
+            const vnTime = new Date(date.getTime() ); // UTC+07
+            const formattedDateInput = moment(vnTime).format('DD-MM-YYYY');
+            $('#offcanvasStockInDateInput').val(formattedDateInput);
+
             const hours = String(vnTime.getHours()).padStart(2, '0');
             const minutes = String(vnTime.getMinutes()).padStart(2, '0');
-
-            // Set date input as DD-MM-YYYY for Pikaday
-            const dateStr = `${day}-${month}-${year}`;
-            $('#offcanvasStockInDateInput').val(dateStr);
-            console.log('Filled date:', dateStr);
-            // Set time input as HH:MM
-            const timeStr = `${hours}:${minutes}`;
-            $('#offcanvasStockInTimeInput').val(timeStr);
-            console.log('Filled time:', timeStr);
+            $('#offcanvasStockInTimeInput').val(`${hours}:${minutes}`);
           } else {
             $('#offcanvasStockInDateInput').val('');
             $('#offcanvasStockInTimeInput').val('00:00');
@@ -764,33 +757,28 @@
     $('#updateStockInForm').on('submit', function(e) {
       e.preventDefault();
       var stockInId = $('#offcanvasStockInIdInput').val();
-      var dateInput = $('#offcanvasStockInDateInput').val(); // DD-MM-YYYY from Pikaday
-      var timeInput = $('#offcanvasStockInTimeInput').val(); // HH:MM
+      var date = $('#offcanvasStockInDateInput').val(); // DD-MM-YYYY
+      var time = $('#offcanvasStockInTimeInput').val(); // HH:mm
 
-      console.log('Submitted date:', dateInput, 'Submitted time:', timeInput);
-
-      // Validate and combine date and time
-      let stockInDate;
-      if (dateInput && timeInput) {
-        const [day, month, year] = dateInput.split('-').map(Number);
-        const [hours, minutes] = timeInput.split(':').map(Number);
-
-        // Check if date is valid
-        if (!isValidDate(day, month, year)) {
-          console.error('Invalid date format:', dateInput);
-          alert('Ngày không hợp lệ. Vui lòng chọn lại.');
-          return;
-        }
-
-        const vnDate = new Date(year, month - 1, day, hours, minutes, 0); // Month is 0-based
-        // Convert to UTC by adding 7 hours (since vnDate is already in Vietnam time)
-        const utcDate = new Date(vnDate.getTime() + 7 * 60 * 60 * 1000);
-        stockInDate = utcDate.toISOString();
-        console.log('Combined stockInDate (UTC):', stockInDate);
-      } else {
-        stockInDate = new Date().toISOString(); // Fallback to current UTC time
-        console.log('No date/time provided, using current UTC:', stockInDate);
+      // Validate date and time
+      if (!date || !time) {
+        alert('Vui lòng nhập đầy đủ ngày và giờ.');
+        return;
       }
+
+      const [day, month, year] = date.split('-').map(Number);
+      const [hours, minutes] = time.split(':').map(Number);
+      if (isNaN(day) || isNaN(month) || isNaN(year) || isNaN(hours) || isNaN(minutes)) {
+        alert('Định dạng ngày hoặc giờ không hợp lệ.');
+        return;
+      }
+
+      // Combine date and time, convert to UTC for backend
+      let stockInDate;
+      const vnDate = new Date(year, month - 1, day, hours, minutes, 0);
+      // Convert to UTC by adding 7 hours (since vnDate is already in local time)
+      const utcDate = new Date(vnDate.getTime() + 7 * 60 * 60 * 1000);
+      stockInDate = utcDate.toISOString();
 
       var formData = {
         id: stockInId,
@@ -875,22 +863,29 @@
     if (initialPage > 0) currentPage = initialPage - 1; // Convert 1-based URL to 0-based
     fetchStockIns(currentPage);
 
-    // Khởi tạo Pikaday cho offcanvasStockInDateInput
-    const offcanvasDateInput = document.getElementById('offcanvasStockInDateInput');
-    if (offcanvasDateInput) {
+    // Khởi tạo Pikaday khi offcanvas được mở (giống cách batch xử lý modal)
+    let pickerInstance = null;
+    $(document).on('shown.bs.offcanvas', '#order-details', function() {
+      const offcanvasDateInput = document.getElementById('offcanvasStockInDateInput');
+      if (!offcanvasDateInput) {
+        console.error("Lỗi: Không tìm thấy input #offcanvasStockInDateInput khi offcanvas mở");
+        return;
+      }
+
       if (typeof Pikaday === 'undefined' || typeof moment === 'undefined') {
         console.error("Lỗi: Pikaday hoặc Moment không tải được. Kiểm tra CDN.");
         alert('Lỗi: Không tải được thư viện lịch. Vui lòng kiểm tra console.');
-      } else {
+        return;
+      }
+
+      if (!pickerInstance) {
         try {
-          const picker = new Pikaday({
+          pickerInstance = new Pikaday({
             field: offcanvasDateInput,
             format: 'DD-MM-YYYY',
             yearRange: 10,
             minDate: new Date(2015, 0, 1),
             maxDate: new Date(),
-            defaultDate: new Date(),
-            setDefaultDate: true,
             firstDay: 1,
             i18n: {
               previousMonth: 'Tháng trước',
@@ -909,12 +904,20 @@
         } catch (error) {
           console.error("Lỗi khởi tạo Pikaday:", error);
           alert('Lỗi khởi tạo lịch. Vui lòng kiểm tra console.');
+          return;
         }
       }
-    } else {
-      console.error("Lỗi: Không tìm thấy input #offcanvasStockInDateInput");
-    }
+
+      // Thêm sự kiện click để hiển thị lịch
+      offcanvasDateInput.addEventListener('click', function() {
+        if (pickerInstance && !pickerInstance.isVisible()) {
+          pickerInstance.show();
+          console.log("Pikaday hiển thị khi nhấp vào input");
+        }
+      });
+    });
   });
 </script>
+
 </body>
 </html>
