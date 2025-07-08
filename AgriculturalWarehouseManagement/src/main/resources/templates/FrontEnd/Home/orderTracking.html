@@ -8,16 +8,16 @@
     <meta name="description" content="Fastkart">
     <meta name="keywords" content="Fastkart">
     <meta name="author" content="Fastkart">
-    <link rel="icon" href="../assets/images/favicon/1.png" type="image/x-icon">
+    <link rel="icon" th:href="@{/FrontEnd/assets/images/favicon/1.png}" type="image/x-icon">
     <title>On-demand last-mile delivery</title>
 
     <!-- Google font -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
+          rel="stylesheet">
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap">
+          href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap">
 
     <!-- bootstrap css -->
     <link id="rtl-link" rel="stylesheet" type="text/css" th:href="@{FrontEnd/assets/css/vendors/bootstrap.css}">
@@ -28,425 +28,425 @@
     <!-- Template css -->
     <link id="color-link" rel="stylesheet" type="text/css" th:href="@{FrontEnd/assets/css/style.css}">
 </head>
+<style>
+    .shake-10s { /* class mới */
+        animation: shake 0.5s ease-in-out;
+        animation-iteration-count: 20; /* 0.5 s × 20 = 10 s */
+    }
+</style>
 
 <body>
 
-    <!-- Loader Start -->
-    <div class="fullpage-loader">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-    <!-- Loader End -->
+<!-- Loader Start -->
+<div class="fullpage-loader">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+<!-- Loader End -->
 
-    <!-- Header Start -->
-    <head th:replace="FrontEnd/fragments/header::header"></head>
-    <!-- Header End -->
+<!-- Header Start -->
+<head th:replace="FrontEnd/fragments/header::header"></head>
+<!-- Header End -->
 
-    <!-- mobile fix menu start -->
-    <div class="mobile-menu d-md-none d-block mobile-cart">
-        <ul>
-            <li class="active">
-                <a href="index.html">
-                    <i class="iconly-Home icli"></i>
-                    <span>Home</span>
-                </a>
-            </li>
+<!-- mobile fix menu start -->
+<!-- mobile fix menu end -->
 
-            <li class="mobile-category">
-                <a href="javascript:void(0)">
-                    <i class="iconly-Category icli js-link"></i>
-                    <span>Category</span>
-                </a>
-            </li>
+<!-- Breadcrumb Section Start -->
+<section class="faq-breadcrumb pt-0">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-contain">
+                    <h2>Order Tracking</h2>
+                    <div class="faq-form-tag">
+                        <div class="input-group" style="display: inline-block">
+                            <form th:action="@{/orderDetailsUser}" method="get" style="position: relative">
+                                <input type="search" name="orderCode" class="form-control" id="exampleFormControlInput1"
+                                       placeholder="Kiểm tra mã theo dõi đơn hàng" style="border:1px solid #20c7a1">
+                                <button type="submit" class="btn-outline-success btn-lg"
+                                        style="margin-top: -6%;color: #50dd92; border: 1px solid #43ca85; position: absolute; margin-left: 390px;height: 92%"><i
+                                        class="fa-solid fa-magnifying-glass"></i></button>
+                            </form>
 
-            <li>
-                <a href="search.html" class="search-box">
-                    <i class="iconly-Search icli"></i>
-                    <span>Search</span>
-                </a>
-            </li>
 
-            <li>
-                <a href="wishlist.html" class="notifi-wishlist">
-                    <i class="iconly-Heart icli"></i>
-                    <span>My Wish</span>
-                </a>
-            </li>
-
-            <li>
-                <a href="cart.html">
-                    <i class="iconly-Bag-2 icli fly-cate"></i>
-                    <span>Cart</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-    <!-- mobile fix menu end -->
-
-    <!-- Breadcrumb Section Start -->
-    <section class="faq-breadcrumb pt-0">
-        <div class="container-fluid-lg">
-            <div class="row">
-                <div class="col-12">
-                    <div class="breadcrumb-contain">
-                        <h2>Order Tracking</h2>
-                        <div class="faq-form-tag">
-                            <div class="input-group">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                                <input type="search" class="form-control" id="exampleFormControlInput1"
-                                    placeholder="Check code of order tracking">
+                            <div id="quantityErrorDiv" th:if="${errorMessageOrderDetail != null}"
+                                 th:text="${errorMessageOrderDetail}"
+                                 class="alert-danger shake-10s"
+                                 style="display: inline-block; text-align: center;; padding: 10px; margin-top: 10px">
                             </div>
+                            <script>
+                                var errorMessageDiv = document.getElementById('quantityErrorDiv');
+
+                                if (errorMessageDiv) {
+                                    setTimeout(function () {
+                                        errorMessageDiv.style.display = 'none';
+                                    }, 10000); // 10 giây
+                                }
+                            </script>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-    <!-- Breadcrumb Section End -->
-
-    <!-- Faq Question section Start -->
-    <section class="faq-contain">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="slider-4-2 product-wrapper">
-                        <div>
-                            <div class="faq-top-box">
-                                <div class="faq-box-icon">
-                                    <img th:src="@{FrontEnd/assets/images/inner-page/faq/start.png}" class="blur-up lazyload"
-                                        alt="">
-                                </div>
-
-                                <div class="faq-box-contain">
-                                    <h3>Getting Started</h3>
-                                    <p>Bring to the table win-win survival strategies to ensure proactive domination.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="faq-top-box">
-                                <div class="faq-box-icon">
-                                    <img th:src="@{FrontEnd/assets/images/inner-page/faq/help.png}" class="blur-up lazyload" alt="">
-                                </div>
-
-                                <div class="faq-box-contain">
-                                    <h3>Sales Question</h3>
-                                    <p>Lorizzle ipsizzle boom shackalack sit get down get down.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="faq-top-box">
-                                <div class="faq-box-icon">
-                                    <img th:src="@{FrontEnd/assets/images/inner-page/faq/price.png}" class="blur-up lazyload"
-                                        alt="">
-                                </div>
-
-                                <div class="faq-box-contain">
-                                    <h3>Pricing & Plans</h3>
-                                    <p>Curabitizzle fizzle break yo neck, yall quis fo shizzle mah nizzle fo rizzle.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="faq-top-box">
-                                <div class="faq-box-icon">
-                                    <img th:src="@{FrontEnd/assets/images/inner-page/faq/contact.png}" class="blur-up lazyload"
-                                        alt="">
-                                </div>
-
-                                <div class="faq-box-contain">
-                                    <h3>Support Contact</h3>
-                                    <p>Gizzle fo shizzle bow wow wow bizzle leo bibendizzle check out this.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Faq Question section End -->
-
-    <!-- Faq Section Start -->
-
-    <!-- Faq Section End -->
-
-    <!-- Footer Section Start -->
-    <footer th:replace="FrontEnd/fragments/footer::footer"></footer>
-    <!-- Footer Section End -->
-
-    <!-- Location Modal Start -->
-    <div class="modal location-modal fade theme-modal" id="locationModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Choose your Delivery Location</h5>
-                    <p class="mt-1 text-content">Enter your address and we will specify the offer for your area.</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="location-list">
-                        <div class="search-input">
-                            <input type="search" class="form-control" placeholder="Search Your Area">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </div>
-
-                        <div class="disabled-box">
-                            <h6>Select a Location</h6>
-                        </div>
-
-                        <ul class="location-select custom-height">
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Alabama</h6>
-                                    <span>Min: $130</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Arizona</h6>
-                                    <span>Min: $150</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>California</h6>
-                                    <span>Min: $110</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Colorado</h6>
-                                    <span>Min: $140</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Florida</h6>
-                                    <span>Min: $160</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Georgia</h6>
-                                    <span>Min: $120</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Kansas</h6>
-                                    <span>Min: $170</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Minnesota</h6>
-                                    <span>Min: $120</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>New York</h6>
-                                    <span>Min: $110</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="javascript:void(0)">
-                                    <h6>Washington</h6>
-                                    <span>Min: $130</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-    <!-- Location Modal End -->
+</section>
+<!-- Breadcrumb Section End -->
 
-    <!-- Deal Box Modal Start -->
-    <div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
-            <div class="modal-content">
-                <div class="modal-header">
+<!-- Faq Question section Start -->
+<section class="faq-contain">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="slider-4-2 product-wrapper">
                     <div>
-                        <h5 class="modal-title w-100" id="deal_today">Deal Today</h5>
-                        <p class="mt-1 text-content">Recommended deals for you.</p>
+                        <div class="faq-top-box">
+                            <div class="faq-box-icon">
+                                <img th:src="@{FrontEnd/assets/images/inner-page/faq/start.png}"
+                                     class="blur-up lazyload"
+                                     alt="">
+                            </div>
+
+                            <div class="faq-box-contain">
+                                <h3>Getting Started</h3>
+                                <p>Bring to the table win-win survival strategies to ensure proactive domination.
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="deal-offer-box">
-                        <ul class="deal-offer-list">
-                            <li class="list-1">
-                                <div class="deal-offer-contain">
-                                    <a href="shop-left-sidebar.html" class="deal-image">
-                                        <img src="../assets/images/vegetable/product/10.png" class="blur-up lazyload"
-                                            alt="">
-                                    </a>
 
-                                    <a href="shop-left-sidebar.html" class="deal-contain">
-                                        <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                        <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
-                                    </a>
-                                </div>
-                            </li>
+                    <div>
+                        <div class="faq-top-box">
+                            <div class="faq-box-icon">
+                                <img th:src="@{FrontEnd/assets/images/inner-page/faq/help.png}" class="blur-up lazyload"
+                                     alt="">
+                            </div>
 
-                            <li class="list-2">
-                                <div class="deal-offer-contain">
-                                    <a href="shop-left-sidebar.html" class="deal-image">
-                                        <img src="../assets/images/vegetable/product/11.png" class="blur-up lazyload"
-                                            alt="">
-                                    </a>
+                            <div class="faq-box-contain">
+                                <h3>Sales Question</h3>
+                                <p>Lorizzle ipsizzle boom shackalack sit get down get down.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="faq-top-box">
+                            <div class="faq-box-icon">
+                                <img th:src="@{FrontEnd/assets/images/inner-page/faq/price.png}"
+                                     class="blur-up lazyload"
+                                     alt="">
+                            </div>
 
-                                    <a href="shop-left-sidebar.html" class="deal-contain">
-                                        <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                        <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
-                                    </a>
-                                </div>
-                            </li>
+                            <div class="faq-box-contain">
+                                <h3>Pricing & Plans</h3>
+                                <p>Curabitizzle fizzle break yo neck, yall quis fo shizzle mah nizzle fo rizzle.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="faq-top-box">
+                            <div class="faq-box-icon">
+                                <img th:src="@{FrontEnd/assets/images/inner-page/faq/contact.png}"
+                                     class="blur-up lazyload"
+                                     alt="">
+                            </div>
 
-                            <li class="list-3">
-                                <div class="deal-offer-contain">
-                                    <a href="shop-left-sidebar.html" class="deal-image">
-                                        <img src="../assets/images/vegetable/product/12.png" class="blur-up lazyload"
-                                            alt="">
-                                    </a>
-
-                                    <a href="shop-left-sidebar.html" class="deal-contain">
-                                        <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                        <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
-                                    </a>
-                                </div>
-                            </li>
-
-                            <li class="list-1">
-                                <div class="deal-offer-contain">
-                                    <a href="shop-left-sidebar.html" class="deal-image">
-                                        <img src="../assets/images/vegetable/product/13.png" class="blur-up lazyload"
-                                            alt="">
-                                    </a>
-
-                                    <a href="shop-left-sidebar.html" class="deal-contain">
-                                        <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                        <h6>$52.57 <del>57.62</del> <span>500 G</span></h6>
-                                    </a>
-                                </div>
-                            </li>
-                        </ul>
+                            <div class="faq-box-contain">
+                                <h3>Support Contact</h3>
+                                <p>Gizzle fo shizzle bow wow wow bizzle leo bibendizzle check out this.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Deal Box Modal End -->
+</section>
+<!-- Faq Question section End -->
 
-    <!-- Tap to top and theme setting button start -->
-    <div class="theme-option">
-        <div class="setting-box">
-            <button class="btn setting-button">
-                <i class="fa-solid fa-gear"></i>
-            </button>
+<!-- Faq Section Start -->
 
-            <div class="theme-setting-2">
-                <div class="theme-box">
-                    <ul>
+<!-- Faq Section End -->
+
+<!-- Footer Section Start -->
+<footer th:replace="FrontEnd/fragments/footer::footer"></footer>
+<!-- Footer Section End -->
+
+<!-- Location Modal Start -->
+<div class="modal location-modal fade theme-modal" id="locationModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Choose your Delivery Location</h5>
+                <p class="mt-1 text-content">Enter your address and we will specify the offer for your area.</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="location-list">
+                    <div class="search-input">
+                        <input type="search" class="form-control" placeholder="Search Your Area">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+
+                    <div class="disabled-box">
+                        <h6>Select a Location</h6>
+                    </div>
+
+                    <ul class="location-select custom-height">
                         <li>
-                            <div class="setting-name">
-                                <h4>Color</h4>
-                            </div>
-                            <div class="theme-setting-button color-picker">
-                                <form class="form-control">
-                                    <label for="colorPick" class="form-label mb-0">Theme Color</label>
-                                    <input type="color" class="form-control form-control-color" id="colorPick"
-                                        value="#0da487" title="Choose your color">
-                                </form>
-                            </div>
+                            <a href="javascript:void(0)">
+                                <h6>Alabama</h6>
+                                <span>Min: $130</span>
+                            </a>
                         </li>
 
                         <li>
-                            <div class="setting-name">
-                                <h4>Dark</h4>
-                            </div>
-                            <div class="theme-setting-button">
-                                <button class="btn btn-2 outline" id="darkButton">Dark</button>
-                                <button class="btn btn-2 unline" id="lightButton">Light</button>
-                            </div>
+                            <a href="javascript:void(0)">
+                                <h6>Arizona</h6>
+                                <span>Min: $150</span>
+                            </a>
                         </li>
 
                         <li>
-                            <div class="setting-name">
-                                <h4>RTL</h4>
+                            <a href="javascript:void(0)">
+                                <h6>California</h6>
+                                <span>Min: $110</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Colorado</h6>
+                                <span>Min: $140</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Florida</h6>
+                                <span>Min: $160</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Georgia</h6>
+                                <span>Min: $120</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Kansas</h6>
+                                <span>Min: $170</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Minnesota</h6>
+                                <span>Min: $120</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>New York</h6>
+                                <span>Min: $110</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Washington</h6>
+                                <span>Min: $130</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Location Modal End -->
+
+<!-- Deal Box Modal Start -->
+<div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title w-100" id="deal_today">Deal Today</h5>
+                    <p class="mt-1 text-content">Recommended deals for you.</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="deal-offer-box">
+                    <ul class="deal-offer-list">
+                        <li class="list-1">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/10.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
                             </div>
-                            <div class="theme-setting-button rtl">
-                                <button class="btn btn-2 rtl-unline">LTR</button>
-                                <button class="btn btn-2 rtl-outline">RTL</button>
+                        </li>
+
+                        <li class="list-2">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/11.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-3">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/12.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-1">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/13.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
                             </div>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+<!-- Deal Box Modal End -->
 
-        <div class="back-to-top">
-            <a id="back-to-top" href="#">
-                <i class="fas fa-chevron-up"></i>
-            </a>
+<!-- Tap to top and theme setting button start -->
+<div class="theme-option">
+    <div class="setting-box">
+        <button class="btn setting-button">
+            <i class="fa-solid fa-gear"></i>
+        </button>
+
+        <div class="theme-setting-2">
+            <div class="theme-box">
+                <ul>
+                    <li>
+                        <div class="setting-name">
+                            <h4>Color</h4>
+                        </div>
+                        <div class="theme-setting-button color-picker">
+                            <form class="form-control">
+                                <label for="colorPick" class="form-label mb-0">Theme Color</label>
+                                <input type="color" class="form-control form-control-color" id="colorPick"
+                                       value="#0da487" title="Choose your color">
+                            </form>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>Dark</h4>
+                        </div>
+                        <div class="theme-setting-button">
+                            <button class="btn btn-2 outline" id="darkButton">Dark</button>
+                            <button class="btn btn-2 unline" id="lightButton">Light</button>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>RTL</h4>
+                        </div>
+                        <div class="theme-setting-button rtl">
+                            <button class="btn btn-2 rtl-unline">LTR</button>
+                            <button class="btn btn-2 rtl-outline">RTL</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
-    <!-- Tap to top and theme setting button end -->
 
-    <!-- Bg overlay Start -->
-    <div class="bg-overlay"></div>
-    <!-- Bg overlay End -->
+    <div class="back-to-top">
+        <a id="back-to-top" href="#">
+            <i class="fas fa-chevron-up"></i>
+        </a>
+    </div>
+</div>
+<!-- Tap to top and theme setting button end -->
 
-    <!-- latest jquery-->
-    <script th:src="@{FrontEnd/assets/js/jquery-3.6.0.min.js}"></script>
+<!-- Bg overlay Start -->
+<div class="bg-overlay"></div>
+<!-- Bg overlay End -->
 
-    <!-- jquery ui-->
-    <script th:src="@{FrontEnd/assets/js/jquery-ui.min.js}"></script>
+<!-- latest jquery-->
+<script th:src="@{FrontEnd/assets/js/jquery-3.6.0.min.js}"></script>
 
-    <!-- Bootstrap js-->
-    <script th:src="@{FrontEnd/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
-    <script th:src="@{FrontEnd/assets/js/bootstrap/popper.min.js}"></script>
-    <script th:src="@{FrontEnd/assets/js/bootstrap/bootstrap-notify.min.js}"></script>
+<!-- jquery ui-->
+<script th:src="@{FrontEnd/assets/js/jquery-ui.min.js}"></script>
 
-    <!-- feather icon js-->
-    <script th:src="@{FrontEnd/assets/js/feather/feather.min.js}"></script>
-    <script th:src="@{FrontEnd/assets/js/feather/feather-icon.js}"></script>
+<!-- Bootstrap js-->
+<script th:src="@{FrontEnd/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/bootstrap/popper.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/bootstrap/bootstrap-notify.min.js}"></script>
 
-    <!-- Lazyload Js -->
-    <script th:src="@{FrontEnd/assets/js/lazysizes.min.js}"></script>
+<!-- feather icon js-->
+<script th:src="@{FrontEnd/assets/js/feather/feather.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/feather/feather-icon.js}"></script>
 
-    <!-- Slick js-->
-    <script th:src="@{FrontEnd/assets/js/slick/slick.js}"></script>
-    <script th:src="@{FrontEnd/assets/js/slick/custom_slick.js}"></script>
+<!-- Lazyload Js -->
+<script th:src="@{FrontEnd/assets/js/lazysizes.min.js}"></script>
 
-    <!-- script js -->
-    <script th:src="@{FrontEnd/assets/js/script.js}"></script>
+<!-- Slick js-->
+<script th:src="@{FrontEnd/assets/js/slick/slick.js}"></script>
+<script th:src="@{FrontEnd/assets/js/slick/custom_slick.js}"></script>
 
-    <!-- theme setting js -->
-    <script th:src="@{FrontEnd/assets/js/theme-setting.js}"></script>
+<!-- script js -->
+<script th:src="@{FrontEnd/assets/js/script.js}"></script>
+
+<!-- theme setting js -->
+<script th:src="@{FrontEnd/assets/js/theme-setting.js}"></script>
 </body>
 
 </html>

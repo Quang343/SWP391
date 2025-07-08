@@ -51,4 +51,48 @@ public interface CartRepository extends CrudRepository<Cart, Long> {
 
     @Override
     void deleteById(Long id);
+
+
+    @Query(value = """
+                   WITH FirstGallery AS (
+                       SELECT *
+                       FROM (
+                           SELECT
+                               g.*,
+                               ROW_NUMBER() OVER (PARTITION BY g.ProductID ORDER BY g.GalleryID ASC) AS rn
+                           FROM gallery g
+                       ) t
+                       WHERE rn = 1
+                   )
+                   SELECT
+                       c.UserID,
+                       p.ProductID,
+                       pd.ProductDetailID,
+                       fg.imageurl,
+                       p.ProductName,
+                       COALESCE(u.UserName, '') AS sellerName,
+                       CONCAT(cw.weight, ' ', cw.unit) AS productWeight,
+                       pd.price,
+                       SUM(c.Quantity) AS TotalQuantityProductDetail,  -- Cộng lại Quantity
+                       SUM(c.total) AS TotalPriceProductDetail        -- Cộng lại Total
+                   FROM cart c
+                   JOIN productdetail pd ON c.ProductDetailID = pd.ProductDetailID
+                   JOIN categoryweight cw ON pd.CategoryWeightID = cw.CategoryWeightID
+                   JOIN product p ON pd.ProductID = p.ProductID
+                   JOIN FirstGallery fg ON p.ProductID = fg.ProductID
+                   LEFT JOIN soldbyseller sbs ON sbs.productdetailid = pd.ProductDetailID\s
+                   LEFT JOIN user u ON sbs.userid = u.UserID
+                   WHERE c.UserID = :userID
+                   GROUP BY
+                       c.UserID,
+                       p.ProductID,
+                       pd.ProductDetailID,
+                       fg.imageurl,
+                       p.ProductName,
+                       u.UserName,
+                       cw.weight,
+                       cw.unit,
+                       pd.price;
+            """, nativeQuery = true)
+    List<Object[]> rawGetCheckOutProductDetailByUserID(int userID);
 }

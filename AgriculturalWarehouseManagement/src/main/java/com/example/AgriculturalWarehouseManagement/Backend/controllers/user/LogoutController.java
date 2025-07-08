@@ -34,7 +34,7 @@ public class LogoutController {
             model.addAttribute("emailCookieSaved", emailCookieSaved);
             model.addAttribute("passwordCookieSaved", passwordCookieSaved);
         } else {
-            session.removeAttribute("auth_token");
+            session.invalidate();
         }
 
 

@@ -488,7 +488,7 @@
                 try {
                     let response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/totalCart/${userId}`);
                     if (response.data.status === "SUCCESS") {
-                        document.getElementById(`total-cart`).innerText = `${response.data.data.totalCart.toLocaleString()}₫`;
+                        document.getElementById(`total-cart`).innerText = `${response.data.data.totalCart.toLocaleString('vi-VN')}₫`;
                     } else {
                         console.error("Không thể lấy tổng giỏ hàng");
                     }

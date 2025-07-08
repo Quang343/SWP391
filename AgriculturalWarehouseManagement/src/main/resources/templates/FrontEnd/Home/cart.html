@@ -259,7 +259,7 @@
                     <div class="button-group cart-button">
                         <ul>
                             <li>
-                                <form th:action="@{/cart}" method="get">
+                                <form th:action="@{/checkOut}" method="get">
                                     <button type="submit"
                                             class="btn btn-animation proceed-btn fw-bold">Process To Checkout
                                     </button>
@@ -349,7 +349,7 @@
                         let cartIdFromElement = element.getAttribute('data-cartidtotal');
 
                         if (cartIdFromElement == cartId) {
-                            element.innerText = `${totalPrice.toLocaleString()}₫`;
+                            element.innerText = `${totalPrice.toLocaleString('vi-VN')}₫`;
                         }
                     });
 
@@ -392,7 +392,7 @@
         try {
             let response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/totalCart/${userId}`);
             if (response.data.status === "SUCCESS") {
-                document.getElementById(`total-cart`).innerText = `${response.data.data.totalCart.toLocaleString()}₫`;
+                document.getElementById(`total-cart`).innerText = `${response.data.data.totalCart.toLocaleString('vi-VN')}₫`;
             } else {
                 document.getElementById(`total-cart`).innerText = `0₫`;
             }

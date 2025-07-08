@@ -1,11 +1,13 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.ProfileRequest;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.OrderUserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ProfileResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ResponseResult;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilter;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.OrderUsersService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -29,18 +31,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.List;
 
 @Controller
 //@RestController
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024 * 2, // 2MB
-        maxFileSize = 1024 * 1024 * 10, // 10MB
-        maxRequestSize = 1024 * 1024 * 50 // 50MB
-)
+//@MultipartConfig(
+//        fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+//        maxFileSize = 1024 * 1024 * 10, // 10MB
+//        maxRequestSize = 1024 * 1024 * 50 // 50MB
+//)
 public class ProfileController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private OrderUsersService orderUsersService;
 
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
@@ -51,15 +57,17 @@ public class ProfileController {
     @GetMapping("profileUser")
     public String getProfileUser(Model model) {
 
-        String token = (String) session.getAttribute("auth_token");
+        String token = (String) session.getAttribute("authToken");
 
         if (token == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
         // Giải mã token
         Claims claims = jwtTokenFilter.decodeToken(token);
         if (claims == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
@@ -68,6 +76,7 @@ public class ProfileController {
         User userEntity = userService.loadUserByEmail(email);
 
         if (userEntity == null) {
+            session.invalidate();
             return "redirect:/login";
         } else {
 
@@ -85,17 +94,19 @@ public class ProfileController {
 
             if (session.getAttribute("errorChangePassword") != null) {
                 String errorChangePassword = (String) session.getAttribute("errorChangePassword");
-//                System.out.println("hello1"+errorChangePassword);
                 model.addAttribute("errorChangePassword", errorChangePassword);
                 session.removeAttribute("errorChangePassword");
             }
 
             if (session.getAttribute("successChangePassword") != null) {
                 String successChangePassword= (String) session.getAttribute("successChangePassword");
-//                System.out.println("hello1"+successChangePassword);
                 model.addAttribute("successChangePassword", successChangePassword);
                 session.removeAttribute("successChangePassword");
             }
+
+            // View Order
+            List<OrderUserResponse> orderUserResponses = orderUsersService.getListOrdersOrEmpty(userEntity.getUserId());
+            model.addAttribute("orderUserResponses", orderUserResponses);
 
             return "FrontEnd/Home/userDashboard";
 
@@ -162,6 +173,7 @@ public class ProfileController {
             User userEntity = userService.loadUserByEmail(userResponseSession.getEmail());
             UserResponse userResponse = userService.getUser(userEntity);
             session.setAttribute("account", userResponse);
+            session.setAttribute("accountImage", userResponse.getImageUrl());
             return "redirect:/profileUser";
         } else {
             session.setAttribute("errorUpdateImage", result.getMessage());
@@ -189,5 +201,7 @@ public class ProfileController {
 
         }
     }
+
+
 
 }

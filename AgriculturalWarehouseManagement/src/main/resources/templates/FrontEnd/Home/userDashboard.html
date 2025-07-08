@@ -58,9 +58,9 @@
             animation-iteration-count: infinite; /*Và lặp đi lặp lại mãi */
         }
 
-        .shake-10s {                 /* class mới */
+        .shake-10s { /* class mới */
             animation: shake 0.5s ease-in-out;
-            animation-iteration-count: 20;  /* 0.5 s × 20 = 10 s */
+            animation-iteration-count: 20; /* 0.5 s × 20 = 10 s */
         }
 
         /* ---- CSS ---- */
@@ -112,17 +112,36 @@
 
         /* Gradient di chuyển liên tục */
         @keyframes glowing {
-            0%   { background-position: 0 0; }
-            50%  { background-position: 400% 0; }
-            100% { background-position: 0 0; }
+            0% {
+                background-position: 0 0;
+            }
+            50% {
+                background-position: 400% 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
         }
 
         /* Nhịp sáng giãn–thu */
         @keyframes pulseGlow {
-            0%, 100% { transform: scale(1); }
-            50%      { transform: scale(1.05); }
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
         }
 
+        .div1 {
+            font-size: 12px;
+            background: linear-gradient(-90deg, #dc9898 0%, #d9dd35 100%);
+            margin-left: calc(9px + 11 * (100vw - 320px) / 1600);
+            font-weight: 600;
+            padding: 4px 6px;
+            color: white;
+            border-radius: 4px;
+        }
     </style>
 
 </head>
@@ -143,47 +162,6 @@
 <!-- Header Start -->
 <head th:replace="FrontEnd/fragments/header::header"></head>
 <!-- Header End -->
-
-<!-- mobile fix menu start -->
-<!--<div class="mobile-menu d-md-none d-block mobile-cart">-->
-<!--    <ul>-->
-<!--        <li class="active">-->
-<!--            <a href="index.html">-->
-<!--                <i class="iconly-Home icli"></i>-->
-<!--                <span>Home</span>-->
-<!--            </a>-->
-<!--        </li>-->
-
-<!--        <li class="mobile-category">-->
-<!--            <a href="javascript:void(0)">-->
-<!--                <i class="iconly-Category icli js-link"></i>-->
-<!--                <span>Category</span>-->
-<!--            </a>-->
-<!--        </li>-->
-
-<!--        <li>-->
-<!--            <a href="search.html" class="search-box">-->
-<!--                <i class="iconly-Search icli"></i>-->
-<!--                <span>Search</span>-->
-<!--            </a>-->
-<!--        </li>-->
-
-<!--        <li>-->
-<!--            <a href="wishlist.html" class="notifi-wishlist">-->
-<!--                <i class="iconly-Heart icli"></i>-->
-<!--                <span>My Wish</span>-->
-<!--            </a>-->
-<!--        </li>-->
-
-<!--        <li>-->
-<!--            <a href="cart.html">-->
-<!--                <i class="iconly-Bag-2 icli fly-cate"></i>-->
-<!--                <span>Cart</span>-->
-<!--            </a>-->
-<!--        </li>-->
-<!--    </ul>-->
-<!--</div>-->
-<!-- mobile fix menu end -->
 
 <!-- Breadcrumb Section Start -->
 <section class="breadcrumb-section pt-0">
@@ -236,10 +214,11 @@
                                     <img th:src="${session.account.getImageUrl}"
                                          class="blur-up lazyload update_img" alt="more image"
                                          accept=".jpg,.jpeg,.png,.gif,.webp,image/*">
-<!--                                    th:if="${session.account.getImageUrl != null && session.account.getImageUrl !=''}"-->
+                                    <!--                                    th:if="${session.account.getImageUrl != null && session.account.getImageUrl !=''}"-->
                                     <div class="cover-icon">
                                         <i class="fa-solid fa-pen">
-                                            <input type="file" name="image" onchange="readURL(this,0)">
+                                            <input type="file" name="image" onchange="readURL(this,0)"
+                                                   accept=".jpg,.jpeg,.png,.gif,.webp,image/*">
                                         </i>
                                     </div>
 
@@ -332,9 +311,10 @@
 
                                 <div class="dashboard-user-name">
                                     <h6 class="text-content">Xin chào,<b class="text-title"
-                                                                       th:text="${session.account.getUserName}">Your
+                                                                         th:text="${session.account.getUserName}">Your
                                         username</b></h6>
-                                    <p class="text-content">Từ tài khoản Dashboard, bạn có thể xem hoạt động gần đây và cập nhật thông tin tài khoản..</p>
+                                    <p class="text-content">Từ tài khoản Dashboard, bạn có thể xem hoạt động gần đây và
+                                        cập nhật thông tin tài khoản..</p>
                                 </div>
 
                                 <div class="total-box">
@@ -343,7 +323,8 @@
                                             <div class="total-contain">
                                                 <img th:src="@{FrontEnd/assets/images/svg/order.svg}"
                                                      class="img-1 blur-up lazyload" alt="">
-                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}" class="blur-up lazyload"
+                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}"
+                                                     class="blur-up lazyload"
                                                      alt="">
                                                 <div class="total-detail">
                                                     <h5>Total Order</h5>
@@ -415,308 +396,69 @@
                                 </div>
 
                                 <div class="order-contain">
-                                    <div class="order-box dashboard-bg-box">
+                                    <div th:each="order : ${orderUserResponses}" class="order-box dashboard-bg-box">
                                         <div class="order-container">
                                             <div class="order-icon">
                                                 <i data-feather="box"></i>
                                             </div>
 
                                             <div class="order-detail">
-                                                <h4>Delivers <span>Pending</span></h4>
-                                                <h6 class="text-content">Gouda parmesan caerphilly mozzarella
-                                                    cottage cheese cauliflower cheese taleggio gouda.</h6>
+                                                <h4>
+                                                    Trạng thái Order
+                                                    <div th:if="${order.status == 'PENDING'}" th:text="${'Đang chờ'}"
+                                                         class="div1">Đang chờ
+                                                    </div>
+                                                    <span th:if="${order.status == 'CONFIRMED'}"
+                                                          th:text="${'Đã xác nhận'}"
+                                                          class="success-bg">Đã xác nhận</span>
+                                                    <div th:if="${order.status == 'DELIVERED'}"
+                                                         th:text="${'Đang giao hàng'}"
+                                                         class="div1">Đang giao hàng
+                                                    </div>
+                                                    <span th:if="${order.status == 'CANCELLED'}"
+                                                          th:text="${'Đã hủy'}" class="danger-bg">Đã hủy</span>
+                                                    <span class="success-bg" style="margin-left: 30px">
+                                                        <a th:href="@{/orderDetailsUser(orderCode=${order.orderCode})}"
+                                                           style="color:white;">Chi tiết Order</a>
+                                                    </span>
+
+                                                </h4>
                                             </div>
                                         </div>
 
                                         <div class="product-order-detail">
-                                            <a href="product-left-thumbnail.html" class="order-image">
-                                                <img src="../assets/images/vegetable/product/1.png"
-                                                     class="blur-up lazyload" alt="">
-                                            </a>
 
                                             <div class="order-wrap">
-                                                <a href="product-left-thumbnail.html">
-                                                    <h3>Fantasy Crunchy Choco Chip Cookies</h3>
-                                                </a>
-                                                <p class="text-content">Cheddar dolcelatte gouda. Macaroni cheese
-                                                    cheese strings feta halloumi cottage cheese jarlsberg cheese
-                                                    triangles say cheese.</p>
+
                                                 <ul class="product-size">
                                                     <li>
                                                         <div class="size-box">
-                                                            <h6 class="text-content">Price : </h6>
-                                                            <h5>$20.68</h5>
+                                                            <h6 class="text-content">Email order: </h6>
+                                                            <h5 th:text="${order.email}">
+                                                                nguyenhoanganh712004qp@gamil.com</h5>
+                                                        </div>
+                                                    </li>
+
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Tổng số lượng : </h6>
+                                                            <h5 th:text="${order.totalQuantity}">100</h5>
                                                         </div>
                                                     </li>
 
                                                     <li>
                                                         <div class="size-box">
-                                                            <h6 class="text-content">Rate : </h6>
-                                                            <div class="product-rating ms-2">
-                                                                <ul class="rating">
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star"></i>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
+                                                            <h6 class="text-content">Tổng giá tiền : </h6>
+                                                            <h5 th:text="${#numbers.formatInteger(order.totalPrice, 0, 'POINT') + '₫'}"
+                                                                class="price theme-color">200.000đ</h5>
                                                         </div>
                                                     </li>
 
                                                     <li>
                                                         <div class="size-box">
-                                                            <h6 class="text-content">Sold By : </h6>
-                                                            <h5>Fresho</h5>
-                                                        </div>
-                                                    </li>
-
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Quantity : </h6>
-                                                            <h5>250 G</h5>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="order-box dashboard-bg-box">
-                                        <div class="order-container">
-                                            <div class="order-icon">
-                                                <i data-feather="box"></i>
-                                            </div>
-
-                                            <div class="order-detail">
-                                                <h4>Delivered <span class="success-bg">Success</span></h4>
-                                                <h6 class="text-content">Cheese on toast cheesy grin cheesy grin
-                                                    cottage cheese caerphilly everyone loves cottage cheese the big
-                                                    cheese.</h6>
-                                            </div>
-                                        </div>
-
-                                        <div class="product-order-detail">
-                                            <a href="product-left-thumbnail.html" class="order-image">
-                                                <img src="../assets/images/vegetable/product/2.png" alt=""
-                                                     class="blur-up lazyload">
-                                            </a>
-
-                                            <div class="order-wrap">
-                                                <a href="product-left-thumbnail.html">
-                                                    <h3>Cold Brew Coffee Instant Coffee 50 g</h3>
-                                                </a>
-                                                <p class="text-content">Pecorino paneer port-salut when the cheese
-                                                    comes out everybody's happy red leicester mascarpone blue
-                                                    castello cauliflower cheese.</p>
-                                                <ul class="product-size">
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Price : </h6>
-                                                            <h5>$20.68</h5>
-                                                        </div>
-                                                    </li>
-
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Rate : </h6>
-                                                            <div class="product-rating ms-2">
-                                                                <ul class="rating">
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star"></i>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Sold By : </h6>
-                                                            <h5>Fresho</h5>
-                                                        </div>
-                                                    </li>
-
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Quantity : </h6>
-                                                            <h5>250 G</h5>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="order-box dashboard-bg-box">
-                                        <div class="order-container">
-                                            <div class="order-icon">
-                                                <i data-feather="box"></i>
-                                            </div>
-
-                                            <div class="order-detail">
-                                                <h4>Delivere <span>Pending</span></h4>
-                                                <h6 class="text-content">Cheesy grin boursin cheesy grin cheesecake
-                                                    blue castello cream cheese lancashire melted cheese.</h6>
-                                            </div>
-                                        </div>
-
-                                        <div class="product-order-detail">
-                                            <a href="product-left-thumbnail.html" class="order-image">
-                                                <img src="../assets/images/vegetable/product/3.png" alt=""
-                                                     class="blur-up lazyload">
-                                            </a>
-
-                                            <div class="order-wrap">
-                                                <a href="product-left-thumbnail.html">
-                                                    <h3>Peanut Butter Bite Premium Butter Cookies 600 g</h3>
-                                                </a>
-                                                <p class="text-content">Cow bavarian bergkase mascarpone paneer
-                                                    squirty cheese fromage frais cheese slices when the cheese comes
-                                                    out everybody's happy.</p>
-                                                <ul class="product-size">
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Price : </h6>
-                                                            <h5>$20.68</h5>
-                                                        </div>
-                                                    </li>
-
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Rate : </h6>
-                                                            <div class="product-rating ms-2">
-                                                                <ul class="rating">
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star"></i>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Sold By : </h6>
-                                                            <h5>Fresho</h5>
-                                                        </div>
-                                                    </li>
-
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Quantity : </h6>
-                                                            <h5>250 G</h5>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="order-box dashboard-bg-box">
-                                        <div class="order-container">
-                                            <div class="order-icon">
-                                                <i data-feather="box"></i>
-                                            </div>
-
-                                            <div class="order-detail">
-                                                <h4>Delivered <span class="success-bg">Success</span></h4>
-                                                <h6 class="text-content">Caerphilly port-salut parmesan pecorino
-                                                    croque monsieur dolcelatte melted cheese cheese and wine.</h6>
-                                            </div>
-                                        </div>
-
-                                        <div class="product-order-detail">
-                                            <a href="product-left-thumbnail.html" class="order-image">
-                                                <img src="../assets/images/vegetable/product/4.png"
-                                                     class="blur-up lazyload" alt="">
-                                            </a>
-
-                                            <div class="order-wrap">
-                                                <a href="product-left-thumbnail.html">
-                                                    <h3>SnackAmor Combo Pack of Jowar Stick and Jowar Chips</h3>
-                                                </a>
-                                                <p class="text-content">The big cheese cream cheese pepper jack
-                                                    cheese slices danish fontina everyone loves cheese on toast
-                                                    bavarian bergkase.</p>
-                                                <ul class="product-size">
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Price : </h6>
-                                                            <h5>$20.68</h5>
-                                                        </div>
-                                                    </li>
-
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Rate : </h6>
-                                                            <div class="product-rating ms-2">
-                                                                <ul class="rating">
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star" class="fill"></i>
-                                                                    </li>
-                                                                    <li>
-                                                                        <i data-feather="star"></i>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Sold By : </h6>
-                                                            <h5>Fresho</h5>
-                                                        </div>
-                                                    </li>
-
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Quantity : </h6>
-                                                            <h5>250 G</h5>
+                                                            <h6 class="text-content">Ngày Order : </h6>
+                                                            <h5 th:text="${order.formatOrderDate()}">2025-7-05</h5>
                                                         </div>
                                                     </li>
                                                 </ul>
@@ -745,11 +487,19 @@
                                             </span>
                                     </div>
 
+                                    <form th:action="@{/checkOut}" method="get">
+                                        <button class="btn theme-bg-color text-white btn-sm fw-bold mt-lg-0 mt-3"
+                                                data-bs-toggle="modal"><i data-feather="plus" class="me-2"></i>
+                                            Đến thanh toán
+                                        </button>
+                                    </form>
+
                                     <button class="btn theme-bg-color text-white btn-sm fw-bold mt-lg-0 mt-3"
                                             data-bs-toggle="modal" data-bs-target="#add-address"><i data-feather="plus"
                                                                                                     class="me-2"></i>
                                         Add New Address
                                     </button>
+
                                 </div>
 
                                 <div class="row g-sm-4 g-3" id="addressBookContainer">
@@ -778,7 +528,7 @@
                                                                             </div>
 
                                                                             <div class="label">
-                                                                                <label id="userFullName" contenteditable="false">${address.setToAddress}</label>
+                                                                                <label id="userSetToAddress" contenteditable="false">${address.setToAddress}</label>
                                                                             </div>
 
 
@@ -786,7 +536,7 @@
                                                                                 <table class="table">
                                                                                     <tbody>
                                                                                         <tr>
-                                                                                            <td id="addressName" colspan="2" >${address.fullName}</td>
+                                                                                            <td id="userFullName" colspan="2" >${address.fullName}</td>
                                                                                         </tr>
                                                                                         <tr>
                                                                                             <td>Address :</td>
@@ -1029,13 +779,15 @@
                                         <div class="d-flex align-items-start">
                                             <h6>Xóa tài khoản của bạn</h6>
                                             <div class="form-check form-switch switch-radio ms-auto">
-                                                <input name="deleteAccount" class="form-check-input" type="checkbox" role="switch"
+                                                <input name="deleteAccount" class="form-check-input" type="checkbox"
+                                                       role="switch"
                                                        id="redio4" required>
                                                 <label class="form-check-label" for="redio4"></label>
                                             </div>
                                         </div>
 
-                                        <p class="text-content">Sau khi tài khoản của bạn bị xóa, bạn sẽ được đăng xuất và tạo tài khoản mới. Bạn không thể đăng ký email đã xóa</p>
+                                        <p class="text-content">Sau khi tài khoản của bạn bị xóa, bạn sẽ được đăng xuất
+                                            và tạo tài khoản mới. Bạn không thể đăng ký email đã xóa</p>
                                     </div>
 
                                     <button class="btn theme-bg-color btn-md fw-bold mt-4 text-white">Delete My
@@ -1053,7 +805,7 @@
 <!-- User Dashboard Section End -->
 
 <!-- Footer Section Start -->
-<footer th:replace="FrontEnd/fragments/footer::footer"></footer>
+<!--<footer th:replace="FrontEnd/fragments/footer::footer"></footer>-->
 <!-- Footer Section End -->
 
 <!-- Deal Box Modal Start -->
@@ -1236,8 +988,8 @@
                 </div>
 
                 <div class="form-floating mb-4 theme-form-floating">
-                            <input class="form-control" placeholder="Leave a comment here" id="settoaddress"
-                                       required/>
+                    <input class="form-control" placeholder="Leave a comment here" id="settoaddress"
+                           required/>
                     <label for="settoaddress">Set To Address</label>
                 </div>
 
@@ -1300,7 +1052,6 @@
     }
 
 
-
     // Add event listener to the Save button
     document.querySelector('.add-address-submit').addEventListener('click', async function () {
 
@@ -1332,8 +1083,8 @@
         //     return;
         // }
 
-        if(!isCapitalizedEachWord(fullname)){
-            showAlert('error','FullName cannot be capitalized Each Word');
+        if (!isCapitalizedEachWord(fullname)) {
+            showAlert('error', 'FullName cannot be capitalized Each Word');
             return;
         }
 
@@ -1616,9 +1367,9 @@
                 return;
             }
 
-            if(!isCapitalizedEachWord(fullName)){
+            if (!isCapitalizedEachWord(fullName)) {
                 console.log(fullName)
-                showAlert('error','FullName cannot be capitalized Each Word');
+                showAlert('error', 'FullName cannot be capitalized Each Word');
                 return;
             }
 
@@ -1939,13 +1690,15 @@
                         <input type="hidden" name="email" th:value="${session.account.getEmail}"/>
 
                         <div class="form-floating theme-form-floating">
-                            <input type="password" name="oldPassword" class="form-control" id="oldPasswordProfile" required>
+                            <input type="password" name="oldPassword" class="form-control" id="oldPasswordProfile"
+                                   required>
                             <label for="oldPasswordProfile">Old password</label>
                         </div>
                     </div>
                     <div class="col-xxl-12">
                         <div class="form-floating theme-form-floating">
-                            <input type="password" name="newPassword" class="form-control" id="changePasswordProfile" required>
+                            <input type="password" name="newPassword" class="form-control" id="changePasswordProfile"
+                                   required>
                             <label for="changePasswordProfile">New password</label>
                         </div>
                     </div>
@@ -1998,7 +1751,7 @@
 <script th:src="@{FrontEnd/assets/js/script.js}"></script>
 
 <!-- theme setting js -->
-<script th:src="@{FrontEnd/assets/js/theme-setting.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/theme-setting.js}"></script>
 
 
 </body>

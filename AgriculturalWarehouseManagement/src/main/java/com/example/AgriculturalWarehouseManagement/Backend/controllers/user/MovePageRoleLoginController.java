@@ -27,15 +27,17 @@ public class MovePageRoleLoginController {
     @GetMapping("/movePageRole")
     public String MovePageRole(Model model) {
 
-        String token = (String) session.getAttribute("auth_token");
+        String token = (String) session.getAttribute("authToken");
 
         if (token == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
         // Giải mã token
         Claims claims = jwtTokenFilter.decodeToken(token);
         if (claims == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
@@ -44,6 +46,7 @@ public class MovePageRoleLoginController {
         User userEntity = userService.loadUserByEmail(email);
 
         if (userEntity == null) {
+            session.invalidate();
             return "redirect:/login";
         } else {
             if (userEntity.getRole().getRoleName().equals("admin")) {
@@ -53,6 +56,7 @@ public class MovePageRoleLoginController {
                 UserResponse userResponse = userService.getUser(userEntity);
                 session.setAttribute("account", userResponse);
                 session.setAttribute("accountId", userResponse.getUserID());
+                session.setAttribute("accountImage", userResponse.getImageUrl());
                 System.out.println(session.getAttribute("accountId").toString());
 
                 return "redirect:/home";
@@ -65,6 +69,8 @@ public class MovePageRoleLoginController {
             } else if (userEntity.getRole().getRoleName().equals("warehourestaff")) {
                 return "redirect:/login";
             }
+
+            session.invalidate();
             return "redirect:/login";
         }
     }

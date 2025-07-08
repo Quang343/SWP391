@@ -379,7 +379,7 @@
                                         <!--                                         class="delivery-detail"-->
 
                                         <div th:if="${session.account!= null}">
-                                            <h6>Hello,</h6>
+                                            <h6>Xin chào,</h6>
                                             <h5 th:text="${session.account.getUserName}" class="glow">My Account</h5>
                                         </div>
                                     </div>
@@ -425,12 +425,12 @@
                     <div class="header-nav-left">
                         <button class="dropdown-category">
                             <i data-feather="align-left"></i>
-                            <span>All Categories</span>
+                            <span>Số danh mục</span>
                         </button>
 
                         <div class="category-dropdown">
                             <div class="category-title">
-                                <h5>Categories</h5>
+                                <h5>Danh mục</h5>
                                 <button type="button" class="btn p-0 close-button text-content">
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
@@ -461,16 +461,16 @@
                                 <div class="offcanvas-body">
                                     <ul class="navbar-nav">
                                         <li class="nav-item">
-                                            <a class="nav-link no-arrow" href="home">Home</a>
+                                            <a class="nav-link no-arrow" href="home">Trang chủ</a>
                                         </li>
 
                                         <li class="nav-item dropdown">
-                                            <a class="nav-link no-arrow" href="shopDetail">Shop</a>
+                                            <a class="nav-link no-arrow" href="shopDetail">Cửa hàng</a>
                                         </li>
 
                                         <li class="nav-item dropdown">
                                             <a class="nav-link dropdown-toggle" href="javascript:void(0)"
-                                               data-bs-toggle="dropdown">Product</a>
+                                               data-bs-toggle="dropdown">Sản phẩm</a>
 
                                             <div class="dropdown-menu dropdown-menu-3 dropdown-menu-2">
                                                 <div class="row">
@@ -516,7 +516,7 @@
                                                     <div class="col-xl-3 d-xl-block d-none">
                                                         <div class="dropdown-column m-0">
                                                             <div class="menu-img-banner">
-                                                                <a class="text-title" href="product-circle.html">
+                                                                <a class="text-title" href="home">
                                                                     <img th:src="@{FrontEnd/assets/images/productMenu.png}"
                                                                          alt="banner">
                                                                 </a>
@@ -549,30 +549,16 @@
                                                     class="new-dropdown">New</label></a>
                                             <ul class="dropdown-menu">
 
-                                                <li class="sub-dropdown-hover">
-                                                    <a class="dropdown-item" href="javascript:void(0)">Order
-                                                        <span class="new-text"><i
-                                                                class="fa-solid fa-bolt-lightning"></i></span></a>
-                                                </li>
                                                 <li>
                                                     <a class="dropdown-item" href="404.html">404</a>
                                                 </li>
+
                                                 <li>
-                                                    <a class="dropdown-item" href="about-us.html">About Us</a>
+                                                    <a class="dropdown-item" href="contactususer">Liên hệ</a>
                                                 </li>
 
                                                 <li>
-                                                    <a class="dropdown-item" href="contact-us.html">Contact</a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="checkout.html">Checkout</a>
-                                                </li>
-
-                                                <li>
-                                                    <a class="dropdown-item" href="compareProductDetail">Compare</a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="faq.html">Faq</a>
+                                                    <a class="dropdown-item" href="compareProductDetail">So sánh</a>
                                                 </li>
 
 
@@ -581,30 +567,13 @@
 
                                         <li class="nav-item dropdown">
                                             <a class="nav-link dropdown-toggle" href="javascript:void(0)"
-                                               data-bs-toggle="dropdown">Seller</a>
+                                               data-bs-toggle="dropdown">Người bán</a>
                                             <ul class="dropdown-menu">
                                                 <li>
-                                                    <a class="dropdown-item" href="seller-become.html">Become a
-                                                        Seller</a>
+                                                    <a class="dropdown-item" href="seller-become.html">Trở thành một người bán</a>
                                                 </li>
                                                 <li>
-                                                    <a class="dropdown-item" href="seller-dashboard.html">Seller
-                                                        Dashboard</a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="seller-detail.html">Seller
-                                                        Detail</a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="seller-detail-2.html">Seller
-                                                        Detail 2</a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="seller-grid.html">Seller Grid</a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="seller-grid-2.html">Seller Grid
-                                                        2</a>
+                                                    <a class="dropdown-item" href="seller-dashboard.html">Dashboard người bán</a>
                                                 </li>
                                             </ul>
                                         </li>
@@ -614,12 +583,6 @@
                         </div>
                     </div>
 
-                    <div class="header-nav-right">
-                        <button class="btn deal-button" data-bs-toggle="modal" data-bs-target="#deal-box">
-                            <i data-feather="zap"></i>
-                            <span>Deal Today</span>
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>

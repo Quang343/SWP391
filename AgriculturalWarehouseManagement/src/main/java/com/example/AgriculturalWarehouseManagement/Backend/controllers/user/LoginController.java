@@ -72,10 +72,10 @@ public class LoginController {
                 }
 
                 if (emailCookieSaved != null && !emailCookieSaved.equals("")) { // Check cookie not the first
-                    if (session.getAttribute("auth_token") != null) {
+                    if (session.getAttribute("authToken") != null) {
 
                         // Giả mã token
-                        Claims claims = jwtTokenFilter.decodeToken((String) session.getAttribute("auth_token"));
+                        Claims claims = jwtTokenFilter.decodeToken((String) session.getAttribute("authToken"));
                         if (claims != null) {
                             return "redirect:/movePageRole";
                         } else {
@@ -103,8 +103,8 @@ public class LoginController {
                     if (loginRequest.getEmail().equals(userEntity.getEmail()) && passwordEncoder.matches(loginRequest.getPassword(), passwordDatabase)) {
                         String token = jwtTokenFilter.generateToken(userEntity.getEmail());
 
-                        session.setAttribute("auth_token", token);
-                        session.setMaxInactiveInterval(60 * 60);
+                        session.setAttribute("authToken", token);
+                        session.setMaxInactiveInterval(20*60);
 
                         Cookie emailCookie = new Cookie("COOKIE_EMAIL", loginRequest.getEmail());
                         Cookie passwordFakeCookie = new Cookie("COOKIE_PASSWORD_FAKE", "HASHING");
@@ -132,9 +132,9 @@ public class LoginController {
                 }
 
                 if (emailCookieSaved != null && !emailCookieSaved.equals("")) {  // Check cookie not the first
-                    if (session.getAttribute("auth_token") != null) { // check time toke
+                    if (session.getAttribute("authToken") != null) { // check time toke
                         // Giả mã token
-                        Claims claims = jwtTokenFilter.decodeToken((String) session.getAttribute("auth_token"));
+                        Claims claims = jwtTokenFilter.decodeToken((String) session.getAttribute("authToken"));
                         if (claims != null) {
 
                             if (cookies != null) {
@@ -178,8 +178,8 @@ public class LoginController {
                         // Set token
                         String token = jwtTokenFilter.generateToken(userEntity.getEmail());
 
-                        session.setAttribute("auth_token", token);
-                        session.setMaxInactiveInterval(60 * 60);
+                        session.setAttribute("authToken", token);
+                        session.setMaxInactiveInterval(20*60);
 
                         return "redirect:/movePageRole";
                     } else {

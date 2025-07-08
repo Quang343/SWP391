@@ -39,15 +39,17 @@ public class WishListProductController {
 
     @GetMapping("/wishlist")
     public String wishlist(Model model) {
-        String token = (String) session.getAttribute("auth_token");
+        String token = (String) session.getAttribute("authToken");
 
         if (token == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
         // Giải mã token
         Claims claims = jwtTokenFilter.decodeToken(token);
         if (claims == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
@@ -56,6 +58,7 @@ public class WishListProductController {
         User userEntity = userService.loadUserByEmail(email);
 
         if (userEntity == null) {
+            session.invalidate();
             return "redirect:/login";
         } else {
 
@@ -96,15 +99,17 @@ public class WishListProductController {
 
     @PostMapping("/deleteWishlistProduct")
     public String deleteWishlistProduct(@ModelAttribute("productId") int productId, Model model) {
-        String token = (String) session.getAttribute("auth_token");
+        String token = (String) session.getAttribute("authToken");
 
         if (token == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
         // Giải mã token
         Claims claims = jwtTokenFilter.decodeToken(token);
         if (claims == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
@@ -113,6 +118,7 @@ public class WishListProductController {
         User userEntity = userService.loadUserByEmail(email);
 
         if (userEntity == null) {
+            session.invalidate();
             return "redirect:/login";
         } else {
 
@@ -125,15 +131,17 @@ public class WishListProductController {
 
     @PostMapping("/deleteAllWishlistProduct")
     public String deleteAllWishlistProduct(Model model) {
-        String token = (String) session.getAttribute("auth_token");
+        String token = (String) session.getAttribute("authToken");
 
         if (token == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
         // Giải mã token
         Claims claims = jwtTokenFilter.decodeToken(token);
         if (claims == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
@@ -142,6 +150,7 @@ public class WishListProductController {
         User userEntity = userService.loadUserByEmail(email);
 
         if (userEntity == null) {
+            session.invalidate();
             return "redirect:/login";
         } else {
 

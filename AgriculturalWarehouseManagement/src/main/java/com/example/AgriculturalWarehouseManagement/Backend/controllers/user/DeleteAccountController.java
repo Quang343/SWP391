@@ -27,15 +27,17 @@ public class DeleteAccountController {
     @PostMapping("/deleteAccount")
     public String deleteAccount(@RequestParam("deleteAccount") String deleteAccount, Model model) {
 
-        String token = (String) session.getAttribute("auth_token");
+        String token = (String) session.getAttribute("authToken");
 
         if (token == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
         // Giải mã token
         Claims claims = jwtTokenFilter.decodeToken(token);
         if (claims == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
@@ -48,7 +50,7 @@ public class DeleteAccountController {
             ResponseResult<User> result = userService.deleteAccount(userEntity.getEmail());
 
             if (result.isActive()){
-                session.removeAttribute("auth_token");
+                session.invalidate();
                 return "redirect:/login";
             } {
                 return "redirect:/home";

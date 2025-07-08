@@ -1,7 +1,9 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.CartUserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ProductDetailUserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductDetailRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.CartUserService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.ProductDetailUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,11 +23,42 @@ public class CompareProductDetailController {
     @Autowired
     private ProductDetailUserService productDetailUserService;
 
+    @Autowired
+    private CartUserService cartUserService;
+
+
+    @Autowired
+    private jakarta.servlet.http.HttpSession session;
+
     List<ProductDetailUserResponse> productDetailUserResponses = new ArrayList<>();
 
     @GetMapping("/compareProductDetail")
     public String compareProductDetail(Model model) {
         model.addAttribute("productDetailUserResponses", productDetailUserResponses);
+
+        // View cart
+        Object accountIdObj = session.getAttribute("accountId");
+        if (accountIdObj != null) {
+            int accountId = (int) accountIdObj;
+
+            List<CartUserResponse> cartUserResponses = cartUserService.getCartByUserIds(accountId);
+
+            int limit = Math.min(cartUserResponses.size(), 3);
+
+            List<CartUserResponse> limitedCartUserResponses = cartUserResponses.subList(0, limit);
+
+            model.addAttribute("sizeCart", cartUserResponses.size());
+            model.addAttribute("cartUserResponses", limitedCartUserResponses);
+            model.addAttribute("sizeCartBelow", Math.max(cartUserResponses.size() - 3, 0));
+
+
+            double totalCart = 0;
+            for (CartUserResponse cartUserResponse : cartUserResponses) {
+                totalCart += cartUserResponse.getTotalPrice();
+            }
+
+            model.addAttribute("totalCart", totalCart);
+        }
         return "FrontEnd/Home/compare";
     }
 
@@ -46,6 +79,30 @@ public class CompareProductDetailController {
             productDetailUserResponses.add(productDetailUserResponse);
         }
         model.addAttribute("productDetailUserResponses", productDetailUserResponses);
+
+        // View cart
+        Object accountIdObj = session.getAttribute("accountId");
+        if (accountIdObj != null) {
+            int accountId = (int) accountIdObj;
+
+            List<CartUserResponse> cartUserResponses = cartUserService.getCartByUserIds(accountId);
+
+            int limit = Math.min(cartUserResponses.size(), 3);
+
+            List<CartUserResponse> limitedCartUserResponses = cartUserResponses.subList(0, limit);
+
+            model.addAttribute("sizeCart", cartUserResponses.size());
+            model.addAttribute("cartUserResponses", limitedCartUserResponses);
+            model.addAttribute("sizeCartBelow", Math.max(cartUserResponses.size() - 3, 0));
+
+
+            double totalCart = 0;
+            for (CartUserResponse cartUserResponse : cartUserResponses) {
+                totalCart += cartUserResponse.getTotalPrice();
+            }
+
+            model.addAttribute("totalCart", totalCart);
+        }
         return "FrontEnd/Home/compare";
     }
 

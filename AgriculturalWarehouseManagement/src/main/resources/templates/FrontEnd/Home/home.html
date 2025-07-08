@@ -126,7 +126,7 @@
 <section>
     <div class="container-fluid-lg">
         <div class="title">
-            <h2>Featured Blog</h2>
+            <h2>Blog nổi bật</h2>
             <span class="title-leaf">
                     <svg class="icon-width">
                         <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
@@ -434,6 +434,158 @@
 <!-- Deal Box Modal End -->
 
 <!-- Tap to top and theme setting button start -->
+<!--<div class="theme-option">-->
+<!--    <div class="setting-box">-->
+<!--        <div class="chat-container" id="chat-container" style="display: none;">-->
+<!--            <div class="chat-header">-->
+<!--                <h1>Chat with Gemini</h1>-->
+<!--            </div>-->
+<!--            <div class="chat-messages" id="chat-messages"></div>-->
+<!--            <div class="chat-input-container">-->
+<!--                <input type="text" id="user-input" placeholder="Type your message...">-->
+<!--                <button id="send-button">Send</button>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Floating chat icon &ndash;&gt;-->
+<!--        <div class="chat-toggle-button" id="chat-toggle-button">-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Your original script goes here &ndash;&gt;-->
+<!--        <script>-->
+<!--            const API_KEY = 'AIzaSyDGFA2p_W6SV0Wc5ep0xNSnY1EwOqfkmvw';-->
+<!--            const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';-->
+<!--            const chatMessages = document.getElementById('chat-messages');-->
+<!--            const userInput = document.getElementById('user-input');-->
+<!--            const sendButton = document.getElementById('send-button');-->
+<!--            const chatContainer = document.getElementById('chat-container');-->
+<!--            const chatToggleButton = document.getElementById('chat-toggle-button');-->
+
+<!--            async function generateResponse(prompt) {-->
+<!--                const response = await fetch(`${API_URL}?key=${API_KEY}`, {-->
+<!--                    method: 'POST',-->
+<!--                    headers: {-->
+<!--                        'Content-Type': 'application/json',-->
+<!--                    },-->
+<!--                    body: JSON.stringify({-->
+<!--                        contents: [-->
+<!--                            {-->
+<!--                                parts: [-->
+<!--                                    {-->
+<!--                                        text: prompt-->
+<!--                                    }-->
+<!--                                ]-->
+<!--                            }-->
+<!--                        ]-->
+<!--                    })-->
+<!--                });-->
+
+<!--                if (!response.ok) {-->
+<!--                    throw new Error('Failed to generate response');-->
+<!--                }-->
+
+<!--                const data = await response.json();-->
+<!--                return data.candidates[0].content.parts[0].text;-->
+<!--            }-->
+
+<!--            function cleanMarkdown(text) {-->
+<!--                return text-->
+<!--                    .replace(/#{1,6}\s?/g, '')-->
+<!--                    .replace(/\*\*/g, '')-->
+<!--                    .replace(/\n{3,}/g, '\n\n')-->
+<!--                    .trim();-->
+<!--            }-->
+
+<!--            function addMessage(message, isUser) {-->
+<!--                const userImage = "[[${session.accountImage}]]";-->
+<!--                console.log("hello"+userImage)-->
+<!--                let image = "";-->
+<!--                if (userImage){-->
+<!--                    image = userImage;-->
+<!--                } else {-->
+<!--                    image = 'https://jbagy.me/wp-content/uploads/2025/03/Hinh-anh-avatar-nam-cute-2.jpg'-->
+<!--                }-->
+
+<!--                const messageElement = document.createElement('div');-->
+<!--                messageElement.classList.add('message');-->
+<!--                messageElement.classList.add(isUser ? 'user-message' : 'bot-message');-->
+
+<!--                const profileImage = document.createElement('img');-->
+<!--                profileImage.classList.add('profile-image');-->
+<!--                profileImage.src = isUser ? image : 'FrontEnd/assets/images/ai.png';-->
+<!--                profileImage.alt = isUser ? 'User' : 'Bot';-->
+
+<!--                const messageContent = document.createElement('div');-->
+<!--                messageContent.classList.add('message-content');-->
+<!--                messageContent.textContent = message;-->
+
+<!--                messageElement.appendChild(profileImage);-->
+<!--                messageElement.appendChild(messageContent);-->
+<!--                chatMessages.appendChild(messageElement);-->
+<!--                chatMessages.scrollTop = chatMessages.scrollHeight;-->
+<!--            }-->
+
+<!--            async function handleUserInput() {-->
+<!--                const userMessage = userInput.value.trim();-->
+<!--                if (userMessage) {-->
+<!--                    // Show user message first-->
+<!--                    addMessage(userMessage, true);-->
+<!--                    userInput.value = '';-->
+<!--                    sendButton.disabled = true;-->
+<!--                    userInput.disabled = true;-->
+
+<!--                    // Add a temporary "..." message for the bot response with animation-->
+<!--                    const botMessageElement = document.createElement('div');-->
+<!--                    botMessageElement.classList.add('message', 'bot-message');-->
+<!--                    botMessageElement.innerHTML = `-->
+<!--                    <img class="profile-image" src="FrontEnd/assets/images/ai.png" alt="Bot">-->
+<!--                       <div class="message-content"><span class="wave">...</span></div>-->
+<!--                `;-->
+<!--                    chatMessages.appendChild(botMessageElement);-->
+<!--                    chatMessages.scrollTop = chatMessages.scrollHeight;-->
+
+<!--                    try {-->
+<!--                        // Get the actual response from the bot-->
+<!--                        const botMessage = await generateResponse(userMessage);-->
+
+<!--                        // Replace the "..." message with the actual response-->
+<!--                        botMessageElement.querySelector('.message-content').textContent = cleanMarkdown(botMessage);-->
+<!--                    } catch (error) {-->
+<!--                        console.error('Error:', error);-->
+<!--                        botMessageElement.querySelector('.message-content').textContent = 'Sorry, I encountered an error. Please try again.';-->
+<!--                    } finally {-->
+<!--                        sendButton.disabled = false;-->
+<!--                        userInput.disabled = false;-->
+<!--                    }-->
+<!--                }-->
+<!--            }-->
+
+<!--            sendButton.addEventListener('click', handleUserInput);-->
+<!--            userInput.addEventListener('keypress', (e) => {-->
+<!--                if (e.key === 'Enter' && !e.shiftKey) {-->
+<!--                    e.preventDefault();-->
+<!--                    handleUserInput();-->
+<!--                }-->
+<!--            });-->
+
+<!--            // Show chat when clicking the icon-->
+<!--            chatToggleButton.addEventListener('click', () => {-->
+<!--                chatContainer.style.display = 'flex';  // Show chat-->
+<!--                chatToggleButton.style.display = 'none';  // Hide the chat icon-->
+<!--            });-->
+
+<!--            // Close the chat when clicking anywhere outside the chat container-->
+<!--            window.addEventListener('click', (e) => {-->
+<!--                if (!chatContainer.contains(e.target) && !chatToggleButton.contains(e.target)) {-->
+<!--                    chatContainer.style.display = 'none';  // Hide chat-->
+<!--                    chatToggleButton.style.display = 'flex';  // Show the chat icon again-->
+<!--                }-->
+<!--            });-->
+<!--        </script>-->
+<!--    </div>-->
+<!--</div>-->
+<!-- Tap to top and theme setting button end -->
+
 <div class="theme-option">
     <div class="setting-box">
         <button class="btn setting-button">
@@ -486,7 +638,6 @@
         </a>
     </div>
 </div>
-<!-- Tap to top and theme setting button end -->
 
 <!-- Items section Start -->
 <div th:if="${session.account != null}" class="button-item">

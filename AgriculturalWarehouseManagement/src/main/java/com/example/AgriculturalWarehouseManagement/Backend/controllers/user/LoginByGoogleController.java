@@ -30,6 +30,7 @@ public class LoginByGoogleController {
     @GetMapping(value = "/loginGG",  params = "code")
     private String loginGG(@RequestParam String code, RedirectAttributes redirectAttributes) throws IOException {
         if (code == null || code.isEmpty()) {
+
             return "redirect:/login";
         }
 
@@ -43,8 +44,8 @@ public class LoginByGoogleController {
             ResponseResult<User> resultLoginGG = userService.inserUserGGService(googleAccountRequest);
 
             String token = jwtTokenFilter.generateToken(googleAccountRequest.getEmail());
-            session.setAttribute("auth_token", token);
-            session.setMaxInactiveInterval(60 * 60);
+            session.setAttribute("authToken", token);
+            session.setMaxInactiveInterval(20*60);
             return "redirect:/movePageRole";
         } else {
             if (user.getStatus().equals("Inactive")) {
@@ -57,8 +58,8 @@ public class LoginByGoogleController {
                 return "redirect:/login";
             } else if (user.getStatusGG().equals("Active") && user.getStatus().equals("Active")) {
                 String token = jwtTokenFilter.generateToken(googleAccountRequest.getEmail());
-                session.setAttribute("auth_token", token);
-                session.setMaxInactiveInterval(60 * 60);
+                session.setAttribute("authToken", token);
+                session.setMaxInactiveInterval(20*60);
 
                 return "redirect:/movePageRole";
             } else {

@@ -39,23 +39,23 @@ public class ContactUsUserController {
 
     @GetMapping("/contactususer")
     public String contactUsUser() {
-
         return "FrontEnd/Home/contactUs";
-
     }
 
     @PostMapping("/contactususer")
     public String contactUsUser(@ModelAttribute ContactUsUserRequests contactUsUserRequests, Model model) {
 
-        String token = (String) session.getAttribute("auth_token");
+        String token = (String) session.getAttribute("authToken");
 
         if (token == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
         // Giải mã token
         Claims claims = jwtTokenFilter.decodeToken(token);
         if (claims == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
@@ -64,6 +64,7 @@ public class ContactUsUserController {
         User userEntity = userService.loadUserByEmail(email);
 
         if (userEntity == null) {
+            session.invalidate();
             return "redirect:/login";
         } else {
 
@@ -85,15 +86,17 @@ public class ContactUsUserController {
     @GetMapping("/contactUserSuccess")
     public String contactUserSuccess() {
 
-        String token = (String) session.getAttribute("auth_token");
+        String token = (String) session.getAttribute("authToken");
 
         if (token == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
         // Giải mã token
         Claims claims = jwtTokenFilter.decodeToken(token);
         if (claims == null) {
+            session.invalidate();
             return "redirect:/login";
         }
 
@@ -102,6 +105,7 @@ public class ContactUsUserController {
         User userEntity = userService.loadUserByEmail(email);
 
         if (userEntity == null) {
+            session.invalidate();
             return "redirect:/login";
         } else {
             Object attr = session.getAttribute("successContactUser");

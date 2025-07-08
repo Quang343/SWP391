@@ -34,7 +34,7 @@ public class JwtTokenFilter  {
 
     private final SecretKey secretKey;
 
-    private final long expirationMs = 3600000; // 1 giờ 10 giây 10000
+    private final long expirationMs = 20 * 60 * 1000; // 20 phút
 
     public JwtTokenFilter() {
         String rawKey = "spring-boot-react-spring-boot-react-123456";
