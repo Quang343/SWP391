@@ -1,30 +1,32 @@
-//package com.example.AgriculturalWarehouseManagement.Backend.models;
-//
-//import jakarta.persistence.*;
-//import lombok.*;
-//
-//@Entity
-//@Table(name = "blogcategory")
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@Builder
-//@Getter
-//@Setter
-//public class BlogCategory {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "BlogCategoryID")
-//    private Long blogCategoryId;
-//
-//    @Column(name = "CategoryName", length = 100)
-//    private String categoryName;
-//
-//    @Column(name = "Description", length = 500)
-//    private String description;
-//
-//    @ManyToOne
+package com.example.AgriculturalWarehouseManagement.Backend.models;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "blogcategory")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
+@Setter
+public class BlogCategory {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "blogcategoryid") // ✅ sửa tên cột ở đây
+    private Long blogCategoryId;
+
+    @Column(name = "categoryname")
+    private String categoryName;
+
+    @Column(name = "description", length = 500)
+    private String description;
+
+    //    @ManyToOne
 //    @JoinColumn(name = "BlogCategoryID")
 //    private BlogCategory blogCategory;
-//
-//}
+// Nếu muốn: List các blog thuộc category này (1 category - nhiều blog)
+//    @OneToMany(mappedBy = "blogCategory")
+//    private java.util.List<Blog> blogs;
+}

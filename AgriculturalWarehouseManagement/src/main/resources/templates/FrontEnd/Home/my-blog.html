@@ -24,6 +24,11 @@
             color: #198754 !important;
         }
 
+        #input-status, #input-category {
+            appearance: auto !important;
+            -webkit-appearance: auto !important;
+            -moz-appearance: auto !important;
+        }
 
     </style>
 </head>
@@ -172,13 +177,13 @@
                             </button>
                         </li>
 
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pills-security-tab" data-bs-toggle="pill"
-                                    data-bs-target="#pills-security" type="button" role="tab"><i
-                                    data-feather="settings"></i>
-                                Setting
-                            </button>
-                        </li>
+<!--                        <li class="nav-item" role="presentation">-->
+<!--                            <button class="nav-link" id="pills-security-tab" data-bs-toggle="pill"-->
+<!--                                    data-bs-target="#pills-security" type="button" role="tab"><i-->
+<!--                                    data-feather="settings"></i>-->
+<!--                                Setting-->
+<!--                            </button>-->
+<!--                        </li>-->
 
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-out-tab" data-bs-toggle="pill"
@@ -1279,6 +1284,54 @@
 </div>
 <!-- Edit Profile Modal End -->
 
+<!-- Modal Add Blog -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addBlogLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBlogLabel">Thêm Blog mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addBlogForm">
+                    <div class="mb-3">
+                        <label for="input-title" class="form-label">Tiêu đề</label>
+                        <input type="text" class="form-control" id="input-title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="input-content" class="form-label">Nội dung</label>
+                        <textarea class="form-control" id="input-content" rows="3" required></textarea>
+                    </div>
+
+<!--                    // tac gia se duoc lay session-->
+                    <div class="mb-3">
+                        <label for="input-author" class="form-label">Tác giả</label>
+                        <input type="text" class="form-control" id="input-author" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="input-category" class="form-label">Danh mục</label>
+                        <select class="form-control" id="input-category" required></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="input-status" class="form-label">Trạng thái</label>
+                        <select class="form-control" id="input-status" required></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="input-thumbnail" class="form-label">Ảnh Thumbnail</label>
+                        <input type="file" class="form-control" id="input-thumbnail" accept="image/*">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-success" onclick="addBlogJS()">Thêm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!-- latest jquery-->
 <script th:src="@{/Frontend/assets/js/jquery-3.6.0.min.js}"></script>
 
@@ -1442,9 +1495,110 @@
         document.getElementById("pills-product-tab").addEventListener('click', function () {
             loadBlogPage(1);
         });
-    });
-</script>
+    }); // Hết hàm view blog user
 
+
+    // ======================= LOAD CATEGORY & STATUS =======================
+    function loadBlogCategories() {
+        axios.get(`${CONTEXT_PATH}/api/my-blog/category`)
+            .then(res => {
+                console.log("Danh mục nhận được:", res.data); // Debug
+                const select = document.getElementById('input-category');
+                select.innerHTML = '';
+                res.data.forEach(cat => {
+                    select.innerHTML += `<option value="${cat.blogCategoryId}">${cat.categoryName}</option>`;
+                });
+            })
+            .catch(err => {
+                console.error("Lỗi load danh mục:", err);
+            });
+    }
+
+    function loadBlogStatusList() {
+        axios.get(`${CONTEXT_PATH}/api/my-blog/status-list`)
+            .then(res => {
+                const select = document.getElementById('input-status');
+                select.innerHTML = '';
+                res.data.forEach(st => {
+                    select.innerHTML += `<option value="${st.name}">${st.name}</option>`;
+                });
+            })
+            .catch(err => {
+                console.error("Lỗi load status:", err);
+            });
+    }
+
+    // Khi modal mở → load danh mục & trạng thái
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("addProductModal");
+        if (modal) {
+            modal.addEventListener("show.bs.modal", function () {
+                loadBlogCategories();
+                loadBlogStatusList();
+            });
+        }
+    });
+
+    // ======================= THÊM BLOG =======================
+    function addBlogJS() {
+        const title = document.getElementById('input-title').value;
+        const content = document.getElementById('input-content').value;
+        const author = document.getElementById('input-author').value; // Lấy giá trị tác giả
+        const blogCategoryID = document.getElementById('input-category').value;
+        const status = document.getElementById('input-status').value;
+        const thumbnailFile = document.getElementById('input-thumbnail').files[0];
+        const userID = 1; // fix cứng hoặc lấy từ session nếu có
+      //  const author = "Tên tác giả"; // sau này lấy từ user login
+        // userID và author tạm hardcode, sau lấy từ session hoặc principal
+        const authorName = author || "Người dùng ẩn danh"; // Nếu người dùng không nhập thì dùng tên mặc định
+
+        if (!thumbnailFile) {
+            alert("Vui lòng chọn ảnh thumbnail!");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", thumbnailFile);
+
+        // Bước 1: Upload ảnh thumbnail
+        axios.post(`${CONTEXT_PATH}/api/my-blog/upload-thumbnail`, formData, {
+            headers: {'Content-Type': 'multipart/form-data'}
+        })
+            .then(res => {
+                const thumbnailName = res.data;
+
+                // Bước 2: Gửi dữ liệu blog
+                const blog = {
+                    title,
+                    content,
+                    blogCategoryID: parseInt(blogCategoryID),
+                    userID,
+                    author,
+                    status,
+                    blogDetail: {
+                        thumbnail: thumbnailName,
+                        detailContent: "Nội dung chi tiết mô tả thêm blog." // bắt buộc nếu dùng @NotBlank
+                    }
+                };
+
+                return axios.post(`${CONTEXT_PATH}/api/my-blog/add_blog`, blog);
+            })
+            .then(res => {
+                alert("🎉 Thêm blog thành công!");
+                loadBlogPage(1);
+                $('#addProductModal').modal('hide');
+                document.getElementById('addBlogForm').reset();
+            })
+            .catch(err => {
+                console.error("Chi tiết lỗi từ server:", err);
+                if (err.response && err.response.data) {
+                    alert("Lỗi khi thêm blog: " + JSON.stringify(err.response.data));
+                } else {
+                    alert("Lỗi không xác định khi thêm blog!");
+                }
+            });
+    }
+</script>
 
 </body>
 

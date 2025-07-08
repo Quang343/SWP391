@@ -75,4 +75,7 @@ public class BlogService {
         return blogRepository.findByUserID(userId);
     }
 
+    public Blog save(Blog blog) {
+        return blogRepository.save(blog);
+    }
 }

@@ -2,19 +2,26 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.blog;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.blog.BlogDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Blog;
+import com.example.AgriculturalWarehouseManagement.Backend.models.BlogCategory;
+import com.example.AgriculturalWarehouseManagement.Backend.models.BlogStatus;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.blog.BlogCategoryService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.blog.BlogService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/my-blog")
@@ -23,6 +30,11 @@ public class BlogRestController {
 
     private final BlogService blogService;
     private final UserService userService;
+    private final BlogCategoryService blogCategoryService;
+
+
+    @Value("${app.upload.product-dir}")
+    private String uploadDir;
 
     @GetMapping("/page")
     public ResponseEntity<?> getMyBlogPage(
@@ -65,4 +77,61 @@ public class BlogRestController {
     }
 
 
+    // Thêm blog (thumbnail là tên file đã upload trước, truyền kèm lên từ FE)
+    @PostMapping("/add_blog")
+    public ResponseEntity<?> addBlog(@RequestBody Blog blog) {
+        blog.setCreatedAt(new Date());
+        blog.setStatus(BlogStatus.DRAFT); // Mặc định là DRAFT
+        // Xử lý thêm các trường, validate nếu cần
+        if (blog.getBlogDetail() != null) {
+            blog.getBlogDetail().setBlog(blog); // set lại quan hệ
+        }
+        Blog savedBlog = blogService.save(blog);
+        return ResponseEntity.ok(savedBlog);
+    }
+
+    // Upload ảnh thumbnail
+    @PostMapping("/upload-thumbnail")
+    public ResponseEntity<?> uploadThumbnail(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("No file uploaded!");
+        }
+        try {
+            String fileName = saveThumbnailFile(file);
+            // FE chỉ cần lưu fileName này, lúc render <img src="/blog/{fileName}">
+            return ResponseEntity.ok(fileName);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Upload error: " + e.getMessage());
+        }
+    }
+
+    // Hàm lưu file vào thư mục đúng config
+    private String saveThumbnailFile(MultipartFile file) throws IOException {
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        // Lưu đúng thư mục Blog, dùng config!
+        Path uploadPath = Paths.get(uploadDir, "Blog");
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+        Files.copy(file.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+        return fileName;
+    }
+
+    @GetMapping("/category")
+    public ResponseEntity<?> getAllBlogCategories() {
+        List<BlogCategory> list = blogCategoryService.findAll();
+        return ResponseEntity.ok(list);
+    }
+    @GetMapping("/status-list")
+    public ResponseEntity<?> getStatusList() {
+        List<Map<String, String>> statusList = Arrays.stream(BlogStatus.values())
+                .map(s -> {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("name", s.name());
+                    map.put("label", s.getStatus());
+                    return map;
+                })
+                .toList();
+        return ResponseEntity.ok(statusList);
+    }
 }

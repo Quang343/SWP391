@@ -56,7 +56,5 @@ public class Blog {
 //    @ManyToOne
 //    @JoinColumn(name = "userid")
 //    private User user;
-
-
 }
 

@@ -13,6 +13,5 @@ public class BlogDTO {
     private String status;
     private String author;
     private String createdAt;
-    private String thumbnail; // lấy từ blogDetail (nếu có)
-    // ...getter/setter...
+    private String thumbnail;
 }
