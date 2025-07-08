@@ -152,12 +152,15 @@
         }
 
         // Check stockOutId from URL
+        // Kiểm tra stockOutId từ URL
         const urlParams = new URLSearchParams(window.location.search);
         const stockOutId = urlParams.get('stockOutId');
         if (!stockOutId) {
             console.error('[ERROR] No stockOutId provided in URL');
-            alert('Vui lòng chọn StockOut ID từ danh sách StockOut trước.');
-            window.location.href = '/warehouse/stockout';
+            $.notify({ message: 'Vui lòng chọn StockOut ID từ danh sách StockOut trước.' }, { type: 'warning', delay: 3000 });
+            setTimeout(() => {
+                window.location.href = '/warehouse/stockout';
+            }, 1000);
             return;
         }
         console.log('[DEBUG] StockOut ID from URL:', stockOutId);

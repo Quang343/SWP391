@@ -158,7 +158,7 @@
                 modalNote: !!modalNote,
                 modalSubmitButton: !!modalSubmitButton
             });
-            alert('Lỗi giao diện, vui lòng kiểm tra console.');
+            $.notify({ message: 'Lỗi giao diện, vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
             return;
         }
         console.log('[DEBUG] All DOM elements found');
@@ -247,14 +247,14 @@
                             const name = order.orderName || `Đơn hàng #${id}`;
                             if (id) {
                                 orderTableBody.innerHTML += `
-                                    <tr>
-                                        <td>${id}</td>
-                                        <td>${name}</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-primary create-stockout-btn" data-order-id="${id}" data-bs-toggle="modal" data-bs-target="#stockOutModal">Tạo Xuất kho</button>
-                                        </td>
-                                    </tr>
-                                `;
+                                <tr>
+                                    <td>${id}</td>
+                                    <td>${name}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary create-stockout-btn" data-order-id="${id}" data-bs-toggle="modal" data-bs-target="#stockOutModal">Tạo Xuất kho</button>
+                                    </td>
+                                </tr>
+                            `;
                                 console.log('[DEBUG] Added order:', { id: id, name: name });
                             } else {
                                 console.warn('[WARN] Invalid order data:', order);
@@ -322,12 +322,12 @@
 
             if (!data.warehouseID || isNaN(data.warehouseID)) {
                 console.warn('[WARN] Invalid warehouseID:', warehouseValue);
-                alert('Vui lòng chọn kho hàng hợp lệ.');
+                $.notify({ message: 'Vui lòng chọn kho hàng hợp lệ.' }, { type: 'warning', delay: 3000 });
                 return;
             }
             if (!data.orderID || isNaN(data.orderID)) {
                 console.warn('[WARN] Invalid orderID:', orderValue);
-                alert('Lỗi: Đơn hàng không hợp lệ.');
+                $.notify({ message: 'Lỗi: Đơn hàng không hợp lệ.' }, { type: 'warning', delay: 3000 });
                 return;
             }
 
@@ -343,9 +343,11 @@
                 },
                 success: function(response) {
                     console.log('[DEBUG] Success response from /api/stockouts:', JSON.stringify(response, null, 2));
-                    alert('Tạo StockOut và StockOutDetails thành công!');
-                    stockOutModal.hide();
-                    loadPendingOrders();
+                    $.notify({ message: 'Tạo StockOut và StockOutDetails thành công!' }, { type: 'success', delay: 3000 });
+                    setTimeout(() => {
+                        stockOutModal.hide();
+                        loadPendingOrders();
+                    }, 500);
                 },
                 error: function(xhr, status, error) {
                     console.error('[ERROR] Failed to create StockOut:', {
@@ -355,7 +357,7 @@
                         response: xhr.responseText ? JSON.stringify(JSON.parse(xhr.responseText), null, 2) : 'No response body',
                         error: error
                     });
-                    alert('Lỗi khi tạo StockOut: ' + (xhr.responseJSON?.message || 'Vui lòng kiểm tra dữ liệu và thử lại.'));
+                    $.notify({ message: 'Lỗi khi tạo StockOut: ' + (xhr.responseJSON?.message || 'Vui lòng kiểm tra dữ liệu và thử lại.') }, { type: 'danger', delay: 3000 });
                 }
             });
         });

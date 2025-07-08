@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="BackEnd/fragments/WareHouse/head::head"></head>
+<head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
 
 <!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -173,13 +173,13 @@
 <!-- page-wrapper Start-->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
   <!-- Page Header Start-->
-  <div th:replace="BackEnd/fragments/WareHouse/header::header"></div>
+  <div th:replace="~{BackEnd/fragments/WareHouse/header::header}"></div>
   <!-- Page Header Ends-->
 
   <!-- Page Body Start-->
   <div class="page-body-wrapper">
     <!-- Page Sidebar Start-->
-    <div th:replace="BackEnd/fragments/WareHouse/sidebar::sidebar"></div>
+    <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
     <!-- Page Sidebar Ends-->
 
     <!-- StockIn section Start -->
@@ -198,7 +198,7 @@
 
                   <!-- Dòng 2: Add new StockIn và Search bên phải -->
                   <div class="second-line" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
-                    <a th:href="@{/warehouse/addstockin}" class="align-items-center btn btn-theme d-flex">
+                    <a th:href="@{/warehouse/addstockin}" class="align-items-center btn btn-theme btn-animation d-flex">
                       <i data-feather="plus"></i> Tạo phiếu nhập
                     </a>
                     <div class="search-bar">
@@ -234,8 +234,7 @@
       <!-- Table End -->
 
       <!-- Container-fluid Ends-->
-      <div th:replace="BackEnd/fragments/WareHouse/footer::footer"></div>
-
+      <div th:replace="~{BackEnd/fragments/WareHouse/footer::footer}"></div>
     </div>
     <!-- StockIn section End -->
   </div>
@@ -252,8 +251,8 @@
         <p>Bạn có chắc chắn muốn đăng xuất?</p>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
         <div class="button-box">
-          <button type="button" class="btn btn--no" data-bs-dismiss="modal">Không</button>
-          <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Có</button>
+          <button type="button" class="btn btn--no btn-animation" data-bs-dismiss="modal">Không</button>
+          <button type="button" th:onclick="|window.location='@{/backend/login}'|" class="btn btn--yes btn-primary btn-animation">Có</button>
         </div>
       </div>
     </div>
@@ -305,7 +304,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
+        <button class="btn btn-primary btn-animation" data-bs-dismiss="modal">Đóng</button>
       </div>
     </div>
   </div>
@@ -326,7 +325,7 @@
       <h6 id="offcanvasStockInDate"></h6>
     </div>
 
-    <form id="updateStockInForm">
+    <form id="updateStockInForm" class="theme-form theme-form-2 mega-form">
       <input type="hidden" id="offcanvasStockInIdInput" />
       <div class="mb-3">
         <label for="offcanvasSupplierId">Nhà cung cấp</label>
@@ -344,7 +343,7 @@
       </div>
       <div class="mb-3">
         <label for="offcanvasStockInDateInput">Ngày</label>
-        <input type="text" class="form-control" id="offcanvasStockInDateInput" placeholder="Chọn ngày (DD-MM-YYYY)" required />
+        <input type="text" class="form-control" id="offcanvasStockInDateInput" placeholder="Chọn ngày (DD/MM/YYYY)" required />
       </div>
       <div class="mb-3">
         <label for="offcanvasStockInTimeInput">Giờ</label>
@@ -354,7 +353,9 @@
         <label for="offcanvasNote">Ghi chú</label>
         <input type="text" class="form-control" id="offcanvasNote" />
       </div>
-      <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+      <div class="card-submit-button d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary btn-animation"><i class="ri-check-line"></i> Lưu thay đổi</button>
+      </div>
     </form>
   </div>
 </div>
@@ -388,8 +389,8 @@
 <script th:src="@{/Backend/assets/js/checkbox-all-check.js}"></script>
 
 <!-- Pikaday và Moment JS -->
-<script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pikaday@1.8.2/pikaday.min.js"></script>
 
 <!-- Custom JavaScript -->
 <script>
@@ -404,14 +405,14 @@
         return 'N/A';
       }
       // Add 7 hours to convert UTC to Vietnam time (UTC+07:00)
-      const vnTime = new Date(date.getTime() );
+      const vnTime = new Date(date.getTime());
       const day = String(vnTime.getDate()).padStart(2, '0');
       const month = String(vnTime.getMonth() + 1).padStart(2, '0');
       const year = vnTime.getFullYear();
       const hours = String(vnTime.getHours()).padStart(2, '0');
       const minutes = String(vnTime.getMinutes()).padStart(2, '0');
       const seconds = String(vnTime.getSeconds()).padStart(2, '0');
-      return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
+      return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`; // DD/MM/YYYY
     } catch (error) {
       console.error('[ERROR] Error parsing date:', dateString, error);
       return 'N/A';
@@ -484,6 +485,7 @@
         error: function(xhr, status, error) {
           console.error('Lỗi khi tải nhà cung cấp:', status, error);
           selectElement.empty().append('<option value="">Lỗi tải nhà cung cấp</option>');
+          $.notify({ message: 'Lỗi khi tải danh sách nhà cung cấp.' }, { type: 'danger', delay: 3000 });
         }
       });
     }
@@ -508,6 +510,7 @@
         error: function(xhr, status, error) {
           console.error('Lỗi khi tải kho:', status, error);
           selectElement.empty().append('<option value="">Lỗi tải kho</option>');
+          $.notify({ message: 'Lỗi khi tải danh sách kho.' }, { type: 'danger', delay: 3000 });
         }
       });
     }
@@ -538,6 +541,7 @@
             noDataRow.show();
             renderPagination(0, 0);
             debugPagination();
+            $.notify({ message: 'Dữ liệu nhập kho không hợp lệ.' }, { type: 'danger', delay: 3000 });
             return;
           }
 
@@ -564,14 +568,14 @@
                 row.append(`<td>${formatDateToVietnamese(stockIn.stockInDate)}</td>`);
                 row.append(`<td>${stockIn.note || 'N/A'}</td>`);
                 row.append(`
-                  <td>
-                    <ul>
-                      <li><a href="/warehouse/stockindetail?stockInId=${stockIn.id}" class="view-detail"><i class="ri-eye-line"></i></a></li>
-                      <li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="${stockIn.id}" class="edit-link"><i class="ri-pencil-line"></i></a></li>
-                      <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="${stockIn.id}"><i class="ri-delete-bin-line"></i></a></li>
-                    </ul>
-                  </td>
-                `);
+              <td>
+                <ul>
+                  <li><a href="/warehouse/stockindetail?stockInId=${stockIn.id}" class="view-detail"><i class="ri-eye-line"></i></a></li>
+                  <li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="${stockIn.id}" class="edit-link"><i class="ri-pencil-line"></i></a></li>
+                  <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="${stockIn.id}"><i class="ri-delete-bin-line"></i></a></li>
+                </ul>
+              </td>
+            `);
                 tableBody.append(row);
                 return;
               }
@@ -592,14 +596,14 @@
                 row.append(`<td>${formatDateToVietnamese(stockIn.stockInDate)}</td>`);
                 row.append(`<td>${stockIn.note || 'N/A'}</td>`);
                 row.append(`
-                  <td>
-                    <ul>
-                      <li><a href="/warehouse/stockindetail?stockInId=${stockIn.id}" class="view-detail"><i class="ri-eye-line"></i></a></li>
-                      <li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="${stockIn.id}" class="edit-link"><i class="ri-pencil-line"></i></a></li>
-                      <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="${stockIn.id}"><i class="ri-delete-bin-line"></i></a></li>
-                    </ul>
-                  </td>
-                `);
+              <td>
+                <ul>
+                  <li><a href="/warehouse/stockindetail?stockInId=${stockIn.id}" class="view-detail"><i class="ri-eye-line"></i></a></li>
+                  <li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="${stockIn.id}" class="edit-link"><i class="ri-pencil-line"></i></a></li>
+                  <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="${stockIn.id}"><i class="ri-delete-bin-line"></i></a></li>
+                </ul>
+              </td>
+            `);
                 tableBody.append(row);
               }).fail(function(jqXHR, textStatus, errorThrown) {
                 console.error('Lỗi khi lấy thông tin nhà cung cấp hoặc kho:', textStatus, errorThrown, 'SupplierID:', supplierId, 'WarehouseID:', warehouseId);
@@ -613,14 +617,14 @@
                 row.append(`<td>${formatDateToVietnamese(stockIn.stockInDate)}</td>`);
                 row.append(`<td>${stockIn.note || 'N/A'}</td>`);
                 row.append(`
-                  <td>
-                    <ul>
-                      <li><a href="/warehouse/stockindetail?stockInId=${stockIn.id}" class="view-detail"><i class="ri-eye-line"></i></a></li>
-                      <li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="${stockIn.id}" class="edit-link"><i class="ri-pencil-line"></i></a></li>
-                      <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="${stockIn.id}"><i class="ri-delete-bin-line"></i></a></li>
-                    </ul>
-                  </td>
-                `);
+              <td>
+                <ul>
+                  <li><a href="/warehouse/stockindetail?stockInId=${stockIn.id}" class="view-detail"><i class="ri-eye-line"></i></a></li>
+                  <li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="${stockIn.id}" class="edit-link"><i class="ri-pencil-line"></i></a></li>
+                  <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="${stockIn.id}"><i class="ri-delete-bin-line"></i></a></li>
+                </ul>
+              </td>
+            `);
                 tableBody.append(row);
               });
             });
@@ -633,11 +637,7 @@
         },
         error: function(xhr, status, error) {
           console.error('Lỗi khi tải danh sách nhập kho:', status, error, 'Phản hồi:', xhr.responseText);
-          alert('Không thể tải danh sách nhập kho. Vui lòng kiểm tra console.');
-          tableBody.empty();
-          noDataRow.show();
-          renderPagination(0, 0);
-          debugPagination();
+          $.notify({ message: 'Không thể tải danh sách nhập kho. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
         }
       });
     }
@@ -704,7 +704,7 @@
       });
     }
 
-    // Load StockIn details into offcanvas và cập nhật ngày (giống batch)
+    // Load StockIn details into offcanvas
     $(document).on('shown.bs.offcanvas', '#order-details', function(event) {
       var stockInId = $(event.relatedTarget).data('stockin-id');
       $('#offcanvasStockInId').text(stockInId);
@@ -719,7 +719,7 @@
           const supplierId = stockIn.supplierID && typeof stockIn.supplierID === 'object' ? (stockIn.supplierID.supplierID || stockIn.supplierID.id) : stockIn.supplierID;
           const warehouseId = stockIn.warehouseID && typeof stockIn.warehouseID === 'object' ? (stockIn.warehouseID.warehouseId || stockIn.warehouseID.id) : stockIn.warehouseID;
 
-          console.log('Đang tải chi tiết phiếu nhập kho ID:', stockInId, 'supplierID:', supplierId, 'warehouseID:', warehouseId, 'stockInDate:', stockIn.stockInDate);
+          console.log('Đang tải chi tiết phiếu nhập kho ID:', stockInId, 'supplierID:', supplierId, 'warehouseID:', warehouseId);
 
           // Load dropdowns
           loadSuppliersDropdown($('#offcanvasSupplierId'), supplierId);
@@ -729,16 +729,74 @@
           const formattedDate = formatDateToVietnamese(stockIn.stockInDate);
           $('#offcanvasStockInDate').text(formattedDate || 'N/A');
 
-          // Populate input fields for editing (giống cách batch xử lý manufactureDate)
+          // Populate input fields for editing
           if (stockIn.stockInDate) {
             const date = new Date(stockIn.stockInDate);
-            const vnTime = new Date(date.getTime() ); // UTC+07
-            const formattedDateInput = moment(vnTime).format('DD-MM-YYYY');
-            $('#offcanvasStockInDateInput').val(formattedDateInput);
-
+            // Add 7 hours to convert UTC to Vietnam time
+            const vnTime = new Date(date.getTime());
+            const year = vnTime.getFullYear();
+            const month = String(vnTime.getMonth() + 1).padStart(2, '0');
+            const day = String(vnTime.getDate()).padStart(2, '0');
             const hours = String(vnTime.getHours()).padStart(2, '0');
             const minutes = String(vnTime.getMinutes()).padStart(2, '0');
+
+            // Set date input as DD/MM/YYYY for display
+            $('#offcanvasStockInDateInput').val(`${day}/${month}/${year}`);
+            // Set time input as HH:mm
             $('#offcanvasStockInTimeInput').val(`${hours}:${minutes}`);
+
+            // Initialize Pikaday
+            const offcanvasDateInput = document.getElementById('offcanvasStockInDateInput');
+            if (offcanvasDateInput) {
+              if (typeof Pikaday === 'undefined' || typeof moment === 'undefined') {
+                console.error("Lỗi: Pikaday hoặc Moment không tải được. Kiểm tra CDN.");
+                $.notify({ message: 'Lỗi: Không tải được thư viện lịch. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+              } else {
+                try {
+                  // Destroy existing Pikaday instance
+                  if (window.pickerInstance) {
+                    window.pickerInstance.destroy();
+                  }
+                  // Format date as DD/MM/YYYY for input
+                  const vnTime = new Date(stockIn.stockInDate);
+                  const formattedDate = moment(vnTime).format('DD/MM/YYYY');
+                  offcanvasDateInput.value = formattedDate; // Display in input
+
+                  // Initialize Pikaday
+                  const picker = new Pikaday({
+                    field: offcanvasDateInput,
+                    format: 'DD/MM/YYYY',
+                    defaultDate: vnTime,
+                    // setDefaultDate: true,
+                    yearRange: 10,
+                    minDate: new Date(2015, 0, 1),
+                    maxDate: new Date(),
+                    firstDay: 1,
+                    i18n: {
+                      previousMonth: 'Tháng trước',
+                      nextMonth: 'Tháng sau',
+                      months: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+                      weekdays: ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'],
+                      weekdaysShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']
+                    },
+                    onSelect: function(date) {
+                      const formattedDate = moment(date).format('DD/MM/YYYY');
+                      offcanvasDateInput.value = formattedDate;
+                      console.log("Ngày được chọn:", formattedDate);
+                    }
+                  });
+
+                  window.pickerInstance = picker;
+                  console.log("Pikaday khởi tạo thành công cho #offcanvasStockInDateInput với defaultDate:", vnTime);
+                } catch (error) {
+                  console.error("Lỗi khởi tạo Pikaday:", error);
+                  $.notify({ message: 'Lỗi khởi tạo lịch. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+                }
+              }
+            } else {
+              console.error("Lỗi: Không tìm thấy input #offcanvasStockInDateInput");
+              $.notify({ message: 'Lỗi: Không tìm thấy trường ngày nhập kho.' }, { type: 'danger', delay: 3000 });
+            }
           } else {
             $('#offcanvasStockInDateInput').val('');
             $('#offcanvasStockInTimeInput').val('00:00');
@@ -748,7 +806,7 @@
         },
         error: function(jqXHR, textStatus, errorThrown) {
           console.error('Lỗi khi tải chi tiết phiếu nhập kho:', textStatus, errorThrown);
-          alert('Không thể tải chi tiết phiếu nhập kho.');
+          $.notify({ message: 'Không thể tải chi tiết phiếu nhập kho.' }, { type: 'danger', delay: 3000 });
         }
       });
     });
@@ -757,19 +815,20 @@
     $('#updateStockInForm').on('submit', function(e) {
       e.preventDefault();
       var stockInId = $('#offcanvasStockInIdInput').val();
-      var date = $('#offcanvasStockInDateInput').val(); // DD-MM-YYYY
+      var date = $('#offcanvasStockInDateInput').val(); // DD/MM/YYYY
       var time = $('#offcanvasStockInTimeInput').val(); // HH:mm
 
       // Validate date and time
       if (!date || !time) {
-        alert('Vui lòng nhập đầy đủ ngày và giờ.');
+        $.notify({ message: 'Vui lòng nhập đầy đủ ngày và giờ.' }, { type: 'warning', delay: 3000 });
         return;
       }
 
-      const [day, month, year] = date.split('-').map(Number);
+      // Parse DD/MM/YYYY
+      const [day, month, year] = date.split('/').map(Number);
       const [hours, minutes] = time.split(':').map(Number);
       if (isNaN(day) || isNaN(month) || isNaN(year) || isNaN(hours) || isNaN(minutes)) {
-        alert('Định dạng ngày hoặc giờ không hợp lệ.');
+        $.notify({ message: 'Định dạng ngày hoặc giờ không hợp lệ.' }, { type: 'warning', delay: 3000 });
         return;
       }
 
@@ -796,7 +855,7 @@
         contentType: 'application/json',
         data: JSON.stringify(formData),
         success: function(response) {
-          alert('Cập nhật phiếu nhập kho thành công!');
+          $.notify({ message: 'Cập nhật phiếu nhập kho thành công!' }, { type: 'success', delay: 3000 });
           $('#order-details').offcanvas('hide');
           $('.modal-backdrop').remove();
           $('body').removeClass('modal-open').css('overflow', '');
@@ -804,9 +863,7 @@
         },
         error: function(xhr, status, error) {
           console.error('Lỗi khi cập nhật phiếu nhập kho:', status, error);
-          alert('Lỗi khi cập nhật phiếu nhập kho: ' + (xhr.responseText || 'Lỗi không xác định'));
-          $('.modal-backdrop').remove();
-          $('body').removeClass('modal-open').css('overflow', '');
+          $.notify({ message: 'Lỗi khi cập nhật phiếu nhập kho: ' + (xhr.responseText || 'Lỗi không xác định') }, { type: 'danger', delay: 3000 });
         }
       });
     });
@@ -822,7 +879,7 @@
       var stockInId = $('#exampleModalToggle').data('stockin-id');
       if (!stockInId) {
         console.error('Không tìm thấy ID phiếu nhập kho để xóa.');
-        alert('Lỗi: Không có phiếu nhập kho nào được chọn để xóa.');
+        $.notify({ message: 'Lỗi: Không có phiếu nhập kho nào được chọn để xóa.' }, { type: 'warning', delay: 3000 });
         return;
       }
 
@@ -843,7 +900,7 @@
         },
         error: function(xhr, status, error) {
           console.error('Lỗi khi xóa phiếu nhập kho:', status, error);
-          alert('Không thể xóa phiếu nhập kho: ' + (xhr.responseText || 'Lỗi không xác định'));
+          $.notify({ message: 'Không thể xóa phiếu nhập kho: ' + (xhr.responseText || 'Lỗi không xác định') }, { type: 'danger', delay: 3000 });
           $('#exampleModalToggle').modal('hide');
           $('.modal-backdrop').remove();
           $('body').removeClass('modal-open').css('overflow', '');
@@ -863,18 +920,19 @@
     if (initialPage > 0) currentPage = initialPage - 1; // Convert 1-based URL to 0-based
     fetchStockIns(currentPage);
 
-    // Khởi tạo Pikaday khi offcanvas được mở (giống cách batch xử lý modal)
+    // Khởi tạo Pikaday khi offcanvas được mở
     let pickerInstance = null;
     $(document).on('shown.bs.offcanvas', '#order-details', function() {
       const offcanvasDateInput = document.getElementById('offcanvasStockInDateInput');
       if (!offcanvasDateInput) {
         console.error("Lỗi: Không tìm thấy input #offcanvasStockInDateInput khi offcanvas mở");
+        $.notify({ message: 'Lỗi: Không tìm thấy trường ngày nhập kho.' }, { type: 'danger' });
         return;
       }
 
       if (typeof Pikaday === 'undefined' || typeof moment === 'undefined') {
         console.error("Lỗi: Pikaday hoặc Moment không tải được. Kiểm tra CDN.");
-        alert('Lỗi: Không tải được thư viện lịch. Vui lòng kiểm tra console.');
+        $.notify({ message: 'Lỗi: Không tải được thư viện lịch. Vui lòng kiểm tra console.' }, { type: 'danger' });
         return;
       }
 
@@ -882,7 +940,7 @@
         try {
           pickerInstance = new Pikaday({
             field: offcanvasDateInput,
-            format: 'DD-MM-YYYY',
+            format: 'DD/MM/YYYY',
             yearRange: 10,
             minDate: new Date(2015, 0, 1),
             maxDate: new Date(),
@@ -895,15 +953,15 @@
               weekdaysShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']
             },
             onSelect: function(date) {
-              const formattedDate = moment(date).format('DD-MM-YYYY');
+              const formattedDate = moment(date).format('DD/MM/YYYY');
               offcanvasDateInput.value = formattedDate;
-              console.log("Ngày được chọn trong offcanvas:", formattedDate);
+              console.log("Ngày được chọn:", formattedDate);
             }
           });
           console.log("Pikaday khởi tạo thành công cho #offcanvasStockInDateInput");
         } catch (error) {
           console.error("Lỗi khởi tạo Pikaday:", error);
-          alert('Lỗi khởi tạo lịch. Vui lòng kiểm tra console.');
+          $.notify({ message: 'Lỗi khởi tạo lịch. Vui lòng kiểm tra console.' }, { type: 'danger' });
           return;
         }
       }

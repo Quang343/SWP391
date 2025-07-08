@@ -198,8 +198,10 @@
         const urlParams = new URLSearchParams(window.location.search);
         const stockInId = urlParams.get('stockInId');
         if (!stockInId) {
-            alert('Vui lòng chọn Mã nhập kho từ danh sách trước.');
-            window.location.href = '/warehouse/stockin';
+            $.notify({ message: 'Vui lòng chọn Mã nhập kho từ danh sách trước.' }, { type: 'warning', delay: 3000 });
+            setTimeout(() => {
+                window.location.href = '/warehouse/stockin';
+            }, 1000);
             return;
         }
         console.log('Mã nhập kho từ URL:', stockInId);
