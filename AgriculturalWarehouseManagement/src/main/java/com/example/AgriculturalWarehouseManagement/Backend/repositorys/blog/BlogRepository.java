@@ -58,4 +58,8 @@ public interface BlogRepository extends JpaRepository<Blog, Integer> {
     // Nếu chỉ cần lấy tất cả blog cá nhân (không phân trang)
     List<Blog> findByUserID(Long userId);
 
+    // Hàm này sẽ trả về mọi blog của user (không quan tâm status)
+    // , có phân trang, sắp xếp mới nhất lên trước.
+    Page<Blog> findByUserIDOrderByCreatedAtDesc(Long userId, Pageable pageable);
+
 }

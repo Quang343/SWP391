@@ -399,8 +399,8 @@
                                     </div>
                                 </div>
 
-                                <div class="table-responsive dashboard-bg-box">
-                                    <table class="table blog-table">
+                                <div class="table-responsive dashboard-bg-box" style="overflow-x:auto; width:100%;">
+                                    <table class="table blog-table" style="min-width: 1000px;">
                                         <!--Bảng Blog-->
                                         <thead>
                                         <tr>
@@ -408,9 +408,11 @@
                                             <th scope="col">Images</th>
                                             <th scope="col">Content</th>
                                             <th scope="col">Title</th>
+                                            <th scope="col">Author</th>
                                             <th scope="col">Status</th>
                                             <th scope="col">Created At</th>
                                             <th scope="col">Edit / Delete</th>
+
                                         </tr>
                                         </thead>
                                         <!--                                        <tbody>-->
@@ -523,70 +525,7 @@
                                                 </td>
                                             </tr>
 
-                                            <tr>
-                                                <td class="product-image">#647536</td>
-                                                <td>
-                                                    <h6>Yumitos Chilli Sprinkled Potato Chips 100 g</h6>
-                                                </td>
-                                                <td>
-                                                    <label class="success">Shipped</label>
-                                                </td>
-                                                <td>
-                                                    <h6>$25.69</h6>
-                                                </td>
-                                            </tr>
 
-                                            <tr>
-                                                <td class="product-image">#125689</td>
-                                                <td>
-                                                    <h6>healthy Long Life Toned Milk 1 L</h6>
-                                                </td>
-                                                <td>
-                                                    <label class="danger">Pending</label>
-                                                </td>
-                                                <td>
-                                                    <h6>$25.69</h6>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td class="product-image">#215487</td>
-                                                <td>
-                                                    <h6>Raw Mutton Leg, Packaging 5 Kg</h6>
-                                                </td>
-                                                <td>
-                                                    <label class="danger">Pending</label>
-                                                </td>
-                                                <td>
-                                                    <h6>$25.69</h6>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td class="product-image">#365474</td>
-                                                <td>
-                                                    <h6>Cold Brew Coffee Instant Coffee 50 g</h6>
-                                                </td>
-                                                <td>
-                                                    <label class="success">Shipped</label>
-                                                </td>
-                                                <td>
-                                                    <h6>$25.69</h6>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td class="product-image">#368415</td>
-                                                <td>
-                                                    <h6>SnackAmor Combo Pack of Jowar Stick and Jowar Chips</h6>
-                                                </td>
-                                                <td>
-                                                    <label class="danger">Pending</label>
-                                                </td>
-                                                <td>
-                                                    <h6>$25.69</h6>
-                                                </td>
-                                            </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -1398,6 +1337,7 @@
             <td><img src="${imageSrc}" style="max-width:100px; max-height:60px;" alt=""></td>
             <td>${blog.content && blog.content.length > 40 ? blog.content.substring(0, 40) + '...' : blog.content || ''}</td>
             <td>${blog.title || ""}</td>
+             <td> <i>${blog.author || ""}</i></td>
             <td><span style="font-weight:bold;color:${color}">${blog.status}</span></td>
             <td>${formatDate(blog.createdAt)}</td>
             <td>

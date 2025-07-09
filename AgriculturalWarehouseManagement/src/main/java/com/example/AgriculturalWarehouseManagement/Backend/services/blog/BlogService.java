@@ -78,4 +78,9 @@ public class BlogService {
     public Blog save(Blog blog) {
         return blogRepository.save(blog);
     }
+
+    public Page<Blog> getAllStatusBlogsByUserPage(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return blogRepository.findByUserIDOrderByCreatedAtDesc(userId, pageable);
+    }
 }

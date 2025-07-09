@@ -52,7 +52,11 @@ public class BlogRestController {
 //            // Chưa tích hợp security thì tạm lấy user test id=1
 //            user = userService.findById(1L);
 //        }
-        Page<Blog> blogPage = blogService.getBlogsByUserPage(user.getUserId(), page - 1, size);
+
+        // ACTIVE
+      //  Page<Blog> blogPage = blogService.getBlogsByUserPage(user.getUserId(), page - 1, size);
+
+        Page<Blog> blogPage = blogService.getAllStatusBlogsByUserPage(user.getUserId(), page - 1, size);
 
         List<BlogDTO> blogDTOs = blogPage.getContent().stream().map(blog -> {
             BlogDTO dto = new BlogDTO();
@@ -134,4 +138,6 @@ public class BlogRestController {
                 .toList();
         return ResponseEntity.ok(statusList);
     }
+
+
 }
