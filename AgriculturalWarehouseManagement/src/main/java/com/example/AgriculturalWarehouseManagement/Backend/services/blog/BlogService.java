@@ -38,7 +38,7 @@ public class BlogService {
 
     // Thêm method này để lấy N bài viết mới nhất, ví dụ 4 bài
     public List<BlogRecentDTO> getRecentBlogs(int count) {
-        List<Object[]> results = blogRepository.findTopNByStatus(BlogStatus.ACTIVE, count);
+        List<Object[]> results = blogRepository.findTopNByStatus("ACTIVE", count);
         List<BlogRecentDTO> dtos = new ArrayList<>();
         for (Object[] row : results) {
             BlogRecentDTO dto = new BlogRecentDTO();

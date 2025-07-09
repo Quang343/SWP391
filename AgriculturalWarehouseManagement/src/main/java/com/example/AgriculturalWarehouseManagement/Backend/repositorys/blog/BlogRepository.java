@@ -18,6 +18,7 @@ public interface BlogRepository extends JpaRepository<Blog, Integer> {
     Blog findByIdWithDetail(@Param("id") Integer id);
 
     // Lấy N bài mới nhất (dùng native query)
+    // Dùng String status thay vì enum
     @Query(
             value = "SELECT b.*, bd.thumbnail " +
                     "FROM blog b " +
@@ -26,7 +27,7 @@ public interface BlogRepository extends JpaRepository<Blog, Integer> {
                     "ORDER BY b.createdat DESC " +
                     "LIMIT :count",
             nativeQuery = true)
-    List<Object[]> findTopNByStatus(@Param("status") BlogStatus status, @Param("count") int count);
+    List<Object[]> findTopNByStatus(@Param("status") String status, @Param("count") int count);
 
     @Query("SELECT b FROM Blog b LEFT JOIN FETCH b.blogDetail WHERE b.status = :status")
     List<Blog> findAllActiveWithDetail(@Param("status") BlogStatus status);

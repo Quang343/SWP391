@@ -29,7 +29,7 @@
                         <div class="recent-post-box" th:each="recent : ${recentBlogs}">
                             <div class="recent-box">
                                 <a th:href="@{|/blog-detail?id=${recent.blogID}|}" class="recent-image">
-                                    <img th:src="@{'/assets/images/blog/' + ${recent.thumbnail}}"
+                                    <img th:src="@{'/blog/'  + ${recent.thumbnail}}"
                                          style="padding: 5px ; object-fit:cover;"
                                          class="img-fluid blur-up lazyload" alt="">
                                 </a>
