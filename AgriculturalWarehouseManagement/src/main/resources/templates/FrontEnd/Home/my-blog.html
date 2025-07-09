@@ -1305,7 +1305,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="edit-thumbnail" class="form-label">Ảnh Thumbnail</label>
-                        <input type="file" class="form-control" id="edit-thumbnail" accept="image/*">
+                        <input type="file" class="form-control" onchange="previewEditThumbnail(event)" id="edit-thumbnail" accept="image/*">
                         <img id="edit-preview-thumbnail" style="max-width: 100px; margin-top: 5px;"/>
                     </div>
                 </form>
@@ -1378,7 +1378,8 @@
             const tr = document.createElement("tr");
             // Nếu dùng DTO thì blog.thumbnail là đủ, nếu vẫn là entity thì blog.blogDetail.thumbnail
             const thumbnail = blog.thumbnail || (blog.blogDetail && blog.blogDetail.thumbnail) || "no-image.png";
-            const imageSrc = `${CONTEXT_PATH}/Frontend/assets/images/blog/${thumbnail}`; // <-- Sửa ở đây
+         //   const imageSrc = `${CONTEXT_PATH}/Frontend/assets/images/blog/${thumbnail}`; // <-- Sửa ở đây
+            const imageSrc = `${CONTEXT_PATH}/blog/${thumbnail}`; // Đường dẫn giống Thymeleaf đã dùng
             const color = getStatusColor(blog.status);
             tr.innerHTML = `
             <td>${(currentPage - 1) * pageSize + idx + 1}</td>
@@ -1692,6 +1693,29 @@
         }
     }
 
+    function previewEditThumbnail(event) {
+        const input = event.target;
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('edit-preview-thumbnail').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function deleteBlog(blogID) {
+        if (!confirm("Bạn có chắc chắn muốn xoá blog này không?")) return;
+
+        axios.delete(`${CONTEXT_PATH}/api/my-blog/delete_blog/${blogID}`)
+            .then(res => {
+                alert("🗑️ Blog đã được xoá!");
+                loadBlogPage(1); // hoặc reload lại trang hiện tại
+            })
+            .catch(err => {
+                alert("Lỗi xoá blog: " + (err.response?.data || "Không rõ nguyên nhân"));
+            });
+    }
 
 </script>
 

@@ -172,6 +172,4 @@ public class BlogRestController {
         blogService.deleteById(id);
         return ResponseEntity.ok("Xoá thành công");
     }
-
-
 }

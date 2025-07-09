@@ -34,8 +34,10 @@ public class Blog {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
+    // Nhớ set lại colume thành text mới ghi được nhiều
+    // ALTER TABLE blog MODIFY COLUMN content TEXT;
 
     @Column(name = "createdat")
     private Date createdAt;
