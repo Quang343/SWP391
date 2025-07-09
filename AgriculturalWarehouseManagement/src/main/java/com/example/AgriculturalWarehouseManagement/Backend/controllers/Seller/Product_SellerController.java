@@ -44,7 +44,7 @@ public class Product_SellerController {
         System.out.println("Received product creation request: " + productDTO);
 
         if (productService.existsByName(productDTO.getName())) {
-            return ResponseEntity.badRequest().body("Product name already exists");
+            return ResponseEntity.badRequest().body("Tên sản phẩm đã tồn tại");
         }
 
         try {
@@ -97,7 +97,7 @@ public class Product_SellerController {
     public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody ProductDTO dto) {
         Product product = productService.findById(id);
         if (product == null) {
-            return ResponseEntity.status(404).body("Product not found");
+            return ResponseEntity.status(404).body("Không tìm thấy sản phẩm");
         }
 
         // Cập nhật có điều kiện, chỉ cập nhật nếu field khác null
@@ -117,12 +117,12 @@ public class Product_SellerController {
                 ProductStatus status = ProductStatus.valueOf(dto.getStatus());
                 product.setStatus(status);
             } catch (IllegalArgumentException e) {
-                return ResponseEntity.badRequest().body("Invalid status");
+                return ResponseEntity.badRequest().body("Trạng thái không hợp lệ");
             }
         }
 
         productService.save(product); // lưu lại
-        return ResponseEntity.ok("Product updated successfully");
+        return ResponseEntity.ok("Sản phẩm đã được cập nhật thành công");
     }
 
     @GetMapping("/api/seller/{id}/images")
@@ -181,7 +181,7 @@ public class Product_SellerController {
     private String uploadDir;
     private String storeFile(MultipartFile file) throws IOException {
         if (file.getOriginalFilename() == null) {
-            throw new IOException("Empty file name");
+            throw new IOException("Tên tệp trống");
         }
 
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());

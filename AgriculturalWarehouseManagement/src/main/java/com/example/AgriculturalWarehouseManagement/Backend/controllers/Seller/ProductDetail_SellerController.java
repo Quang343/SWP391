@@ -47,15 +47,21 @@ public class ProductDetail_SellerController {
     // ✅ Cập nhật
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ProductDetail_SellerDTO dto) {
-        ProductDetail updated = productDetailService.updateProductDetail(id, dto);
-        return ResponseEntity.ok(updated);
+        try {
+            ProductDetail updated = productDetailService.updateProductDetail(id, dto);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body(
+                    java.util.Map.of("message", ex.getMessage())
+            );
+        }
     }
 
     // ✅ Xóa mềm
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         boolean deleted = productDetailService.deleteProductDetail(id);
-        return deleted ? ResponseEntity.ok("Đã ẩn product detail") : ResponseEntity.notFound().build();
+        return deleted ? ResponseEntity.ok("Đã ẩn chi tiết sản phẩm") : ResponseEntity.notFound().build();
     }
 
     // ✅ Lấy danh sách detail theo product

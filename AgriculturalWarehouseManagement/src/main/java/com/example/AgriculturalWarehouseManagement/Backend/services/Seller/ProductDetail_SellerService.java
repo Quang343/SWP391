@@ -64,28 +64,51 @@ public class ProductDetail_SellerService implements IProductDetail_SellerService
         return productDetailRepository.save(detail);
     }
 
-
     @Override
     public ProductDetail updateProductDetail(Long id, ProductDetail_SellerDTO dto) {
         ProductDetail detail = findById(id);
+        Product product = detail.getProductID();
+        Category category = product.getCategory();
+
+        // Tìm hoặc tạo CategoryWeight
+        CategoryWeight newWeight = categoryWeightRepository
+                .findByCategoryAndWeightAndUnit(category, dto.getWeight(), dto.getUnit())
+                .orElseGet(() -> {
+                    CategoryWeight created = new CategoryWeight();
+                    created.setCategory(category);
+                    created.setWeight(dto.getWeight());
+                    created.setUnit(dto.getUnit());
+                    return categoryWeightRepository.save(created);
+                });
+
+        // Kiểm tra nếu thay đổi weight + unit → thì check trùng
+        if (!detail.getCategoryWeightID().getCategoryWeightId().equals(newWeight.getCategoryWeightId())) {
+            boolean exists = productDetailRepository.existsByProductIDAndCategoryWeightIDAndProductDetailIdNot(
+                    product, newWeight, id
+            );
+            if (exists) {
+                String formattedWeight = dto.getWeight() % 1 == 0
+                        ? String.valueOf(dto.getWeight().intValue())
+                        : dto.getWeight().toString();
+
+                throw new RuntimeException("Đã tồn tại Product Detail khác với trọng lượng "
+                        + formattedWeight + " " + dto.getUnit() + " cho sản phẩm này.");
+            }
+        }
+
+        // Update các trường còn lại
+        detail.setCategoryWeightID(newWeight); // gán lại nếu weight đổi
         detail.setPrice(dto.getPrice());
         detail.setExpiry(dto.getExpiry());
         detail.setStatus(ProductDetailStatus.valueOf(dto.getStatus()));
 
-        // update weight
-        CategoryWeight weight = detail.getCategoryWeightID();
-        weight.setWeight(dto.getWeight());
-        weight.setUnit(dto.getUnit());
-        categoryWeightRepository.save(weight);
-
-        // Format lại chi tiết tên
+        // Format lại tên
         String formattedWeight = dto.getWeight() % 1 == 0
                 ? String.valueOf(dto.getWeight().intValue())
                 : dto.getWeight().toString();
         detail.setDetailName(formattedWeight + " " + dto.getUnit());
 
         return productDetailRepository.save(detail);
-
     }
 
     @Override

@@ -3,6 +3,7 @@
 
 <head th:replace="FrontEnd/fragments/head::head"></head>
 
+
 <body>
 
 <!-- Loader Start -->
@@ -67,15 +68,15 @@
         <div class="row">
             <div class="col-12">
                 <div class="breadcrumb-contain">
-                    <h2>User Dashboard</h2>
+                    <h2>Trang quản lý người bán</h2>
                     <nav>
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item">
                                 <a href="home">
-                                    <i class="fa-solid fa-house"></i>
+                                    <i class="fa-solid fa-house" title="Trang chủ"></i>
                                 </a>
                             </li>
-                            <li class="breadcrumb-item active">User Dashboard</li>
+                            <li class="breadcrumb-item active">Trang quản lý người bán</li>
                         </ol>
                     </nav>
                 </div>
@@ -564,7 +565,7 @@
 
                                 <div class="order-tab dashboard-bg-box">
                                     <div class="table-responsive">
-                                        <table class="table order-table">
+                                        <table id="orderTable" class="table order-table">
                                             <thead>
                                             <tr>
                                                 <th scope="col">Order ID</th>
@@ -667,29 +668,29 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <nav class="custom-pagination">
-                                        <ul class="pagination justify-content-center">
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="javascript:void(0)" tabindex="-1">
-                                                    <i class="fa-solid fa-angles-left"></i>
-                                                </a>
-                                            </li>
-                                            <li class="page-item active">
-                                                <a class="page-link" href="javascript:void(0)">1</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="javascript:void(0)">2</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="javascript:void(0)">3</a>
-                                            </li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="javascript:void(0)">
-                                                    <i class="fa-solid fa-angles-right"></i>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </nav>
+<!--                                    <nav class="custom-pagination">-->
+<!--                                        <ul class="pagination justify-content-center">-->
+<!--                                            <li class="page-item disabled">-->
+<!--                                                <a class="page-link" href="javascript:void(0)" tabindex="-1">-->
+<!--                                                    <i class="fa-solid fa-angles-left"></i>-->
+<!--                                                </a>-->
+<!--                                            </li>-->
+<!--                                            <li class="page-item active">-->
+<!--                                                <a class="page-link" href="javascript:void(0)">1</a>-->
+<!--                                            </li>-->
+<!--                                            <li class="page-item">-->
+<!--                                                <a class="page-link" href="javascript:void(0)">2</a>-->
+<!--                                            </li>-->
+<!--                                            <li class="page-item">-->
+<!--                                                <a class="page-link" href="javascript:void(0)">3</a>-->
+<!--                                            </li>-->
+<!--                                            <li class="page-item">-->
+<!--                                                <a class="page-link" href="javascript:void(0)">-->
+<!--                                                    <i class="fa-solid fa-angles-right"></i>-->
+<!--                                                </a>-->
+<!--                                            </li>-->
+<!--                                        </ul>-->
+<!--                                    </nav>-->
                                 </div>
                             </div>
                         </div>
@@ -1943,7 +1944,7 @@
     });
 </script>
 
-<!--CRUD-->
+<!--CRUD Product-->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         loadCategories();
@@ -2734,7 +2735,7 @@
                     <!-- Custom -->
                     <div id="customWeightSection" class="mb-3" style="display: none;">
                         <label class="form-label fw-bold">Tùy chỉnh khối lượng / đơn vị</label>
-                        <div class="d-flex align-items-center flex-wrap gap-2">
+                        <div class="d-flex align-items-center flex-wrap gap-2" required>
                             <input type="number" step="0.01" id="weight" class="form-control"
                                    placeholder="Nhập khối lượng..." style="max-width: 150px;"/>
 
@@ -2924,7 +2925,7 @@
     }
 </style>
 
-<!--CRUD-->
+<!--CRUD Product Detail-->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         loadProductDropdown();
@@ -3029,10 +3030,13 @@
                             const container = document.getElementById("weightUnitSelectContainer");
                             container.innerHTML = "";
 
-                            list.forEach(item => {
+                            list.forEach((item, index) => {
                                 const button = document.createElement("button");
                                 button.type = "button";
-                                button.className = "btn weight-unit-btn";
+                                button.className = "btn weight-unit-btn btn-outline-secondary";
+                                if (index === 0) {
+                                    button.classList.add("active");
+                                }
                                 button.textContent = `${item.weight} ${item.unit}`;
                                 button.dataset.weight = item.weight;
                                 button.dataset.unit = item.unit;
@@ -3041,7 +3045,8 @@
                             setupAvailableWeightSelection();
                         });
 
-                    loadProductDetails(productId); // Load bảng theo sản phẩm được chọn
+                    // ❌ Dòng này gây lỗi filter ngoài bảng khi chọn trong modal
+                    // loadProductDetails(productId);
                 });
         });
     }
@@ -3086,8 +3091,25 @@
                 weight = parseFloat(selectedBtn.dataset.weight);
                 unit = selectedBtn.dataset.unit;
             } else {
-                weight = parseFloat(document.getElementById("weight").value);
-                unit = document.getElementById("unit").value.trim();
+                const weightInput = document.getElementById("weight").value;
+                const unitInput = document.getElementById("unit").value.trim();
+
+                if (!weightInput || isNaN(parseFloat(weightInput))) {
+                    alert("Vui lòng nhập khối lượng hợp lệ.");
+                    btn.disabled = false;
+                    btn.innerText = "Thêm Chi Tiết";
+                    return;
+                }
+
+                if (!unitInput) {
+                    alert("Vui lòng chọn đơn vị.");
+                    btn.disabled = false;
+                    btn.innerText = "Thêm Chi Tiết";
+                    return;
+                }
+
+                weight = parseFloat(weightInput);
+                unit = unitInput;
             }
 
             const dto = {
@@ -3124,9 +3146,12 @@
                     // 👇 Tải lại toàn bộ để tính trang cuối
                     axios.get('/AgriculturalWarehouseManagementApplication/api/seller/product-details/all-dto')
                         .then(res => {
+                            // 👉 Reset filter ngoài bảng về "Tất cả sản phẩm"
+                            document.getElementById("productFilter").value = "";
+
                             const totalItems = res.data.length;
                             const lastPage = Math.ceil(totalItems / pageSizeDetail);
-                            loadProductDetails(null, lastPage);
+                            loadProductDetails(null, lastPage); // load lại toàn bộ
                         });
                 })
                 .catch(err => {
@@ -3155,9 +3180,26 @@
                 if (availableRadio.checked) {
                     availableSection.style.display = "block";
                     customSection.style.display = "none";
+
+                    // ❌ Reset unit khi quay lại chế độ available
+                    document.getElementById("unit").value = "";
+                    document.querySelectorAll('#unitButtonGroup button[data-unit]').forEach(btn => {
+                        btn.classList.remove("btn-primary");
+                        btn.classList.add("btn-outline-secondary");
+                    });
+
                 } else {
                     availableSection.style.display = "none";
                     customSection.style.display = "block";
+
+                    // ✅ Mặc định chọn "g" nếu chưa chọn đơn vị nào
+                    const unitInput = document.getElementById("unit");
+                    if (!unitInput.value) {
+                        const defaultBtn = document.querySelector('#unitButtonGroup button[data-unit="g"]');
+                        if (defaultBtn) {
+                            defaultBtn.click(); // Gọi sự kiện click để set đơn vị và đổi màu nút
+                        }
+                    }
                 }
             });
         });
@@ -3189,7 +3231,7 @@
                     <td>${item.detailName}</td>
                     <td>${item.price}</td>
                     <td>${item.expiry}</td>
-                    <td>${item.status}</td>
+                    <td><span style="color: ${getStatusColor(item.status)}; font-weight: bold;">${item.status.replace(/_/g, ' ')}</span></td>
                     <td class="text-center align-middle">
                         <ul class="option-list d-flex justify-content-center gap-2 list-unstyled m-0">
                             <li>
@@ -3198,7 +3240,7 @@
                                 </button>
                             </li>
                             <li>
-                                <button class="btn btn-sm btn-outline-danger btn-delete"
+                                <button class="btn btn-sm btn-outline-danger btn-delete-product-detail"
                                     title="${item.status === 'INACTIVE' ? 'Chi tiết sản phẩm đã ngừng kinh doanh' : 'Soft Delete'}"
                                     data-id="${item.id}"
                                     ${item.status === 'INACTIVE' ? 'disabled' : ''}>
@@ -3220,6 +3262,17 @@
             .catch(err => {
                 console.error("❌ Lỗi khi load product details:", err);
             });
+    }
+
+    function getStatusColor(status) {
+        switch (status) {
+            case "ACTIVE":
+                return "green";
+            case "INACTIVE":
+                return "red";
+            default:
+                return "black";
+        }
     }
 
     // Set mặc định cho radio
@@ -3260,6 +3313,15 @@
             const id = editBtn.dataset.id;
             openEditProductDetailModal(id);
         }
+
+        const deleteBtn = e.target.closest(".btn-delete-product-detail");
+        if (deleteBtn) {
+            const id = deleteBtn.dataset.id;
+            const confirmDelete = confirm("Bạn có chắc muốn ngừng kinh doanh chi tiết sản phẩm này?");
+            if (confirmDelete) {
+                softDeleteProductDetail(id);
+            }
+        }
     });
 
     function openEditProductDetailModal(id) {
@@ -3279,16 +3341,19 @@
             })
             .then(res => {
                 const detail = res.data;
-                document.getElementById("editProductNameInDetail").value = detail.productName;
 
+                document.getElementById("editProductNameInDetail").value = detail.productName;
                 document.getElementById("editWeight").value = detail.weight;
                 document.getElementById("editUnit").value = detail.unit;
-
                 document.getElementById("editPrice").value = detail.price;
                 document.getElementById("editExpiry").value = detail.expiry;
                 document.getElementById("editStatusInDetail").value = detail.status;
 
-                document.getElementById("editProductDetailForm").dataset.id = id;
+                // ✅ Lưu lại dữ liệu gốc để so sánh sau
+                const form = document.getElementById("editProductDetailForm");
+                form.dataset.id = id;
+                form.dataset.originalWeight = detail.weight;
+                form.dataset.originalUnit = detail.unit;
 
                 const modal = new bootstrap.Modal(document.getElementById("editProductDetailModal"));
                 modal.show();
@@ -3315,14 +3380,34 @@
             .then(() => {
                 alert("Cập nhật thành công.");
                 bootstrap.Modal.getInstance(document.getElementById("editProductDetailModal")).hide();
-                loadProductDetails(null, currentPageDetail); // load lại đúng trang đang đứng
+
+                const currentFilterId = document.getElementById("productFilter").value;
+                loadProductDetails(currentFilterId || null, currentPageDetail);
             })
             .catch(err => {
                 console.error("❌ Lỗi khi cập nhật:", err);
-                alert("Có lỗi xảy ra khi cập nhật chi tiết.");
+
+                // Nếu server có trả message lỗi cụ thể
+                if (err.response?.data?.message) {
+                    alert("Lỗi khi cập nhật: " + err.response.data.message);
+                } else {
+                    alert("Có lỗi xảy ra khi cập nhật chi tiết.");
+                }
             });
     });
 
+    function softDeleteProductDetail(id) {
+        axios.delete(`/AgriculturalWarehouseManagementApplication/api/seller/product-details/${id}`)
+            .then(() => {
+                alert("Chi tiết sản phẩm đã được chuyển sang INACTIVE.");
+                const currentFilterId = document.getElementById("productFilter").value;
+                loadProductDetails(currentFilterId || null, currentPageDetail);
+            })
+            .catch(err => {
+                console.error("❌ Lỗi khi xóa mềm:", err);
+                alert("Không thể cập nhật trạng thái.");
+            });
+    }
 
 </script>
 
@@ -3414,6 +3499,37 @@
 
 <!-- theme setting js -->
 <script th:src="@{/Frontend/assets/js/theme-setting.js}"></script>
+
+
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<!--Phân trang template-->
+<script>
+    $(document).ready(function () {
+        $('#orderTable').DataTable({
+            "language": {
+                "search": "Tìm kiếm:",
+                "lengthMenu": "Hiển thị _MENU_ dòng mỗi trang",
+                "zeroRecords": "Không tìm thấy kết quả nào",
+                "info": "Trang _PAGE_ / _PAGES_",
+                "infoEmpty": "Không có dữ liệu",
+                "infoFiltered": "(lọc từ _MAX_ dòng)",
+                "paginate": {
+                    "previous": "«",
+                    "next": "»"
+                }
+            },
+            "order": [], // Không sort mặc định
+            "pageLength": 5 // Mặc định 5 dòng/trang
+        });
+    });
+</script>
 </body>
 
 </html>

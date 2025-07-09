@@ -12,5 +12,8 @@ public interface ProductDetail_SellerRepository extends JpaRepository<ProductDet
     List<ProductDetail> findByProductID_Id(Long productId);
 
     boolean existsByProductIDAndCategoryWeightID(Product product, CategoryWeight weight);
+
+    boolean existsByProductIDAndCategoryWeightIDAndProductDetailIdNot(Product product, CategoryWeight weight, Long excludeId);
+
 }
 
