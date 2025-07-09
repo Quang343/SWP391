@@ -1,11 +1,14 @@
 package com.example.AgriculturalWarehouseManagement.Backend.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.Date;
+
+//@author: Đào Huy Hoàng
 
 @Entity
 @AllArgsConstructor
@@ -50,6 +53,7 @@ public class Blog {
 
     // Liên kết 1-1 với BlogDetail (mappedBy phía BlogDetail)
     @OneToOne(mappedBy = "blog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private BlogDetail blogDetail;
 
     // Thêm sau

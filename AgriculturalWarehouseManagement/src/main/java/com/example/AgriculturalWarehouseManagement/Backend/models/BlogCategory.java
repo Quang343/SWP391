@@ -3,6 +3,9 @@ package com.example.AgriculturalWarehouseManagement.Backend.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+
+//@author: Đào Huy Hoàng
+
 @Entity
 @Table(name = "blogcategory")
 @Data

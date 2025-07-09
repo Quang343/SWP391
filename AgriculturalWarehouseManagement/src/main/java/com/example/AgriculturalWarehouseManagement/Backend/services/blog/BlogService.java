@@ -1,5 +1,6 @@
 package com.example.AgriculturalWarehouseManagement.Backend.services.blog;
 
+
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.response.blog.BlogRecentDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Blog;
 import com.example.AgriculturalWarehouseManagement.Backend.models.BlogStatus;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+//@author: Đào Huy Hoàng
 
 @Service
 @RequiredArgsConstructor
@@ -83,4 +86,15 @@ public class BlogService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return blogRepository.findByUserIDOrderByCreatedAtDesc(userId, pageable);
     }
+//    public void deleteById(Integer id) {
+//        blogRepository.deleteById(id);
+//    }
+    public void deleteById(Integer id) {
+        Blog blog = blogRepository.findById(id).orElse(null);
+        if (blog != null) {
+            blog.setStatus(BlogStatus.DELETED); // Đổi status
+            blogRepository.save(blog);
+        }
+    }
+
 }

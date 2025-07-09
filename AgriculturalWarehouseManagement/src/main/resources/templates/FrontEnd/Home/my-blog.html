@@ -1271,6 +1271,54 @@
 </div>
 
 
+<!--model edit-->
+
+<div class="modal fade" id="editBlogModal" tabindex="-1" aria-labelledby="editBlogLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editBlogLabel">Chỉnh sửa Blog</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editBlogForm">
+                    <!-- Giống như form add, chỉ đổi id các input thành edit-... -->
+                    <div class="mb-3">
+                        <label for="edit-title" class="form-label">Tiêu đề</label>
+                        <input type="text" class="form-control" id="edit-title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-content" class="form-label">Nội dung</label>
+                        <textarea class="form-control" id="edit-content" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-category" class="form-label">Danh mục</label>
+                        <select class="form-control" id="edit-category" required></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-status" class="form-label">Trạng thái</label>
+                        <select class="form-control" id="edit-status" required></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-author" class="form-label">Tác giả</label>
+                        <input type="text" class="form-control" id="edit-author" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-thumbnail" class="form-label">Ảnh Thumbnail</label>
+                        <input type="file" class="form-control" id="edit-thumbnail" accept="image/*">
+                        <img id="edit-preview-thumbnail" style="max-width: 100px; margin-top: 5px;"/>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-success" onclick="saveEditBlog()">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!-- latest jquery-->
 <script th:src="@{/Frontend/assets/js/jquery-3.6.0.min.js}"></script>
 
@@ -1337,12 +1385,12 @@
             <td><img src="${imageSrc}" style="max-width:100px; max-height:60px;" alt=""></td>
             <td>${blog.content && blog.content.length > 40 ? blog.content.substring(0, 40) + '...' : blog.content || ''}</td>
             <td>${blog.title || ""}</td>
-             <td> <i>${blog.author || ""}</i></td>
+             <td> <b><i>${blog.author || ""}</i></b></td>
             <td><span style="font-weight:bold;color:${color}">${blog.status}</span></td>
             <td>${formatDate(blog.createdAt)}</td>
-            <td>
-                <a href="/blog/edit?id=${blog.blogID}"><i data-feather="edit"></i></a>
-                <a href="/blog/delete?id=${blog.blogID}"><i data-feather="trash-2"></i></a>
+          <td>
+                  <a href="javascript:void(0)" onclick="openEditBlogModal(${blog.blogID})"><i data-feather="edit"></i></a>
+                   <a href="javascript:void(0)" onclick="deleteBlog(${blog.blogID})"><i data-feather="trash-2"></i></a>
             </td>
         `;
             tbody.appendChild(tr);
@@ -1538,6 +1586,113 @@
                 }
             });
     }
+
+    // Edit model
+    let currentEditBlogId = null;
+
+    function openEditBlogModal(blogID) {
+        currentEditBlogId = blogID;
+        // Lấy dữ liệu blog
+        axios.get(`${CONTEXT_PATH}/api/my-blog/detail/${blogID}`)
+            .then(res => {
+                const blog = res.data;
+                document.getElementById('edit-title').value = blog.title || '';
+                document.getElementById('edit-content').value = blog.content || '';
+                document.getElementById('edit-author').value = blog.author || '';
+
+                // Hiển thị thumbnail hiện tại
+                const thumb = (blog.blogDetail && blog.blogDetail.thumbnail) || blog.thumbnail || 'no-image.png';
+                document.getElementById('edit-preview-thumbnail').src = `${CONTEXT_PATH}/blog/${thumb}`;
+
+                // Load category & status (phải set selected sau khi render option)
+                loadEditBlogCategories(blog.blogCategoryID || blog.blogCategoryId);
+                loadEditBlogStatusList(blog.status);
+
+                $('#editBlogModal').modal('show');
+            })
+            .catch(err => {
+                alert("Lỗi load blog: " + JSON.stringify(err));
+            });
+    }
+
+    // Load category và set selected
+    function loadEditBlogCategories(selectedValue) {
+        axios.get(`${CONTEXT_PATH}/api/my-blog/category`)
+            .then(res => {
+                const select = document.getElementById('edit-category');
+                select.innerHTML = '';
+                res.data.forEach(cat => {
+                    select.innerHTML += `<option value="${cat.blogCategoryId}">${cat.categoryName}</option>`;
+                });
+                if (selectedValue) select.value = selectedValue;
+            });
+    }
+
+    // Load status và set selected
+    function loadEditBlogStatusList(selectedValue) {
+        axios.get(`${CONTEXT_PATH}/api/my-blog/status-list`)
+            .then(res => {
+                const select = document.getElementById('edit-status');
+                select.innerHTML = '';
+                res.data.forEach(st => {
+                    select.innerHTML += `<option value="${st.name}">${st.name}</option>`;
+                });
+                if (selectedValue) select.value = selectedValue;
+            });
+    }
+    function saveEditBlog() {
+        const title = document.getElementById('edit-title').value;
+        const content = document.getElementById('edit-content').value;
+        const author = document.getElementById('edit-author').value;
+        const blogCategoryID = document.getElementById('edit-category').value;
+        const status = document.getElementById('edit-status').value;
+        const thumbnailFile = document.getElementById('edit-thumbnail').files[0];
+
+        // Nếu chọn ảnh mới → upload trước, còn không thì giữ nguyên
+        function doUpdate(thumbnailName) {
+            const blog = {
+                title,
+                content,
+                author,
+                blogCategoryID: parseInt(blogCategoryID),
+                status,
+                blogDetail: {
+                    thumbnail: thumbnailName // Dùng ảnh mới nếu upload, không thì giữ ảnh cũ
+                }
+            };
+
+            axios.put(`${CONTEXT_PATH}/api/my-blog/edit_blog/${currentEditBlogId}`, blog)
+                .then(res => {
+                    alert("Cập nhật thành công!");
+                    $('#editBlogModal').modal('hide');
+                    loadBlogPage(1); // hoặc load lại page hiện tại
+                })
+                .catch(err => {
+                    alert("Lỗi cập nhật: " + JSON.stringify(err));
+                });
+        }
+
+        // Nếu có file thì upload
+        if (thumbnailFile) {
+            const formData = new FormData();
+            formData.append("file", thumbnailFile);
+            axios.post(`${CONTEXT_PATH}/api/my-blog/upload-thumbnail`, formData, {
+                headers: {'Content-Type': 'multipart/form-data'}
+            }).then(res => {
+                doUpdate(res.data); // dùng tên file mới
+            }).catch(err => {
+                alert("Lỗi upload ảnh: " + JSON.stringify(err));
+            });
+        } else {
+            // Không chọn file mới → lấy tên ảnh cũ từ preview src
+            const imgSrc = document.getElementById('edit-preview-thumbnail').src;
+            // Lấy tên file từ đường dẫn
+            let thumbnailName = imgSrc.split('/blog/')[1] || '';
+            doUpdate(thumbnailName);
+        }
+    }
+
+
 </script>
 
 </body>

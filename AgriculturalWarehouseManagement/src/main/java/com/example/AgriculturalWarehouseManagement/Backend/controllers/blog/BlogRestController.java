@@ -23,6 +23,8 @@ import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.*;
 
+//@author: Đào Huy Hoàng
+
 @RestController
 @RequestMapping("/api/my-blog")
 @RequiredArgsConstructor
@@ -137,6 +139,38 @@ public class BlogRestController {
                 })
                 .toList();
         return ResponseEntity.ok(statusList);
+    }
+
+    @PutMapping("/edit_blog/{id}")
+    public ResponseEntity<?> editBlog(@PathVariable Integer id, @RequestBody Blog blogUpdate) {
+        Blog blog = blogService.getBlogById(id);
+        if (blog == null) {
+            return ResponseEntity.badRequest().body("Blog không tồn tại");
+        }
+        // Update các trường (tuỳ yêu cầu)
+        blog.setTitle(blogUpdate.getTitle());
+        blog.setContent(blogUpdate.getContent());
+        blog.setStatus(blogUpdate.getStatus());
+        blog.setAuthor(blogUpdate.getAuthor());
+        blog.setBlogCategoryID(blogUpdate.getBlogCategoryID());
+        blog.setBlogDateUpdate(new Date());
+        // Nếu cập nhật ảnh
+        if (blogUpdate.getBlogDetail() != null && blog.getBlogDetail() != null) {
+            blog.getBlogDetail().setThumbnail(blogUpdate.getBlogDetail().getThumbnail());
+        }
+        Blog updated = blogService.save(blog);
+        return ResponseEntity.ok(updated);
+    }
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<?> getBlogDetail(@PathVariable Integer id) {
+        Blog blog = blogService.getBlogById(id);
+        if (blog == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(blog);
+    }
+    @DeleteMapping("/delete_blog/{id}")
+    public ResponseEntity<?> deleteBlog(@PathVariable Integer id) {
+        blogService.deleteById(id);
+        return ResponseEntity.ok("Xoá thành công");
     }
 
 

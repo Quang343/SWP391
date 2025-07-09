@@ -1,5 +1,7 @@
 package com.example.AgriculturalWarehouseManagement.Backend.models;
 
+//@author: Đào Huy Hoàng
+
 public enum BlogStatus {
     ACTIVE("Active"),
     INACTIVE("Inactive"), // Admin xóa mềm

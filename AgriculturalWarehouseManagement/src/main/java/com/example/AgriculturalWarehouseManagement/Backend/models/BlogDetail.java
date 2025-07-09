@@ -1,5 +1,6 @@
 package com.example.AgriculturalWarehouseManagement.Backend.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -20,6 +21,7 @@ public class BlogDetail {
     // Khóa ngoại tham chiếu tới Blog
     @OneToOne
     @JoinColumn(name = "blogid", referencedColumnName = "blogid")
+    @JsonBackReference
     private Blog blog;
 
     @Column(name = "thumbnail")
