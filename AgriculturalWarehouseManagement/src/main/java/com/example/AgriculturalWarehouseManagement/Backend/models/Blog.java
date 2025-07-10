@@ -36,7 +36,7 @@ public class Blog {
 
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
-    // Nhớ set lại colume thành text mới ghi được nhiều
+    // Nhớ set lại colume thành text thay vì Nvarchar mới ghi được nhiều
     // ALTER TABLE blog MODIFY COLUMN content TEXT;
 
     @Column(name = "createdat")
