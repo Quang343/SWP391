@@ -207,4 +207,10 @@ public class BlogController {
 //
 //        return "FrontEnd/Home/my-blog";
 //    }
+
+    @RequestMapping("/admin/blog")
+    public String adminBlog() {
+        System.out.println("Vào tới controller adminBlog");
+        return "BackEnd/Blog/All_Blog";
+    }
 }

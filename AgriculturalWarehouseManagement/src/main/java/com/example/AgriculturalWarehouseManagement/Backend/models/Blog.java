@@ -29,6 +29,11 @@ public class Blog {
     @Column(name = "blogcategoryid")
     private Integer blogCategoryID;
 
+//    @ManyToOne(fetch = FetchType.LAZY) // Sửa bổ sung
+//    @JoinColumn(name = "blogcategoryid", referencedColumnName = "blogcategoryid")
+//    private BlogCategory blogCategory;
+
+
     @NotBlank(message = "Tiêu đề không được để trống")
     @Size(max = 255, message = "Tiêu đề không được vượt quá 255 ký tự")
     @Column(name = "title")

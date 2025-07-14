@@ -56,7 +56,7 @@ public class BlogRestController {
 //        }
 
         // ACTIVE
-      //  Page<Blog> blogPage = blogService.getBlogsByUserPage(user.getUserId(), page - 1, size);
+        //  Page<Blog> blogPage = blogService.getBlogsByUserPage(user.getUserId(), page - 1, size);
 
         Page<Blog> blogPage = blogService.getAllStatusBlogsByUserPage(user.getUserId(), page - 1, size);
 

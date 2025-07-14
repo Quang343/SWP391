@@ -97,4 +97,11 @@ public class BlogService {
         }
     }
 
+    // Admin CRUD
+    public Page<Blog> getAllBlogsPage(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return blogRepository.findAll(pageable);
+    }
+
+
 }
