@@ -27,7 +27,7 @@ public class ContactUserService {
         CapitalizedEachWord capitalizedEachWord = new CapitalizedEachWord();
 
         if (!capitalizedEachWord.isCapitalizedEachWord(contactUsUserRequests.getFullName())) {
-            return new ResponseResult<>("ERROR", "Tên đầy đủ không được viết hoa Mỗi từ", false);
+            return new ResponseResult<>("ERROR", "Tên đầy đủ không được viết hoa mỗi từ", false);
         }
 
         String address = contactUsUserRequests.getAddress();
@@ -65,6 +65,6 @@ public class ContactUserService {
         contactUsUserResponse.setPhone(contactUsUser.getPhone());
         contactUsUserResponse.setMessage(contactUsUser.getMessage());
 
-        return new ResponseResult<>("SUCCESS", "ContactUsUser successfully inserted", true);
+        return new ResponseResult<>("SUCCESS", "Bạn đã liên hệ thành công ", true);
     }
 }

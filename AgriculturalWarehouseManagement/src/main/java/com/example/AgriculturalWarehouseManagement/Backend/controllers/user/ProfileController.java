@@ -1,14 +1,12 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.ProfileRequest;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.OrderUserResponse;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ProfileResponse;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ResponseResult;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.*;
 import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilter;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.OrderUsersService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.WishlistServices;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,6 +42,9 @@ public class ProfileController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private WishlistServices wishlistServices;
 
     @Autowired
     private OrderUsersService orderUsersService;
@@ -107,6 +108,13 @@ public class ProfileController {
             // View Order
             List<OrderUserResponse> orderUserResponses = orderUsersService.getListOrdersOrEmpty(userEntity.getUserId());
             model.addAttribute("orderUserResponses", orderUserResponses);
+
+            // Total Order
+            model.addAttribute("totalOrder", orderUserResponses.size());
+
+            // Total Wishlist
+            List<ProductUserHomepageResponse> wishlistResponses = wishlistServices.getListOfWishlist(userEntity.getUserId());
+            model.addAttribute("totalWishlist", wishlistResponses.size());
 
             return "FrontEnd/Home/userDashboard";
 

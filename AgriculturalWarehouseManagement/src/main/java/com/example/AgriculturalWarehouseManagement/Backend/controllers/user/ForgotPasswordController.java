@@ -43,7 +43,7 @@ public class ForgotPasswordController {
 
         if (user != null) {
             if (user.getStatusGG().equals("Active")) {
-                model.addAttribute("errorForgotpassword", "Email is already in Google !!!");
+                model.addAttribute("errorForgotpassword", "Email đã có trong Google !!!");
                 return "FrontEnd/Home/forgot";
             } else {
                 String otpForgotPassword = generateOTPCheck.generateOTP();
@@ -54,7 +54,7 @@ public class ForgotPasswordController {
                 return "redirect:/otpForgotPassword";
             }
         } else {
-            model.addAttribute("errorForgotpassword", "Email not exist !!!");
+            model.addAttribute("errorForgotpassword", "Email không tồn tại !!!");
             return "FrontEnd/Home/forgot";
         }
 
@@ -72,7 +72,7 @@ public class ForgotPasswordController {
 
             return "redirect:/otpForgotPassword";
         } else {
-            model.addAttribute("errorResendOtp", "Email not exist !!!");
+            model.addAttribute("errorResendOtp", "Email không tồn tại !!!");
             return "FrontEnd/Home/otpForgotPassword";
         }
 
@@ -95,7 +95,7 @@ public class ForgotPasswordController {
         String sessionOtp = (String) session.getAttribute("otpForgotPassword");
 
         if (!otp.equals(sessionOtp)) {
-            model.addAttribute("errorOtpForgotpassword", "Invalid OTP");
+            model.addAttribute("errorOtpForgotpassword", "OTP không hợp lệ");
             return "FrontEnd/Home/otpForgotPassword";
         } else {
             return "redirect:/changeForgotPassword";
@@ -114,7 +114,7 @@ public class ForgotPasswordController {
         ResponseResult<User> messageChangePassword = userService.changePassword(email, changePassword);
 
         if (messageChangePassword.getMessage() == null || messageChangePassword.getMessage().equals("")) {
-            model.addAttribute("errorChangePassword", "Cannot find email");
+            model.addAttribute("errorChangePassword", "Không tìm thấy email");
             return "FrontEnd/Home/changeForgotPassword";
         } else {
             if (!messageChangePassword.isActive()) {

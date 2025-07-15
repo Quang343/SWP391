@@ -48,7 +48,7 @@
 <div class="mobile-menu d-md-none d-block mobile-cart">
     <ul>
         <li class="active">
-            <a href="index.html">
+            <a href="home">
                 <i class="iconly-Home icli"></i>
                 <span>Home</span>
             </a>
@@ -91,15 +91,15 @@
         <div class="row">
             <div class="col-12">
                 <div class="breadcrumb-contain">
-                    <h2 class="mb-2">Log In</h2>
+                    <h2 class="mb-2">Đăng nhập</h2>
                     <nav>
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item">
-                                <a href="index.html">
+                                <a href="home">
                                     <i class="fa-solid fa-house"></i>
                                 </a>
                             </li>
-                            <li class="breadcrumb-item active">Log In</li>
+                            <li class="breadcrumb-item active">Đăng nhập</li>
                         </ol>
                     </nav>
                 </div>
@@ -122,24 +122,24 @@
             <div class="col-xxl-4 col-xl-5 col-lg-6 col-sm-8 mx-auto">
                 <div class="log-in-box">
                     <div class="log-in-title">
-                        <h3>Welcome To Fastkart</h3>
-                        <h4>Log In Your Account</h4>
+                        <h3>Chào mừng đến với Fastkart</h3>
+                        <h4>Đăng nhập tài khoản của bạn</h4>
                     </div>
 
                     <div class="input-box">
                         <form th:action="@{/login}" method="POST" class="row g-4">
                             <div class="col-12">
                                 <div class="form-floating theme-form-floating log-in-form">
-                                    <input type="email" name="email" th:value="${emailCookieSaved}" class="form-control" id="email" placeholder="Email Address">
-                                    <label for="email">Email Address</label>
+                                    <input type="email" name="email" th:value="${emailCookieSaved}" class="form-control" id="email" placeholder="Email Address" required>
+                                    <label for="email">Email</label>
                                 </div>
                             </div>
 
                             <div class="col-12">
                                 <div class="form-floating theme-form-floating log-in-form">
                                     <input type="password" name="password" th:value="${passwordCookieSaved}" class="form-control" id="password"
-                                           placeholder="Password" >
-                                    <label for="password">Password</label>
+                                           placeholder="Password" required>
+                                    <label for="password">Mật khẩu</label>
                                 </div>
                             </div>
 
@@ -148,15 +148,14 @@
                                     <div class="form-check ps-0 m-0 remember-box">
                                         <input name="rememberMe" class="checkbox_animated check-box" type="checkbox"
                                                id="flexCheckDefault">
-                                        <label class="form-check-label" for="flexCheckDefault">Remember me</label>
+                                        <label class="form-check-label" for="flexCheckDefault">Ghi nhớ tôi</label>
                                     </div>
-                                    <a href="forgotPassword" class="forgot-password">Forgot Password?</a>
+                                    <a href="forgotPassword" class="forgot-password">Quên mật khẩu?</a>
                                 </div>
                             </div>
 
                             <div class="col-12">
-                                <button class="btn btn-animation w-100 justify-content-center" type="submit">Log
-                                    In</button>
+                                <button class="btn btn-animation w-100 justify-content-center" type="submit">Đăng nhập</button>
                             </div>
 
                             <div th:if="${errorLogin}" class="alert alert-danger">
@@ -178,7 +177,7 @@
                             <li>
                                 <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:8080/AgriculturalWarehouseManagement/loginGG&response_type=code&client_id=284166213808-hbk6iij4oe2fq97i3surklcgd2rlir1r.apps.googleusercontent.com&approval_prompt=force">
                                     <img th:src="@{/Frontend/assets/images/inner-page/google.png}" alt="Google" />
-                                    Log In with Google
+                                    Đăng nhập bằng tài khoản Google
                                 </a>
                             </li>
 
@@ -190,8 +189,8 @@
                     </div>
 
                     <div class="sign-up-box">
-                        <h4>Don't have an account?</h4>
-                        <a href="register">Sign Up</a>
+                        <h4>Không có tài khoản?</h4>
+                        <a href="register">Đăng ký</a>
                     </div>
                 </div>
             </div>

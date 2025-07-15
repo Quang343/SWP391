@@ -43,17 +43,17 @@ public class LoginController {
         System.out.println(rememberMe);
         User userEntity = userService.loadUserByEmail(loginRequest.getEmail());
         if (userEntity == null) {
-            model.addAttribute("errorLogin", "Email not exists !!!");
+            model.addAttribute("errorLogin", "Email không tồn tại !!!");
             return "FrontEnd/Home/login";
         } else {
 
             if (userEntity.getStatus().equals("Inactive")){
-                model.addAttribute("errorLogin", "Account inactive !!!");
+                model.addAttribute("errorLogin", "Tài khoản không hoạt động !!!");
                 return "FrontEnd/Home/login";
             }
 
             if (userEntity.getStatusGG().equals("Active")){
-                model.addAttribute("errorLogin", "Email had already been used by Accout Google !!!");
+                model.addAttribute("errorLogin", "Email đã được Tài khoản Google sử dụng !!!");
                 return "FrontEnd/Home/login";
             }
 
@@ -114,7 +114,7 @@ public class LoginController {
                         return "redirect:/movePageRole";
 
                     } else {
-                        model.addAttribute("errorLogin", "Wrong password or email !!!");
+                        model.addAttribute("errorLogin", "Mật khẩu hoặc email không đúng !!!");
                         return "FrontEnd/Home/login";
                     }
                 }
@@ -183,7 +183,7 @@ public class LoginController {
 
                         return "redirect:/movePageRole";
                     } else {
-                        model.addAttribute("errorLogin", "Wrong password or email !!!");
+                        model.addAttribute("errorLogin", "Mật khẩu hoặc email không đúng !!!");
                         return "FrontEnd/Home/login";
                     }
 

@@ -163,7 +163,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="breadcrumb-contain">
-                    <h2>Contact Us</h2>
+                    <h2>Liên hệ với chúng tôi</h2>
                     <h6 class="glow-btn" style="color: red; margin-left: 10px;" th:if="${errorContactUser != null}"
                         th:text="${errorContactUser}">ErrorContactUser</h6>
                     <nav>
@@ -173,7 +173,7 @@
                                     <i class="fa-solid fa-house"></i>
                                 </a>
                             </li>
-                            <li class="breadcrumb-item active">Contact Us</li>
+                            <li class="breadcrumb-item active">Liên hệ với chúng tôi</li>
                         </ol>
                     </nav>
                 </div>
@@ -198,7 +198,7 @@
                         </div>
                         <div class="col-xl-12">
                             <div class="contact-title">
-                                <h3>Get In Touch</h3>
+                                <h3>Hãy liên lạc</h3>
                             </div>
                             <div class="contact-title">
                                 <h6 class="glow-btn" th:if="${session.account == null}">Hãy đăng nhập để bạn có thể liên hệ
@@ -214,7 +214,7 @@
                                                 <i class="fa-solid fa-phone"></i>
                                             </div>
                                             <div class="contact-detail-title">
-                                                <h4>Phone</h4>
+                                                <h4>Số điện thoại</h4>
                                             </div>
 
                                             <div class="contact-detail-contain">
@@ -244,7 +244,7 @@
                                                 <i class="fa-solid fa-location-dot"></i>
                                             </div>
                                             <div class="contact-detail-title">
-                                                <h4>FPT University</h4>
+                                                <h4>Đại học FPT</h4>
                                             </div>
 
                                             <div class="contact-detail-contain">
@@ -262,16 +262,16 @@
 
             <div class="col-lg-6">
                 <div class="title d-xxl-none d-block">
-                    <h2>Contact Us</h2>
+                    <h2>Liên hệ với chúng tôi</h2>
                 </div>
                 <form th:action="@{/contactususer}" method="post" class="right-sidebar-box">
                     <div class="row">
                         <div class="col-xxl-6 col-lg-12 col-sm-6">
                             <div class="mb-md-4 mb-3 custom-form">
-                                <label for="fullNameContact" class="form-label">Full name</label>
+                                <label for="fullNameContact" class="form-label">Tên đầy đủ</label>
                                 <div class="custom-input">
                                     <input type="text" name="fullName" class="form-control" id="fullNameContact"
-                                           placeholder="Enter Full Name" required>
+                                           placeholder="Nhập tên đầy đủ" required>
                                     <i class="fa-solid fa-user"></i>
                                 </div>
                             </div>
@@ -282,7 +282,7 @@
                                 <label for="emailContact" class="form-label">Email</label>
                                 <div class="custom-input">
                                     <input type="email" name="email" class="form-control" id="emailContact"
-                                           placeholder="Enter Email" required>
+                                           placeholder="Nhập Email" required>
                                     <i class="fa-solid fa-envelope"></i>
                                 </div>
                             </div>
@@ -290,10 +290,10 @@
 
                         <div class="col-xxl-6 col-lg-12 col-sm-6">
                             <div class="mb-md-4 mb-3 custom-form">
-                                <label for="addressContact" class="form-label">Address</label>
+                                <label for="addressContact" class="form-label">Địa chỉ</label>
                                 <div class="custom-input">
                                     <input type="text" name="address" class="form-control" id="addressContact"
-                                           placeholder="Enter Address" required>
+                                           placeholder="Nhập địa chỉ" required>
                                     <i class="fa-solid fa-envelope"></i>
                                 </div>
                             </div>
@@ -301,10 +301,10 @@
 
                         <div class="col-xxl-6 col-lg-12 col-sm-6">
                             <div class="mb-md-4 mb-3 custom-form">
-                                <label for="phoneContact" class="form-label">Phone Number</label>
+                                <label for="phoneContact" class="form-label">Số điện thoại</label>
                                 <div class="custom-input">
                                     <input type="tel" name="phone" class="form-control" id="phoneContact"
-                                           placeholder="Enter Your Phone Number" maxlength="10"
+                                           placeholder="Nhận số điện thoại" maxlength="10"
                                            pattern="^(03|05|07|08|09)[0-9]{8}$"
                                            inputmode="numeric"
                                            required>
@@ -315,10 +315,10 @@
 
                         <div class="col-12">
                             <div class="mb-md-4 mb-3 custom-form">
-                                <label for="messageContact" class="form-label">Message</label>
+                                <label for="messageContact" class="form-label">Tin nhắn</label>
                                 <div class="custom-textarea">
                                         <textarea name="message" class="form-control" id="messageContact"
-                                                  placeholder="Enter Your Message" rows="6" required></textarea>
+                                                  placeholder="Nhập tin nhắn" rows="6" required></textarea>
                                     <i class="fa-solid fa-message"></i>
                                 </div>
                             </div>

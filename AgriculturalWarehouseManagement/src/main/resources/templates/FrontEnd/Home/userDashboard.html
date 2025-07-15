@@ -169,7 +169,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="breadcrumb-contain">
-                    <h2>User Dashboard</h2>
+                    <h2>Trang tổng quan của tôi</h2>
                     <nav>
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item">
@@ -177,7 +177,7 @@
                                     <i class="fa-solid fa-house"></i>
                                 </a>
                             </li>
-                            <li class="breadcrumb-item active">User Dashboard</li>
+                            <li class="breadcrumb-item active">Trang tổng quan của tôi</li>
                         </ol>
                     </nav>
                 </div>
@@ -222,7 +222,7 @@
                                         </i>
                                     </div>
 
-                                    <button type="submit" class="btn btn-outline-primary btn-sm glow-btn">Save</button>
+                                    <button type="submit" class="btn btn-outline-primary btn-sm glow-btn">Lưu</button>
                                 </div>
                             </form>
 
@@ -301,7 +301,7 @@
                         <div class="tab-pane fade show active" id="pills-dashboard" role="tabpanel">
                             <div class="dashboard-home">
                                 <div class="title">
-                                    <h2>My Dashboard</h2>
+                                    <h2>Trang tổng quan của tôi</h2>
                                     <span class="title-leaf">
                                             <svg class="icon-width bg-gray">
                                                 <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
@@ -327,49 +327,31 @@
                                                      class="blur-up lazyload"
                                                      alt="">
                                                 <div class="total-detail">
-                                                    <h5>Total Order</h5>
-                                                    <h3>3658</h3>
+                                                    <h5>Tổng số Order</h5>
+                                                    <h3 th:if="${totalOrder != null}" th:text="${totalOrder}">3658</h3>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
                                             <div class="total-contain">
-                                                <img th:src="@{FrontEnd/assets/images/svg/pending.svg}"
+                                                <img th:src="@{FrontEnd/assets/images/svg/wishlist.svg}"
                                                      class="img-1 blur-up lazyload" alt="">
-                                                <img th:src="@{FrontEnd/assets/images/svg/pending.svg}"
-                                                     class="blur-up lazyload"
-                                                     alt="">
-                                                <div class="total-detail">
-                                                    <h5>Total Pending Order</h5>
-                                                    <h3>254</h3>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
-                                            <div class="total-contain">
-                                                <img src="../assets/images/svg/wishlist.svg"
-                                                     class="img-1 blur-up lazyload" alt="">
-                                                <img src="../assets/images/svg/wishlist.svg"
+                                                <img th:src="@{FrontEnd/assets/images/svg/wishlist.svg}"
                                                      class="blur-up lazyload" alt="">
                                                 <div class="total-detail">
-                                                    <h5>Total Wishlist</h5>
-                                                    <h3>32158</h3>
+                                                    <h5>Tổng yêu thích</h5>
+                                                    <h3 th:if="${totalWishlist != null}" th:text="${totalWishlist}">32158</h3>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="dashboard-title">
-                                    <h3>Thông tin Account </h3>
-                                </div>
-
                                 <div class="row g-4">
                                     <div class="col-xxl-6">
                                         <div class="dashboard-content-title">
-                                            <h4>Thông tin Information
+                                            <h4>Thông tin
                                             </h4>
                                         </div>
                                         <div class="dashboard-detail">
@@ -387,7 +369,7 @@
                         <div class="tab-pane fade" id="pills-order" role="tabpanel">
                             <div class="dashboard-order">
                                 <div class="title">
-                                    <h2>My Orders History</h2>
+                                    <h2>Lịch sử đơn hàng của tôi</h2>
                                     <span class="title-leaf title-leaf-gray">
                                             <svg class="icon-width bg-gray">
                                                 <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
@@ -479,7 +461,7 @@
                             <div class="dashboard-address">
                                 <div class="title title-flex">
                                     <div>
-                                        <h2>My Address Book</h2>
+                                        <h2>Sổ địa chỉ của tôi</h2>
                                         <span class="title-leaf">
                                                 <svg class="icon-width bg-gray">
                                                     <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
@@ -497,7 +479,7 @@
                                     <button class="btn theme-bg-color text-white btn-sm fw-bold mt-lg-0 mt-3"
                                             data-bs-toggle="modal" data-bs-target="#add-address"><i data-feather="plus"
                                                                                                     class="me-2"></i>
-                                        Add New Address
+                                        Thêm địa chỉ mới
                                     </button>
 
                                 </div>
@@ -575,7 +557,7 @@
                                                                                 data-email="${address.email}"
                                                                                 data-note="${address.note}"
                                                                                 data-addressbookid="${address.addressBookId}">
-                                                                            <i data-feather="edit"></i> Edit
+                                                                            <i data-feather="edit"></i> Sửa
                                                                         </button>
 
 
@@ -585,7 +567,7 @@
                                                                                     data-addressbookid="${address.addressBookId}"
                                                                                     data-id="${address.userId}">
                                                                                     <i data-feather="trash-2"></i>
-                                                                                Remove
+                                                                                Xóa
                                                                             </button>
                                                                         </div>
                                                                     </div>
@@ -595,7 +577,7 @@
                                                     });
                                                     container.innerHTML = htmlContent;
                                                 } else {
-                                                    container.innerHTML = "No address books found.";
+                                                    container.innerHTML = "Không tìm thấy sổ địa chỉ.";
                                                 }
                                             } catch (error) {
                                                 console.error('Error fetching the address book:', error);
@@ -614,7 +596,7 @@
                         <div class="tab-pane fade" id="pills-profile" role="tabpanel">
                             <div class="dashboard-profile">
                                 <div class="title">
-                                    <h2>My Profile</h2>
+                                    <h2>Thông tin cái nhân</h2>
                                     <span class="title-leaf">
                                             <svg class="icon-width bg-gray">
                                                 <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
@@ -623,35 +605,14 @@
                                 </div>
 
                                 <div class="profile-detail dashboard-bg-box">
-                                    <div class="dashboard-title">
-                                        <h3>Profile Name</h3>
-                                    </div>
                                     <div class="profile-name-detail">
                                         <div class="d-sm-flex align-items-center d-block">
                                             <h3 th:text="${session.account.getUserName}">Your username</h3>
-                                            <div class="product-rating profile-rating">
-                                                <ul class="rating">
-                                                    <li>
-                                                        <i data-feather="star" class="fill"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i data-feather="star" class="fill"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i data-feather="star" class="fill"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i data-feather="star"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i data-feather="star"></i>
-                                                    </li>
-                                                </ul>
-                                            </div>
+
                                         </div>
 
                                         <a href="javascript:void(0)" data-bs-toggle="modal"
-                                           data-bs-target="#editProfile">Edit</a>
+                                           data-bs-target="#editProfile">Sửa</a>
                                     </div>
 
                                     <div class="location-profile">
@@ -673,7 +634,7 @@
                                             <li>
                                                 <div class="location-box">
                                                     <i data-feather="check-square"></i>
-                                                    <h6>Create At</h6>
+                                                    <h6>Ngày tạo</h6>
                                                     <h6 th:text="${session.account.formatCreateAt}">Your create at</h6>
                                                 </div>
                                             </li>
@@ -686,37 +647,37 @@
                                     <div class="row">
                                         <div class="col-xxl-7">
                                             <div class="dashboard-title mb-3">
-                                                <h3>Profile About</h3>
+                                                <h3>Thông tin cái nhân về tôi</h3>
                                             </div>
 
                                             <div class="table-responsive">
                                                 <table class="table">
                                                     <tbody>
                                                     <tr>
-                                                        <td>Username:</td>
+                                                        <td>Tên người dùng:</td>
                                                         <td th:text="${session.account.getUserName}">Your username</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Fullname:</td>
+                                                        <td>Tên đầy đủ:</td>
                                                         <td th:text="${session.account.getFullName}">Your Fullname</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Gender :</td>
+                                                        <td>Giới tính :</td>
                                                         <td th:text="${session.account.getGender}">Your gender</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Birthday :</td>
+                                                        <td>Ngày sinh :</td>
                                                         <td th:text="${session.account.getDob}">Your dob</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Phone Number :</td>
+                                                        <td>Số điện thoại :</td>
                                                         <td>
                                                             <a href="javascript:void(0)"
                                                                th:text="${session.account.getPhone}">Your phone</a>
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Address :</td>
+                                                        <td>Địa ch :</td>
                                                         <td th:text="${session.account.getAddress}">549 Sulphur Springs
                                                             Road, Downers, IL
                                                         </td>
@@ -726,7 +687,7 @@
                                             </div>
 
                                             <div class="dashboard-title mb-3">
-                                                <h3>Login Details</h3>
+                                                <h3>Chi tiết đăng nhập</h3>
                                             </div>
 
                                             <div class="table-responsive">
@@ -740,11 +701,11 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Password :</td>
+                                                        <td>Mật khẩu :</td>
                                                         <td>
                                                             <a href="javascript:void(0)">●●●●●●
                                                                 <span data-bs-toggle="modal"
-                                                                      data-bs-target="#editProfilePassword">Edit</span></a>
+                                                                      data-bs-target="#editProfilePassword">Sửa</span></a>
                                                         </td>
                                                     </tr>
                                                     </tbody>
@@ -771,7 +732,7 @@
 
                                 <div class="dashboard-bg-box mt-4">
                                     <div class="dashboard-title mb-4">
-                                        <h3>Privacy</h3>
+                                        <h3>Xóa tài khoản</h3>
                                     </div>
 
 
@@ -790,8 +751,7 @@
                                             và tạo tài khoản mới. Bạn không thể đăng ký email đã xóa</p>
                                     </div>
 
-                                    <button class="btn theme-bg-color btn-md fw-bold mt-4 text-white">Delete My
-                                        Account
+                                    <button class="btn theme-bg-color btn-md fw-bold mt-4 text-white">Xóa tài khoản của tôi
                                     </button>
                                 </div>
                             </form>
@@ -959,7 +919,7 @@
     <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add a new address</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Thêm một địa chỉ mới</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -969,28 +929,28 @@
 
                 <div class="form-floating mb-4 theme-form-floating">
                     <input type="text" class="form-control" id="fullNameAdd" placeholder="Enter Full name" required>
-                    <label for="fullNameAdd">Full name</label>
+                    <label for="fullNameAdd">Tên đầy đủ</label>
                 </div>
 
                 <div class="form-floating mb-4 theme-form-floating">
                     <input type="text" class="form-control" id="phone" placeholder="Phone" required>
-                    <label for="phone">Phone</label>
+                    <label for="phone">Số điện thoại</label>
                 </div>
 
                 <div class="form-floating mb-4 theme-form-floating">
                     <input type="email" class="form-control" id="address" placeholder="Enter Address" required>
-                    <label for="address">Address</label>
+                    <label for="address">Địa chỉ</label>
                 </div>
 
                 <div class="form-floating mb-4 theme-form-floating">
                     <textarea type="text" class="form-control" id="note" placeholder="Enter note" required></textarea>
-                    <label for="note">Note</label>
+                    <label for="note">Ghi chú</label>
                 </div>
 
                 <div class="form-floating mb-4 theme-form-floating">
                     <input class="form-control" placeholder="Leave a comment here" id="settoaddress"
                            required/>
-                    <label for="settoaddress">Set To Address</label>
+                    <label for="settoaddress">Gửi địa chỉ</label>
                 </div>
 
 
@@ -1002,10 +962,9 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-md" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary btn-md" data-bs-dismiss="modal">Đóng</button>
                 <button type="button" class="add-address-submit btn theme-bg-color btn-md text-white"
-                        data-bs-dismiss="modal">Save
-                    changes
+                        data-bs-dismiss="modal">Lưu
                 </button>
             </div>
         </div>
@@ -1068,7 +1027,7 @@
         console.log("email:---" + email)
 
         if (!fullname || !email || !note || !settoaddress || !address || !phone) {
-            showAlert('error', 'Please fill in all the required fields.')
+            showAlert('error', 'Vui lòng điền vào tất cả các trường bắt buộc.')
             return;
         }
         console.log(fullname)
@@ -1078,24 +1037,19 @@
         console.log(settoaddress)
         console.log(email)
 
-        // if(fullname.length < 9){
-        //     showAlert('error','at least 9');
-        //     return;
-        // }
-
         if (!isCapitalizedEachWord(fullname)) {
-            showAlert('error', 'FullName cannot be capitalized Each Word');
+            showAlert('error', 'Tên đầy đủ không được viết hoa mỗi từ');
             return;
         }
 
         const phoneRegex = /^(03|05|07|08|09)\d{8}$/;
         if (!phoneRegex.test(phone)) {
-            showAlert('error', 'Please enter a valid phone number (starting with 03, 05, 07, 08, or 09 and 10 digits).');
+            showAlert('error', 'Vui lòng nhập số điện thoại hợp lệ (bắt đầu bằng 03, 05, 07, 08 hoặc 09 và 10 chữ số).');
             return;
         }
 
         if (email.indexOf('@') === -1 || email.indexOf('.') === -1 || email.indexOf('@') > email.indexOf('.')) {
-            showAlert('error', 'Please enter a valid email address.');
+            showAlert('error', 'Vui lòng nhập địa chỉ email hợp lệ.');
             return;
         } else {
             $('#alert-message').hide();
@@ -1117,7 +1071,7 @@
             // Gửi PUT request đến server bằng axios
             const response = await axios.post('http://localhost:8080/AgriculturalWarehouseManagement/addressBook', addressBookRequest);
 
-            showAlert('success', 'Add success !!!');
+            showAlert('success', 'Thêm thành công !!!');
 
             fetchGetAddressBook();
 
@@ -1239,7 +1193,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel2">Edit Address Book</h5>
+                <h5 class="modal-title" id="exampleModalLabel2">Chỉnh sửa sổ địa chỉ</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -1250,7 +1204,7 @@
                     <div class="col-xxl-12">
                         <div class="form-floating theme-form-floating">
                             <input type="text" class="form-control" id="editfullname" value="" required>
-                            <label for="editfullname">Full Name</label>
+                            <label for="editfullname">Họ và tên đầy đủ</label>
                         </div>
                     </div>
                     <div class="col-xxl-6">
@@ -1262,34 +1216,34 @@
                     <div class="col-xxl-6">
                         <div class="form-floating theme-form-floating">
                             <input type="text" class="form-control" id="editnote" value="" required>
-                            <label for="editnote">Note</label>
+                            <label for="editnote">Ghi chú</label>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="form-floating theme-form-floating">
                             <input type="text" class="form-control" id="editsettoaddress" value="" required>
-                            <label for="editsettoaddress">Setto Address</label>
+                            <label for="editsettoaddress">Gửi đến địa chỉ</label>
                         </div>
                     </div>
                     <div class="col-xxl-6">
                         <div class="form-floating theme-form-floating">
                             <input type="text" class="form-control" id="editphone" value="" required>
-                            <label for="editphone">Phone</label>
+                            <label for="editphone">Số điện thoại</label>
                         </div>
 
                     </div>
                     <div class="col-xxl-6">
                         <div class="form-floating theme-form-floating">
                             <input type="text" class="form-control" id="editaddress" value="" required>
-                            <label for="editaddress">Address</label>
+                            <label for="editaddress">Địa chỉ</label>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Đóng</button>
                 <button type="button" data-bs-dismiss="modal"
-                        class="save-change-edit btn theme-bg-color btn-md fw-bold text-light">Save changes
+                        class="save-change-edit btn theme-bg-color btn-md fw-bold text-light">Lưu
                 </button>
             </div>
         </div>
@@ -1363,24 +1317,24 @@
 
 
             if (!fullName || !email || !note || !setToAddress || !address || !phone) {
-                showAlert('error', 'Please fill in all the required fields.');
+                showAlert('error', 'Vui lòng điền đầy đủ các trường bắt buộc.');
                 return;
             }
 
             if (!isCapitalizedEachWord(fullName)) {
                 console.log(fullName)
-                showAlert('error', 'FullName cannot be capitalized Each Word');
+                showAlert('error', 'Tên đầy đủ không được viết hoa mỗi từ');
                 return;
             }
 
             const phoneRegex = /^(03|05|07|08|09)\d{8}$/;
             if (!phoneRegex.test(phone)) {
-                showAlert('error', 'Please enter a valid phone number (starting with 03, 05, 07, 08, or 09 and 10 digits).');
+                showAlert('error', 'Vui lòng nhập số điện thoại hợp lệ (bắt đầu bằng 03, 05, 07, 08 hoặc 09 và 10 chữ số).');
                 return;
             }
 
             if (email.indexOf('@') === -1 || email.indexOf('.') === -1 || email.indexOf('@') > email.indexOf('.')) {
-                showAlert('error', 'Please enter a valid email address.').show();
+                showAlert('error', 'Vui lòng nhập địa chỉ email hợp lệ.').show();
                 return;
             } else {
                 $('#alert-message').hide();
@@ -1402,7 +1356,7 @@
 
                 if (response.status === 200) {
 
-                    showAlert('success', 'Edit success');
+                    showAlert('success', 'Chỉnh sửa thành công');
                     fetchGetAddressBook();
                 } else {
                     alert("Error updating address");
@@ -1491,22 +1445,19 @@
     <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
         <div class="modal-content">
             <div class="modal-header d-block text-center">
-                <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure ?</h5>
+                <h5 class="modal-title w-100" id="exampleModalLabel22">Bạn có chắc chắn xóa địa chỉ không?</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="remove-box">
-                    <p>The permission for the use/group, preview is inherited from the object, object will create a
-                        new permission for this object</p>
-                </div>
+
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Không</button>
                 <button type="button" data-bs-dismiss="modal"
                         class="remove-address btn theme-bg-color btn-md fw-bold text-light"
-                >Yes
+                >Có
                 </button>
 
             </div>
@@ -1555,7 +1506,7 @@
             console.log(userId, addressBookId);
             console.log("-------------")
             if (!userId || !addressBookId) {
-                showAlert('error', 'Please fill in all the required fields.')
+                showAlert('error', 'Vui lòng điền đầy đủ các trường bắt buộc.')
                 return;
             }
 
@@ -1585,7 +1536,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit Profile</h5>
+                <h5 class="modal-title">Chỉnh sửa hồ sơ</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -1600,7 +1551,7 @@
                         <div class="form-floating theme-form-floating">
                             <input type="text" name="userName" class="form-control" id="userNameProfile"
                                    th:value="${session.account.getUserName}" required>
-                            <label for="userNameProfile">User Name</label>
+                            <label for="userNameProfile">Tên người dùng</label>
                         </div>
                     </div>
 
@@ -1608,7 +1559,7 @@
                         <div class="form-floating theme-form-floating">
                             <input type="text" name="fullName" class="form-control" id="fullNameProfile"
                                    th:value="${session.account.getFullName}" required>
-                            <label for="fullNameProfile">Full Name</label>
+                            <label for="fullNameProfile">Tên đầy đủ</label>
                         </div>
                     </div>
 
@@ -1616,13 +1567,13 @@
                         <div class="form-check form-check-inline">
                             <input type="radio" class="form-check-input" name="gender" id="maleProfile" value="male"
                                    th:checked="${session.account.gender} == 'male'" required>
-                            <label class="form-check-label" for="maleProfile">Male</label>
+                            <label class="form-check-label" for="maleProfile">Nam</label>
                         </div>
 
                         <div class="form-check form-check-inline">
                             <input type="radio" class="form-check-input" name="gender" id="femaleProfile" value="female"
                                    th:checked="${session.account.gender} == 'female'" required>
-                            <label class="form-check-label" for="femaleProfile">Female</label>
+                            <label class="form-check-label" for="femaleProfile">Nữ</label>
                         </div>
                     </div>
 
@@ -1633,7 +1584,7 @@
                                    th:value="${session.account.getDob}"
                                    th:max="${#temporals.format(#temporals.createNow().minusYears(18), 'yyyy-MM-dd')}"
                                    required>
-                            <label for="dobProfile">Birthday</label>
+                            <label for="dobProfile">Ngày sinh</label>
                         </div>
                     </div>
 
@@ -1645,7 +1596,7 @@
                                    maxlength="10"
                                    inputmode="numeric"
                                    required>
-                            <label for="phoneProfile">Phone number</label>
+                            <label for="phoneProfile">Số điện thoại</label>
                         </div>
                     </div>
 
@@ -1654,16 +1605,16 @@
                         <div class="form-floating theme-form-floating">
                             <input type="text" name="address" class="form-control" id="addressProfile"
                                    th:value="${session.account.getAddress}" required>
-                            <label for="addressProfile">Address</label>
+                            <label for="addressProfile">Địa chỉ</label>
                         </div>
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-animation btn-md fw-bold"
-                                data-bs-dismiss="modal">Close
+                                data-bs-dismiss="modal">Đóng
                         </button>
                         <button type="submit"
-                                class="btn theme-bg-color btn-md fw-bold text-light">Save changes
+                                class="btn theme-bg-color btn-md fw-bold text-light">Lưu
                         </button>
                     </div>
                 </form>
@@ -1677,7 +1628,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">New Password</h5>
+                <h5 class="modal-title">Mật khẩu mới</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -1692,23 +1643,23 @@
                         <div class="form-floating theme-form-floating">
                             <input type="password" name="oldPassword" class="form-control" id="oldPasswordProfile"
                                    required>
-                            <label for="oldPasswordProfile">Old password</label>
+                            <label for="oldPasswordProfile">Mật khẩu cũ</label>
                         </div>
                     </div>
                     <div class="col-xxl-12">
                         <div class="form-floating theme-form-floating">
                             <input type="password" name="newPassword" class="form-control" id="changePasswordProfile"
                                    required>
-                            <label for="changePasswordProfile">New password</label>
+                            <label for="changePasswordProfile">Mật khẩu mới</label>
                         </div>
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-animation btn-md fw-bold"
-                                data-bs-dismiss="modal">Close
+                                data-bs-dismiss="modal">Đóng
                         </button>
                         <button type="submit"
-                                class="btn theme-bg-color btn-md fw-bold text-light">Save changes
+                                class="btn theme-bg-color btn-md fw-bold text-light">Lưu
                         </button>
                     </div>
 

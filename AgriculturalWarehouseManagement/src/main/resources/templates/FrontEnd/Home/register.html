@@ -37,8 +37,8 @@
             <div class="col-xl-5 col-lg-6 me-auto">
                 <div class="log-in-box">
                     <div class="log-in-title">
-                        <h3>Welcome To Fastkart</h3>
-                        <h4>Sign Up Your Account</h4>
+                        <h3>Chào mừng bạn đến với Fastkart</h3>
+                        <h4>Hãy đăng kí tài khoản của bạn</h4>
                     </div>
 
                     <div class="input-box">
@@ -47,7 +47,7 @@
                                 <div class="form-floating theme-form-floating log-in-form">
                                     <input type="text" class="form-control" id="username" name="username"
                                            placeholder="Enter User Name" required />
-                                    <label for="username">Username</label>
+                                    <label for="username">Tên người dùng</label>
                                 </div>
                             </div>
 
@@ -55,7 +55,7 @@
                                 <div class="form-floating theme-form-floating log-in-form">
                                     <input type="email" class="form-control" id="emailAddress" name="email"
                                            placeholder="Email Address" required />
-                                    <label for="emailAddress">Email Address</label>
+                                    <label for="emailAddress">Email</label>
                                 </div>
                             </div>
 
@@ -63,25 +63,14 @@
                                 <div class="form-floating theme-form-floating log-in-form">
                                     <input type="password" class="form-control" id="password" name="password"
                                            placeholder="Password" required />
-                                    <label for="password">Password</label>
+                                    <label for="password">Mật khẩu</label>
                                 </div>
                             </div>
 
                             <div class="col-12">
-                                <div class="forgot-box">
-                                    <div class="form-check ps-0 m-0 remember-box">
-                                        <input class="checkbox_animated check-box" type="checkbox"
-                                               id="flexCheckDefault" required/>
-                                        <label class="form-check-label" for="flexCheckDefault">I accept the terms
-                                            and privacy policy.</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-animation w-100 justify-content-center">Register</button>
-                                <h5 class="new-page mt-3 text-center">Already have an account?
-                                    <a th:href="@{/login}">Sign In</a>
+                                <button type="submit" class="btn btn-animation w-100 justify-content-center">Đăng kí</button>
+                                <h5 class="new-page mt-3 text-center">Đã có một tài khoản?
+                                    <a th:href="@{/login}">Đăng nhập</a>
                                 </h5>
                             </div>
 
@@ -92,7 +81,7 @@
                     </div>
 
                     <div class="other-log-in">
-                        <h6>or</h6>
+                        <h6>Hoặc</h6>
                     </div>
 
                     <div class="log-in-button">
@@ -100,7 +89,7 @@
                             <li>
                                 <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:8080/AgriculturalWarehouseManagement/loginGG&response_type=code&client_id=284166213808-hbk6iij4oe2fq97i3surklcgd2rlir1r.apps.googleusercontent.com&approval_prompt=force">
                                     <img th:src="@{/Frontend/assets/images/inner-page/google.png}" alt="Google" />
-                                    Log In with Google
+                                    Đăng nhập với Google
                                 </a>
                             </li>
 

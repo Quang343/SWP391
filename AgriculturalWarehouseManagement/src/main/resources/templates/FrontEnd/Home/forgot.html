@@ -93,15 +93,15 @@
             <div class="row">
                 <div class="col-12">
                     <div class="breadcrumb-contain">
-                        <h2>Forgot Password</h2>
+                        <h2>Quên mật khẩu</h2>
                         <nav>
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item">
-                                    <a href="index.html">
+                                    <a href="home">
                                         <i class="fa-solid fa-house"></i>
                                     </a>
                                 </li>
-                                <li class="breadcrumb-item active">Forgot Password</li>
+                                <li class="breadcrumb-item active">Quên mật khẩu</li>
                             </ol>
                         </nav>
                     </div>
@@ -125,8 +125,8 @@
                     <div class="d-flex align-items-center justify-content-center h-100">
                         <div class="log-in-box">
                             <div class="log-in-title">
-                                <h3>Welcome To Fastkart</h3>
-                                <h4>Forgot your password</h4>
+                                <h3>Chào mừng bạn đến Fastkart</h3>
+                                <h4>Quên mật khẩu của bạn</h4>
                             </div>
 
                             <div class="input-box">
@@ -135,22 +135,21 @@
                                         <div class="form-floating theme-form-floating log-in-form">
                                             <input type="email" name="email" class="form-control" id="email"
                                                 placeholder="Email Address">
-                                            <label for="email">Email Address</label>
+                                            <label for="email">Email</label>
                                         </div>
                                     </div>
 
                                     <div class="col-12">
-                                        <button class="btn btn-animation w-100" type="submit">Forgot
-                                            Password</button>
+                                        <button class="btn btn-animation w-100" type="submit">Quên mật khẩu</button>
                                     </div>
 
                                 </form>
 
-                                <div th:if="${errorForgotpassword}" class="alert alert-danger">
+                                <div th:if="${errorForgotpassword}" class="alert alert-danger" style="margin-top: 10px">
                                     <span th:text="${errorForgotpassword}"></span>
                                 </div>
 
-                                <div th:if="${successChangePassword}" class="alert alert-success">
+                                <div th:if="${successChangePassword}" class="alert alert-success"  style="margin-top: 10px">
                                     <span th:text="${successChangePassword}"></span>
                                 </div>
                             </div>

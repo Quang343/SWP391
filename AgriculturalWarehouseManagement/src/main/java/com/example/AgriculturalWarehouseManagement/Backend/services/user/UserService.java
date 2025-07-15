@@ -44,37 +44,37 @@ public class UserService {
 
     public ResponseResult<User> registerUserService(RegisterRequestDTO registerRequestDTO) {
         if (userRepository.findByEmail(registerRequestDTO.getEmail()) != null) {
-            return new ResponseResult<>("ERROR", "Email already exists !!!", false);
+            return new ResponseResult<>("ERROR", "Email đã tồn tại !!!", false);
         } else {
             if (registerRequestDTO.getUsername().length() < 9) {
-                return new ResponseResult<>("ERROR", "Username is too short, at least 9 characters !!!", false);
+                return new ResponseResult<>("ERROR", "Tên người dùng quá ngắn, ít nhất 9 ký tự !!!", false);
             }
 
             if (registerRequestDTO.getPassword().length() < 9) {
-                return new ResponseResult<>("ERROR", "Password cannot be less than 9 characters", false);
+                return new ResponseResult<>("ERROR", "Mật khẩu không được ít hơn 9 ký tự", false);
             } else {
 //                .: Đại diện cho một ký tự bất kỳ, ngoại trừ ký tự new line (dấu xuống dòng).
 //                *: Có nghĩa là lặp lại 0 hoặc nhiều lần ký tự trước đó
                 if (!registerRequestDTO.getPassword().matches(".*[a-zA-Z].*") || !registerRequestDTO.getPassword().matches(".*\\d.*")) {
-                    return new ResponseResult<>("ERROR", "Password must contain at least one letter and one number", false);
+                    return new ResponseResult<>("ERROR", "Mật khẩu phải chứa ít nhất một chữ cái và một số", false);
                 } else {
                     if (registerRequestDTO.getPassword().matches(".*\\s.*")) {
-                        return new ResponseResult<>("ERROR", "Password cannot contain spaces", false);
+                        return new ResponseResult<>("ERROR", "Mật khẩu không được chứa khoảng trắng", false);
                     } else {
 
                         if (!registerRequestDTO.getPassword().matches(".*[A-Z].*")) {
-                            return new ResponseResult<>("ERROR", "Password must contain at least one uppercase letter", false);
+                            return new ResponseResult<>("ERROR", "Mật khẩu phải chứa ít nhất một chữ cái viết hoa", false);
                         }
 
                         if (!registerRequestDTO.getPassword().matches(".*[a-z].*")) {
-                            return new ResponseResult<>("ERROR", "Password must contain at least one lowercase letter", false);
+                            return new ResponseResult<>("ERROR", "Mật khẩu phải chứa ít nhất một chữ cái thường", false);
                         }
 
                         if (!registerRequestDTO.getPassword().matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
-                            return new ResponseResult<>("ERROR", "Password must contain at least one special character.", false);
+                            return new ResponseResult<>("ERROR", "Mật khẩu phải chứa ít nhất một ký tự đặc biệt.", false);
                         }
 
-                        return new ResponseResult<>("SUCCESS", "User registered successfully !!!", true);
+                        return new ResponseResult<>("SUCCESS", "Người dùng đã đăng ký thành công !!!", true);
                     }
                 }
             }
@@ -117,42 +117,42 @@ public class UserService {
             return new ResponseResult<>("ERROR", null, false);
         } else {
             if (changePassword == null) {
-                return new ResponseResult<>("ERROR", "Let enter password !!!", false);
+                return new ResponseResult<>("ERROR", "Hãy nhập mật khẩu nhé !!!", false);
             } else {
                 User user = userRepository.findByEmail(email);
                 if (changePassword.length() < 9) {
-                    return new ResponseResult<>("ERROR", "Password cannot be less than 9 characters", false);
+                    return new ResponseResult<>("ERROR", "Mật khẩu không được ít hơn 9 ký tự", false);
                 } else {
 //                .: Đại diện cho một ký tự bất kỳ, ngoại trừ ký tự new line (dấu xuống dòng).
 //                *: Có nghĩa là lặp lại 0 hoặc nhiều lần ký tự trước đó
                     if (!changePassword.matches(".*[a-zA-Z].*") || !changePassword.matches(".*\\d.*")) {
-                        return new ResponseResult<>("ERROR", "Password must contain at least one letter and one number", false);
+                        return new ResponseResult<>("ERROR", "Mật khẩu phải chứa ít nhất một chữ cái và một số", false);
                     } else {
                         if (changePassword.matches(".*\\s.*")) {
-                            return new ResponseResult<>("ERROR", "Password cannot contain spaces", false);
+                            return new ResponseResult<>("ERROR", "Mật khẩu không được chứa khoảng trắng", false);
                         } else {
 
                             if (!changePassword.matches(".*[A-Z].*")) {
-                                return new ResponseResult<>("ERROR", "Password must contain at least one uppercase letter", false);
+                                return new ResponseResult<>("ERROR", "Mật khẩu phải chứa ít nhất một chữ cái viết hoa", false);
                             }
 
                             if (!changePassword.matches(".*[a-z].*")) {
-                                return new ResponseResult<>("ERROR", "Password must contain at least one lowercase letter", false);
+                                return new ResponseResult<>("ERROR", "Mật khẩu phải chứa ít nhất một chữ cái thường", false);
                             }
 
                             if (!changePassword.matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
-                                return new ResponseResult<>("ERROR", "Password must contain at least one special character.", false);
+                                return new ResponseResult<>("ERROR", "Mật khẩu phải chứa ít nhất một ký tự đặc biệt.", false);
                             }
 
                             if (passwordEncoder.matches(changePassword, user.getPassword())){
-                                return new ResponseResult<>("ERROR", "The new password cannot be the same as the old password.", false);
+                                return new ResponseResult<>("ERROR", "Mật khẩu mới không được giống với mật khẩu cũ.", false);
                             }
 
                             String hashedPassword = passwordEncoder.encode(changePassword);
                             user.setPassword(hashedPassword);
                             userRepository.save(user); // Save in database
 
-                            return new ResponseResult<>("SUCCESS", "Change password successfully !!!", true);
+                            return new ResponseResult<>("SUCCESS", "Đã đổi mật khẩu thành công !!!", true);
                         }
                     }
                 }
@@ -180,7 +180,7 @@ public class UserService {
         user.setPassword("");
 
         userRepository.save(user);
-        return new ResponseResult<>("SUCCESS", "Insert user account google successfully !!!", true);
+        return new ResponseResult<>("SUCCESS", "Tài khoản người dùng google đăng  nhập thành công !!!", true);
     }
 
 
@@ -219,18 +219,18 @@ public class UserService {
         User user = userRepository.findByEmail(profileRequest.getEmail());
 
         if(profileRequest.getUserName().length() < 9){
-            return new ResponseResult<>("ERROR", "UserName cannot be less than 9 characters", false);
+            return new ResponseResult<>("ERROR", "Tên người dùng không được ít hơn 9 ký tự", false);
         }
 
         CapitalizedEachWord capitalizedEachWord = new CapitalizedEachWord();
 
         if (!capitalizedEachWord.isCapitalizedEachWord(profileRequest.getFullName())) {
-            return new ResponseResult<>("ERROR", "FullName cannot be capitalized Each Word", false);
+            return new ResponseResult<>("ERROR", "Tên đầy đủ không được viết hoa Mỗi từ", false);
         }
 
-        if (profileRequest.getFullName().length() < 4) {
-            return new ResponseResult<>("ERROR", "FullName cannot be less than 4 characters", false);
-        }
+//        if (profileRequest.getFullName().length() < 4) {
+//            return new ResponseResult<>("ERROR", "FullName cannot be less than 4 characters", false);
+//        }
 
         String updateInfor = "";
 
@@ -328,7 +328,7 @@ public class UserService {
 
         profileResponse.setLastUpdateAt(user.getLastTimeUpdatePass());
 
-        return new ResponseResult<>("SUCCESS", "Edit profile successfully !!!", true);
+        return new ResponseResult<>("SUCCESS", "Chỉnh sửa hồ sơ thành công !!!", true);
     }
 
     public ResponseResult<User> editProfileUserImage(String email, String imagePath, MultipartFile file) {
@@ -337,9 +337,9 @@ public class UserService {
             User user = userRepository.findByEmail(email);
             user.setImage(imagePath);
             userRepository.save(user);
-            return new ResponseResult<>("SUCCESS", "Edit image successfully !!!", true);
+            return new ResponseResult<>("SUCCESS", "Chỉnh sửa hình ảnh thành công !!!", true);
         } else {
-            return new ResponseResult<>("ERROR", "Please select an image to edit !!!", false);
+            return new ResponseResult<>("ERROR", "Vui lòng chọn hình ảnh để chỉnh sửa !!!", false);
         }
 
     }
@@ -347,9 +347,9 @@ public class UserService {
     public ResponseResult<User> checkOldPassword(String email, String oldPassword) {
         User user = userRepository.findByEmail(email);
         if (!passwordEncoder.matches(oldPassword, user.getPassword())){
-            return new ResponseResult<>("ERROR", "Old password doesn't match !!!", false);
+            return new ResponseResult<>("ERROR", "Mật khẩu cũ không khớp !!!", false);
         } else {
-            return new ResponseResult<>("SUCCESS", "Old password successfully !!!", true);
+            return new ResponseResult<>("SUCCESS", "Mật khẩu cũ thành công !!!", true);
         }
     }
 
@@ -359,6 +359,6 @@ public class UserService {
         user.setStatus("Inactive");
         userRepository.save(user);
 
-        return new ResponseResult<>("SUCCESS", "Delete account successfully !!!", true);
+        return new ResponseResult<>("SUCCESS", "Xóa tài khoản thành công !!!", true);
     }
 }

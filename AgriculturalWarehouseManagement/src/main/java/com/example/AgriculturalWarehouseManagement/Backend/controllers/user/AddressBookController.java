@@ -66,9 +66,9 @@ public class AddressBookController {
         String deleteAddresssBookResponse = addressBookService.deleteAddressBook(userid, addressbookid);
 //        System.out.println(deleteAddresssBookResponse);
         if (deleteAddresssBookResponse != null) {
-            return ResponseEntity.ok(new ResponseResult<>("SUCCESS", "Delete Success !!!", true));
+            return ResponseEntity.ok(new ResponseResult<>("SUCCESS", "Xóa thành công !!!", true));
         } else  {
-            return ResponseEntity.ok(new ResponseResult<>("ERROR", "Delete Failed!!!", false));
+            return ResponseEntity.ok(new ResponseResult<>("ERROR", "Xóa không thành công!!!", false));
         }
 
     }

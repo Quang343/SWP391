@@ -284,7 +284,7 @@
                                                  class="d-flex align-items-center gap-2 text-decoration-none text-dark px-2 py-1">
                                                 <img src="${p.imageUrlGallery}" alt="" style="width:40px;height:40px;object-fit:cover;">
                                                 <span>${p.productName}</span>
-                                                <span class="ms-auto text-muted">${p.productPrice.toLocaleString()}₫</span>
+                                                <span class="ms-auto text-muted">${p.productPrice.toLocaleString('vi-VN')}₫</span>
                                               </a>
                                             </li>
                                           `).join('');
@@ -388,24 +388,24 @@
                                         <ul class="user-box-name">
                                             <li class="product-box-contain" th:if="${session.account == null}">
                                                 <i></i>
-                                                <a href="login">Log In</a>
+                                                <a href="login">Đăng nhập</a>
                                             </li>
 
                                             <li class="product-box-contain" th:if="${session.account != null}">
-                                                <a href="logoutUser">Logout</a>
+                                                <a href="logoutUser">Đăng xuất</a>
                                             </li>
 
                                             <li class="product-box-contain" th:if="${session.account == null}">
-                                                <a href="register">Register</a>
+                                                <a href="register">Đăng kí</a>
                                             </li>
 
                                             <li class="product-box-contain" th:if="${session.account == null}">
-                                                <a href="forgotPassword">Forgot Password</a>
+                                                <a href="forgotPassword">Quên mật khẩu</a>
                                             </li>
 
                                             <li class="product-box-contain"
                                                 th:if="${session.account != null && session.account.getRole().getRoleID() == 2}">
-                                                <a href="profileUser">Profile</a>
+                                                <a href="profileUser">Thông tin cái nhân</a>
                                             </li>
                                         </ul>
                                     </div>

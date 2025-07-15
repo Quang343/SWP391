@@ -981,12 +981,12 @@
                                     <input name="productId" id="modalProductIdInput" type="hidden" value="">
                                     <input name="productDetailId" id="modalProductDetailIdInput" type="hidden" value="">
 
-                                    <h4>Choose Weight :</h4>
+                                    <h4>Chọn cân nặng :</h4>
                                     <select id="modalWeightSelect" class="form-select select-form-size">
-                                        <option selected>Select Size</option>
+                                        <option selected>Chọn Size</option>
                                     </select>
 
-                                    <button type="submit" class="btn btn-outline-success mt-2">Compare</button>
+                                    <button type="submit" class="btn btn-outline-success mt-2">So sánh</button>
                                 </form>
                             </div>
 
@@ -1012,7 +1012,7 @@
                                         productDetails.forEach(detail => {
                                             const option = document.createElement('option');
                                             option.value = detail.productDetailId;
-                                            option.textContent = `${detail.productWeight} - ${detail.price.toLocaleString()} VND`;
+                                            option.textContent = `${detail.productWeight} - ${detail.price.toLocaleString('vi-VN')}₫`;
                                             option.dataset.productDetailID = detail.productDetailId;
                                             weightSelect.appendChild(option);
                                         });

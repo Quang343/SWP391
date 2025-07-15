@@ -49,12 +49,12 @@ public class LoginByGoogleController {
             return "redirect:/movePageRole";
         } else {
             if (user.getStatus().equals("Inactive")) {
-                redirectAttributes.addFlashAttribute("errorLoginGG", "Account inactive !!!");
+                redirectAttributes.addFlashAttribute("errorLoginGG", "Tài khoản không hoạt động !!!");
                 return "redirect:/login";
             }
 
             if (user.getStatusGG().equals("Inactive") && user.getStatus().equals("Active")) {
-                redirectAttributes.addFlashAttribute("errorLoginGG", "Email had register by account !!!");
+                redirectAttributes.addFlashAttribute("errorLoginGG", "Email đã được đăng ký theo tài khoản !!!");
                 return "redirect:/login";
             } else if (user.getStatusGG().equals("Active") && user.getStatus().equals("Active")) {
                 String token = jwtTokenFilter.generateToken(googleAccountRequest.getEmail());

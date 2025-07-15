@@ -76,7 +76,7 @@ public class RegisterController {
             session.removeAttribute("registerRequestDTO");
             return "redirect:/login";
         } else {
-            model.addAttribute("errorResendOtpRegister", "Error OTP");
+            model.addAttribute("errorResendOtpRegister", "Sai OTP");
             return "FrontEnd/Home/otp";
         }
     }
@@ -92,7 +92,7 @@ public class RegisterController {
 
             return "redirect:/otp";
         } else {
-            model.addAttribute("errorResendOtpRegister", "Email not exist !!!");
+            model.addAttribute("errorResendOtpRegister", "Email không tồn tại !!!");
             return "FrontEnd/Home/otp";
         }
     }
