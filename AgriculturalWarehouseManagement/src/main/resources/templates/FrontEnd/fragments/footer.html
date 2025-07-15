@@ -1,0 +1,604 @@
+<footer class="section-t-space" th:fragment="footer" >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        /* Chat container initially hidden */
+        .chat-container {
+            display: none; /* Initially hidden */
+            width: 100%;
+            max-width: 400px;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 59vh;
+            position: fixed;
+            right: 20px;
+            z-index: 9999;
+            color: white;
+            bottom: 120px;
+        }
+
+        /* Header of chat box */
+        .chat-header {
+            background-color: #64e456; /* Green */
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .chat-header h1 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        /* Messages area */
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .message {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .message-content {
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 70%;
+        }
+
+        .user-message {
+            flex-direction: row-reverse;
+        }
+
+        .user-message .message-content {
+            background-color: #4a90e2;
+            margin-right: 10px;
+        }
+
+        .bot-message .message-content {
+            background-color: #3a3a3a;
+            margin-left: 10px;
+        }
+
+        .profile-image {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Input area for the user */
+        .chat-input-container {
+            display: flex;
+            padding: 15px;
+            background-color: #2a2a2a;
+        }
+
+        #user-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #4a4a4a;
+            border-radius: 5px;
+            font-size: 1rem;
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            outline: none;
+        }
+
+        #send-button {
+            padding: 10px 20px;
+            background-color: #64e456; /* Green */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        #send-button:hover {
+            background-color: #53c845;
+        }
+
+        #send-button:disabled {
+            background-color: #2a5a8a;
+            cursor: not-allowed;
+        }
+
+        /* Floating Chat Icon */
+        .chat-toggle-button {
+            position: fixed;
+            bottom: 139px;
+            right: 25px;
+            background-color: #64e456; /* Green */
+            color: #fff;
+            border-radius: 50%;
+            width: 39px;
+            height: 39px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 2rem;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+        }
+
+        /* Scrollbar Styles */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #2a2a2a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4a4a4a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5a5a5a;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .chat-container {
+                height: 90vh;
+                border-radius: 0;
+            }
+
+            .chat-toggle-button {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Animation for the "..." to move up and down */
+        @keyframes wave {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        /* Apply animation to the message content */
+        .wave {
+            display: inline-block;
+            font-size: 1rem;
+            animation: wave 1s infinite;
+        }
+    </style>
+
+    <div class="theme-option">
+        <div class="setting-box">
+            <div class="chat-container" id="chat-container" style="display: none;">
+                <div class="chat-header">
+                    <h1>Chat với AI</h1>
+                </div>
+                <div class="chat-messages" id="chat-messages"></div>
+                <div class="chat-input-container">
+                    <textarea id="user-input" placeholder="Type your message..."></textarea>
+                    <button id="send-button">Send</button>
+                </div>
+            </div>
+
+            <!-- Floating chat icon -->
+            <div class="chat-toggle-button" id="chat-toggle-button">
+                🤖
+            </div>
+
+            <!-- Your original script goes here -->
+           <script>
+               const API_KEY = 'AIzaSyAtnF_Jjby18AzcG_d03oPDcGoyw7Fe7Kg';
+               const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+               const chatMessages = document.getElementById('chat-messages');
+               const userInput = document.getElementById('user-input');
+               const sendButton = document.getElementById('send-button');
+               const chatContainer = document.getElementById('chat-container');
+               const chatToggleButton = document.getElementById('chat-toggle-button');
+
+               // Function to load chat messages from localStorage
+               function loadChatMessages() {
+                   const savedMessages = JSON.parse(localStorage.getItem('chatMessages')) || [];
+                   savedMessages.forEach((msg) => {
+                       addMessage(msg.text, msg.isUser, msg.isTemp);
+                   });
+               }
+
+               // Function to save chat messages to localStorage
+               function saveChatMessages() {
+                   const messages = [];
+                   document.querySelectorAll('.message').forEach((message) => {
+                       messages.push({
+                           text: message.querySelector('.message-content').textContent,
+                           isUser: message.classList.contains('user-message'),
+                           isTemp: message.querySelector('.wave') !== null  // Check if it's a temporary "..." message
+                       });
+                   });
+                   localStorage.setItem('chatMessages', JSON.stringify(messages));  // Save to localStorage
+               }
+
+               // Send and display user and bot messages
+               async function generateResponse(prompt) {
+                   const response = await fetch(`${API_URL}?key=${API_KEY}`, {
+                       method: 'POST',
+                       headers: {
+                           'Content-Type': 'application/json',
+                       },
+                       body: JSON.stringify({
+                           contents: [
+                               {
+                                   parts: [
+                                       {
+                                           text: prompt
+                                       }
+                                   ]
+                               }
+                           ]
+                       })
+                   });
+
+                   if (!response.ok) {
+                       throw new Error('Failed to generate response');
+                   }
+
+                   const data = await response.json();
+                   return data.candidates[0].content.parts[0].text;
+               }
+
+               // Clean markdown for the response
+               function cleanMarkdown(text) {
+                   return text
+                       .replace(/#{1,6}\s?/g, '')
+                       .replace(/\*\*/g, '')
+                       .replace(/\n{3,}/g, '\n\n')
+                       .trim();
+               }
+
+               // Add message to chat
+               function addMessage(message, isUser, isTemp = false) {
+                   const userImage = "[[${session.accountImage}]]";
+                   let image = ""
+                   if (userImage){
+                       image = userImage;
+                   } else {
+                       image = 'https://jbagy.me/wp-content/uploads/2025/03/Hinh-anh-avatar-nam-cute-2.jpg'
+                   }
+                   const messageElement = document.createElement('div');
+                   messageElement.classList.add('message');
+                   messageElement.classList.add(isUser ? 'user-message' : 'bot-message');
+
+                   const profileImage = document.createElement('img');
+                   profileImage.classList.add('profile-image');
+                   profileImage.src = isUser ? image : 'FrontEnd/assets/images/ai.png';
+                   profileImage.alt = isUser ? 'User' : 'Bot';
+
+                   const messageContent = document.createElement('div');
+                   messageContent.classList.add('message-content');
+                   messageContent.textContent = message;
+
+                   messageElement.appendChild(profileImage);
+                   messageElement.appendChild(messageContent);
+                   chatMessages.appendChild(messageElement);
+                   chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                   // Save chat messages to localStorage
+                   saveChatMessages();
+               }
+
+               // Handle user input and generate bot response
+               async function handleUserInput() {
+                   const userMessage = userInput.value.trim();
+                   if (userMessage) {
+                       addMessage(userMessage, true);  // Add user message
+                       userInput.value = '';
+                       sendButton.disabled = true;
+                       userInput.disabled = true;
+
+                       // Add a temporary "..." message for the bot response with animation
+                       const botMessageElement = document.createElement('div');
+                       botMessageElement.classList.add('message', 'bot-message');
+                       botMessageElement.innerHTML = `
+            <img class="profile-image" src="FrontEnd/assets/images/ai.png" alt="Bot">
+            <div class="message-content"><span class="wave">...</span></div>
+        `;
+                       chatMessages.appendChild(botMessageElement);
+                       chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                       // Save "..." message to localStorage immediately
+                       saveChatMessages();
+
+                       try {
+                           // Get the actual response from the bot
+                           const botMessage = await generateResponse(userMessage);
+
+                           // Update the "..." message with the actual bot response
+                           botMessageElement.querySelector('.message-content').textContent = cleanMarkdown(botMessage);
+
+                           // After updating the "..." message, save the actual response to localStorage
+                           saveChatMessages();
+                       } catch (error) {
+                           console.error('Error:', error);
+                           botMessageElement.querySelector('.message-content').textContent = 'Sorry, I encountered an error. Please try again.';
+                       } finally {
+                           sendButton.disabled = false;
+                           userInput.disabled = false;
+                       }
+                   }
+               }
+
+               // Event listeners
+               sendButton.addEventListener('click', handleUserInput);
+               userInput.addEventListener('keypress', (e) => {
+                   if (e.key === 'Enter' && !e.shiftKey) {
+                       e.preventDefault();
+                       handleUserInput();
+                   }
+               });
+
+               // Toggle chat visibility
+               chatToggleButton.addEventListener('click', () => {
+                   chatContainer.style.display = 'flex';
+                   chatToggleButton.style.display = 'none';
+
+                   // Cuộn xuống cuối sau khi mở
+                   setTimeout(() => {
+                       chatMessages.scrollTop = chatMessages.scrollHeight;
+                   }, 100); // đợi chat hiển thị
+               });
+
+
+               window.addEventListener('click', (e) => {
+                   if (!chatContainer.contains(e.target) && !chatToggleButton.contains(e.target)) {
+                       chatContainer.style.display = 'none';
+                       chatToggleButton.style.display = 'flex';
+                   }
+               });
+
+               // Load saved chat messages when the page loads
+               window.addEventListener('load', () => {
+                   loadChatMessages();
+               });
+
+
+
+           </script>
+
+
+
+        </div>
+    </div>
+
+    <div class="container-fluid-lg">
+        <div class="service-section">
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="service-contain">
+                        <div class="service-box">
+                            <div class="service-image">
+                                <img th:src="@{FrontEnd/assets/svg/product.svg}" class="blur-up lazyload" alt="">
+                            </div>
+
+                            <div class="service-detail">
+                                <h5>Mỗi sản phẩm tươi</h5>
+                            </div>
+                        </div>
+
+                        <div class="service-box">
+                            <div class="service-image">
+                                <img th:src="@{FrontEnd/assets/svg/delivery.svg}" class="blur-up lazyload" alt="">
+                            </div>
+
+                            <div class="service-detail">
+                                <h5>Giao hàng miễn phí cho đơn hàng trên $50</h5>
+                            </div>
+                        </div>
+
+                        <div class="service-box">
+                            <div class="service-image">
+                                <img th:src="@{FrontEnd/assets/svg/discount.svg}" class="blur-up lazyload" alt="">
+                            </div>
+
+                            <div class="service-detail">
+                                <h5>Giảm giá Mega hàng ngày</h5>
+                            </div>
+                        </div>
+
+                        <div class="service-box">
+                            <div class="service-image">
+                                <img th:src="@{FrontEnd/assets/svg/market.svg}" class="blur-up lazyload" alt="">
+                            </div>
+
+                            <div class="service-detail">
+                                <h5>Giá tốt nhất trên thị trường</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-footer section-b-space section-t-space">
+            <div class="row g-md-4 g-3">
+                <div class="col-xl-3 col-lg-4 col-sm-6">
+                    <div class="footer-logo">
+                        <div class="theme-logo">
+                            <a href="home">
+                                <img th:src="@{FrontEnd/assets/images/logo/1.png}" class="blur-up lazyload" alt="">
+                            </a>
+                        </div>
+
+                        <div class="footer-logo-contain">
+
+                            <ul class="address">
+                                <li>
+                                    <i data-feather="home"></i>
+                                    <a href="javascript:void(0)">Đại học FPT</a>
+                                </li>
+                                <li>
+                                    <i data-feather="mail"></i>
+                                    <a href="javascript:void(0)">SWP391TEAMCCD@gmail.com</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl col-lg-2 col-sm-3">
+                    <div class="footer-title">
+                        <h4>Danh mục</h4>
+                    </div>
+
+                    <div class="footer-contain">
+                        <ul>
+                            <li>
+                                <a href="shopDetail" class="text-content">Cửa hàng</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="col-xl col-lg-2 col-sm-3">
+                    <div class="footer-title">
+                        <h4>Đường links có hữu ích</h4>
+                    </div>
+
+                    <div class="footer-contain">
+                        <ul>
+                            <li>
+                                <a href="home" class="text-content">Trang chủ</a>
+                            </li>
+
+                            <li>
+                                <a href="#" class="text-content">Blog</a>
+                            </li>
+                            <li>
+                                <a href="contactususer" class="text-content">Liên hệ với chúng tôi</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div th:if="${session.account != null}" class="col-xl-2 col-sm-3">
+                    <div class="footer-title">
+                        <h4>Trung tâm giúp đỡ</h4>
+                    </div>
+
+                    <div class="footer-contain">
+                        <ul>
+                            <li>
+                                <a href="profileUser" class="text-content">Tài khoản đã của bạn</a>
+                            </li>
+                            <li>
+                                <a href="compareProductDetail" class="text-content">So sánh</a>
+                            </li>
+                            <li>
+                                <a href="wishlist" class="text-content">Yêu thích</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-lg-4 col-sm-6">
+                    <div class="footer-title">
+                        <h4>Liên hệ với chúng tôi</h4>
+                    </div>
+
+                    <div class="footer-contact">
+                        <ul>
+                            <li>
+                                <div class="footer-number">
+                                    <i data-feather="phone"></i>
+                                    <div class="contact-number">
+                                        <h6 class="text-content">Hotline 24/7 :</h6>
+                                        <h5>+91 888 104 2340</h5>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="footer-number">
+                                    <i data-feather="mail"></i>
+                                    <div class="contact-number">
+                                        <h6 class="text-content">Email Address :</h6>
+                                        <h5>SWP391TEAMCCD@gmail.com</h5>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="social-app">
+                                <h5 class="mb-2 text-content">Download App :</h5>
+                                <ul>
+                                    <li class="mb-0">
+                                        <a href="https://play.google.com/store/apps" target="_blank">
+                                            <img th:src="@{FrontEnd/assets/images/playstore.svg}" class="blur-up lazyload"
+                                                 alt="">
+                                        </a>
+                                    </li>
+                                    <li class="mb-0">
+                                        <a href="https://www.apple.com/in/app-store/" target="_blank">
+                                            <img th:src="@{FrontEnd/assets/images/appstore.svg}" class="blur-up lazyload"
+                                                 alt="">
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sub-footer section-small-space">
+            <div class="reserve">
+                <h6 class="text-content">©2025 Fastkart All rights reserved</h6>
+            </div>
+
+            <div class="payment">
+                <img src="../assets/images/payment/1.png" class="blur-up lazyload" alt="">
+            </div>
+
+            <div class="social-link">
+                <h6 class="text-content">Stay connected :</h6>
+                <ul>
+                    <li>
+                        <a href="https://www.facebook.com/" target="_blank">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://twitter.com/" target="_blank">
+                            <i class="fa-brands fa-twitter"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.instagram.com/" target="_blank">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://in.pinterest.com/" target="_blank">
+                            <i class="fa-brands fa-pinterest-p"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
