@@ -82,18 +82,43 @@ public class BlogRestController {
 
 
     // Thêm blog (thumbnail là tên file đã upload trước, truyền kèm lên từ FE)
-    @PostMapping("/add_blog")
-    public ResponseEntity<?> addBlog(@RequestBody Blog blog) {
-//        System.out.println(blog);
-        blog.setCreatedAt(new Date());
-        blog.setStatus(BlogStatus.DRAFT); // Mặc định là DRAFT
-        // Xử lý thêm các trường, validate nếu cần
-        if (blog.getBlogDetail() != null) {
-            blog.getBlogDetail().setBlog(blog); // set lại quan hệ
-        }
-        Blog savedBlog = blogService.save(blog);
-        return ResponseEntity.ok(savedBlog);
+//    @PostMapping("/add_blog")
+//    public ResponseEntity<?> addBlog(@RequestBody Blog blog) {
+////        System.out.println(blog);
+//        blog.setCreatedAt(new Date());
+//        blog.setStatus(BlogStatus.DRAFT); // Mặc định là DRAFT
+//        // Xử lý thêm các trường, validate nếu cần
+//        if (blog.getBlogDetail() != null) {
+//            blog.getBlogDetail().setBlog(blog); // set lại quan hệ
+//        }
+//        Blog savedBlog = blogService.save(blog);
+//        return ResponseEntity.ok(savedBlog);
+//    }
+
+@PostMapping("/add_blog")
+public ResponseEntity<?> addBlog(@RequestBody Blog blog) {
+    blog.setCreatedAt(new Date());
+    blog.setStatus(BlogStatus.DRAFT); // Mặc định là DRAFT
+    if (blog.getBlogDetail() != null) {
+        blog.getBlogDetail().setBlog(blog); // set lại quan hệ
     }
+    Blog savedBlog = blogService.save(blog);
+
+    // Convert to DTO before returning
+    BlogDTO dto = new BlogDTO();
+    dto.setBlogID(savedBlog.getBlogID());
+    dto.setTitle(savedBlog.getTitle());
+    dto.setContent(savedBlog.getContent());
+    dto.setStatus(savedBlog.getStatus().toString());
+    dto.setAuthor(savedBlog.getAuthor());
+    dto.setCreatedAt(savedBlog.getCreatedAt() != null ? savedBlog.getCreatedAt().toString() : null);
+    if (savedBlog.getBlogDetail() != null) {
+        dto.setThumbnail(savedBlog.getBlogDetail().getThumbnail());
+    }
+    dto.setBlogCategoryID(savedBlog.getBlogCategoryID());
+    return ResponseEntity.ok(dto);
+}
+
 
     // Upload ảnh thumbnail
     @PostMapping("/upload-thumbnail")
@@ -140,32 +165,85 @@ public class BlogRestController {
         return ResponseEntity.ok(statusList);
     }
 
-    @PutMapping("/edit_blog/{id}")
-    public ResponseEntity<?> editBlog(@PathVariable Integer id, @RequestBody Blog blogUpdate) {
-        Blog blog = blogService.getBlogById(id);
-        if (blog == null) {
-            return ResponseEntity.badRequest().body("Blog không tồn tại");
-        }
-        // Update các trường (tuỳ yêu cầu)
-        blog.setTitle(blogUpdate.getTitle());
-        blog.setContent(blogUpdate.getContent());
-        blog.setStatus(blogUpdate.getStatus());
-        blog.setAuthor(blogUpdate.getAuthor());
-        blog.setBlogCategoryID(blogUpdate.getBlogCategoryID());
-        blog.setBlogDateUpdate(new Date());
-        // Nếu cập nhật ảnh
-        if (blogUpdate.getBlogDetail() != null && blog.getBlogDetail() != null) {
-            blog.getBlogDetail().setThumbnail(blogUpdate.getBlogDetail().getThumbnail());
-        }
-        Blog updated = blogService.save(blog);
-        return ResponseEntity.ok(updated);
+//    @PutMapping("/edit_blog/{id}")
+//    public ResponseEntity<?> editBlog(@PathVariable Integer id, @RequestBody Blog blogUpdate) {
+//        Blog blog = blogService.getBlogById(id);
+//        if (blog == null) {
+//            return ResponseEntity.badRequest().body("Blog không tồn tại");
+//        }
+//        // Update các trường (tuỳ yêu cầu)
+//        blog.setTitle(blogUpdate.getTitle());
+//        blog.setContent(blogUpdate.getContent());
+//        blog.setStatus(blogUpdate.getStatus());
+//        blog.setAuthor(blogUpdate.getAuthor());
+//        blog.setBlogCategoryID(blogUpdate.getBlogCategoryID());
+//        blog.setBlogDateUpdate(new Date());
+//        // Nếu cập nhật ảnh
+//        if (blogUpdate.getBlogDetail() != null && blog.getBlogDetail() != null) {
+//            blog.getBlogDetail().setThumbnail(blogUpdate.getBlogDetail().getThumbnail());
+//        }
+//        Blog updated = blogService.save(blog);
+//        return ResponseEntity.ok(updated);
+//    }
+@PutMapping("/edit_blog/{id}")
+public ResponseEntity<?> editBlog(@PathVariable Integer id, @RequestBody Blog blogUpdate) {
+    Blog blog = blogService.getBlogById(id);
+    if (blog == null) {
+        return ResponseEntity.badRequest().body("Blog không tồn tại");
     }
-    @GetMapping("/detail/{id}")
-    public ResponseEntity<?> getBlogDetail(@PathVariable Integer id) {
-        Blog blog = blogService.getBlogById(id);
-        if (blog == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(blog);
+    // Update các trường (tuỳ yêu cầu)
+    blog.setTitle(blogUpdate.getTitle());
+    blog.setContent(blogUpdate.getContent());
+    blog.setStatus(blogUpdate.getStatus());
+    blog.setAuthor(blogUpdate.getAuthor());
+    blog.setBlogCategoryID(blogUpdate.getBlogCategoryID());
+    blog.setBlogDateUpdate(new Date());
+    // Nếu cập nhật ảnh
+    if (blogUpdate.getBlogDetail() != null && blog.getBlogDetail() != null) {
+        blog.getBlogDetail().setThumbnail(blogUpdate.getBlogDetail().getThumbnail());
     }
+    Blog updated = blogService.save(blog);
+
+    // Convert to DTO before returning
+    BlogDTO dto = new BlogDTO();
+    dto.setBlogID(updated.getBlogID());
+    dto.setTitle(updated.getTitle());
+    dto.setContent(updated.getContent());
+    dto.setStatus(updated.getStatus().toString());
+    dto.setAuthor(updated.getAuthor());
+    dto.setCreatedAt(updated.getCreatedAt() != null ? updated.getCreatedAt().toString() : null);
+    if (updated.getBlogDetail() != null) {
+        dto.setThumbnail(updated.getBlogDetail().getThumbnail());
+    }
+    dto.setBlogCategoryID(updated.getBlogCategoryID());
+    return ResponseEntity.ok(dto);
+}
+
+    //    @GetMapping("/detail/{id}")
+//    public ResponseEntity<?> getBlogDetail(@PathVariable Integer id) {
+//        Blog blog = blogService.getBlogById(id);
+//        if (blog == null) return ResponseEntity.notFound().build();
+//        return ResponseEntity.ok(blog);
+//    }
+@GetMapping("/detail/{id}")
+public ResponseEntity<?> getBlogDetail(@PathVariable Integer id) {
+    Blog blog = blogService.getBlogById(id);
+    if (blog == null) return ResponseEntity.notFound().build();
+    BlogDTO dto = new BlogDTO();
+    dto.setBlogID(blog.getBlogID());
+    dto.setTitle(blog.getTitle());
+    dto.setContent(blog.getContent());
+    dto.setStatus(blog.getStatus().toString());
+    dto.setAuthor(blog.getAuthor());
+    dto.setCreatedAt(blog.getCreatedAt() != null ? blog.getCreatedAt().toString() : null);
+    if (blog.getBlogDetail() != null) {
+        dto.setThumbnail(blog.getBlogDetail().getThumbnail());
+    }
+    // Có thể set thêm blogCategoryID nếu cần
+    dto.setBlogCategoryID(blog.getBlogCategoryID());
+    return ResponseEntity.ok(dto);
+}
+
     @DeleteMapping("/delete_blog/{id}")
     public ResponseEntity<?> deleteBlog(@PathVariable Integer id) {
         blogService.deleteById(id);

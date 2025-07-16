@@ -101,6 +101,7 @@
                                                 <th scope="col">Content</th>
                                                 <th scope="col">Title</th>
                                                 <th scope="col">Author</th>
+                                                <th scope="col">Category</th> <!-- THÊM DÒNG NÀY -->
                                                 <th scope="col">Status</th>
                                                 <th scope="col">Created At</th>
                                                 <th scope="col">Edit / Delete</th>
@@ -290,6 +291,7 @@
                 <td>${blog.content && blog.content.length > 40 ? blog.content.substring(0, 40) + '...' : blog.content || ''}</td>
                 <td>${blog.title || ""}</td>
                 <td><b><i>${blog.author || ""}</i></b></td>
+                 <td>${blog.blogCategoryName || ""}</td>  <!-- THÊM DÒNG NÀY -->
                 <td><span style="font-weight:bold;color:${color}">${blog.status}</span></td>
                 <td>${formatDate(blog.createdAt)}</td>
                 <td>

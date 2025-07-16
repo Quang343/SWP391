@@ -16,6 +16,8 @@ public class BlogDTO {
     private String author;
     private String createdAt;
     private String thumbnail;
+
+    private Integer blogCategoryID; // thêm nếu muốn nhận biết bên FE
     // Thêm trường này cho admin
    // private String blogCategoryName;
 //    private Integer blogCategoryID; // <-- thêm trường này
