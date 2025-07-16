@@ -18,7 +18,7 @@
 <!-- Loader End -->
 
 <!-- Header Start -->
-<header th:replace="FrontEnd/fragments/header::header"></header>
+<!--<header th:replace="FrontEnd/fragments/header::header"></header>-->
 <!-- Header End -->
 
 <!-- mobile fix menu start -->
@@ -98,18 +98,29 @@
                         </button>
                     </div>
                     <div class="profile-box">
-                        <div class="cover-image">
-                            <img src="../assets/images/inner-page/cover-img.jpg" class="img-fluid blur-up lazyload"
-                                 alt="">
+                        <div class="cover-image position-relative">
+                            <img src="../assets/images/inner-page/cover-img.jpg" class="img-fluid blur-up lazyload" alt="">
+
+                            <!-- Nút chỉnh sửa ảnh bìa -->
+                            <button class="btn btn-sm btn-light position-absolute top-0 end-0 m-2 edit-cover-btn" title="Đổi ảnh bìa">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
                         </div>
+
 
                         <div class="profile-contain">
                             <div class="profile-image">
-                                <div class="position-relative">
-                                    <img src="../assets/images/vendor-page/logo.png"
-                                         class="blur-up lazyload update_img" alt="">
+                                <div class="position-relative avatar-wrapper">
+                                    <img src="../assets/images/vendor-page/logo.png" class="avatar-img" alt="">
+
+                                    <!-- Nút chỉnh sửa ảnh avatar -->
+                                    <button class="btn btn-sm btn-light position-absolute edit-avatar-btn" title="Đổi ảnh đại diện">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+
                                 </div>
                             </div>
+
 
                             <div class="profile-name">
                                 <h3>Joshua D. Bass</h3>
@@ -120,44 +131,44 @@
 
                     <ul class="nav nav-pills user-nav-pills" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <a href="#pills-tabContent" class="nav-link active" id="pills-dashboard-tab"
-                               data-bs-toggle="pill" data-bs-target="#pills-dashboard" role="tab"><i
-                                    data-feather="home"></i>
-                                DashBoard</a>
+                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-profile" type="button" role="tab">
+                                <i data-feather="user"></i> Hồ sơ
+                            </button>
                         </li>
+
+<!--                        <li class="nav-item" role="presentation">-->
+<!--                            <a href="#pills-tabContent" class="nav-link" id="pills-dashboard-tab"-->
+<!--                               data-bs-toggle="pill" data-bs-target="#pills-dashboard" role="tab">-->
+<!--                                <i data-feather="layout"></i> Tổng quan-->
+<!--                            </a>-->
+<!--                        </li>-->
 
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-product-tab" data-bs-toggle="pill"
-                                    data-bs-target="#pills-product" type="button" role="tab"><i
-                                    data-feather="shopping-bag"></i>Products
+                                    data-bs-target="#pills-product" type="button" role="tab">
+                                <i data-feather="package"></i> Sản phẩm
                             </button>
                         </li>
 
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-product-detail-tab" data-bs-toggle="pill"
-                                    data-bs-target="#pills-product-detail" type="button" role="tab"><i
-                                    data-feather="shopping-bag"></i>Product Detail
+                                    data-bs-target="#pills-product-detail" type="button" role="tab">
+                                <i data-feather="file-text"></i> Chi tiết sản phẩm
                             </button>
                         </li>
 
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-order-tab" data-bs-toggle="pill"
-                                    data-bs-target="#pills-order" type="button" role="tab"><i
-                                    data-feather="shopping-bag"></i>Order
-                            </button>
-                        </li>
-
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
-                                    data-bs-target="#pills-profile" type="button" role="tab"><i data-feather="user"></i>
-                                Profile
+                                    data-bs-target="#pills-order" type="button" role="tab">
+                                <i data-feather="clipboard"></i> Đơn hàng
                             </button>
                         </li>
 
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-out-tab" data-bs-toggle="pill"
-                                    data-bs-target="#pills-out" type="button" role="tab"><i data-feather="log-out"></i>
-                                Log Out
+                                    data-bs-target="#pills-out" type="button" role="tab">
+                                <i data-feather="log-out"></i> Đăng xuất
                             </button>
                         </li>
                     </ul>
@@ -171,10 +182,10 @@
                 <div class="dashboard-right-sidebar">
 
                     <div class="tab-content" id="pills-tabContent">
-                        <div class="tab-pane fade show active" id="pills-dashboard" role="tabpanel">
+                        <div class="tab-pane fade show" id="pills-dashboard" role="tabpanel">
                             <div class="dashboard-home">
                                 <div class="title">
-                                    <h2>My Dashboard</h2>
+                                    <h2>Tổng Quan</h2>
                                     <span class="title-leaf">
                                             <svg class="icon-width bg-gray">
                                                 <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
@@ -442,13 +453,6 @@
                                     </div>
                                 </div>
 
-                                <div class="d-flex justify-content-start mb-2">
-                                    <button id="btnResetSort" class="btn btn-outline-secondary btn-sm"
-                                            title="Tải lại bảng">
-                                        🔄
-                                    </button>
-                                </div>
-
                                 <div class="table-responsive dashboard-bg-box">
                                     <table class="table product-table">
                                         <thead>
@@ -555,7 +559,7 @@
                         <div class="tab-pane fade" id="pills-order" role="tabpanel">
                             <div class="dashboard-order">
                                 <div class="title">
-                                    <h2>All Order</h2>
+                                    <h2>Tất Cả Đơn Hàng</h2>
                                     <span class="title-leaf title-leaf-gray">
                                             <svg class="icon-width bg-gray">
                                                 <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
@@ -668,95 +672,179 @@
                                             </tbody>
                                         </table>
                                     </div>
-<!--                                    <nav class="custom-pagination">-->
-<!--                                        <ul class="pagination justify-content-center">-->
-<!--                                            <li class="page-item disabled">-->
-<!--                                                <a class="page-link" href="javascript:void(0)" tabindex="-1">-->
-<!--                                                    <i class="fa-solid fa-angles-left"></i>-->
-<!--                                                </a>-->
-<!--                                            </li>-->
-<!--                                            <li class="page-item active">-->
-<!--                                                <a class="page-link" href="javascript:void(0)">1</a>-->
-<!--                                            </li>-->
-<!--                                            <li class="page-item">-->
-<!--                                                <a class="page-link" href="javascript:void(0)">2</a>-->
-<!--                                            </li>-->
-<!--                                            <li class="page-item">-->
-<!--                                                <a class="page-link" href="javascript:void(0)">3</a>-->
-<!--                                            </li>-->
-<!--                                            <li class="page-item">-->
-<!--                                                <a class="page-link" href="javascript:void(0)">-->
-<!--                                                    <i class="fa-solid fa-angles-right"></i>-->
-<!--                                                </a>-->
-<!--                                            </li>-->
-<!--                                        </ul>-->
-<!--                                    </nav>-->
+                                    <!--                                    <nav class="custom-pagination">-->
+                                    <!--                                        <ul class="pagination justify-content-center">-->
+                                    <!--                                            <li class="page-item disabled">-->
+                                    <!--                                                <a class="page-link" href="javascript:void(0)" tabindex="-1">-->
+                                    <!--                                                    <i class="fa-solid fa-angles-left"></i>-->
+                                    <!--                                                </a>-->
+                                    <!--                                            </li>-->
+                                    <!--                                            <li class="page-item active">-->
+                                    <!--                                                <a class="page-link" href="javascript:void(0)">1</a>-->
+                                    <!--                                            </li>-->
+                                    <!--                                            <li class="page-item">-->
+                                    <!--                                                <a class="page-link" href="javascript:void(0)">2</a>-->
+                                    <!--                                            </li>-->
+                                    <!--                                            <li class="page-item">-->
+                                    <!--                                                <a class="page-link" href="javascript:void(0)">3</a>-->
+                                    <!--                                            </li>-->
+                                    <!--                                            <li class="page-item">-->
+                                    <!--                                                <a class="page-link" href="javascript:void(0)">-->
+                                    <!--                                                    <i class="fa-solid fa-angles-right"></i>-->
+                                    <!--                                                </a>-->
+                                    <!--                                            </li>-->
+                                    <!--                                        </ul>-->
+                                    <!--                                    </nav>-->
                                 </div>
                             </div>
                         </div>
 
                         <div class="tab-pane fade" id="pills-profile" role="tabpanel">
                             <div class="dashboard-profile">
-                                <div class="title">
-                                    <h2>My Profile</h2>
-                                    <span class="title-leaf">
-                                            <svg class="icon-width bg-gray">
-                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
-                                            </svg>
-                                        </span>
+                                <div class="title d-flex justify-content-between align-items-center">
+                                    <h2>Hồ sơ</h2>
                                 </div>
 
-                                <div class="profile-tab dashboard-bg-box">
-                                    <div class="dashboard-title dashboard-flex">
-                                        <h3>Profile Name</h3>
-                                        <button class="btn btn-sm theme-bg-color text-white" data-bs-toggle="modal"
-                                                data-bs-target="#edit-profile">Edit Profile
-                                        </button>
-                                    </div>
-
+                                <!-- Thông tin cơ bản -->
+                                <div class="profile-tab dashboard-bg-box mb-3">
+                                    <h4 class="mb-3">🔹 Thông tin cơ bản</h4>
                                     <ul>
-                                        <li>
-                                            <h5>Company Name :</h5>
-                                            <h5>Grocery Store</h5>
+                                        <li class="editable-row" data-key="userId">
+                                            <h5>ID người dùng:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <span class="field-value"></span>
+                                                <input class="form-control form-control-sm d-none field-input" type="text" readonly>
+                                                <i class="bi bi-lock-fill text-muted ms-3" title="Không thể chỉnh sửa"></i>
+                                            </div>
                                         </li>
-                                        <li>
-                                            <h5>Email Address :</h5>
-                                            <h5>joshuadbass@rhyta.com</h5>
+
+                                        <li class="editable-row" data-key="username">
+                                            <h5>Tên người dùng:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <span class="field-value"></span>
+                                                <input class="form-control form-control-sm d-none field-input" type="text">
+                                                <button class="btn btn-sm btn-outline-secondary ms-2 btn-edit" title="Chỉnh sửa">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            </div>
+                                            <small class="form-text text-muted d-none field-hint">Tên người dùng phải có từ 3 đến 20 ký tự.</small>
                                         </li>
-                                        <li>
-                                            <h5>Country / Region :</h5>
-                                            <h5>107 Veltri Drive</h5>
+
+                                        <li class="editable-row" data-key="fullName">
+                                            <h5>Họ và tên:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <span class="field-value"></span>
+                                                <input class="form-control form-control-sm d-none field-input" type="text">
+                                                <button class="btn btn-sm btn-outline-secondary ms-2 btn-edit" title="Chỉnh sửa">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            </div>
+                                            <small class="form-text text-muted d-none field-hint">Họ và tên không được để trống.</small>
+                                        </li>
+
+                                        <li class="editable-row" data-key="gender">
+                                            <h5>Giới tính:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <span class="field-value"></span>
+                                                <select class="form-select form-select-sm d-none field-input">
+                                                    <option>Nam</option>
+                                                    <option>Nữ</option>
+                                                    <option>Khác</option>
+                                                </select>
+                                                <button class="btn btn-sm btn-outline-secondary ms-2 btn-edit" title="Chỉnh sửa">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            </div>
+                                            <small class="form-text text-muted d-none field-hint">Chọn giới tính phù hợp.</small>
+                                        </li>
+
+                                        <li class="editable-row" data-key="dob">
+                                            <h5>Ngày sinh:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <span class="field-value"></span>
+                                                <input class="form-control form-control-sm d-none field-input" type="date">
+                                                <button class="btn btn-sm btn-outline-secondary ms-2 btn-edit" title="Chỉnh sửa">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            </div>
+                                            <small class="form-text text-muted d-none field-hint">Vui lòng chọn ngày sinh hợp lệ. Tuổi phải từ 10 đến 100</small>
                                         </li>
 
                                         <li>
-                                            <h5>Year Established :</h5>
-                                            <h5>2022</h5>
-                                        </li>
-
-                                        <li>
-                                            <h5>Total Employees :</h5>
-                                            <h5>154 - 360 People</h5>
-                                        </li>
-                                        <li>
-                                            <h5>Category :</h5>
-                                            <h5>Grocery</h5>
-                                        </li>
-
-                                        <li>
-                                            <h5>Street Address :</h5>
-                                            <h5>234 High St</h5>
-                                        </li>
-
-                                        <li>
-                                            <h5>City / State :</h5>
-                                            <h5>107 Veltri Drive</h5>
-                                        </li>
-
-                                        <li>
-                                            <h5>Zip :</h5>
-                                            <h5>B23 6SN</h5>
+                                            <h5>Ngày tạo tài khoản:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <h5 class="createdAt mb-0">--/--/----</h5>
+                                                <i class="bi bi-lock-fill text-muted ms-3" title="Không thể chỉnh sửa"></i>
+                                            </div>
                                         </li>
                                     </ul>
+                                </div>
+
+                                <!-- Thông tin liên lạc -->
+                                <div class="profile-tab dashboard-bg-box mb-3">
+                                    <h4 class="mb-3">🔹 Thông tin liên lạc</h4>
+                                    <ul>
+                                        <li>
+                                            <h5>Email:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <h5 class="email mb-0">example@email.com</h5>
+                                                <i class="bi bi-lock-fill text-muted ms-3" title="Không thể chỉnh sửa"></i>
+                                            </div>
+                                        </li>
+
+                                        <li class="editable-row" data-key="phone">
+                                            <h5>Số điện thoại:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <span class="field-value"></span>
+                                                <input class="form-control form-control-sm d-none field-input" type="text">
+                                                <button class="btn btn-sm btn-outline-secondary ms-2 btn-edit" title="Chỉnh sửa">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            </div>
+                                            <small class="form-text text-muted d-none field-hint">Số điện thoại gồm 10 chữ số, bắt đầu bằng 0.</small>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Thông tin đăng nhập -->
+                                <div class="profile-tab dashboard-bg-box">
+                                    <h4 class="mb-3">🔹 Thông tin đăng nhập</h4>
+                                    <ul>
+                                        <li>
+                                            <h5>Tài khoản (Email):</h5>
+                                            <div class="d-flex align-items-center">
+                                                <h5 class="account-email mb-0">--</h5>
+                                                <i class="bi bi-lock-fill text-muted ms-2" title="Không thể chỉnh sửa"></i>
+                                            </div>
+                                        </li>
+
+                                        <li class="editable-row" data-key="password">
+                                            <h5>Mật khẩu:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <span class="field-value">******</span>
+
+                                                <!-- 🔒 Không cho chỉnh sửa trực tiếp -->
+                                                <!-- Có thể giữ input nếu bạn cần logic backend, nhưng nên disabled -->
+                                                <input type="password" class="form-control form-control-sm field-input d-none" disabled />
+
+                                                <!-- 🔗 Nút đổi mật khẩu -->
+                                                <button type="button" id="btnEditPassword" class="btn btn-sm btn-outline-secondary ms-2" title="Đổi mật khẩu">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+
+                                <!-- Nút Huỷ & Lưu -->
+                                <div class="d-flex justify-content-end mt-4 gap-2">
+                                    <button id="cancel-edit" class="btn btn-outline-secondary" title="Huỷ các thay đổi">
+                                        <i class="bi bi-x-circle me-1"></i> Huỷ
+                                    </button>
+                                    <button id="save-edit" class="btn btn-primary" title="Lưu các thay đổi">
+                                        <i class="bi bi-save me-1"></i> Lưu thay đổi
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -808,7 +896,7 @@
 <!-- User Dashboard Section End -->
 
 <!-- Footer Section Start -->
-<footer th:replace="FrontEnd/fragments/footer::footer"></footer>
+<!--<footer th:replace="FrontEnd/fragments/footer::footer"></footer>-->
 <!-- Footer Section End -->
 
 <!-- Deal Box Modal Start -->
@@ -900,50 +988,50 @@
 
 <!-- Tap to top and theme setting button start -->
 <div class="theme-option">
-    <div class="setting-box">
-        <button class="btn setting-button">
-            <i class="fa-solid fa-gear"></i>
-        </button>
+    <!--    <div class="setting-box">-->
+    <!--        <button class="btn setting-button">-->
+    <!--            <i class="fa-solid fa-gear"></i>-->
+    <!--        </button>-->
 
-        <div class="theme-setting-2">
-            <div class="theme-box">
-                <ul>
-                    <li>
-                        <div class="setting-name">
-                            <h4>Color</h4>
-                        </div>
-                        <div class="theme-setting-button color-picker">
-                            <form class="form-control">
-                                <label for="colorPick" class="form-label mb-0">Theme Color</label>
-                                <input type="color" class="form-control form-control-color" id="colorPick"
-                                       value="#0da487" title="Choose your color">
-                            </form>
-                        </div>
-                    </li>
+    <!--        <div class="theme-setting-2">-->
+    <!--            <div class="theme-box">-->
+    <!--                <ul>-->
+    <!--                    <li>-->
+    <!--                        <div class="setting-name">-->
+    <!--                            <h4>Color</h4>-->
+    <!--                        </div>-->
+    <!--                        <div class="theme-setting-button color-picker">-->
+    <!--                            <form class="form-control">-->
+    <!--                                <label for="colorPick" class="form-label mb-0">Theme Color</label>-->
+    <!--                                <input type="color" class="form-control form-control-color" id="colorPick"-->
+    <!--                                       value="#0da487" title="Choose your color">-->
+    <!--                            </form>-->
+    <!--                        </div>-->
+    <!--                    </li>-->
 
-                    <li>
-                        <div class="setting-name">
-                            <h4>Dark</h4>
-                        </div>
-                        <div class="theme-setting-button">
-                            <button class="btn btn-2 outline" id="darkButton">Dark</button>
-                            <button class="btn btn-2 unline" id="lightButton">Light</button>
-                        </div>
-                    </li>
+    <!--                    <li>-->
+    <!--                        <div class="setting-name">-->
+    <!--                            <h4>Dark</h4>-->
+    <!--                        </div>-->
+    <!--                        <div class="theme-setting-button">-->
+    <!--                            <button class="btn btn-2 outline" id="darkButton">Dark</button>-->
+    <!--                            <button class="btn btn-2 unline" id="lightButton">Light</button>-->
+    <!--                        </div>-->
+    <!--                    </li>-->
 
-                    <li>
-                        <div class="setting-name">
-                            <h4>RTL</h4>
-                        </div>
-                        <div class="theme-setting-button rtl">
-                            <button class="btn btn-2 rtl-unline">LTR</button>
-                            <button class="btn btn-2 rtl-outline">RTL</button>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+    <!--                    <li>-->
+    <!--                        <div class="setting-name">-->
+    <!--                            <h4>RTL</h4>-->
+    <!--                        </div>-->
+    <!--                        <div class="theme-setting-button rtl">-->
+    <!--                            <button class="btn btn-2 rtl-unline">LTR</button>-->
+    <!--                            <button class="btn btn-2 rtl-outline">RTL</button>-->
+    <!--                        </div>-->
+    <!--                    </li>-->
+    <!--                </ul>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
 
     <div class="back-to-top">
         <a id="back-to-top" href="#">
@@ -1114,134 +1202,6 @@
     </div>
 </div>
 <!-- Location Modal End -->
-
-<!-- Edit Profile Start -->
-<div class="modal fade theme-modal" id="editProfile" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel2">Edit Profile</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row g-4">
-                    <div class="col-xxl-12">
-                        <form>
-                            <div class="form-floating theme-form-floating">
-                                <input type="text" class="form-control" id="pname" value="Jack Jennas">
-                                <label for="pname">Full Name</label>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="col-xxl-6">
-                        <form>
-                            <div class="form-floating theme-form-floating">
-                                <input type="email" class="form-control" id="email1" value="vicki.pope@gmail.com">
-                                <label for="email1">Email address</label>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="col-xxl-6">
-                        <form>
-                            <div class="form-floating theme-form-floating">
-                                <input class="form-control" type="tel" value="4567891234" name="mobile" id="mobile"
-                                       maxlength="10" oninput="javascript: if (this.value.length > this.maxLength) this.value =
-                                            this.value.slice(0, this.maxLength);">
-                                <label for="mobile">Email address</label>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="col-12">
-                        <form>
-                            <div class="form-floating theme-form-floating">
-                                <input type="text" class="form-control" id="address1"
-                                       value="8424 James Lane South San Francisco">
-                                <label for="address1">Add Address</label>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="col-12">
-                        <form>
-                            <div class="form-floating theme-form-floating">
-                                <input type="text" class="form-control" id="address2" value="CA 94080">
-                                <label for="address2">Add Address 2</label>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="col-xxl-4">
-                        <form>
-                            <div class="form-floating theme-form-floating">
-                                <select class="form-select" id="floatingSelect1">
-                                    <option selected>Choose Your Country</option>
-                                    <option value="kingdom">United Kingdom</option>
-                                    <option value="states">United States</option>
-                                    <option value="fra">France</option>
-                                    <option value="china">China</option>
-                                    <option value="spain">Spain</option>
-                                    <option value="italy">Italy</option>
-                                    <option value="turkey">Turkey</option>
-                                    <option value="germany">Germany</option>
-                                    <option value="russian">Russian Federation</option>
-                                    <option value="malay">Malaysia</option>
-                                    <option value="mexico">Mexico</option>
-                                    <option value="austria">Austria</option>
-                                    <option value="hong">Hong Kong SAR, China</option>
-                                    <option value="ukraine">Ukraine</option>
-                                    <option value="thailand">Thailand</option>
-                                    <option value="saudi">Saudi Arabia</option>
-                                    <option value="canada">Canada</option>
-                                    <option value="singa">Singapore</option>
-                                </select>
-                                <label for="floatingSelect">Country</label>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="col-xxl-4">
-                        <form>
-                            <div class="form-floating theme-form-floating">
-                                <select class="form-select" id="floatingSelect">
-                                    <option selected>Choose Your City</option>
-                                    <option value="kingdom">India</option>
-                                    <option value="states">Canada</option>
-                                    <option value="fra">Dubai</option>
-                                    <option value="china">Los Angeles</option>
-                                    <option value="spain">Thailand</option>
-                                </select>
-                                <label for="floatingSelect">City</label>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="col-xxl-4">
-                        <form>
-                            <div class="form-floating theme-form-floating">
-                                <input type="text" class="form-control" id="address3" value="94080">
-                                <label for="address3">Pin Code</label>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-animation btn-md fw-bold"
-                        data-bs-dismiss="modal">Close
-                </button>
-                <button type="button" data-bs-dismiss="modal"
-                        class="btn theme-bg-color btn-md fw-bold text-light">Save changes
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Edit Profile End -->
 
 <!-- Edit Card Start -->
 <div class="modal fade theme-modal" id="editCard" tabindex="-1">
@@ -1546,8 +1506,10 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button class="btn btn-success" type="submit" id="submitBtn">Đồng ý</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy
+                    </button>
+                    <button class="btn btn-success" type="submit" id="submitBtn">Đồng ý
+                    </button>
                 </div>
             </form>
         </div>
@@ -1637,7 +1599,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button class="btn btn-primary" type="submit" id="editSubmitBtn">Cập Nhật</button>
+                    <button class="btn btn-success" type="submit" id="editSubmitBtn">Cập Nhật</button>
                 </div>
             </form>
         </div>
@@ -1647,24 +1609,42 @@
 
 <!--Logic Tab Product-->
 
-<!--CSS-->
+<!--CSS Product-->
 <style>
 
-    #btnResetSort {
-        background-color: #f8f9fa;
-        border: 1px solid #ced4da;
-        color: #343a40;
-        padding: 4px 10px;
-        font-size: 14px;
-        border-radius: 4px;
-        transition: background-color 0.2s, color 0.2s;
+    /* Nút Hủy - màu trung tính nổi bật nhẹ */
+    .btn.btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        color: #fff;
+        font-weight: 500;
+        transition: 0.3s ease;
+        padding: 6px 16px;
     }
 
-    #btnResetSort:hover {
-        background-color: #e2e6ea;
-        color: #212529;
-        cursor: pointer;
+    .btn.btn-secondary:hover {
+        background-color: #5a6268;
+        box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.3);
+    }
+
+    /* Nút Đồng ý - màu xanh nổi bật */
+    .btn.btn-success {
+        background-color: #198754;
+        border: none;
+        color: #fff;
         font-weight: 500;
+        transition: 0.3s ease;
+        padding: 6px 16px;
+    }
+
+    .btn.btn-success:hover {
+        background-color: #157347;
+        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.3);
+    }
+
+    /* Icon trong button cách chữ một chút */
+    .btn i {
+        margin-right: 6px;
     }
 
     .btn-sort.active-sort {
@@ -2131,12 +2111,6 @@
         setupProductViewButtons();
     }
 
-    document.getElementById("btnResetSort").addEventListener("click", function () {
-        currentSort = {key: null, order: null};
-        document.querySelectorAll(".btn-sort").forEach(btn => btn.classList.remove("active-sort"));
-        loadProducts(1); // 👈 về trang 1
-    });
-
     function addActionListeners() {
         document.querySelectorAll(".btn-edit").forEach(btn => {
             btn.addEventListener("click", function () {
@@ -2215,7 +2189,7 @@
                     if (isDuplicate) {
                         alert("Tên sản phẩm đã tồn tại.");
                         btn.disabled = false;
-                        btn.innerText = "Thêm Sản Phẩm";
+                        btn.innerText = "Dồng ý";
                         return;
                     }
 
@@ -2257,14 +2231,14 @@
                                 })
                                 .finally(() => {
                                     btn.disabled = false;
-                                    btn.innerText = "Thêm Sản Phẩm";
+                                    btn.innerText = "Đồng ý";
                                 });
                         })
                         .catch(err => {
                             alert("Thêm sản phẩm thất bại.");
                             console.error(err);
                             btn.disabled = false;
-                            btn.innerText = "Thêm Sản Phẩm";
+                            btn.innerText = "Đồng ý";
                         });
                 });
         });
@@ -2864,7 +2838,7 @@
 </div>
 <!--Modal Edit Product Detail End-->
 
-<!--CSS-->
+<!--CSS Product Detail-->
 <style>
     .product-detail-table {
         width: 100%;
@@ -3123,7 +3097,7 @@
 
             axios.post('/AgriculturalWarehouseManagementApplication/api/seller/product-details', dto)
                 .then(() => {
-                    alert("Thêm Product Detail thành công.");
+                    alert("Thêm chi tiết mới thành công.");
                     bootstrap.Modal.getInstance(document.getElementById('addProductDetailModal')).hide();
 
                     form.reset();
@@ -3260,7 +3234,7 @@
                 setupProductDetailActions?.();
             })
             .catch(err => {
-                console.error("❌ Lỗi khi load product details:", err);
+                console.error("❌ Lỗi khi tải chi tiết sản phẩm:", err);
             });
     }
 
@@ -3359,7 +3333,7 @@
                 modal.show();
             })
             .catch(err => {
-                console.error("❌ Lỗi khi mở modal edit:", err);
+                console.error("❌ Lỗi khi mở modal chỉnh sửa:", err);
                 alert("Không thể hiển thị chi tiết sản phẩm.");
             });
     }
@@ -3460,6 +3434,463 @@
 
 <!--Tab Product Detail End-->
 
+<!--Tab Profile-->
+
+<!--CSS Profile-->
+<style>
+    .avatar-wrapper {
+        width: 120px; /* tuỳ chỉnh */
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin: auto;
+    }
+
+    .avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .edit-avatar-btn {
+        bottom: 8px;
+        right: 8px;
+        border-radius: 50%;
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+
+    .edit-avatar-btn, .edit-cover-btn {
+        border-radius: 50%;
+        padding: 5px 7px;
+    }
+
+    /* 🔹 Nút Hủy */
+    #cancel-edit {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #ced4da;
+        transition: all 0.2s ease-in-out;
+    }
+
+    #cancel-edit:hover {
+        background-color: #e2e6ea;
+        color: #495057;
+        border-color: #adb5bd;
+    }
+
+    /* 🔹 Nút Lưu */
+    #save-edit {
+        background-color: #198754;
+        color: #fff;
+        border: none;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+
+    #save-edit:hover {
+        background-color: #157347;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    #save-edit:active {
+        transform: scale(0.98);
+    }
+
+    /* 🔸 Responsive spacing nếu cần */
+    .profile-tab .btn {
+        min-width: 110px;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+    }
+</style>
+
+<!--CRUD profile-->
+<!-- Modal đổi mật khẩu -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="changePasswordForm" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">Đổi mật khẩu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="currentPassword" class="form-label">Mật khẩu hiện tại</label>
+                    <input type="password" class="form-control" id="currentPassword" required minlength="6" />
+                </div>
+                <div class="mb-3">
+                    <label for="newPassword" class="form-label">Mật khẩu mới</label>
+                    <input type="password" class="form-control" id="newPassword" required minlength="6" />
+                </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới</label>
+                    <input type="password" class="form-control" id="confirmPassword" required minlength="6" />
+                </div>
+                <div id="passwordError" class="text-danger d-none"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Huỷ</button>
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const BASE_URL = "/AgriculturalWarehouseManagementApplication/api/seller/user";
+        const originalValues = {};
+        let isEditing = false;
+
+        function loadUserData() {
+            fetch(`${BASE_URL}/by-id/2`)
+                .then(res => res.json())
+                .then(data => {
+                    setField("userId", data.userId, true);
+                    setField("fullName", data.fullName);
+                    setField("gender", data.gender);
+                    setField("dob", data.dob);
+                    setField("phone", data.phone);
+                    setField("password", data.password);
+                    setField("username", data.username);
+
+                    document.querySelector(".createdAt").textContent = data.createdAt;
+                    document.querySelector(".email").textContent = data.email;
+                    document.querySelector(".account-email").textContent = data.email;
+
+                    document.querySelectorAll(".editable-row").forEach(row => {
+                        const key = row.dataset.key;
+                        originalValues[key] = row.querySelector(".field-value").textContent.trim();
+                    });
+
+                    // Disable buttons initially
+                    updateActionButtons();
+                })
+                .catch(err => {
+                    console.error("Lỗi khi lấy dữ liệu:", err);
+                    showAlert("Không thể tải thông tin người dùng!", "error");
+                });
+        }
+
+        function setField(key, value, readOnly = false) {
+            const row = document.querySelector(`.editable-row[data-key="${key}"]`);
+            if (!row) return;
+
+            const span = row.querySelector(".field-value");
+            const input = row.querySelector(".field-input");
+
+            if (key === "dob") {
+                span.textContent = value;
+                input.value = convertToInputDate(value);
+            } else if (key === "password") {
+                span.textContent = "*".repeat(value.length);
+                input.value = value;
+            } else {
+                span.textContent = value;
+                input.value = value;
+            }
+
+            if (readOnly) {
+                const btn = row.querySelector(".btn-edit");
+                if (btn) btn.disabled = true;
+            }
+        }
+
+        function toggleEdit(button) {
+            const row = button.closest(".editable-row");
+            const key = row.dataset.key;
+            const span = row.querySelector(".field-value");
+            const input = row.querySelector(".field-input");
+            const hint = row.querySelector(".field-hint");
+
+            const isViewing = !span.classList.contains("d-none");
+
+            if (isViewing) {
+                span.classList.add("d-none");
+                input.classList.remove("d-none");
+                if (hint) hint.classList.remove("d-none");
+                button.innerHTML = '<i class="bi bi-check-lg"></i>';
+                input.focus();
+
+                // Đã bắt đầu chỉnh sửa
+                isEditing = true;
+                updateActionButtons();
+            } else {
+                let value = input.value.trim();
+                if (input.tagName === "SELECT") {
+                    value = input.options[input.selectedIndex].text;
+                }
+
+                if (key === "dob") {
+                    span.textContent = convertToDisplayDate(value);
+                } else if (key === "password") {
+                    span.textContent = "*".repeat(value.length);
+                } else {
+                    span.textContent = value;
+                }
+
+                span.classList.remove("d-none");
+                input.classList.add("d-none");
+                if (hint) hint.classList.add("d-none");
+                button.innerHTML = '<i class="bi bi-pencil-square"></i>';
+            }
+        }
+
+        document.getElementById("cancel-edit").addEventListener("click", () => {
+            for (const key in originalValues) {
+                const row = document.querySelector(`.editable-row[data-key="${key}"]`);
+                const span = row.querySelector(".field-value");
+                const input = row.querySelector(".field-input");
+                const hint = row.querySelector(".field-hint");
+
+                span.classList.remove("d-none");
+                input.classList.add("d-none");
+                if (hint) hint.classList.add("d-none");
+
+                const value = originalValues[key];
+                input.value = (key === "dob") ? convertToInputDate(value) : value;
+                span.textContent = (key === "password") ? "*".repeat(value.length) : value;
+
+                const btn = row.querySelector(".btn-edit");
+                if (btn && !btn.disabled) btn.innerHTML = '<i class="bi bi-pencil-square"></i>';
+            }
+
+            isEditing = false;
+            updateActionButtons();
+            // showAlert("Đã huỷ chỉnh sửa!", "info");
+        });
+
+        document.getElementById("save-edit").addEventListener("click", () => {
+            const updatedData = {};
+            let isValid = true;
+            let errorMessage = "";
+
+            document.querySelectorAll(".editable-row").forEach(row => {
+                const key = row.dataset.key;
+                const input = row.querySelector(".field-input");
+                let value = input.value.trim();
+
+                if (input.tagName === "SELECT") {
+                    value = input.options[input.selectedIndex].text;
+                }
+
+                switch (key) {
+                    case "fullName":
+                        if (!value.match(/^[A-Za-zÀ-ỹ\s]+$/)) {
+                            isValid = false;
+                            errorMessage = "Họ và tên không hợp lệ.";
+                        }
+                        break;
+                    case "gender":
+                        if (!["Nam", "Nữ", "Khác"].includes(value)) {
+                            isValid = false;
+                            errorMessage = "Giới tính không hợp lệ.";
+                        }
+                        break;
+                    case "dob":
+                        if (!value) {
+                            isValid = false;
+                            errorMessage = "Ngày sinh không được để trống.";
+                        } else {
+                            const today = new Date();
+                            const dob = new Date(value);
+                            const age = today.getFullYear() - dob.getFullYear();
+                            if (dob > today) {
+                                isValid = false;
+                                errorMessage = "Ngày sinh không được lớn hơn ngày hiện tại.";
+                            } else if (age < 10 || age > 100) {
+                                isValid = false;
+                                errorMessage = "Tuổi phải từ 10 đến 100.";
+                            }
+                        }
+                        break;
+                    case "phone":
+                        if (!value.match(/^0\d{9}$/)) {
+                            isValid = false;
+                            errorMessage = "Số điện thoại không hợp lệ.";
+                        }
+                        break;
+                    case "username":
+                        if (value.length < 4 || /\s/.test(value)) {
+                            isValid = false;
+                            errorMessage = "Tên đăng nhập phải tối thiểu 4 ký tự và không có khoảng trắng.";
+                        }
+                        break;
+                    case "password":
+                        if (value.length < 6) {
+                            isValid = false;
+                            errorMessage = "Mật khẩu phải có ít nhất 6 ký tự.";
+                        }
+                        break;
+                }
+
+                if (!isValid) return;
+
+                updatedData[key] = (key === "dob") ? convertToDisplayDate(value) : value;
+            });
+
+            if (!isValid) {
+                showAlert(errorMessage, "error");
+                return;
+            }
+
+            fetch(BASE_URL, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedData)
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error("Lỗi khi lưu");
+                    return res.json();
+                })
+                .then(() => {
+                    showAlert("Lưu thay đổi thành công!", "success");
+                    isEditing = false;
+                    updateActionButtons();
+                    setTimeout(() => location.reload(), 1500);
+                })
+                .catch(err => {
+                    console.error(err);
+                    showAlert("Đã xảy ra lỗi khi lưu!", "error");
+                });
+        });
+
+        document.addEventListener("keypress", function (e) {
+            if (e.key === "Enter" && e.target.classList.contains("field-input")) {
+                const row = e.target.closest(".editable-row");
+                toggleEdit(row.querySelector(".btn-edit"));
+            }
+        });
+
+        document.addEventListener("click", function (e) {
+            const btn = e.target.closest(".btn-edit");
+            if (btn) toggleEdit(btn);
+        });
+
+        function convertToInputDate(str) {
+            const [d, m, y] = str.split("/");
+            return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+        }
+
+        function convertToDisplayDate(str) {
+            const [y, m, d] = str.split("-");
+            return `${d}/${m}/${y}`;
+        }
+
+        function updateActionButtons() {
+            const saveBtn = document.getElementById("save-edit");
+            const cancelBtn = document.getElementById("cancel-edit");
+
+            if (isEditing) {
+                saveBtn.removeAttribute("disabled");
+                cancelBtn.removeAttribute("disabled");
+                saveBtn.classList.remove("btn-outline-secondary");
+                saveBtn.classList.add("btn-primary");
+            } else {
+                saveBtn.setAttribute("disabled", true);
+                cancelBtn.setAttribute("disabled", true);
+                saveBtn.classList.remove("btn-primary");
+                saveBtn.classList.add("btn-outline-secondary");
+            }
+        }
+
+        function showAlert(message, type = 'success') {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: type,
+                title: message,
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                background: '#fefefe',
+                color: '#333'
+            });
+        }
+
+        const changePasswordModal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+        const changePasswordForm = document.getElementById('changePasswordForm');
+        const passwordErrorDiv = document.getElementById('passwordError');
+
+        document.getElementById('btnEditPassword').addEventListener('click', () => {
+            changePasswordForm.reset();
+            passwordErrorDiv.classList.add('d-none');
+            passwordErrorDiv.textContent = '';
+            changePasswordModal.show();
+        });
+
+        changePasswordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const userId = 2; // thay thành ID user thực tế
+            const currentPassword = document.getElementById('currentPassword').value.trim();
+            const newPassword = document.getElementById('newPassword').value.trim();
+            const confirmPassword = document.getElementById('confirmPassword').value.trim();
+
+            if (newPassword !== confirmPassword) {
+                passwordErrorDiv.textContent = "Mật khẩu mới và xác nhận không khớp.";
+                passwordErrorDiv.classList.remove('d-none');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                passwordErrorDiv.textContent = "Mật khẩu mới phải có ít nhất 6 ký tự.";
+                passwordErrorDiv.classList.remove('d-none');
+                return;
+            }
+
+            if (newPassword === currentPassword) {
+                passwordErrorDiv.textContent = "Mật khẩu mới không được trùng mật khẩu hiện tại.";
+                passwordErrorDiv.classList.remove('d-none');
+                return;
+            }
+
+
+            fetch('/AgriculturalWarehouseManagementApplication/api/seller/user/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: userId,
+                    currentPassword: currentPassword,
+                    newPassword: newPassword
+                })
+            })
+                .then(async res => {
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                        const errorMessage = data.error || 'Lỗi khi đổi mật khẩu';
+                        throw new Error(errorMessage);
+                    }
+
+                    // ✅ Hiển thị alert thành công
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đổi mật khẩu thành công!',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        willClose: () => {
+                            // ✅ Reload sau khi alert đóng
+                            location.reload();
+                        }
+                    });
+
+                    changePasswordModal.hide();
+                })
+                .catch(err => {
+                    passwordErrorDiv.textContent = err.message || "Lỗi không xác định.";
+                    passwordErrorDiv.classList.remove('d-none');
+                });
+
+        });
+
+        loadUserData();
+    });
+</script>
+<!--Tab Profile End-->
+
 
 <!-- Bg overlay Start -->
 <div class="bg-overlay"></div>
@@ -3497,11 +3928,6 @@
 <!-- script js -->
 <script th:src="@{/Frontend/assets/js/script.js}"></script>
 
-<!-- theme setting js -->
-<script th:src="@{/Frontend/assets/js/theme-setting.js}"></script>
-
-
-
 <!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 
@@ -3509,27 +3935,77 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- theme setting js -->
+<script th:src="@{/Frontend/assets/js/theme-setting.js}"></script>
+
 <!--Phân trang template-->
 <script>
-    $(document).ready(function () {
-        $('#orderTable').DataTable({
-            "language": {
-                "search": "Tìm kiếm:",
-                "lengthMenu": "Hiển thị _MENU_ dòng mỗi trang",
-                "zeroRecords": "Không tìm thấy kết quả nào",
-                "info": "Trang _PAGE_ / _PAGES_",
-                "infoEmpty": "Không có dữ liệu",
-                "infoFiltered": "(lọc từ _MAX_ dòng)",
-                "paginate": {
-                    "previous": "«",
-                    "next": "»"
-                }
-            },
-            "order": [], // Không sort mặc định
-            "pageLength": 5 // Mặc định 5 dòng/trang
+    document.addEventListener("DOMContentLoaded", function () {
+        const tabLinks = document.querySelectorAll('.user-nav-pills .nav-link');
+
+        // Lấy tab được lưu
+        const savedTabId = localStorage.getItem("activeSidebarTab");
+        const savedTab = savedTabId ? document.getElementById(savedTabId) : null;
+
+        // Xóa hết active khỏi tab + content trước khi Bootstrap xử lý
+        document.querySelectorAll('.user-nav-pills .nav-link, .tab-pane').forEach(el => {
+            el.classList.remove("active", "show");
+        });
+
+        // Nếu có tab lưu → bật nó, không thì bật dashboard mặc định
+        if (savedTab) {
+            const targetSelector = savedTab.getAttribute("data-bs-target");
+            const targetTab = document.querySelector(targetSelector);
+
+            savedTab.classList.add("active");
+            targetTab.classList.add("active", "show");
+
+            const tabTrigger = new bootstrap.Tab(savedTab);
+            tabTrigger.show();
+        } else {
+            // fallback nếu không có localStorage
+            const defaultTab = document.querySelector('.user-nav-pills .nav-link');
+            if (defaultTab) new bootstrap.Tab(defaultTab).show();
+        }
+
+        // Ghi lại khi chuyển tab
+        tabLinks.forEach(tab => {
+            tab.addEventListener("shown.bs.tab", function (e) {
+                localStorage.setItem("activeSidebarTab", e.target.getAttribute("id"));
+            });
         });
     });
 </script>
+
+
+<!--Reload giữ nguyên tab-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tabLinks = document.querySelectorAll('.user-nav-pills .nav-link');
+
+        // Khi người dùng click vào tab, lưu lại id tab
+        tabLinks.forEach(tab => {
+            tab.addEventListener("shown.bs.tab", function (e) {
+                const tabId = e.target.getAttribute("id"); // Ví dụ: "pills-product-tab"
+                localStorage.setItem("activeSidebarTab", tabId);
+            });
+        });
+
+        // Khi load lại trang, lấy id tab đã lưu và kích hoạt
+        const savedTabId = localStorage.getItem("activeSidebarTab");
+        if (savedTabId) {
+            const savedTab = document.getElementById(savedTabId);
+            if (savedTab) {
+                const tabTrigger = new bootstrap.Tab(savedTab);
+                tabTrigger.show();
+            }
+        }
+    });
+</script>
+
 </body>
 
 </html>

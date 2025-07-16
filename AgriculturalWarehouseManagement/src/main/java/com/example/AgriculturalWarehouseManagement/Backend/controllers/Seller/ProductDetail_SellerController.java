@@ -1,16 +1,16 @@
-package com.example.AgriculturalWarehouseManagement.Backend.controllers.Seller;
+package com.example.AgriculturalWarehouseManagement.Backend.controllers.seller;
 
 
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller.ProductDetailEditResponseDTO;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller.ProductDetailResponseDTO;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller.ProductDetail_SellerDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.ProductDetailEditResponseDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.ProductDetailResponseDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.ProductDetail_SellerDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.CategoryWeight;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductDetail;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductDetailStatus;
-import com.example.AgriculturalWarehouseManagement.Backend.repositorys.Seller.CategoryWeight_SellerRepository;
-import com.example.AgriculturalWarehouseManagement.Backend.repositorys.Seller.ProductDetail_SellerRepository;
-import com.example.AgriculturalWarehouseManagement.Backend.services.Seller.IProductDetail_SellerService;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller.CategoryWeight_SellerRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller.ProductDetail_SellerRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.services.seller.IProductDetail_SellerService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

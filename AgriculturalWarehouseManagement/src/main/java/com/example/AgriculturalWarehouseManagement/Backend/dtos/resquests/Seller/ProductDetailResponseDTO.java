@@ -1,4 +1,4 @@
-package com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller;
+package com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

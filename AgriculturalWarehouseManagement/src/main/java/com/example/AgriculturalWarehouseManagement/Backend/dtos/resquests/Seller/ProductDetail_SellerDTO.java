@@ -1,4 +1,4 @@
-package com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller;
+package com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

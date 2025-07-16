@@ -1,4 +1,4 @@
-package com.example.AgriculturalWarehouseManagement.Backend.repositorys.Seller;
+package com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller;
 
 import com.example.AgriculturalWarehouseManagement.Backend.models.Category;
 import com.example.AgriculturalWarehouseManagement.Backend.models.CategoryWeight;

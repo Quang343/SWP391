@@ -1,7 +1,7 @@
-package com.example.AgriculturalWarehouseManagement.Backend.controllers.Seller;
+package com.example.AgriculturalWarehouseManagement.Backend.controllers.seller;
 
 
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller.Product_SellerDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.Product_SellerDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductImageDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Category;

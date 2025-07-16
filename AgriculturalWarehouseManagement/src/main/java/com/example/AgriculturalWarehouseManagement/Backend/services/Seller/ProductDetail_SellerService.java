@@ -1,12 +1,12 @@
-package com.example.AgriculturalWarehouseManagement.Backend.services.Seller;
+package com.example.AgriculturalWarehouseManagement.Backend.services.seller;
 
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller.ProductDetailResponseDTO;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller.ProductDetail_SellerDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.ProductDetailResponseDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.ProductDetail_SellerDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.*;
 
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductRepository;
-import com.example.AgriculturalWarehouseManagement.Backend.repositorys.Seller.CategoryWeight_SellerRepository;
-import com.example.AgriculturalWarehouseManagement.Backend.repositorys.Seller.ProductDetail_SellerRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller.CategoryWeight_SellerRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller.ProductDetail_SellerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +46,7 @@ public class ProductDetail_SellerService implements IProductDetail_SellerService
 
         boolean existsDetail = productDetailRepository.existsByProductIDAndCategoryWeightID(product, weight);
         if (existsDetail) {
-            throw new RuntimeException("Đã tồn tại Product Detail với trọng lượng "
+            throw new RuntimeException("Đã tồn tại chi tiết sản phẩm với trọng lượng "
                     + formattedWeight + " " + dto.getUnit() + " cho sản phẩm này.");
         }
 
@@ -91,7 +91,7 @@ public class ProductDetail_SellerService implements IProductDetail_SellerService
                         ? String.valueOf(dto.getWeight().intValue())
                         : dto.getWeight().toString();
 
-                throw new RuntimeException("Đã tồn tại Product Detail khác với trọng lượng "
+                throw new RuntimeException("Đã tồn tại chi tiết sản phẩm khác với trọng lượng "
                         + formattedWeight + " " + dto.getUnit() + " cho sản phẩm này.");
             }
         }
@@ -127,7 +127,7 @@ public class ProductDetail_SellerService implements IProductDetail_SellerService
     @Override
     public ProductDetail findById(Long id) {
         return productDetailRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy ProductDetail"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy chi tiết sản phẩm"));
     }
 
     @Override

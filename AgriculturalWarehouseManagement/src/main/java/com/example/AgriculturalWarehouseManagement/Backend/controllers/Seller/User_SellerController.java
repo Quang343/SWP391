@@ -1,0 +1,55 @@
+package com.example.AgriculturalWarehouseManagement.Backend.controllers.seller;
+
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.ChangePasswordRequest;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.User_SellerDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.services.seller.User_SellerService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/seller/user")
+@RequiredArgsConstructor
+public class User_SellerController {
+
+    private final User_SellerService userService;
+
+    // 🔹 Lấy thông tin user theo username
+    @GetMapping("/{username}")
+    public ResponseEntity<User_SellerDTO> getUserProfile(@PathVariable String username) {
+        User_SellerDTO dto = userService.getUserByUsername(username);
+        return ResponseEntity.ok(dto);
+    }
+
+    // 🔹 Cập nhật thông tin user
+    @PutMapping
+    public ResponseEntity<User_SellerDTO> updateUserProfile(@RequestBody User_SellerDTO dto) {
+        User_SellerDTO updated = userService.updateUserProfile(dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    // 🔹 Tạm thời: Lấy thông tin user theo userId (do chưa có session)
+    @GetMapping("/by-id/{id}")
+    public ResponseEntity<User_SellerDTO> getUserProfileById(@PathVariable int id) {
+        return userService.getUserById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
+        try {
+            userService.changePassword(request.getUserId(), request.getCurrentPassword(), request.getNewPassword());
+            return ResponseEntity.ok().body(Map.of("message", "Đổi mật khẩu thành công"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("error", "Lỗi server"));
+        }
+    }
+
+
+}
+
