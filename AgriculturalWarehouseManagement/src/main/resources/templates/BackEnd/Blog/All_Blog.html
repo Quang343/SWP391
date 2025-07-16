@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" >
 
-<head th:replace="BackEnd/fragments/Admin/head::head"></head>
+<head th:replace="BackEnd/fragments/Blog/head::head"></head>
 <style>
     .col-stt {
         text-align: center !important;
@@ -22,6 +22,14 @@
         opacity: 0;
         transform: translateY(-10px);
     }
+    .pagination .page-item.active .page-link {
+        background-color: #19a877 !important;   /* xanh Fastkart */
+        border-color: #19a877 !important;
+        color: #fff !important;
+        font-weight: 600;
+        border-radius: 10px;
+    }
+
 </style>
 <body>
 <!-- tap on top start-->
@@ -33,13 +41,13 @@
 <!-- page-wrapper Start-->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
     <!-- Page Header Start-->
-    <div th:replace="BackEnd/fragments/Admin/header::header"></div>
+    <div th:replace="BackEnd/fragments/Blog/header::header"></div>
     <!-- Page Header Ends-->
 
     <!-- Page Body Start-->
     <div class="page-body-wrapper">
         <!-- Page Sidebar Start-->
-        <div th:replace="BackEnd/fragments/Admin/sidebar::sidebar"></div>
+        <div th:replace="BackEnd/fragments/Blog/sidebar::sidebar"></div>
         <!-- Page Sidebar Ends-->
 
         <!-- Container-fluid starts-->
@@ -73,7 +81,7 @@
                                                 <a href="javascript:void(0)">Export</a>
                                             </li>
                                             <li>
-                                                <a class="btn btn-solid" th:href="@{/admin/add_product}">Add Blog</a>
+                                                <a class="btn btn-solid" th:href="@{/admin/add_blog}">Add Blog</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -123,7 +131,7 @@
             </div>
             <!-- Container-fluid Ends-->
 
-            <div th:replace="BackEnd/fragments/Admin/footer::footer"></div>
+            <div th:replace="BackEnd/fragments/Blog/footer::footer"></div>
 
         </div>
     </div>
@@ -251,8 +259,8 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
     const CONTEXT_PATH = "/AgriculturalWarehouseManagementApplication";
-    const ADMIN_BLOG_API = `${CONTEXT_PATH}/api/admin-blog/page`;
-    const pageSize = 10;
+    const ADMIN_BLOG_API = `${CONTEXT_PATH}/api/admin/blog/page`;
+    const pageSize = 5;
 
     function loadAdminBlogPage(page = 1) {
         axios.get(`${ADMIN_BLOG_API}?page=${page}&size=${pageSize}`)
@@ -282,7 +290,6 @@
                 <td>${blog.content && blog.content.length > 40 ? blog.content.substring(0, 40) + '...' : blog.content || ''}</td>
                 <td>${blog.title || ""}</td>
                 <td><b><i>${blog.author || ""}</i></b></td>
-                <td>${blog.blogCategoryName || ""}</td>
                 <td><span style="font-weight:bold;color:${color}">${blog.status}</span></td>
                 <td>${formatDate(blog.createdAt)}</td>
                 <td>
@@ -297,28 +304,43 @@
 
     function renderPagination(currentPage, totalPages) {
         let html = '';
+
+        // Hiện PREVIOUS nếu không phải trang 1
         if (currentPage > 1) {
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(1);return false;" title="Trang đầu"><i class="fa-solid fa-angle-double-left"></i></a></li>`;
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage - 1});return false;" title="Trang trước"><i class="fa-solid fa-angle-left"></i></a></li>`;
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage - 1});return false;">PREVIOUS</a></li>`;
         }
-        let range = 2;
-        let start = Math.max(1, currentPage - range);
-        let end = Math.min(totalPages, currentPage + range);
-        if (start > 1) html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-        for (let i = start; i <= end; i++) {
-            if (i === currentPage) {
-                html += `<li class="page-item active"><a class="page-link" href="#" onclick="gotoPage(${i});return false;">${i}</a></li>`;
-            } else {
-                html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${i});return false;">${i}</a></li>`;
-            }
+
+        // Luôn hiện trang 1
+        html += `<li class="page-item${currentPage === 1 ? " active" : ""}"><a class="page-link" href="#" onclick="gotoPage(1);return false;">1</a></li>`;
+
+        // Nếu currentPage > 3, hiện ...
+        if (currentPage > 3) {
+            html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
         }
-        if (end < totalPages) html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+
+        // Hiện các trang trước/sau currentPage (nếu có)
+        for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+            html += `<li class="page-item${i === currentPage ? " active" : ""}"><a class="page-link" href="#" onclick="gotoPage(${i});return false;">${i}</a></li>`;
+        }
+
+        // Nếu currentPage < totalPages - 2, hiện ...
+        if (currentPage < totalPages - 2) {
+            html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+
+        // Luôn hiện trang cuối nếu > 1
+        if (totalPages > 1) {
+            html += `<li class="page-item${currentPage === totalPages ? " active" : ""}"><a class="page-link" href="#" onclick="gotoPage(${totalPages});return false;">${totalPages}</a></li>`;
+        }
+
+        // Hiện NEXT nếu không phải trang cuối
         if (currentPage < totalPages) {
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage + 1});return false;" title="Trang sau"><i class="fa-solid fa-angle-right"></i></a></li>`;
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${totalPages});return false;" title="Trang cuối"><i class="fa-solid fa-angle-double-right"></i></a></li>`;
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage + 1});return false;">NEXT</a></li>`;
         }
+
         document.getElementById("pagination").innerHTML = html;
     }
+
 
     function gotoPage(page) {
         loadAdminBlogPage(page);

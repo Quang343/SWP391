@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="BackEnd/fragments/Blog/head::head"></head>
+
+<body>
+<!-- tap on top start -->
+<div class="tap-top">
+    <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+
+<!-- page-wrapper start -->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <!-- Page Header Start-->
+    <div th:replace="BackEnd/fragments/Blog/header::header"></div>
+    <!-- Page Header Ends-->
+
+    <!-- Page Body start -->
+    <div class="page-body-wrapper">
+        <!-- Page Sidebar Start-->
+        <div th:replace="BackEnd/fragments/Blog/sidebar::sidebar"></div>
+        <!-- Page Sidebar Ends-->
+
+        <div class="page-body">
+
+            <!-- New Product Add Start -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-sm-8 m-auto">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="card-header-2">
+                                            <h5>Thông tin Blog</h5>
+                                        </div>
+
+                                        <form id="blogForm" class="theme-form theme-form-2 mega-form">
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="form-label-title col-sm-3 mb-0">Tiêu đề</label>
+                                                <div class="col-sm-9">
+                                                    <input class="form-control" name="title" id="title" type="text" required placeholder="Nhập tiêu đề blog">
+                                                </div>
+                                            </div>
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="col-sm-3 col-form-label form-label-title">Danh mục</label>
+                                                <div class="col-sm-9">
+                                                    <select class="form-control" id="category" name="category" required>
+                                                        <!-- Category sẽ load động từ API -->
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="col-sm-3 col-form-label form-label-title">Tác giả</label>
+                                                <div class="col-sm-9">
+                                                    <input class="form-control" type="text" name="author" id="author" placeholder="Tên tác giả">
+                                                </div>
+                                            </div>
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="form-label-title col-sm-3 mb-0">Trạng thái</label>
+                                                <div class="col-sm-9">
+                                                    <select class="form-control" name="status" id="input-status" required>
+                                                        <!-- Status sẽ load động từ API -->
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="col-sm-3 col-form-label form-label-title">Ảnh </label>
+                                                <div class="col-sm-9">
+                                                    <input class="form-control" type="file" name="thumbnail" id="thumbnail">
+                                                </div>
+                                            </div>
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="form-label-title col-sm-3 mb-0">Nội dung</label>
+                                                <div class="col-sm-9">
+                                                    <textarea class="form-control" name="content" id="content" rows="6" required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-content-end">
+                                                <button type="submit" class="btn btn-success">Thêm Blog</button>
+                                                <a href="/admin/blog" class="btn btn-outline-secondary ms-2">Hủy</a>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- New Blog Add End -->
+
+            <!-- footer Start -->
+            <div class="container-fluid" th:replace="BackEnd/fragments/Blog/footer::footer">
+
+            </div>
+            <!-- footer En -->
+        </div>
+        <!-- Container-fluid End -->
+    </div>
+    <!-- Page Body End -->
+</div>
+<!-- page-wrapper End -->
+
+<!-- Modal Start -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                <p>Are you sure you want to log out?</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="button-box">
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                    <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal End -->
+
+<!-- latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- Bootstrap js -->
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+
+<!-- feather icon js -->
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+
+<!-- scrollbar simplebar js -->
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+
+<!-- Sidebar js -->
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+
+<!-- customizer js -->
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+
+<!-- Plugins js -->
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+
+<!-- Data table js -->
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+
+<!-- sidebar effect -->
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+
+<!-- Theme js -->
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    const CONTEXT_PATH = '/AgriculturalWarehouseManagementApplication';
+    function loadBlogStatusList() {
+        axios.get(`${CONTEXT_PATH}/api/admin/blog/status-list`)
+            .then(res => {
+                const select = document.getElementById('input-status');
+                select.innerHTML = '';
+                res.data.forEach(st => {
+                    select.innerHTML += `<option value="${st.name}">${st.label || st.name}</option>`;
+                });
+            })
+            .catch(err => {
+                console.error("Lỗi load status:", err);
+            });
+    }
+    function loadBlogCategories() {
+        axios.get(`${CONTEXT_PATH}/api/admin/blog/category`)
+            .then(res => {
+                const select = document.getElementById('category');
+                select.innerHTML = '';
+                res.data.forEach(cate => {
+                    select.innerHTML += `<option value="${cate.blogCategoryID}">${cate.categoryName}</option>`;
+                });
+            })
+            .catch(err => {
+                console.error("Lỗi load danh mục:", err);
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        loadBlogStatusList();
+        loadBlogCategories(); // <--- Gọi hàm này! // ... Các init khác (ví dụ loadCategory...)
+    });
+
+    document.getElementById("blogForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        // Lấy dữ liệu từ form
+        const title = document.getElementById('title').value;
+        const author = document.getElementById('author').value;
+        const content = document.getElementById('content').value;
+        const categoryID = document.getElementById('category').value;
+        const statusSelect = document.getElementById('input-status');
+        const status = statusSelect ? statusSelect.value : "ACTIVE";
+        // Ảnh thì cần xử lý thêm nếu upload file
+
+        // Nếu không có trường trạng thái (vì là admin), gán mặc định ACTIVE
+        const data = {
+            title: title,
+            author: author,
+            content: content,
+            blogCategoryID: categoryID,
+            status: status || "ACTIVE"
+            // Thêm trường khác nếu có
+        };
+
+        axios.post(`${CONTEXT_PATH}/api/admin/blog/add_blog`, data)
+            .then(res => {
+                alert("Thêm blog thành công!");
+                window.location.href = "/admin/blog"; // Quay về trang list blog
+            })
+            .catch(err => {
+                alert("Lỗi thêm blog! " + (err?.response?.data?.message || ''));
+            });
+    });
+
+
+</script>
+</body>
+
+</html>

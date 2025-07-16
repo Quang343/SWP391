@@ -30,7 +30,8 @@ public class Blog {
     private Integer blogCategoryID;
 
 //    @ManyToOne(fetch = FetchType.LAZY) // Sửa bổ sung
-//    @JoinColumn(name = "blogcategoryid", referencedColumnName = "blogcategoryid")
+//    @JoinColumn(name = "blogcategoryid", referencedColumnName = "blogcategoryid"
+//            , insertable = false, updatable = false)
 //    private BlogCategory blogCategory;
 
 

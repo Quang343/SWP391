@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
+//@author: Đào Huy Hoàng
+
 @Controller
 public class BlogController {
 
@@ -124,35 +126,6 @@ public class BlogController {
         return "FrontEnd/Home/blog-grid";
     }
 
-    // CRUD
-
-//    @RequestMapping("/my-blog")
-//    public String myBlog(Model model) {
-//        // User user = userService.findByUsername("daohuyhoang507@gmail.com"); // hoặc username/email test
-//        User user = userService.findById(1L); // lấy user id = 1
-//        List<Blog> myBlogs = blogService.getBlogsByUser(user.getUserId());
-//        model.addAttribute("blogs", myBlogs);
-//        model.addAttribute("user", user);
-//        return "FrontEnd/Home/my-blog";
-//    }
-
-    // Tạm k dùng thymleaf
-//    @RequestMapping("/my-blog")
-//    public String myBlog(
-//            @RequestParam(defaultValue = "1") int page,
-//            @RequestParam(defaultValue = "3") int size,
-//            Model model) {
-//        User user = userService.findById(1L); // Lấy user tạm thời
-//        Page<Blog> blogPage = blogService.getBlogsByUserPage(user.getUserId(), page - 1, size); // page-1 cho PageRequest
-//
-//        int totalPages = blogPage.getTotalPages();
-//        model.addAttribute("blogs", blogPage.getContent());
-//        model.addAttribute("currentPage", page);
-//        model.addAttribute("totalPages", totalPages);
-//        model.addAttribute("user", user);
-//        return "FrontEnd/Home/my-blog";
-//    }
-
     @RequestMapping("/my-blog")
     public String myBlog() {
         Object sessionAccount = session.getAttribute("account");
@@ -162,57 +135,13 @@ public class BlogController {
         return "FrontEnd/Home/my-blog";
     }
 
-
-
-    // Lấy thông tin blog của user / Cách 1
-//    @RequestMapping("/my-blog")
-//    public String myBlog(Model model, Principal principal) {
-//        if (principal == null) {
-//            return "redirect:/login"; // Chưa login thì cho về login
-//        }
-//
-//        String username = principal.getName(); // Lấy username từ phiên đăng nhập
-//        User user = userService.findByUsername(username); // Lấy user từ DB
-//
-//        if (user == null) {
-//            return "FrontEnd/Home/error_404"; // Nếu user không tồn tại
-//        }
-//
-//        List<Blog> myBlogs = blogService.getBlogsByUser(user.getUserId()); // Lấy blog theo user
-//        model.addAttribute("blogs", myBlogs);
-//        model.addAttribute("user", user);
-//
-//        return "FrontEnd/Home/my-blog";
-//    }
-
-    // Cách 2: Giúp các chỗ khác không cần gọi lại findByUsername nữa. Tiện cho các request sau!
-//    @RequestMapping("/my-blog")
-//    public String myBlog(Model model, Principal principal, HttpSession session) {
-//        if (principal == null) {
-//            return "redirect:/login";
-//        }
-//
-//        // Kiểm tra trong session đã có user chưa, chưa có thì lấy từ DB và lưu lại
-//        User user = (User) session.getAttribute("user");
-//        if (user == null) {
-//            String username = principal.getName();
-//            user = userService.findByUsername(username);
-//            if (user == null) {
-//                return "FrontEnd/Home/error_404";
-//            }
-//            session.setAttribute("user", user); // Lưu vào session để lần sau dùng
-//        }
-//
-//        List<Blog> myBlogs = blogService.getBlogsByUser(user.getUserId());
-//        model.addAttribute("blogs", myBlogs);
-//        model.addAttribute("user", user);
-//
-//        return "FrontEnd/Home/my-blog";
-//    }
-
     @RequestMapping("/admin/blog")
     public String adminBlog() {
         System.out.println("Vào tới controller adminBlog");
         return "BackEnd/Blog/All_Blog";
+    }
+    @RequestMapping("/admin/add_blog")
+    public String adminAddBlog() {
+        return "BackEnd/Blog/Add_Blog";
     }
 }
