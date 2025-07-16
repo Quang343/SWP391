@@ -194,36 +194,61 @@
         loadBlogCategories(); // <--- Gọi hàm này! // ... Các init khác (ví dụ loadCategory...)
     });
 
-    document.getElementById("blogForm").addEventListener("submit", function (e) {
-        e.preventDefault();
 
-        // Lấy dữ liệu từ form
+    function addAdminBlogJS() {
         const title = document.getElementById('title').value;
-        const author = document.getElementById('author').value;
         const content = document.getElementById('content').value;
-        const categoryID = document.getElementById('category').value;
-        const statusSelect = document.getElementById('input-status');
-        const status = statusSelect ? statusSelect.value : "ACTIVE";
-        // Ảnh thì cần xử lý thêm nếu upload file
+        const author = document.getElementById('author').value;
+        const blogCategoryID = document.getElementById('category').value;
+        const status = document.getElementById('input-status').value;
+        const thumbnailFile = document.getElementById('thumbnail').files[0];
 
-        // Nếu không có trường trạng thái (vì là admin), gán mặc định ACTIVE
-        const data = {
-            title: title,
-            author: author,
-            content: content,
-            blogCategoryID: categoryID,
-            status: status || "ACTIVE"
-            // Thêm trường khác nếu có
-        };
+        // Nếu không chọn ảnh thì vẫn cho thêm blog (tuỳ yêu cầu), ở đây báo lỗi:
+        if (!thumbnailFile) {
+            alert("Vui lòng chọn ảnh thumbnail!");
+            return;
+        }
 
-        axios.post(`${CONTEXT_PATH}/api/admin/blog/add_blog`, data)
+        const formData = new FormData();
+        formData.append("file", thumbnailFile);
+
+        // 1. Upload ảnh thumbnail trước
+        axios.post(`${CONTEXT_PATH}/api/admin/blog/upload-thumbnail`, formData, {
+            headers: {'Content-Type': 'multipart/form-data'}
+        })
             .then(res => {
-                alert("Thêm blog thành công!");
-                window.location.href = "/admin/blog"; // Quay về trang list blog
+                const thumbnailName = res.data;
+
+                // 2. Tạo dữ liệu blog gửi lên backend
+                const blog = {
+                    title,
+                    content,
+                    blogCategoryID: parseInt(blogCategoryID),
+                    author,
+                    status,
+                    thumbnail: thumbnailName  // Trường này Controller đã nhận!
+                    // Không cần userID vì admin thêm
+                };
+
+                return axios.post(`${CONTEXT_PATH}/api/admin/blog/add_blog`, blog);
+            })
+            .then(res => {
+                alert("🎉 Thêm blog thành công!");
+                window.location.href = CONTEXT_PATH + "/admin/blog";
             })
             .catch(err => {
-                alert("Lỗi thêm blog! " + (err?.response?.data?.message || ''));
+                console.error("Chi tiết lỗi từ server:", err);
+                if (err.response && err.response.data) {
+                    alert("Lỗi khi thêm blog: " + JSON.stringify(err.response.data));
+                } else {
+                    alert("Lỗi không xác định khi thêm blog!");
+                }
             });
+    }
+
+    document.getElementById("blogForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        addAdminBlogJS();
     });
 
 
