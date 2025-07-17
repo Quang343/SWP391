@@ -18,7 +18,7 @@ public class BlogCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "blogcategoryid") // ✅ sửa tên cột ở đây
-    private Long blogCategoryId;
+    private Integer blogCategoryId;
 
     @Column(name = "categoryname")
     private String categoryName;

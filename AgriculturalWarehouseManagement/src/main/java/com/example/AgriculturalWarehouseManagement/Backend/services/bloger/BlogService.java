@@ -98,8 +98,13 @@ public class BlogService {
     }
 
     // Admin CRUD
+//    public Page<Blog> getAllBlogsPage(int page, int size) {
+//        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+//        return blogRepository.findAll(pageable);
+//    }
     public Page<Blog> getAllBlogsPage(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        // method này có @EntityGraph → fetch blogCategory đầy đủ
         return blogRepository.findAll(pageable);
     }
 

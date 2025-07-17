@@ -181,7 +181,8 @@
                 const select = document.getElementById('category');
                 select.innerHTML = '';
                 res.data.forEach(cate => {
-                    select.innerHTML += `<option value="${cate.blogCategoryID}">${cate.categoryName}</option>`;
+                    console.log(cate.blogCategoryId)
+                    select.innerHTML += `<option value="${cate.blogCategoryId}">${cate.categoryName}</option>`;
                 });
             })
             .catch(err => {
@@ -203,6 +204,7 @@
         const status = document.getElementById('input-status').value;
         const thumbnailFile = document.getElementById('thumbnail').files[0];
 
+        console.log("hee"+blogCategoryID)
         // Nếu không chọn ảnh thì vẫn cho thêm blog (tuỳ yêu cầu), ở đây báo lỗi:
         if (!thumbnailFile) {
             alert("Vui lòng chọn ảnh thumbnail!");
@@ -223,12 +225,13 @@
                 const blog = {
                     title,
                     content,
-                    blogCategoryID: parseInt(blogCategoryID),
+                    blogCategoryID : parseInt(blogCategoryID),
                     author,
                     status,
                     thumbnail: thumbnailName  // Trường này Controller đã nhận!
                     // Không cần userID vì admin thêm
                 };
+                console.log("Gửi lên BE: ", blog);
 
                 return axios.post(`${CONTEXT_PATH}/api/admin/blog/add_blog`, blog);
             })

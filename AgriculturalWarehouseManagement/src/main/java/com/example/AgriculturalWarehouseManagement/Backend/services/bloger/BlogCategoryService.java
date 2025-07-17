@@ -16,7 +16,7 @@ public class BlogCategoryService implements IBlogCategoryService {
     private final BlogCategoryRepository blogCategoryRepository;
 
     @Override
-    public BlogCategory findById(Long id) {
+    public BlogCategory findById(Integer id) {
         return blogCategoryRepository.findById(id).orElse(null);
     }
 

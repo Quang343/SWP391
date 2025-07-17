@@ -41,9 +41,7 @@ public class AdminBlogAPIController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size
     ) {
-        // Lấy tất cả các blog phân trang
         Page<Blog> blogPage = blogService.getAllBlogsPage(page - 1, size);
-
         List<AdminBlogDTO> blogDTOs = blogPage.getContent().stream().map(blog -> {
             AdminBlogDTO dto = new AdminBlogDTO();
             dto.setBlogID(blog.getBlogID());
@@ -55,15 +53,20 @@ public class AdminBlogAPIController {
             if (blog.getBlogDetail() != null) {
                 dto.setThumbnail(blog.getBlogDetail().getThumbnail());
             }
+            // CHUẨN: mapping tên & id category, nếu object null thì query thêm
             if (blog.getBlogCategory() != null) {
                 dto.setBlogCategoryName(blog.getBlogCategory().getCategoryName());
                 dto.setBlogCategoryID(blog.getBlogCategory().getBlogCategoryId());
+            } else if (blog.getBlogCategoryID() != null) {
+               // BlogCategory cate = blogCategoryService.findById(Long.valueOf(blog.getBlogCategoryID()));
+                BlogCategory cate = blogCategoryService.findById(blog.getBlogCategoryID());
+
+                dto.setBlogCategoryName(cate != null ? cate.getCategoryName() : "");
+                dto.setBlogCategoryID(cate != null ? cate.getBlogCategoryId() : null);
             }
             return dto;
         }).toList();
 
-
-        // Trả về response với dữ liệu blog
         Map<String, Object> result = new HashMap<>();
         result.put("blogs", blogDTOs);
         result.put("totalPages", blogPage.getTotalPages());
@@ -71,6 +74,8 @@ public class AdminBlogAPIController {
 
         return ResponseEntity.ok(result);
     }
+
+
 
     @GetMapping("/category")
     public ResponseEntity<?> getAllBlogCategories() {
@@ -122,21 +127,26 @@ public class AdminBlogAPIController {
         blog.setAuthor(dto.getAuthor());
         blog.setStatus(BlogStatus.valueOf(dto.getStatus()));
         blog.setCreatedAt(new java.util.Date());
-        blog.setBlogCategoryID(dto.getBlogCategoryID() != null ? dto.getBlogCategoryID().intValue() : null);
+
+        if (dto.getBlogCategoryID() != null) {
+            // Lấy object category và gán cả object + id
+            BlogCategory blogCategory = blogCategoryService.findById(dto.getBlogCategoryID());
+            blog.setBlogCategory(blogCategory);
+            blog.setBlogCategoryID(dto.getBlogCategoryID().intValue());
+        }
 
         // Nếu có thumbnail, tạo BlogDetail
         if (dto.getThumbnail() != null && !dto.getThumbnail().isEmpty()) {
-
             BlogDetail detail = new BlogDetail();
             detail.setThumbnail(dto.getThumbnail());
-            detail.setDetailContent("Nội dung chi tiết mặc định hoặc cho phép để rỗng nếu không bắt buộc"); // THÊM DÒNG NÀY
+            detail.setDetailContent("Nội dung chi tiết mặc định hoặc để rỗng");
             detail.setBlog(blog);
             blog.setBlogDetail(detail);
         }
 
         Blog savedBlog = blogService.save(blog);
 
-        // Trả về DTO nếu muốn
+        // Trả về DTO có đầy đủ category name/id
         AdminBlogDTO res = new AdminBlogDTO();
         res.setBlogID(savedBlog.getBlogID());
         res.setTitle(savedBlog.getTitle());
@@ -147,11 +157,13 @@ public class AdminBlogAPIController {
         if (savedBlog.getBlogDetail() != null) {
             res.setThumbnail(savedBlog.getBlogDetail().getThumbnail());
         }
-        res.setBlogCategoryID(savedBlog.getBlogCategoryID() != null ? savedBlog.getBlogCategoryID().longValue() : null);
-        // res.setBlogCategoryName... nếu cần
-
+        if (savedBlog.getBlogCategory() != null) {
+            res.setBlogCategoryName(savedBlog.getBlogCategory().getCategoryName());
+            res.setBlogCategoryID(savedBlog.getBlogCategory().getBlogCategoryId());
+        }
         return ResponseEntity.ok(res);
     }
+
 
 }
 
