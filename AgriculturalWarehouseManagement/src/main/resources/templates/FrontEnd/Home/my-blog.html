@@ -4,30 +4,36 @@
 <head th:replace="FrontEnd/fragments/head::head">
 
     <style>
+        /* Màu nền của các trang đã chọn */
         ul.custom-pagination li.page-item.active > a.page-link,
         ul.custom-pagination li.page-item.active > span.page-link {
-            background-color: #198754 !important;
+            background-color: #19a877 !important;   /* Màu xanh bạn muốn */
             color: #fff !important;
             border: none !important;
         }
 
-        ul.custom-pagination .page-link, ul.custom-pagination .page-link:focus {
-            color: #198754 !important;
+        /* Màu cho các nút phân trang chưa chọn */
+        ul.custom-pagination .page-link {
+            color: #198754 !important;  /* Màu chữ xanh đậm */
             border-radius: 6px !important;
             min-width: 38px;
             text-align: center;
             box-shadow: none !important;
         }
 
+        /* Màu khi hover lên nút phân trang */
         ul.custom-pagination .page-link:hover {
-            background-color: #e5f6ee !important;
+            background-color: #e5f6ee !important;  /* Màu nền sáng khi hover */
             color: #198754 !important;
         }
 
-        #input-status, #input-category {
-            appearance: auto !important;
-            -webkit-appearance: auto !important;
-            -moz-appearance: auto !important;
+        /* Thêm sự ưu tiên cho phân trang khi chọn */
+        .pagination .page-item.active .page-link {
+            background-color: #19a877 !important;   /* Màu xanh Fastkart */
+            border-color: #19a877 !important;
+            color: #fff !important;
+            font-weight: 600;
+            border-radius: 10px;
         }
 
     </style>
@@ -658,7 +664,8 @@
                     </div>
                     <div class="mb-3">
                         <label for="input-thumbnail" class="form-label">Ảnh Thumbnail</label>
-                        <input type="file" class="form-control" id="input-thumbnail" accept="image/*">
+                        <input type="file" class="form-control" id="input-thumbnail" accept="image/*" onchange="previewImage(event)">
+                        <img id="thumbnailPreview" style="max-width: 100%; margin-top: 10px; display: none;" alt="Preview Image"/>
                     </div>
                 </form>
             </div>
@@ -803,49 +810,43 @@
 
     function renderPagination(currentPage, totalPages) {
         let html = '';
-        // Nút về Đầu (<<)
+
+        // Hiện PREVIOUS nếu không phải trang 1
         if (currentPage > 1) {
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(1);return false;" title="Trang đầu"><i class="fa-solid fa-angle-double-left"></i></a></li>`;
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage - 1});return false;">PREVIOUS</a></li>`;
         }
-        // Nút về trước (<)
-        if (currentPage > 1) {
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage - 1});return false;" title="Trang trước"><i class="fa-solid fa-angle-left"></i></a></li>`;
-        }
-        // Tính sliding window
-        let range = 2;
-        let start = Math.max(1, currentPage - range);
-        let end = Math.min(totalPages, currentPage + range);
-        // ... trái nếu cần
-        if (start > 1) {
+
+        // Luôn hiện trang 1
+        html += `<li class="page-item${currentPage === 1 ? " active" : ""}"><a class="page-link" href="#" onclick="gotoPage(1);return false;">1</a></li>`;
+
+        // Nếu currentPage > 3, hiện ...
+        if (currentPage > 3) {
             html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
         }
-        // Các số trang
-        for (let i = start; i <= end; i++) {
-            if (i === currentPage) {
-                html += `<li class="page-item active">
-            <a class="page-link" href="#" style="background-color:#198754;color:#fff;border:none;" onclick="gotoPage(${i});return false;">${i}</a>
-        </li>`;
-            } else {
-                html += `<li class="page-item">
-            <a class="page-link" href="#" onclick="gotoPage(${i});return false;">${i}</a>
-        </li>`;
-            }
+
+        // Hiện các trang trước/sau currentPage (nếu có)
+        for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+            html += `<li class="page-item${i === currentPage ? " active" : ""}"><a class="page-link" href="#" onclick="gotoPage(${i});return false;">${i}</a></li>`;
         }
-        // ... phải nếu cần
-        if (end < totalPages) {
+
+        // Nếu currentPage < totalPages - 2, hiện ...
+        if (currentPage < totalPages - 2) {
             html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
         }
-        // Nút sau (>)
-        if (currentPage < totalPages) {
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage + 1});return false;" title="Trang sau"><i class="fa-solid fa-angle-right"></i></a></li>`;
+
+        // Luôn hiện trang cuối nếu > 1
+        if (totalPages > 1) {
+            html += `<li class="page-item${currentPage === totalPages ? " active" : ""}"><a class="page-link" href="#" onclick="gotoPage(${totalPages});return false;">${totalPages}</a></li>`;
         }
-        // Nút cuối (>>)
+
+        // Hiện NEXT nếu không phải trang cuối
         if (currentPage < totalPages) {
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${totalPages});return false;" title="Trang cuối"><i class="fa-solid fa-angle-double-right"></i></a></li>`;
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage + 1});return false;">NEXT</a></li>`;
         }
 
         document.getElementById("pagination").innerHTML = html;
     }
+
 
 
     function gotoPage(page) {
@@ -988,6 +989,26 @@
                 }
             });
     }
+
+    // Hàm để preview ảnh khi người dùng chọn file
+    function previewImage(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('thumbnailPreview');
+
+        // Kiểm tra nếu có file được chọn
+        if (file) {
+            const reader = new FileReader();  // Tạo đối tượng FileReader để đọc file
+
+            // Khi file được đọc xong
+            reader.onload = function() {
+                preview.src = reader.result;  // Đặt đường dẫn ảnh đã đọc vào src của img
+                preview.style.display = 'block';  // Hiển thị thẻ img
+            };
+
+            reader.readAsDataURL(file);  // Đọc file dưới dạng base64
+        }
+    }
+
 
     // Edit model
     let currentEditBlogId = null;

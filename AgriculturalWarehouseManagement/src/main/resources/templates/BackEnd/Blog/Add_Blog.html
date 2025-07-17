@@ -70,7 +70,10 @@
                                             <div class="mb-4 row align-items-center">
                                                 <label class="col-sm-3 col-form-label form-label-title">Ảnh </label>
                                                 <div class="col-sm-9">
-                                                    <input class="form-control" type="file" name="thumbnail" id="thumbnail">
+                                                    <input class="form-control" type="file" name="thumbnail" id="thumbnail" onchange="previewImage(event)">
+                                                    <!-- Thẻ hiển thị ảnh thumbnail đã chọn -->
+                                                    <img id="thumbnailPreview" src="#" alt="Preview Image"
+                                                         style="max-width: 100%; display: none; margin-top: 10px;" />
                                                 </div>
                                             </div>
                                             <div class="mb-4 row align-items-center">
@@ -253,6 +256,25 @@
         e.preventDefault();
         addAdminBlogJS();
     });
+
+    function previewImage(event) {
+        const file = event.target.files[0];  // Lấy file đã chọn
+        const preview = document.getElementById('thumbnailPreview');  // Thẻ img để hiển thị preview
+
+        // Kiểm tra nếu có file được chọn
+        if (file) {
+            const reader = new FileReader();  // Tạo đối tượng FileReader để đọc file
+
+            // Khi file được đọc xong
+            reader.onload = function() {
+                preview.src = reader.result;  // Đặt đường dẫn ảnh đã đọc vào src của img
+                preview.style.display = 'block';  // Hiển thị thẻ img
+            };
+
+            reader.readAsDataURL(file);  // Đọc file dưới dạng base64
+        }
+    }
+
 
 
 </script>
