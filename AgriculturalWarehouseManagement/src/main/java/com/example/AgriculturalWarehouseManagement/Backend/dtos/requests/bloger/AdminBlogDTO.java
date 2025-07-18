@@ -15,5 +15,4 @@ public class AdminBlogDTO {
     private String createdAt;
     private String thumbnail;
     private String blogCategoryName; // Thêm cho admin
-   // private Long blogCategoryID;  // Thêm cho admin nếu muốn
 }

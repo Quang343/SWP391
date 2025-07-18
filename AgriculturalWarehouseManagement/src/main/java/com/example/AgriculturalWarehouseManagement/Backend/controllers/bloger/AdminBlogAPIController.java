@@ -11,6 +11,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.services.bloger.BlogC
 import com.example.AgriculturalWarehouseManagement.Backend.services.bloger.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -164,6 +165,105 @@ public class AdminBlogAPIController {
         return ResponseEntity.ok(res);
     }
 
+    @PutMapping("/edit_blog/{id}")
+    public ResponseEntity<?> editBlog(@PathVariable Integer id, @RequestBody AdminBlogDTO dto) {
+        Blog blog = blogService.getBlogById(id);
+        if (blog == null) {
+            return ResponseEntity.badRequest().body("Blog không tồn tại");
+        }
+
+        // Cập nhật tiêu đề, nội dung, tác giả
+        blog.setTitle(dto.getTitle());
+        blog.setContent(dto.getContent());
+        blog.setAuthor(dto.getAuthor());
+
+        // Cập nhật trạng thái với kiểm tra lỗi
+        try {
+            blog.setStatus(BlogStatus.valueOf(dto.getStatus()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Trạng thái không hợp lệ");
+        }
+
+        // Cập nhật danh mục nếu có
+        if (dto.getBlogCategoryID() != null) {
+            BlogCategory blogCategory = blogCategoryService.findById(dto.getBlogCategoryID());
+            if (blogCategory != null) {
+                blog.setBlogCategory(blogCategory);
+            } else {
+                return ResponseEntity.badRequest().body("Danh mục không tồn tại");
+            }
+        }
+
+        // Cập nhật thumbnail nếu có
+        if (dto.getThumbnail() != null && !dto.getThumbnail().isEmpty()) {
+            if (blog.getBlogDetail() != null) {
+                blog.getBlogDetail().setThumbnail(dto.getThumbnail());
+            }
+        }
+
+        // Cập nhật thời gian sửa đổi
+        blog.setBlogDateUpdate(new Date());
+
+        // Lưu blog đã cập nhật
+        Blog updated = blogService.save(blog);
+
+        // Chuyển sang DTO trước khi trả về
+        AdminBlogDTO res = new AdminBlogDTO();
+        res.setBlogID(updated.getBlogID());
+        res.setTitle(updated.getTitle());
+        res.setContent(updated.getContent());
+        res.setStatus(updated.getStatus().toString());
+        res.setAuthor(updated.getAuthor());
+        res.setCreatedAt(updated.getCreatedAt() != null ? updated.getCreatedAt().toString() : null);
+        res.setBlogCategoryID(updated.getBlogCategoryID());
+        if (updated.getBlogDetail() != null) {
+            res.setThumbnail(updated.getBlogDetail().getThumbnail());
+        }
+
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<?> getBlogDetail(@PathVariable Integer id) {
+        Blog blog = blogService.getBlogById(id);
+        if (blog == null) return ResponseEntity.notFound().build();
+
+        // Chuyển đổi blog thành DTO
+        AdminBlogDTO dto = new AdminBlogDTO();
+        dto.setBlogID(blog.getBlogID());
+        dto.setTitle(blog.getTitle());
+        dto.setContent(blog.getContent());
+        dto.setStatus(blog.getStatus().toString());
+        dto.setAuthor(blog.getAuthor());
+        dto.setCreatedAt(blog.getCreatedAt() != null ? blog.getCreatedAt().toString() : null);
+
+        // Nếu có blogDetail thì thêm thumbnail vào DTO
+        if (blog.getBlogDetail() != null) {
+            dto.setThumbnail(blog.getBlogDetail().getThumbnail());
+        }
+
+        // Cũng có thể set blogCategoryID nếu cần thiết
+        dto.setBlogCategoryID(blog.getBlogCategoryID());
+
+        return ResponseEntity.ok(dto);
+    }
+
+    @PutMapping("/delete_blog/{id}")
+    public ResponseEntity<?> deleteBlog(@PathVariable Integer id) {
+        Blog blog = blogService.getBlogById(id);
+        if (blog == null) {
+            return ResponseEntity.badRequest().body("Blog không tồn tại");
+        }
+
+        // Chuyển trạng thái của blog thành DELETED
+        blog.setStatus(BlogStatus.DELETED);
+
+        // Cập nhật blog trong cơ sở dữ liệu
+        blog.setBlogDateUpdate(new Date());
+        blogService.save(blog);
+
+        return ResponseEntity.ok("Blog đã được chuyển sang trạng thái DELETED");
+    }
 
 }
 

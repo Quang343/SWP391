@@ -210,6 +210,58 @@
 </div>
 <!-- Delete Modal Box End -->
 
+<!-- Modal Edit Blog -->
+<div class="modal fade" id="editBlogModal" tabindex="-1" aria-labelledby="editBlogLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editBlogLabel">Chỉnh sửa Blog</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editBlogForm">
+                    <!-- Tiêu đề -->
+                    <div class="mb-3">
+                        <label for="edit-title" class="form-label">Tiêu đề</label>
+                        <input type="text" class="form-control" id="edit-title" required>
+                    </div>
+                    <!-- Nội dung -->
+                    <div class="mb-3">
+                        <label for="edit-content" class="form-label">Nội dung</label>
+                        <textarea class="form-control" id="edit-content" rows="3" required></textarea>
+                    </div>
+                    <!-- Danh mục -->
+                    <div class="mb-3">
+                        <label for="edit-category" class="form-label">Danh mục</label>
+                        <select class="form-control" id="edit-category" required></select>
+                    </div>
+                    <!-- Trạng thái -->
+                    <div class="mb-3">
+                        <label for="edit-status" class="form-label">Trạng thái</label>
+                        <select class="form-control" id="edit-status" required></select>
+                    </div>
+                    <!-- Tác giả -->
+                    <div class="mb-3">
+                        <label for="edit-author" class="form-label">Tác giả</label>
+                        <input type="text" class="form-control" id="edit-author" required>
+                    </div>
+                    <!-- Ảnh Thumbnail -->
+                    <div class="mb-3">
+                        <label for="edit-thumbnail" class="form-label">Ảnh Thumbnail</label>
+                        <input type="file" class="form-control" onchange="previewEditThumbnail(event)" id="edit-thumbnail" accept="image/*">
+                        <img id="edit-preview-thumbnail" style="max-width: 100px; margin-top: 5px;"/>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-success" onclick="saveEditBlog()">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!-- latest js -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
 
@@ -294,10 +346,11 @@
                  <td>${blog.blogCategoryName || ""}</td>  <!-- THÊM DÒNG NÀY -->
                 <td><span style="font-weight:bold;color:${color}">${blog.status}</span></td>
                 <td>${formatDate(blog.createdAt)}</td>
-                <td>
+               <td>
                     <a href="javascript:void(0)" onclick="openEditBlogModal(${blog.blogID})"><i data-feather="edit"></i></a>
                     <a href="javascript:void(0)" onclick="deleteBlog(${blog.blogID})"><i data-feather="trash-2"></i></a>
-                </td>
+               </td>
+
             </tr>
             `;
         });
@@ -370,6 +423,138 @@
     document.addEventListener('DOMContentLoaded', function () {
         loadAdminBlogPage(1);
     });
+
+    /// Model edit
+    let currentEditBlogId = null;
+
+    // Mở Modal Chỉnh sửa
+    function openEditBlogModal(blogID) {
+        currentEditBlogId = blogID;
+
+        // Lấy dữ liệu blog từ API
+        axios.get(`${CONTEXT_PATH}/api/admin/blog/detail/${blogID}`)
+            .then(res => {
+                const blog = res.data;
+                document.getElementById('edit-title').value = blog.title || '';
+                document.getElementById('edit-content').value = blog.content || '';
+                document.getElementById('edit-author').value = blog.author || '';
+
+                // Hiển thị ảnh thumbnail hiện tại
+                const thumb = blog.thumbnail || 'no-image.png';
+                document.getElementById('edit-preview-thumbnail').src = `${CONTEXT_PATH}/blog/${thumb}`;
+
+                // Load category & status
+                loadEditBlogCategories(blog.blogCategoryID || blog.blogCategoryId);
+                loadEditBlogStatusList(blog.status);
+
+                // Hiển thị modal
+                $('#editBlogModal').modal('show');
+            })
+            .catch(err => {
+                alert("Lỗi tải blog: " + JSON.stringify(err));
+            });
+    }
+
+
+    // Load danh mục và set giá trị hiện tại cho Edit
+    function loadEditBlogCategories(selectedValue) {
+        axios.get(`${CONTEXT_PATH}/api/admin/blog/category`)
+            .then(res => {
+                const select = document.getElementById('edit-category');
+                select.innerHTML = '';
+                res.data.forEach(cat => {
+                    select.innerHTML += `<option value="${cat.blogCategoryId}">${cat.categoryName}</option>`;
+                });
+                if (selectedValue) select.value = selectedValue;
+            });
+    }
+
+    // Load status và set giá trị hiện tại cho Edit
+    function loadEditBlogStatusList(selectedValue) {
+        axios.get(`${CONTEXT_PATH}/api/admin/blog/status-list`)
+            .then(res => {
+                const select = document.getElementById('edit-status');
+                select.innerHTML = '';
+                res.data.forEach(st => {
+                    select.innerHTML += `<option value="${st.name}">${st.name}</option>`;
+                });
+                if (selectedValue) select.value = selectedValue;
+            });
+    }
+
+    // Lưu thay đổi khi chỉnh sửa blog
+    function saveEditBlog() {
+        const title = document.getElementById('edit-title').value;
+        const content = document.getElementById('edit-content').value;
+        const author = document.getElementById('edit-author').value;
+        const blogCategoryID = document.getElementById('edit-category').value;
+        const status = document.getElementById('edit-status').value;
+        const thumbnailFile = document.getElementById('edit-thumbnail').files[0];
+
+        // Nếu có file ảnh mới, upload trước
+        function doUpdate(thumbnailName) {
+            const blog = {
+                title,
+                content,
+                author,
+                blogCategoryID: parseInt(blogCategoryID),
+                status,
+                blogDetail: {
+                    thumbnail: thumbnailName // Nếu có ảnh mới, dùng ảnh mới
+                }
+            };
+
+            // Gửi dữ liệu lên API để cập nhật blog
+          //  axios.put(`${CONTEXT_PATH}/api/admin/blog/${currentEditBlogId}`, blog)
+            axios.put(`${CONTEXT_PATH}/api/admin/blog/edit_blog/${currentEditBlogId}`, blog)
+
+                    .then(res => {
+                    console.log("Current Edit Blog ID:", currentEditBlogId);
+
+                    alert("🎉 Cập nhật blog thành công!");
+                    $('#editBlogModal').modal('hide');
+                    loadAdminBlogPage(1);  // Load lại dữ liệu blog
+                })
+                .catch(err => {
+                    alert("Lỗi cập nhật: " + JSON.stringify(err));
+                });
+        }
+
+        // Nếu chọn ảnh mới, upload ảnh trước khi cập nhật
+        if (thumbnailFile) {
+            const formData = new FormData();
+            formData.append("file", thumbnailFile);
+            axios.post(`${CONTEXT_PATH}/api/admin/blog/upload-thumbnail`, formData, {
+                headers: {'Content-Type': 'multipart/form-data'}
+            }).then(res => {
+                doUpdate(res.data); // Dùng tên ảnh mới
+            }).catch(err => {
+                alert("Lỗi upload ảnh: " + JSON.stringify(err));
+            });
+        } else {
+            // Không có ảnh mới, lấy ảnh hiện tại từ preview
+            const imgSrc = document.getElementById('edit-preview-thumbnail').src;
+            let thumbnailName = imgSrc.split('/blog/')[1] || '';  // Lấy tên file từ src
+            doUpdate(thumbnailName);  // Cập nhật với ảnh hiện tại
+        }
+    }
+    // model deleted
+    // Hàm gọi API để chuyển trạng thái blog về DELETED
+    function deleteBlog(blogID) {
+        if (confirm("Bạn có chắc chắn muốn xóa blog này?")) {
+            // Gửi PUT request tới API để chuyển trạng thái blog về DELETED
+            axios.put(`${CONTEXT_PATH}/api/admin/blog/delete_blog/${blogID}`)
+                .then(res => {
+                    alert(res.data);  // Hiển thị thông báo thành công
+                    loadAdminBlogPage(1);  // Tải lại trang danh sách blog
+                })
+                .catch(err => {
+                    console.error('Lỗi khi chuyển trạng thái blog:', err);
+                    alert("Lỗi khi xóa blog");
+                });
+        }
+    }
+
 </script>
 
 </body>

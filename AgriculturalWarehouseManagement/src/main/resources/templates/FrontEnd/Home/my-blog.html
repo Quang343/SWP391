@@ -4,6 +4,53 @@
 <head th:replace="FrontEnd/fragments/head::head">
 
     <style>
+
+        /* Căn giữa ảnh trong container */
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            object-fit: contain; /* Hoặc 'cover' nếu bạn muốn ảnh phủ toàn bộ container */
+            max-width: 100%; /* Đảm bảo ảnh đáp ứng và không vượt quá chiều rộng của container */
+            height: auto; /* Giữ tỷ lệ ảnh khi thay đổi kích thước */
+        }
+
+        /* Căn giữa tất cả các phần tử trong profile box */
+        .profile-box {
+            display: flex;
+            justify-content: center; /* Căn giữa theo chiều ngang */
+            align-items: center; /* Căn giữa theo chiều dọc */
+            padding: 0;
+            margin: 0;
+            height: 100%; /* Đảm bảo chiều cao của box là 100% */
+        }
+
+        /* Mẫu cho background của ảnh */
+        .cover-image {
+            width: 100%; /* Đảm bảo ảnh cover chiếm toàn bộ chiều rộng */
+            height: 200px; /* Tùy chỉnh chiều cao của ảnh cover */
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Kiểm tra và sửa layout cho các phần tử trong profile */
+        .profile-contain {
+            text-align: center; /* Căn giữa văn bản */
+        }
+
+        /* Nếu bạn muốn thêm padding hoặc margin cho các phần tử trong profile */
+        .profile-name {
+            margin-top: 10px;
+        }
+
+        .cover-icon input[type="file"] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
         /* Màu nền của các trang đã chọn */
         ul.custom-pagination li.page-item.active > a.page-link,
         ul.custom-pagination li.page-item.active > span.page-link {
@@ -135,22 +182,59 @@
                     </div>
                     <div class="profile-box">
                         <div class="cover-image">
-                            <img th:src="@{/assets/images/inner-page/cover-img.jpg}" class="img-fluid blur-up lazyload"
+                            <img th:src="@{FrontEnd/assets/images/inner-page/cover-img.jpg}"
+                                 class="img-fluid blur-up lazyload"
                                  alt="">
                         </div>
 
+                        <div></div> <br>
+
                         <div class="profile-contain">
-                            <div class="profile-image">
+                            <form th:action="@{/profileUserEdit/image}"
+                                  method="post"
+                                  enctype="multipart/form-data"
+                                  class="profile-image">
                                 <div class="position-relative">
-                                    <img th:src="@{/assets/images/vendor-page/logo.png}"
-                                         class="blur-up lazyload update_img" alt="">
+                                    <img th:src="${session.account.getImageUrl}"
+                                         class="blur-up lazyload update_img" alt="more image"
+                                         accept=".jpg,.jpeg,.png,.gif,.webp,image/*">
+                                    <!--                                    th:if="${session.account.getImageUrl != null && session.account.getImageUrl !=''}"-->
+                                    <div class="cover-icon">
+                                        <i class="fa-solid fa-pen">
+                                            <input type="file" name="image" onchange="readURL(this,0)"
+                                                   accept=".jpg,.jpeg,.png,.gif,.webp,image/*">
+                                        </i>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-outline-primary btn-sm glow-btn">Lưu</button>
                                 </div>
-                            </div>
+                            </form>
 
                             <div class="profile-name">
-                                <h3>Đào Huy Hoàng</h3>
-                                <h6 class="text-content">daohuyhoang507@gmail.com</h6>
+                                <h3 th:text="${session.account.getUserName}">Your username</h3>
+                                <h6 class="text-content" th:text="${session.account.getEmail}">Your email</h6>
                             </div>
+
+                            <div class="alert alert-danger shake-10s"
+                                 th:if="${errorUpdateImage != null}"
+                                 th:text="${errorUpdateImage}">
+                            </div>
+
+                            <div class="alert alert-danger shake-10s"
+                                 th:if="${errorUpdateProfile != null}"
+                                 th:text="${errorUpdateProfile}">
+                            </div>
+
+                            <div class="alert alert-danger shake-10s"
+                                 th:if="${errorChangePassword != null}"
+                                 th:text="${errorChangePassword}">
+                            </div>
+
+                            <div class="alert alert-success shake-10s"
+                                 th:if="${successChangePassword != null}"
+                                 th:text="${successChangePassword}">
+                            </div>
+
                         </div>
                     </div>
 
