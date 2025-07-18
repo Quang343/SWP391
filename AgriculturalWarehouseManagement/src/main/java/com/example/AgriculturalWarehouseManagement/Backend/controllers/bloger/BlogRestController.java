@@ -210,4 +210,19 @@ public class BlogRestController {
         blogService.deleteById(id);
         return ResponseEntity.ok("Xoá thành công");
     }
+
+//    @GetMapping("/total-blogs")
+//    public ResponseEntity<?> getTotalBlogsByUser() {
+//        Object user = session.getAttribute("account");
+//        if (user == null) {
+//            return ResponseEntity.ok("You are not logged in");
+//        }
+//
+//        UserResponse accountId = (UserResponse) user;
+//
+//        // Lấy tổng số blog của người dùng với trạng thái ACTIVE
+//        Long totalActiveBlogs = blogService.countBlogsByUser(accountId.getUserID(), BlogStatus.ACTIVE);
+//
+//        return ResponseEntity.ok(totalActiveBlogs);
+//    }
 }

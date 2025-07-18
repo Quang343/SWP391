@@ -68,4 +68,21 @@ public interface BlogRepository extends JpaRepository<Blog, Integer> {
     @EntityGraph(attributePaths = "blogCategory")
     Page<Blog> findAll(Pageable pageable);
 
+//    // Đếm số lượng blog của một user với trạng thái ACTIVE
+//    @Query("SELECT COUNT(b) FROM Blog b WHERE b.userID = :userId AND b.status = :status")
+//    Long countBlogsByUserAndStatus(@Param("userId") Long userId, @Param("status") BlogStatus status);
+//
+//    // Đếm số lượng blog của một user, không phân biệt trạng thái
+//    @Query("SELECT COUNT(b) FROM Blog b WHERE b.userID = :userId")
+//    Long countBlogsByUser(@Param("userId") Long userId);
+
+//    // Đếm số lượng blog của một user với trạng thái ACTIVE
+//    @Query("SELECT COUNT(b) FROM Blog b WHERE b.userId = :userId AND b.status = :status")
+//    Long countBlogsByUserAndStatus(@Param("userId") int userId, @Param("status") BlogStatus status);
+//
+//    // Đếm số lượng blog của một user, không phân biệt trạng thái
+//    @Query("SELECT COUNT(b) FROM Blog b WHERE b.userId = :userId")
+//    Long countBlogsByUser(@Param("userId") int userId);
+
+
 }
