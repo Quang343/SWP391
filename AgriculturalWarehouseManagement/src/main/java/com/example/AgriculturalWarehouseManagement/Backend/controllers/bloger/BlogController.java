@@ -1,28 +1,100 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.bloger;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Blog;
+import com.example.AgriculturalWarehouseManagement.Backend.models.CommentBlog;
+import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.services.bloger.BlogService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.bloger.CommentBlogService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.bloger.UserServiceBlog;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 //@author: Đào Huy Hoàng
 
 @Controller
+@RequiredArgsConstructor
 public class BlogController {
 
-    @Autowired
-    private BlogService blogService;
+    private final BlogService blogService;
+    private final CommentBlogService commentBlogService;
+    private final UserServiceBlog userServiceBlog; // Cap nhat them
+    private final HttpSession session;
 
-    @Autowired
-    private jakarta.servlet.http.HttpSession session;
+    @RequestMapping("/blog-detail")
+    public String blogdetail(@RequestParam(value = "id", required = false) Integer id, Model model) {
 
+        if (id == null) {
+            return "redirect:/blog-list";
+        }
+
+        Blog blog = blogService.getBlogById(id);
+
+        if (blog == null || id <= 0) {
+            return "FrontEnd/Home/error_404";
+        }
+        model.addAttribute("blog", blog);
+
+        // Recent posts
+        model.addAttribute("recentBlogs", blogService.getRecentBlogs(4));
+
+        // Load Comments
+        model.addAttribute("comments", commentBlogService.getCommentsByBlogId(id));
+
+        return "FrontEnd/Home/blog-detail";
+    }
+
+    @PostMapping("/blog-detail/comment")
+    public String postComment(@RequestParam("blogId") Integer blogId,
+                              @RequestParam("commentText") String commentText,
+                              HttpSession session,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            Object sessionAccount = session.getAttribute("account");
+
+            if (sessionAccount instanceof UserResponse userResponse) {
+                User user = userServiceBlog.findById(userResponse.getUserID());
+
+                if (user == null) {
+                    redirectAttributes.addFlashAttribute("error", "Không tìm thấy người dùng.");
+                    return "redirect:/login";
+                }
+
+                Blog blog = blogService.getBlogById(blogId);
+                if (blog == null) {
+                    redirectAttributes.addFlashAttribute("error", "Không tìm thấy blog.");
+                    return "redirect:/blog-list";
+                }
+
+                CommentBlog comment = CommentBlog.builder()
+                        .blog(blog)
+                        .user(user)
+                        .commentText(commentText)
+                        .status("Active")
+                        .build();
+
+                commentBlogService.save(comment);
+                return "redirect:/blog-detail?id=" + blogId;
+            }
+
+            redirectAttributes.addFlashAttribute("error", "Bạn cần đăng nhập để bình luận.");
+            return "redirect:/login";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi khi đăng bình luận: " + e.getMessage());
+            return "redirect:/blog-detail?id=" + blogId;
+        }
+    }
 
     @RequestMapping("/blog-list")
     public String bloglist(
@@ -66,32 +138,6 @@ public class BlogController {
 
         return "FrontEnd/Home/blog-list";
     }
-
-
-    @RequestMapping("/blog-detail")
-    public String blogdetail(@RequestParam(value = "id", required = false) Integer id, Model model) {
-
-        if (id == null) {
-            return "redirect:/blog-list";
-        }
-
-        Blog blog = blogService.getBlogById(id);
-
-        if (blog == null || id <= 0) {
-            return "FrontEnd/Home/error_404";
-        }
-        model.addAttribute("blog", blog);
-
-        // Lấy 4 bài viết mới nhất cho sidebar/recent posts
-        model.addAttribute("recentBlogs", blogService.getRecentBlogs(4));
-
-        // (Có thể lấy thêm comment nếu muốn)
-        // List<CommentBlog> comments = commentBlogService.getByBlogId(id);
-        // model.addAttribute("comments", comments);
-
-        return "FrontEnd/Home/blog-detail"; // Đường dẫn file html đúng với cấu trúc project
-    }
-
 
     @RequestMapping("/blog-grid")
     public String bloggrid(
