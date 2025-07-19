@@ -265,6 +265,35 @@ public class AdminBlogAPIController {
         return ResponseEntity.ok("Blog đã được chuyển sang trạng thái DELETED");
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<?> searchBlogs(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        Page<Blog> blogPage = blogService.searchBlogs(keyword, page - 1, size);
+        List<AdminBlogDTO> blogDTOs = blogPage.getContent().stream().map(blog -> {
+            AdminBlogDTO dto = new AdminBlogDTO();
+            dto.setBlogID(blog.getBlogID());
+            dto.setTitle(blog.getTitle());
+            dto.setContent(blog.getContent());
+            dto.setStatus(blog.getStatus().toString());
+            dto.setAuthor(blog.getAuthor());
+            dto.setCreatedAt(blog.getCreatedAt() != null ? blog.getCreatedAt().toString() : null);
+            dto.setThumbnail(blog.getBlogDetail() != null ? blog.getBlogDetail().getThumbnail() : null);
+            dto.setBlogCategoryName(blog.getBlogCategory() != null ? blog.getBlogCategory().getCategoryName() : "");
+            return dto;
+        }).toList();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("blogs", blogDTOs);
+        result.put("totalPages", blogPage.getTotalPages());
+        result.put("currentPage", blogPage.getNumber() + 1);
+
+        return ResponseEntity.ok(result);
+    }
+
+
 }
 
 

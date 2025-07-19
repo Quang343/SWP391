@@ -88,7 +88,12 @@
 
                                 </div>
                                 <div class="search-box">
-                                    <label>Search:<input type="search" class="" placeholder="" aria-controls="table_id"></label>
+<!--                                    <label>Search:<input type="search" class="" placeholder="" aria-controls="table_id"></label>-->
+                                    <label>
+                                        Search:
+                                        <input type="search" class="" placeholder="Search by Author, Title, Content..."
+                                               aria-controls="table_id" id="searchInput" onkeyup="searchBlogs()" oninput="searchBlogs()">
+                                    </label>
                                 </div>
                                 <div>
                                     <div class="table-responsive dashboard-bg-box" style="overflow-x:auto; width:100%;">
@@ -554,6 +559,49 @@
                 });
         }
     }
+ /// =================== Search ===============
+
+    function searchBlogs() {
+        const keyword = document.getElementById("searchInput").value.toLowerCase();
+
+        axios.get(`${ADMIN_BLOG_API}?page=1&size=1000`)
+            .then(res => {
+                const data = res.data.blogs;
+                const filteredBlogs = data.filter(blog => {
+                    return (
+                        (blog.author && blog.author.toLowerCase().includes(keyword)) ||
+                        (blog.title && blog.title.toLowerCase().includes(keyword)) ||
+                        (blog.content && blog.content.toLowerCase().includes(keyword))
+                    );
+                });
+
+                renderAdminBlogs(filteredBlogs, 1, filteredBlogs.length || 1);
+
+                // Thông báo số bài viết tìm được
+                const resultMessage = filteredBlogs.length > 0
+                    ? `Có ${filteredBlogs.length} bài viết phù hợp với từ khóa "${keyword}"`
+                    : `Không tìm thấy kết quả phù hợp với từ khóa "${keyword}"`;
+
+                document.getElementById("pagination").innerHTML = `
+                <div style="padding: 8px; text-align: center; font-weight: 500; color: #333;">
+                    ${resultMessage}
+                </div>`;
+
+                // Nếu không có blog nào tìm được
+                if (filteredBlogs.length === 0) {
+                    document.getElementById("blogTableBody").innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align:center;color:red;font-weight:500;">
+                            Không tìm thấy kết quả phù hợp!
+                        </td>
+                    </tr>`;
+                }
+            })
+            .catch(err => {
+                console.error('Lỗi lấy dữ liệu:', err);
+            });
+    }
+
 
 </script>
 
