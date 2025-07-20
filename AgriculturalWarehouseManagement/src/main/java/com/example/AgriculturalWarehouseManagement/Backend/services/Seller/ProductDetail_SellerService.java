@@ -67,7 +67,7 @@ public class ProductDetail_SellerService implements IProductDetail_SellerService
         detail = productDetailRepository.save(detail);
 
         // ✅ Gán user (seller) → Bảng SoldBySeller
-        User seller = userRepository.findById(dto.getUserId().intValue())
+        User seller = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
 
         SoldBySeller link = new SoldBySeller();

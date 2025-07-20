@@ -5,8 +5,8 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductImageDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Category;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Gallery;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
-import com.example.AgriculturalWarehouseManagement.Backend.models.ProductImage;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductStatus;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.CategoryService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.ProductImageService;
@@ -127,12 +127,12 @@ public class Product_SellerController {
 
     @GetMapping("/api/seller/{id}/images")
     public ResponseEntity<?> getImagesByProduct(@PathVariable Long id) {
-        List<ProductImage> images = productImageService.findByProductId(id);
+        List<Gallery> images = productImageService.findByProductId(id);
 
         // Trả về danh sách DTO đơn giản chỉ gồm id và imageUrl
         List<Map<String, Object>> result = images.stream().map(img -> {
             Map<String, Object> map = new HashMap<>();
-            map.put("id", img.getId());
+            map.put("id", img.getGalleryId());
             map.put("imageUrl", img.getImageUrl());
             return map;
         }).toList();
@@ -151,9 +151,9 @@ public class Product_SellerController {
 
             String filename = storeFile(file); // giống hàm bạn đang dùng
             ProductImageDTO dto = ProductImageDTO.builder().imageUrl(filename).build();
-            ProductImage savedImage = productService.createProductImage(productId, dto);
+            Gallery savedImage = productService.createProductImage(productId, dto);
             Map<String, Object> response = new HashMap<>();
-            response.put("id", savedImage.getId());
+            response.put("id", savedImage.getGalleryId());
             response.put("imageUrl", savedImage.getImageUrl());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -163,7 +163,7 @@ public class Product_SellerController {
 
     @DeleteMapping("/api/seller/product/{productId}/images/{imageId}")
     public ResponseEntity<?> deleteImage(@PathVariable Long productId, @PathVariable Long imageId) throws IOException {
-        Optional<ProductImage> image = Optional.ofNullable(productImageService.findById(imageId));
+        Optional<Gallery> image = Optional.ofNullable(productImageService.findById(imageId));
         if (image.isEmpty() || !image.get().getProduct().getId().equals(productId)) {
             return ResponseEntity.notFound().build();
         }

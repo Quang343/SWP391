@@ -33,7 +33,7 @@ public class User_SellerController {
 
     // 🔹 Tạm thời: Lấy thông tin user theo userId (do chưa có session)
     @GetMapping("/by-id/{id}")
-    public ResponseEntity<User_SellerDTO> getUserProfileById(@PathVariable int id) {
+    public ResponseEntity<User_SellerDTO> getUserProfileById(@PathVariable Long id) {
         return userService.getUserById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -52,7 +52,7 @@ public class User_SellerController {
     }
 
     @PostMapping("/{userId}/avatar")
-    public ResponseEntity<?> uploadAvatar(@PathVariable int userId, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> uploadAvatar(@PathVariable Long userId, @RequestParam("file") MultipartFile file) {
         try {
             String avatarUrl = userService.saveAvatar(userId, file);
             return ResponseEntity.ok(Map.of("avatarUrl", avatarUrl));

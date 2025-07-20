@@ -4,8 +4,8 @@ package com.example.AgriculturalWarehouseManagement.Backend.services.admin;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductImageDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Category;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Gallery;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
-import com.example.AgriculturalWarehouseManagement.Backend.models.ProductImage;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductStatus;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.CategoryRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductImageRepository;
@@ -82,20 +82,20 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public ProductImage createProductImage(Long productId, ProductImageDTO productImageDTO) throws Exception {
+    public Gallery createProductImage(Long productId, ProductImageDTO productImageDTO) throws Exception {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new Exception
                         ("Product not found with id: " + productId));
-        ProductImage productImage = ProductImage.builder()
+        Gallery gallery = Gallery.builder()
                 .product(product)
                 .imageUrl(productImageDTO.getImageUrl())
                 .build();
         //không cho insert quá 5 ảnh cho 1 sản phẩm
         int size = productImageRepository.findAllByProduct(product).size();
-        if (size >= ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
-            throw new Exception("Number of images must be <= " + ProductImage.MAXIMUM_IMAGES_PER_PRODUCT);
+        if (size >= Gallery.MAXIMUM_IMAGES_PER_PRODUCT) {
+            throw new Exception("Number of images must be <= " + Gallery.MAXIMUM_IMAGES_PER_PRODUCT);
         }
-        return productImageRepository.save(productImage);
+        return productImageRepository.save(gallery);
     }
 
     //    chiến_seller

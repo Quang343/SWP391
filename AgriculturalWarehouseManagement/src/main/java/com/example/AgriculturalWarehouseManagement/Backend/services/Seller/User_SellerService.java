@@ -8,9 +8,9 @@ import java.util.Optional;
 public interface User_SellerService {
     User_SellerDTO getUserByUsername(String username);
     User_SellerDTO updateUserProfile(User_SellerDTO dto);
-    Optional<User_SellerDTO> getUserById(int userId);
-    void changePassword(int userId, String currentPassword, String newPassword);
-    String saveAvatar(int userId, MultipartFile file) throws Exception;
+    Optional<User_SellerDTO> getUserById(Long userId);
+    void changePassword(Long userId, String currentPassword, String newPassword);
+    String saveAvatar(Long userId, MultipartFile file) throws Exception;
 
 }
 

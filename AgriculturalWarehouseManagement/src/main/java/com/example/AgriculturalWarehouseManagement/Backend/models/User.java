@@ -18,14 +18,14 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userID")
-    private int userId;
+    private Long userId;
 
     @ManyToOne()
     @JoinColumn(name = "roleid")
     private Role role;
 
     @Column(name = "username", length = 100)
-    private String userName;
+    private String username;
 
     @Column(name = "fullname", length = 255)
     private String fullName;

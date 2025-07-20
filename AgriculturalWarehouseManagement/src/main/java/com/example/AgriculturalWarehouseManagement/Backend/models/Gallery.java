@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Gallery")
-public class ProductImage {
+@Table(name = "gallery")
+public class Gallery {
 
     public static final int MAXIMUM_IMAGES_PER_PRODUCT = 5;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "galleryid")
-    private Long id;
+    private int galleryId;
 
     @ManyToOne()
     @JoinColumn(name = "productid", nullable = false)

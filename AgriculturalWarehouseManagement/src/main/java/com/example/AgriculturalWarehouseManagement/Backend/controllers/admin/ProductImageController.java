@@ -2,8 +2,8 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.admin;
 
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductImageDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Gallery;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
-import com.example.AgriculturalWarehouseManagement.Backend.models.ProductImage;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,10 +39,10 @@ public class ProductImageController {
         try {
             Product existingProduct = productService.findById(id);
             files = (files == null) ? new ArrayList<>() : files;
-            if(files.size() > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT){
+            if(files.size() > Gallery.MAXIMUM_IMAGES_PER_PRODUCT){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Number of files not be exceeded 5");
             }
-            List<ProductImage> productImages = new ArrayList<>();
+            List<Gallery> galleries = new ArrayList<>();
             for(MultipartFile file : files) {
                 //kiểm tra kích thước file và định dạng
                 if (file.getSize() == 0) continue;
@@ -59,11 +59,11 @@ public class ProductImageController {
                 //luu vao doi tuong product trong db
                 ProductImageDTO productImageDTO = new ProductImageDTO();
                 productImageDTO.setImageUrl(fileName);
-                ProductImage productImage = productService.createProductImage
+                Gallery gallery = productService.createProductImage
                         (existingProduct.getId(), productImageDTO);
-                productImages.add(productImage);
+                galleries.add(gallery);
             }
-            return ResponseEntity.ok().body(productImages);
+            return ResponseEntity.ok().body(galleries);
         }
         catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

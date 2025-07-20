@@ -26,7 +26,7 @@ public class User_SellerServiceImpl implements User_SellerService {
 
     @Override
     public User_SellerDTO getUserByUsername(String username) {
-        User user = userRepository.findByUserName(username);
+        User user = userRepository.findByUsername(username);
         return mapToDTO(user);
     }
 
@@ -53,7 +53,7 @@ public class User_SellerServiceImpl implements User_SellerService {
         }
 
         user.setPhone(dto.getPhone());
-        user.setUserName(dto.getUsername()); // ✅ CẬP NHẬT USERNAME
+        user.setUsername(dto.getUsername()); // ✅ CẬP NHẬT USERNAME
         user.setPassword(dto.getPassword());
 
         userRepository.save(user);
@@ -69,21 +69,21 @@ public class User_SellerServiceImpl implements User_SellerService {
                 .createdAt(user.getCreatedAt() != null ? user.getCreatedAt().format(dateFormat) : "")
                 .email(user.getEmail())
                 .phone(user.getPhone())
-                .username(user.getUserName()) // map lại đúng username
+                .username(user.getUsername()) // map lại đúng username
                 .password(user.getPassword())
                 .image(user.getImage()) // 👈 Bổ sung dòng này
                 .build();
     }
 
     @Override
-    public Optional<User_SellerDTO> getUserById(int userId) {
+    public Optional<User_SellerDTO> getUserById(Long userId) {
         return userRepository.findById(userId)
                 .map(this::mapToDTO);
     }
 
 
     @Override
-    public void changePassword(int userId, String currentPassword, String newPassword) {
+    public void changePassword(Long userId, String currentPassword, String newPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng với ID: " + userId));
 
@@ -103,7 +103,7 @@ public class User_SellerServiceImpl implements User_SellerService {
     private String rootUploadDir;
 
     @Override
-    public String saveAvatar(int userId, MultipartFile file) throws Exception {
+    public String saveAvatar(Long userId, MultipartFile file) throws Exception {
         // Kiểm tra định dạng file
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         String extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();

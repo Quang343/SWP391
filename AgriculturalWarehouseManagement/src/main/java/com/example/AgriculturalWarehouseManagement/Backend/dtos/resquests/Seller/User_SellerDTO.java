@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User_SellerDTO {
-    private int userId;
+    private Long userId;
     private String fullName;
     private String gender;
     private String dob;

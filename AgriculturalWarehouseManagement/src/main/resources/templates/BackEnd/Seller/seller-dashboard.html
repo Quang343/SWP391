@@ -2087,10 +2087,10 @@
                         <label class="form-label-title col-sm-3 mb-0">Hình ảnh</label>
                         <div class="col-sm-9">
                             <div class="custom-upload-box">
-                                <label for="productImages" class="upload-label">
+                                <label for="galleries" class="upload-label">
                                     <i class="fa fa-upload me-2"></i>Chọn ảnh (tối đa 5)
                                 </label>
-                                <input type="file" id="productImages" class="form-control visually-hidden"
+                                <input type="file" id="galleries" class="form-control visually-hidden"
                                        accept="image/*" multiple>
                                 <p class="text-muted mt-2 mb-0" id="fileUploadNote">Chưa có tệp nào được chọn.</p>
                                 <div id="previewContainer" class="d-flex flex-wrap gap-2 mt-2"></div>
@@ -2448,7 +2448,7 @@
     let selectedFiles = [];
 
     document.addEventListener("DOMContentLoaded", () => {
-        const input = document.getElementById("productImages");
+        const input = document.getElementById("galleries");
         const note = document.getElementById("fileUploadNote");
         const previewContainer = document.getElementById("previewContainer");
         const modalEl = document.getElementById("addProductModal");
