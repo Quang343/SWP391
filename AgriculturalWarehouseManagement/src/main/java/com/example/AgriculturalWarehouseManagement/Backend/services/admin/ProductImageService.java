@@ -1,8 +1,8 @@
 package com.example.AgriculturalWarehouseManagement.Backend.services.admin;
 
 
+import com.example.AgriculturalWarehouseManagement.Backend.models.Gallery;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
-import com.example.AgriculturalWarehouseManagement.Backend.models.ProductImage;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,16 +15,16 @@ public class ProductImageService implements  IProductImageService{
     private final ProductImageRepository productImageRepository;
 
     @Override
-    public List<ProductImage> findAllByProduct(Product product) {
+    public List<Gallery> findAllByProduct(Product product) {
         return productImageRepository.findAllByProduct(product);
     }
 
-    public List<ProductImage> findByProductId(Long productId) {
+    public List<Gallery> findByProductId(Long productId) {
         return productImageRepository.findByProductId(productId);
     }
 
     @Override
-    public List<ProductImage> findAll() {
+    public List<Gallery> findAll() {
         return productImageRepository.findAll();
     }
 
@@ -33,11 +33,11 @@ public class ProductImageService implements  IProductImageService{
         productImageRepository.deleteAllByProduct(product);
     }
 
-    public void deleteById(Long id){
+    public void deleteById(int id){
         productImageRepository.deleteById(id);
     }
 
-    public ProductImage findById(Long id){
+    public Gallery findById(int id){
         return productImageRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product image not found"));
     }

@@ -1,16 +1,15 @@
-package com.example.AgriculturalWarehouseManagement.Backend.controllers.Seller;
+package com.example.AgriculturalWarehouseManagement.Backend.controllers.seller;
 
 
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller.ProductDetailResponseDTO;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller.ProductDetail_SellerDTO;
-import com.example.AgriculturalWarehouseManagement.Backend.models.CategoryWeight;
-import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
-import com.example.AgriculturalWarehouseManagement.Backend.models.ProductDetail;
-import com.example.AgriculturalWarehouseManagement.Backend.models.ProductDetailStatus;
-import com.example.AgriculturalWarehouseManagement.Backend.repositorys.Seller.CategoryWeight_SellerRepository;
-import com.example.AgriculturalWarehouseManagement.Backend.repositorys.Seller.ProductDetail_SellerRepository;
-import com.example.AgriculturalWarehouseManagement.Backend.services.Seller.IProductDetail_SellerService;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.ProductDetailEditResponseDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.ProductDetailResponseDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.ProductDetail_SellerDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.models.*;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller.CategoryWeight_SellerRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller.ProductDetail_SellerRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller.SoldBySellerRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.product.ProductService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.seller.IProductDetail_SellerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,15 +45,21 @@ public class ProductDetail_SellerController {
     // ✅ Cập nhật
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ProductDetail_SellerDTO dto) {
-        ProductDetail updated = productDetailService.updateProductDetail(id, dto);
-        return ResponseEntity.ok(updated);
+        try {
+            ProductDetail updated = productDetailService.updateProductDetail(id, dto);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body(
+                    java.util.Map.of("message", ex.getMessage())
+            );
+        }
     }
 
     // ✅ Xóa mềm
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         boolean deleted = productDetailService.deleteProductDetail(id);
-        return deleted ? ResponseEntity.ok("Đã ẩn product detail") : ResponseEntity.notFound().build();
+        return deleted ? ResponseEntity.ok("Đã ẩn chi tiết sản phẩm") : ResponseEntity.notFound().build();
     }
 
     // ✅ Lấy danh sách detail theo product
@@ -68,7 +73,18 @@ public class ProductDetail_SellerController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         ProductDetail detail = productDetailService.findById(id);
-        return ResponseEntity.ok(detail);
+
+        ProductDetailEditResponseDTO dto = ProductDetailEditResponseDTO.builder()
+                .id(detail.getProductDetailId())
+                .productName(detail.getProductID().getName())
+                .weight(detail.getCategoryWeightID().getWeight()) // ✅ đóng ngoặc ()
+                .unit(detail.getCategoryWeightID().getUnit())     // ✅ đóng ngoặc ()
+                .price(detail.getPrice())
+                .expiry(detail.getExpiry())
+                .status(detail.getStatus().name())
+                .build();
+
+        return ResponseEntity.ok(dto);
     }
 
     // ✅ Lấy danh sách status để load dropdown
@@ -97,21 +113,30 @@ public class ProductDetail_SellerController {
         List<ProductDetailResponseDTO> result = productDetailService.getProductDetailsByProductIdAsDTO(productId);
         return ResponseEntity.ok(result);
     }
+    private final SoldBySellerRepository soldBySellerRepository;
 
     @GetMapping("/all-dto")
     public ResponseEntity<?> getAllProductDetailsAsDTO() {
         List<ProductDetail> details = productDetail_SellerRepository.findAll();
-        List<ProductDetailResponseDTO> result = details.stream().map(detail -> ProductDetailResponseDTO.builder()
-                .id(detail.getProductDetailId())
-                .productName(detail.getProductID().getName())
-                .detailName(detail.getDetailName())
-                .price(detail.getPrice())
-                .expiry(detail.getExpiry())
-                .status(detail.getStatus().name())
-                .build()
-        ).collect(Collectors.toList());
+        List<ProductDetailResponseDTO> result = details.stream().map(detail -> {
+            // Gọi repository để lấy seller
+            List<SoldBySeller> sellers = soldBySellerRepository.findByProductDetail(detail);
+            String email = sellers.isEmpty() ? "N/A" : sellers.get(0).getUser().getEmail();
+
+            return ProductDetailResponseDTO.builder()
+                    .id(detail.getProductDetailId())
+                    .productName(detail.getProductID().getName())
+                    .detailName(detail.getDetailName())
+                    .price(detail.getPrice())
+                    .expiry(detail.getExpiry())
+                    .status(detail.getStatus().name())
+                    .sellerEmail(email)
+                    .build();
+        }).collect(Collectors.toList());
 
         return ResponseEntity.ok(result);
     }
+
+
 
 }

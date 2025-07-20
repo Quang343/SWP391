@@ -37,7 +37,7 @@ public class Product {
     private ProductStatus status;
 
     //    thanh
-    @OneToMany(mappedBy = "productID", fetch = FetchType.LAZY)
-    private List<ProductDetail> productDetails;
+//    @OneToMany(mappedBy = "productID", fetch = FetchType.LAZY)
+//    private List<ProductDetail> productDetails;
     //    thanh
 }

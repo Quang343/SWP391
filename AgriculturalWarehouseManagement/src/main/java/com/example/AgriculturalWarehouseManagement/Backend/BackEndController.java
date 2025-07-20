@@ -70,6 +70,10 @@ public class BackEndController {
     @RequestMapping("/warehouse/addadjustment")
     public String addadjustment() {return "BackEnd/WareHouse/addadjustment";}
 
+    @RequestMapping("/seller-dashboard")
+    public String sellerDashboard() {
+        return "BackEnd/Seller/seller-dashboard";
+    }
 
 }
 

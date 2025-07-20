@@ -1,12 +1,12 @@
-package com.example.AgriculturalWarehouseManagement.Backend.controllers.Seller;
+package com.example.AgriculturalWarehouseManagement.Backend.controllers.seller;
 
 
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller.Product_SellerDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.Product_SellerDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductImageDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Category;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
-import com.example.AgriculturalWarehouseManagement.Backend.models.ProductImage;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Gallery;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductStatus;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.CategoryService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.ProductImageService;
@@ -44,7 +44,7 @@ public class Product_SellerController {
         System.out.println("Received product creation request: " + productDTO);
 
         if (productService.existsByName(productDTO.getName())) {
-            return ResponseEntity.badRequest().body("Product name already exists");
+            return ResponseEntity.badRequest().body("Tên sản phẩm đã tồn tại");
         }
 
         try {
@@ -97,7 +97,7 @@ public class Product_SellerController {
     public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody ProductDTO dto) {
         Product product = productService.findById(id);
         if (product == null) {
-            return ResponseEntity.status(404).body("Product not found");
+            return ResponseEntity.status(404).body("Không tìm thấy sản phẩm");
         }
 
         // Cập nhật có điều kiện, chỉ cập nhật nếu field khác null
@@ -117,22 +117,22 @@ public class Product_SellerController {
                 ProductStatus status = ProductStatus.valueOf(dto.getStatus());
                 product.setStatus(status);
             } catch (IllegalArgumentException e) {
-                return ResponseEntity.badRequest().body("Invalid status");
+                return ResponseEntity.badRequest().body("Trạng thái không hợp lệ");
             }
         }
 
         productService.save(product); // lưu lại
-        return ResponseEntity.ok("Product updated successfully");
+        return ResponseEntity.ok("Sản phẩm đã được cập nhật thành công");
     }
 
     @GetMapping("/api/seller/{id}/images")
     public ResponseEntity<?> getImagesByProduct(@PathVariable Long id) {
-        List<ProductImage> images = productImageService.findByProductId(id);
+        List<Gallery> images = productImageService.findByProductId(id);
 
         // Trả về danh sách DTO đơn giản chỉ gồm id và imageUrl
         List<Map<String, Object>> result = images.stream().map(img -> {
             Map<String, Object> map = new HashMap<>();
-            map.put("id", img.getId());
+            map.put("id", img.getGalleryId());
             map.put("imageUrl", img.getImageUrl());
             return map;
         }).toList();
@@ -151,9 +151,9 @@ public class Product_SellerController {
 
             String filename = storeFile(file); // giống hàm bạn đang dùng
             ProductImageDTO dto = ProductImageDTO.builder().imageUrl(filename).build();
-            ProductImage savedImage = productService.createProductImage(productId, dto);
+            Gallery savedImage = productService.createProductImage(productId, dto);
             Map<String, Object> response = new HashMap<>();
-            response.put("id", savedImage.getId());
+            response.put("id", savedImage.getGalleryId());
             response.put("imageUrl", savedImage.getImageUrl());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -162,8 +162,8 @@ public class Product_SellerController {
     }
 
     @DeleteMapping("/api/seller/product/{productId}/images/{imageId}")
-    public ResponseEntity<?> deleteImage(@PathVariable Long productId, @PathVariable Long imageId) throws IOException {
-        Optional<ProductImage> image = Optional.ofNullable(productImageService.findById(imageId));
+    public ResponseEntity<?> deleteImage(@PathVariable Long productId, @PathVariable int imageId) throws IOException {
+        Optional<Gallery> image = Optional.ofNullable(productImageService.findById(imageId));
         if (image.isEmpty() || !image.get().getProduct().getId().equals(productId)) {
             return ResponseEntity.notFound().build();
         }
@@ -181,7 +181,7 @@ public class Product_SellerController {
     private String uploadDir;
     private String storeFile(MultipartFile file) throws IOException {
         if (file.getOriginalFilename() == null) {
-            throw new IOException("Empty file name");
+            throw new IOException("Tên tệp trống");
         }
 
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());

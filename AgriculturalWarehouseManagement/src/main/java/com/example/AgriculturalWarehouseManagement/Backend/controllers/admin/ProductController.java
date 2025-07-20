@@ -4,8 +4,8 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.admin;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductImageDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Category;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Gallery;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
-import com.example.AgriculturalWarehouseManagement.Backend.models.ProductImage;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductStatus;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.CategoryService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.ProductImageService;
@@ -27,7 +27,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -170,7 +169,7 @@ public class ProductController {
         config();
         ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
         List<String> statuses = getProductStatus();
-        List<ProductImage> images = productImageService.findAllByProduct(product);
+        List<Gallery> images = productImageService.findAllByProduct(product);
         model.addAttribute("images", images);
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("statuses", statuses);
@@ -304,9 +303,9 @@ public class ProductController {
     }
 
     private void deleteOldFiles(Product product){
-        List<ProductImage> images = productImageService.findAllByProduct(product);
-        for(ProductImage productImage : images){
-            String oldFileName = productImage.getImageUrl();
+        List<Gallery> images = productImageService.findAllByProduct(product);
+        for(Gallery gallery : images){
+            String oldFileName = gallery.getImageUrl();
             if(oldFileName != null && !oldFileName.isBlank()){
                 deleteFile(oldFileName);
             }

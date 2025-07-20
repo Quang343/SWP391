@@ -1,7 +1,7 @@
-package com.example.AgriculturalWarehouseManagement.Backend.services.Seller;
+package com.example.AgriculturalWarehouseManagement.Backend.services.seller;
 
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller.ProductDetailResponseDTO;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller.ProductDetail_SellerDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.ProductDetailResponseDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.ProductDetail_SellerDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductDetail;
 
 import java.util.List;

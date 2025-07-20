@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userid")
+    @Column(name = "userID")
     private Long userId;
 
     @ManyToOne()
@@ -66,18 +67,23 @@ public class User {
     @Column(name = "lasttimeupdatepass")
     private LocalDateTime lastTimeUpdatePass;
 
-//    @OneToOne(mappedBy = "user")
-//    private ForgotPassword forgotPassword;
+    @Column(name = "googleid", length = 255)
+    private String googleID;
+
+    @Column(name = "statusgg", length = 255)
+    private String statusGG;
 
     @PrePersist
-    protected void onCreate() {
+    protected void onCreate(){
         this.createdAt = LocalDateTime.now();
-        this.lastTimeUpdatePass = LocalDateTime.now();
     }
 
     @PreUpdate
-    protected void onUpdate() {
+    protected void onUpdate(){
         this.lastTimeUpdatePass = LocalDateTime.now();
     }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MyAddressBook> myAddressBooks;
 
 }

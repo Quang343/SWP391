@@ -1,4 +1,4 @@
-package com.example.AgriculturalWarehouseManagement.Backend.repositorys.Seller;
+package com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller;
 
 import com.example.AgriculturalWarehouseManagement.Backend.models.CategoryWeight;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
@@ -12,5 +12,8 @@ public interface ProductDetail_SellerRepository extends JpaRepository<ProductDet
     List<ProductDetail> findByProductID_Id(Long productId);
 
     boolean existsByProductIDAndCategoryWeightID(Product product, CategoryWeight weight);
+
+    boolean existsByProductIDAndCategoryWeightIDAndProductDetailIdNot(Product product, CategoryWeight weight, Long excludeId);
+
 }
 

@@ -1,4 +1,4 @@
-package com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.Seller;
+package com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDetail_SellerDTO {
+    private Long userId; // 🆕 ID của người bán đang tạo detail
+
     @NotNull(message = "Product ID không được để trống")
     private Long productId;
 

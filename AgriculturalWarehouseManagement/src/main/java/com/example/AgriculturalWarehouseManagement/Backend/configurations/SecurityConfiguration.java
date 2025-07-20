@@ -5,6 +5,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.services.CustomSucces
 import com.example.AgriculturalWarehouseManagement.Backend.services.CustomUserDetailsService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.user.UserService;
 import jakarta.servlet.DispatcherType;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -21,10 +22,10 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
 
-
+//
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
+//@EnableWebSecurity
+//@EnableMethodSecurity
 public class SecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -78,6 +79,12 @@ public class SecurityConfiguration {
     SecurityFilterChain filterChain(HttpSecurity http, UserService userService) throws Exception {
         http
 //                .csrf(AbstractHttpConfigurer::disable)
+//                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/seller/**")
+                        .ignoringRequestMatchers("/seller-dashboard")
+                        .ignoringRequestMatchers("/warehouse/**")
+                )
                 .authorizeHttpRequests(requests -> requests
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE).permitAll()
                         .requestMatchers(
@@ -90,6 +97,7 @@ public class SecurityConfiguration {
                                 "/css/**",
                                 "/js/**",
                                 "/images/**"
+
                         ).permitAll()
 //                        .requestMatchers("/forgotPassword/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")

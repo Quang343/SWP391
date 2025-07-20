@@ -2,11 +2,12 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.admin;
 
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductImageDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Gallery;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
-import com.example.AgriculturalWarehouseManagement.Backend.models.ProductImage;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.product.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -31,6 +33,9 @@ public class ProductImageController {
 
     private final ProductService productService;
 
+    @Value("${app.upload.product-dir}")
+    private String uploadDir;
+
     @PostMapping(value = "/uploads/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadImages(
             @Valid @PathVariable("id") Long id,
@@ -39,10 +44,10 @@ public class ProductImageController {
         try {
             Product existingProduct = productService.findById(id);
             files = (files == null) ? new ArrayList<>() : files;
-            if(files.size() > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT){
+            if(files.size() > Gallery.MAXIMUM_IMAGES_PER_PRODUCT){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Number of files not be exceeded 5");
             }
-            List<ProductImage> productImages = new ArrayList<>();
+            List<Gallery> galleries = new ArrayList<>();
             for(MultipartFile file : files) {
                 //kiểm tra kích thước file và định dạng
                 if (file.getSize() == 0) continue;
@@ -59,27 +64,16 @@ public class ProductImageController {
                 //luu vao doi tuong product trong db
                 ProductImageDTO productImageDTO = new ProductImageDTO();
                 productImageDTO.setImageUrl(fileName);
-                ProductImage productImage = productService.createProductImage
+                Gallery gallery = productService.createProductImage
                         (existingProduct.getId(), productImageDTO);
-                productImages.add(productImage);
+                galleries.add(gallery);
             }
-            return ResponseEntity.ok().body(productImages);
+            return ResponseEntity.ok().body(galleries);
         }
         catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-
-    /*
-    *
-    {
-    "name": "Ipad Pro",
-    "price": 815.34,
-    "url": "",
-    "description": "This is a test product",
-    "category_id": 1
-    }
-    * */
 
     //return name of file
     private String storeFile(MultipartFile file) throws IOException {
@@ -90,13 +84,12 @@ public class ProductImageController {
         //Thêm UUID vào trước để đảm bảo fileName là duy nhất
         String uniqueFileName = UUID.randomUUID().toString() + "." + fileName;
         //Đường dẫn đến thư mục mà bạn muốn lưu file
-        java.nio.file.Path uploadDir = Paths.get("uploads");
-        //Kiểm tra và tạo nếu thư mục chưa tồn tại
-        if(!Files.exists(uploadDir)){
-            Files.createDirectories(uploadDir);
+        Path uploadPath = Paths.get(uploadDir, "Admin");
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
         }
         //Đường dẫn đầy đủ đến file
-        java.nio.file.Path destination = Paths.get(uploadDir.toString(), uniqueFileName);
+        Path destination = uploadPath.resolve(uniqueFileName);
         //Sao chép file vào thư mục đích
         Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
         return uniqueFileName;

@@ -1,5 +1,6 @@
 package com.example.AgriculturalWarehouseManagement.Backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,7 @@ public class ProductDetail {
 
     @ManyToOne
     @JoinColumn(name = "productid", nullable = false)
+    @JsonIgnore
     private Product productID;
 
     @Column(name = "price")

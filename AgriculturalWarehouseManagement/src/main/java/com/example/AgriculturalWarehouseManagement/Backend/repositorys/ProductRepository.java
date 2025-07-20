@@ -18,21 +18,21 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     Page<Product> findByCategoryIdAndStatus(Long categoryId, ProductStatus status, Pageable pageable);
 
     //thanh
-    @Query("""
-    SELECT 
-        p.id AS productId,
-        p.name AS productName,
-        SUM(pb.importedQuantity - pb.soldQuantity) AS totalRemaining
-    FROM Product p
-    JOIN p.productDetails pd
-    JOIN pd.productBatches pb
-    GROUP BY p.id, p.name
-    """)
-    List<ProductStockProjection> getRemainingStockByProduct();
-
-    @Query("""
-    SELECT SUM(pb.importedQuantity - pb.soldQuantity)
-    FROM ProductBatch pb
-    """)
-    Integer getTotalRemainingAllProducts();
+//    @Query("""
+//    SELECT
+//        p.id AS productId,
+//        p.name AS productName,
+//        SUM(pb.importedQuantity - pb.soldQuantity) AS totalRemaining
+//    FROM Product p
+//    JOIN p.productDetails pd
+//    JOIN pd.productBatches pb
+//    GROUP BY p.id, p.name
+//    """)
+//    List<ProductStockProjection> getRemainingStockByProduct();
+//
+//    @Query("""
+//    SELECT SUM(pb.importedQuantity - pb.soldQuantity)
+//    FROM ProductBatch pb
+//    """)
+//    Integer getTotalRemainingAllProducts();
 }

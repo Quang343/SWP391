@@ -5,7 +5,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.services.admin.produ
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductImageDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
-import com.example.AgriculturalWarehouseManagement.Backend.models.ProductImage;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Gallery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,7 +19,7 @@ public interface IProductService {
     Product findById(Long id);
     boolean existsByName(String name);
 
-    ProductImage createProductImage(Long productId, ProductImageDTO productImageDTO) throws Exception;
+    Gallery createProductImage(Long productId, ProductImageDTO productImageDTO) throws Exception;
 
     Page<Product> findAll(Pageable pageable);
 }
