@@ -55,6 +55,11 @@ public class BlogController {
         // Load Comments
         model.addAttribute("comments", commentBlogService.getCommentsByBlogId(id));
 
+        // Trending Products
+        List<ProductDetailUserResponse> trendingProducts = productDetailUserService.getTrendingProducts();
+        model.addAttribute("trendingProducts", trendingProducts);
+
+
         return "FrontEnd/Home/blog-detail";
     }
 
@@ -104,7 +109,7 @@ public class BlogController {
     @RequestMapping("/blog-list")
     public String bloglist(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "3") int size,
+            @RequestParam(defaultValue = "6") int size,
             @RequestParam(required = false) String keyword,
             Model model) {
 
@@ -151,7 +156,7 @@ public class BlogController {
     @RequestMapping("/blog-grid")
     public String bloggrid(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "3") int size,
+            @RequestParam(defaultValue = "6") int size,
             Model model) {
 
         if (page < 1) page = 1; // Nếu user nhập page=0 hay page<1, set lại thành 1
@@ -177,6 +182,11 @@ public class BlogController {
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
         model.addAttribute("maxPages", maxPages);
+
+        // Trending Products
+        List<ProductDetailUserResponse> trendingProducts = productDetailUserService.getTrendingProducts();
+        model.addAttribute("trendingProducts", trendingProducts);
+
 
         return "FrontEnd/Home/blog-grid";
     }

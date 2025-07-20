@@ -89,7 +89,7 @@ public class BlogService {
     public void deleteById(Integer id) {
         Blog blog = blogRepository.findById(id).orElse(null);
         if (blog != null) {
-            blog.setStatus(BlogStatus.DELETED); // Đổi status
+            blog.setStatus(BlogStatus.DELETED);
             blogRepository.save(blog);
         }
     }
@@ -101,23 +101,13 @@ public class BlogService {
         return blogRepository.findAll(pageable);
     }
 
-//    public Long countBlogsByUser(Long userId, BlogStatus status) {
-//        return blogRepository.countBlogsByUserAndStatus(userId, status);  // Đếm blog với status cụ thể
-//    }
-//
-//    public Long countAllBlogsByUser(Long userId) {
-//        return blogRepository.countBlogsByUser(userId);  // Đếm tất cả blog của user không phân biệt trạng thái
-//    }
+    public Page<Blog> getBlogsByUserAndStatusPage(Long userId, BlogStatus status, int page, int size) {
+        return blogRepository.findByUserIDAndStatusOrderByCreatedAtDesc(userId, status, PageRequest.of(page, size));
+    }
 
-    // Đếm số lượng blog của user theo trạng thái
-//    public Long countBlogsByUser(int userId, BlogStatus status) {
-//        return blogRepository.countBlogsByUserAndStatus(userId, status);
-//    }
-//
-//    // Đếm số lượng blog của user không phân biệt trạng thái
-//    public Long countAllBlogsByUser(int userId) {
-//        return blogRepository.countBlogsByUser(userId);
-//    }
-
+    public Page<Blog> getAllBlogsPageByStatus(int page, int size, BlogStatus status) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return blogRepository.findAllByStatus(status, pageable);
+    }
 
 }

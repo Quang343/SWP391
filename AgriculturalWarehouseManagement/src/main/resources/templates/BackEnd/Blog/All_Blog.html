@@ -87,6 +87,10 @@
                                     </div>
 
                                 </div>
+
+                                <div class="col-md-3">
+                                    <select class="form-select" id="filterStatus" onchange="filterByStatus()"></select>
+                                </div>
                                 <div class="search-box">
                                     <!--                                    <label>Search:<input type="search" class="" placeholder="" aria-controls="table_id"></label>-->
                                     <label>
@@ -95,6 +99,8 @@
                                                aria-controls="table_id" id="searchInput" onkeyup="searchBlogs()" oninput="searchBlogs()">
                                     </label>
                                 </div>
+
+
                                 <div>
                                     <div class="table-responsive dashboard-bg-box" style="overflow-x:auto; width:100%;">
                                         <table class="table blog-table" style="min-width: 1000px;">
@@ -321,7 +327,8 @@
     const pageSize = 5;
 
     function loadAdminBlogPage(page = 1) {
-        axios.get(`${ADMIN_BLOG_API}?page=${page}&size=${pageSize}`)
+        const status = document.getElementById("filterStatus")?.value || "ALL";
+        axios.get(`${ADMIN_BLOG_API}?page=${page}&size=${pageSize}&status=${status}`)
             .then(res => {
                 const data = res.data || {};
                 renderAdminBlogs(data.blogs, data.currentPage, pageSize);
@@ -426,6 +433,7 @@
 
     // Load dữ liệu khi vào trang
     document.addEventListener('DOMContentLoaded', function () {
+        loadStatusFilterOptions();
         loadAdminBlogPage(1);
     });
 
@@ -600,6 +608,22 @@
             .catch(err => {
                 console.error('Lỗi lấy dữ liệu:', err);
             });
+    }
+///===== filter
+
+    function loadStatusFilterOptions() {
+        axios.get(`${CONTEXT_PATH}/api/admin/blog/status-list`)
+            .then(res => {
+                const select = document.getElementById('filterStatus');
+                select.innerHTML = `<option value="ALL">Tất cả trạng thái</option>`;
+                res.data.forEach(st => {
+                    select.innerHTML += `<option value="${st.name}">${st.label}</option>`;
+                });
+            });
+    }
+
+    function filterByStatus() {
+        loadAdminBlogPage(1);
     }
 
 

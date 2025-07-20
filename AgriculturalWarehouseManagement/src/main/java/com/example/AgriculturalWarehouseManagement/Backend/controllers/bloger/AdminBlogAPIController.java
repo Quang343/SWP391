@@ -40,9 +40,24 @@ public class AdminBlogAPIController {
     @GetMapping("/page")
     public ResponseEntity<?> getAllBlogsPage(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String status // <-- THÊM DÒNG NÀY
     ) {
-        Page<Blog> blogPage = blogService.getAllBlogsPage(page - 1, size);
+        Page<Blog> blogPage;
+
+        // Nếu có status và không phải "ALL", thì filter
+        if (status != null && !status.equalsIgnoreCase("ALL") && !status.isEmpty()) {
+            BlogStatus filterStatus;
+            try {
+                filterStatus = BlogStatus.valueOf(status.trim().toUpperCase());
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body("Trạng thái không hợp lệ: " + status);
+            }
+            blogPage = blogService.getAllBlogsPageByStatus(page - 1, size, filterStatus); // bạn sẽ viết hàm này!
+        } else {
+            blogPage = blogService.getAllBlogsPage(page - 1, size);
+        }
+
         List<AdminBlogDTO> blogDTOs = blogPage.getContent().stream().map(blog -> {
             AdminBlogDTO dto = new AdminBlogDTO();
             dto.setBlogID(blog.getBlogID());
@@ -54,14 +69,11 @@ public class AdminBlogAPIController {
             if (blog.getBlogDetail() != null) {
                 dto.setThumbnail(blog.getBlogDetail().getThumbnail());
             }
-            // CHUẨN: mapping tên & id category, nếu object null thì query thêm
             if (blog.getBlogCategory() != null) {
                 dto.setBlogCategoryName(blog.getBlogCategory().getCategoryName());
                 dto.setBlogCategoryID(blog.getBlogCategory().getBlogCategoryId());
             } else if (blog.getBlogCategoryID() != null) {
-                // BlogCategory cate = blogCategoryService.findById(Long.valueOf(blog.getBlogCategoryID()));
                 BlogCategory cate = blogCategoryService.findById(blog.getBlogCategoryID());
-
                 dto.setBlogCategoryName(cate != null ? cate.getCategoryName() : "");
                 dto.setBlogCategoryID(cate != null ? cate.getBlogCategoryId() : null);
             }
@@ -75,6 +87,7 @@ public class AdminBlogAPIController {
 
         return ResponseEntity.ok(result);
     }
+
 
 
 

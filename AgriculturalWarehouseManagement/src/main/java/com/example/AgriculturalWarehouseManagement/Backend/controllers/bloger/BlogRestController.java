@@ -46,17 +46,21 @@ public class BlogRestController {
     public ResponseEntity<?> getMyBlogPage(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "3") int size
-            //   Principal principal // Thêm tham số này
+         //  @RequestParam(required = false) String status // Bổ sung dòng này
     ) {
 
-        // ACTIVE
-        //  Page<Blog> blogPage = blogService.getBlogsByUserPage(user.getUserId(), page - 1, size);
         Object user = session.getAttribute("account");
         if (user == null) {
             return ResponseEntity.ok("You are not logged in");
         }
         UserResponse accountId = (UserResponse) user;
-        Page<Blog> blogPage = blogService.getAllStatusBlogsByUserPage((long) accountId.getUserID(), page - 1, size);
+       Page<Blog> blogPage = blogService.getAllStatusBlogsByUserPage((long) accountId.getUserID(), page - 1, size);
+//        Page<Blog> blogPage;
+//        if (status != null && !status.equalsIgnoreCase("ALL") && !status.isEmpty()) {
+//            blogPage = blogService.getBlogsByUserAndStatusPage((long) accountId.getUserID(), BlogStatus.valueOf(status), page - 1, size);
+//        } else {
+//            blogPage = blogService.getAllStatusBlogsByUserPage((long) accountId.getUserID(), page - 1, size);
+//        }
 
         List<BlogDTO> blogDTOs = blogPage.getContent().stream().map(blog -> {
             BlogDTO dto = new BlogDTO();
@@ -211,18 +215,4 @@ public class BlogRestController {
         return ResponseEntity.ok("Xoá thành công");
     }
 
-//    @GetMapping("/total-blogs")
-//    public ResponseEntity<?> getTotalBlogsByUser() {
-//        Object user = session.getAttribute("account");
-//        if (user == null) {
-//            return ResponseEntity.ok("You are not logged in");
-//        }
-//
-//        UserResponse accountId = (UserResponse) user;
-//
-//        // Lấy tổng số blog của người dùng với trạng thái ACTIVE
-//        Long totalActiveBlogs = blogService.countBlogsByUser(accountId.getUserID(), BlogStatus.ACTIVE);
-//
-//        return ResponseEntity.ok(totalActiveBlogs);
-//    }
 }
