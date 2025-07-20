@@ -433,7 +433,7 @@
                 },
                 error: function(xhr, status, error) {
                     console.error('Lỗi khi tải danh sách Lô:', status, error);
-                    alert('Không thể tải danh sách Lô. Vui lòng kiểm tra console.');
+                    $.notify({ message: 'Không thể tải danh sách Lô. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
                 }
             });
         }
@@ -497,14 +497,14 @@
                             method: 'GET',
                             dataType: 'json',
                             success: function(batches) {
-                                var batchMap = {};
+                                var batchBruno = {};
                                 $.each(batches, function(index, batch) {
-                                    batchMap[batch.batchId || batch.id] = batch.batchId || 'No ID';
+                                    batchBruno[batch.batchId || batch.id] = batch.batchId || 'No ID';
                                 });
 
                                 $.each(data.content, function(index, adjustment) {
                                     var batchId = adjustment.batchId;
-                                    var mappedBatchId = batchMap[batchId] || batchId || 'N/A';
+                                    var mappedBatchId = batchBruno[batchId] || batchId || 'N/A';
 
                                     var row = $('<tr></tr>').attr('data-id', adjustment.id || '');
                                     row.append(`<td>${adjustment.id || 'N/A'}</td>`);
@@ -514,13 +514,13 @@
                                     row.append(`<td>${adjustment.reason || 'N/A'}</td>`);
                                     row.append(`<td>${adjustment.adjustmentType === 'Add' ? 'Nhập Thêm' : adjustment.adjustmentType === 'Remove' ? 'Hao Hụt' : 'N/A'}</td>`);
                                     row.append(`
-                                    <td>
-                                        <ul class="action-list">
-                                            <li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="${adjustment.id || ''}" data-batch-id="${batchId || ''}" data-quantity="${adjustment.quantity || ''}" data-reason="${adjustment.reason || ''}" data-adjustment-type="${adjustment.adjustmentType || ''}"><i class="ri-pencil-line"></i></a></li>
-                                            <li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="${adjustment.id || ''}"><i class="ri-delete-bin-line"></i></a></li>
-                                        </ul>
-                                    </td>
-                                `);
+                                <td>
+                                    <ul class="action-list">
+                                        <li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="${adjustment.id || ''}" data-batch-id="${batchId || ''}" data-quantity="${adjustment.quantity || ''}" data-reason="${adjustment.reason || ''}" data-adjustment-type="${adjustment.adjustmentType || ''}"><i class="ri-pencil-line"></i></a></li>
+                                        <li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="${adjustment.id || ''}"><i class="ri-delete-bin-line"></i></a></li>
+                                    </ul>
+                                </td>
+                            `);
                                     tableBody.append(row);
                                 });
 
@@ -528,7 +528,7 @@
                             },
                             error: function(xhr, status, error) {
                                 console.error('Lỗi khi tải danh sách Lô:', status, error);
-                                alert('Không thể tải danh sách Lô. Vui lòng kiểm tra console.');
+                                $.notify({ message: 'Không thể tải danh sách Lô. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
                                 $.each(data.content, function(index, adjustment) {
                                     var batchId = adjustment.batchId;
                                     var row = $('<tr></tr>').attr('data-id', adjustment.id || '');
@@ -539,13 +539,13 @@
                                     row.append(`<td>${adjustment.reason || 'N/A'}</td>`);
                                     row.append(`<td>${adjustment.adjustmentType === 'Add' ? 'Thêm' : adjustment.adjustmentType === 'Remove' ? 'Trừ' : 'N/A'}</td>`);
                                     row.append(`
-                                    <td>
-                                        <ul class="action-list">
-                                            <li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="${adjustment.id || ''}" data-batch-id="${batchId || ''}" data-quantity="${adjustment.quantity || ''}" data-reason="${adjustment.reason || ''}" data-adjustment-type="${adjustment.adjustmentType || ''}"><i class="ri-pencil-line"></i></a></li>
-                                            <li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="${adjustment.id || ''}"><i class="ri-delete-bin-line"></i></a></li>
-                                        </ul>
-                                    </td>
-                                `);
+                                <td>
+                                    <ul class="action-list">
+                                        <li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="${adjustment.id || ''}" data-batch-id="${batchId || ''}" data-quantity="${adjustment.quantity || ''}" data-reason="${adjustment.reason || ''}" data-adjustment-type="${adjustment.adjustmentType || ''}"><i class="ri-pencil-line"></i></a></li>
+                                        <li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="${adjustment.id || ''}"><i class="ri-delete-bin-line"></i></a></li>
+                                    </ul>
+                                </td>
+                            `);
                                     tableBody.append(row);
                                 });
                                 bindActionEvents();
@@ -560,7 +560,7 @@
                 },
                 error: function(xhr, status, error) {
                     console.error('Lỗi khi tải Điều Chỉnh:', status, error);
-                    alert('Không thể tải danh sách Điều Chỉnh. Vui lòng kiểm tra console.');
+                    $.notify({ message: 'Không thể tải danh sách Điều Chỉnh. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
                     tableBody.empty();
                     noDataRow.show();
                     renderPagination(0, 0);
@@ -578,7 +578,7 @@
                 var adjustmentType = $(this).data('adjustment-type');
 
                 if (!adjustmentId) {
-                    alert('ID Điều Chỉnh không hợp lệ.');
+                    $.notify({ message: 'ID Điều Chỉnh không hợp lệ.' }, { type: 'warning', delay: 3000 });
                     return;
                 }
 
@@ -595,7 +595,7 @@
                 e.preventDefault();
                 var adjustmentId = $(this).data('adjustment-id');
                 if (!adjustmentId) {
-                    alert('ID Điều Chỉnh không hợp lệ.');
+                    $.notify({ message: 'ID Điều Chỉnh không hợp lệ.' }, { type: 'warning', delay: 3000 });
                     return;
                 }
                 $('.confirm-delete').data('adjustment-id', adjustmentId);
@@ -665,11 +665,11 @@
             var adjustmentType = $('#editAdjustmentType').val();
 
             if (!quantity || isNaN(parseInt(quantity))) {
-                alert('Vui lòng nhập số lượng hợp lệ.');
+                $.notify({ message: 'Vui lòng nhập số lượng hợp lệ.' }, { type: 'warning', delay: 3000 });
                 return;
             }
             if (!adjustmentType) {
-                alert('Vui lòng chọn loại Điều Chỉnh.');
+                $.notify({ message: 'Vui lòng chọn loại Điều Chỉnh.' }, { type: 'warning', delay: 3000 });
                 return;
             }
 
@@ -687,7 +687,7 @@
                 data: JSON.stringify(formData),
                 dataType: 'json',
                 success: function(response) {
-                    alert('Cập nhật Điều Chỉnh thành công!');
+                    $.notify({ message: 'Cập nhật Điều Chỉnh thành công!' }, { type: 'success', delay: 3000 });
                     $('#editAdjustmentModal').modal('hide');
                     $('.modal-backdrop').remove(); // Ensure backdrop is removed
                     $('body').removeClass('modal-open').css('overflow', '');
@@ -695,7 +695,7 @@
                 },
                 error: function(xhr, status, error) {
                     console.error('Lỗi khi sửa Điều Chỉnh:', status, error);
-                    alert('Lỗi khi sửa Điều Chỉnh: ' + (xhr.responseText || 'Vui lòng kiểm tra console.'));
+                    $.notify({ message: 'Lỗi khi sửa Điều Chỉnh: ' + (xhr.responseText || 'Vui lòng kiểm tra console.') }, { type: 'danger', delay: 3000 });
                     $('#editAdjustmentModal').modal('hide');
                     $('.modal-backdrop').remove();
                     $('body').removeClass('modal-open').css('overflow', '');
@@ -708,7 +708,7 @@
             e.preventDefault();
             var adjustmentId = $(this).data('adjustment-id');
             if (!adjustmentId) {
-                alert('ID Điều Chỉnh không hợp lệ.');
+                $.notify({ message: 'ID Điều Chỉnh không hợp lệ.' }, { type: 'warning', delay: 3000 });
                 return;
             }
 
@@ -725,16 +725,17 @@
                             $(this).off('hidden.bs.modal');
                             $('.modal-backdrop').remove();
                             $('body').removeClass('modal-open').css('overflow', '');
+                            $.notify({ message: 'Xóa Điều Chỉnh thành công!' }, { type: 'success', delay: 3000 });
                             fetchAdjustments(currentPage);
                         });
                     } else {
-                        alert('Xóa Điều Chỉnh thành công!');
+                        $.notify({ message: 'Xóa Điều Chỉnh thành công!' }, { type: 'success', delay: 3000 });
                         fetchAdjustments(currentPage);
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('Lỗi khi xóa Điều Chỉnh:', status, error);
-                    alert('Lỗi khi xóa Điều Chỉnh: ' + (xhr.responseText || 'Vui lòng kiểm tra console.'));
+                    $.notify({ message: 'Lỗi khi xóa Điều Chỉnh: ' + (xhr.responseText || 'Vui lòng kiểm tra console.') }, { type: 'danger', delay: 3000 });
                     $('#exampleModalToggle').modal('hide');
                     $('.modal-backdrop').remove();
                     $('body').removeClass('modal-open').css('overflow', '');

@@ -519,6 +519,8 @@
         let currentPage = 0;
         let totalPages = 1;
         const pageSize = 8;
+        let searchTerm = ''; // Store current search term
+        let allBatches = []; // Store all batches for frontend filtering
 
         // Ensure table body and no-data row exist
         function ensureElements() {
@@ -532,7 +534,7 @@
                     tableBody.id = 'productBatchTableBody';
                     table.appendChild(tableBody);
                 } else {
-                    console.error('Table #table_id not found');
+                    console.error('Table #table_id không tồn tại');
                     return null;
                 }
             }
@@ -540,16 +542,19 @@
             if (!noDataRow) {
                 noDataRow = document.createElement('tr');
                 noDataRow.id = 'no-data-row';
-                noDataRow.innerHTML = '<td colspan="8" class="text-center">Không có dữ liệu trong bảng</td>';
+                noDataRow.innerHTML = '<td colspan="8" class="text-center" style="background-color: #e6f3f2; color: #555;">Không tìm thấy bản ghi nào</td>';
                 tableBody.appendChild(noDataRow);
             }
 
             return { tableBody, noDataRow };
         }
 
-        // Update URL with page number (1-based)
+        // Update URL with page number and search term
         function updateURL(page) {
-            history.pushState({}, '', `?page=${page + 1}`);
+            const params = new URLSearchParams();
+            if (page > 0) params.set('page', page + 1);
+            if (searchTerm) params.set('search', searchTerm);
+            history.pushState({}, '', `?${params.toString()}`);
         }
 
         // Populate ProductDetail dropdown for edit modal
@@ -573,7 +578,7 @@
 
                         if (productDetailId !== 'N/A' && productId !== 'N/A') {
                             $.ajax({
-                                url: `http://localhost:8080/api/products/${productId}/name`,
+                                url: `/api/products/${productId}/name`,
                                 method: 'GET',
                                 async: false,
                                 success: function(productName) {
@@ -637,131 +642,206 @@
             }
         }
 
-        // Fetch ProductBatch data and populate table
-        async function fetchProductBatches(page = 0) {
-            currentPage = page;
-            updateURL(page);
-            const { tableBody, noDataRow } = ensureElements();
-            if (!tableBody || !noDataRow) return;
-
-            console.log('Đang tải lô sản phẩm cho trang:', page);
+        // Fetch all product batches for filtering
+        async function fetchAllProductBatches() {
+            // Try original endpoint first, fallback to paginated if it fails
+            let url = '/api/product-batches';
+            console.log('Fetching all product batches with URL:', url);
 
             try {
-                const response = await fetch(`/api/product-batches/paginatedProductBatches?page=${page}&size=${pageSize}`);
-                if (!response.ok) throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
-                const data = await response.json();
+                let response = await fetch(url);
+                let data;
+                if (!response.ok) {
+                    console.warn(`[WARN] Primary endpoint ${url} failed with status: ${response.status}, trying paginated endpoint`);
+                    url = `/api/product-batches/paginatedProductBatches?page=0&size=1000`;
+                    response = await fetch(url);
+                    if (!response.ok) throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
+                    data = await response.json();
+                    data = data.content || [];
+                } else {
+                    data = await response.json();
+                }
 
-                console.log('Phản hồi API:', data);
-
-                if (!data || !data.content || typeof data.totalPages === 'undefined' || typeof data.number === 'undefined') {
-                    console.error('Dữ liệu phản hồi không hợp lệ:', data);
-                    tableBody.innerHTML = '';
-                    noDataRow.style.display = '';
-                    renderPagination(0, 0);
+                if (!data || !Array.isArray(data)) {
+                    console.error('Phản hồi API không hợp lệ:', data);
+                    allBatches = [];
+                    filterAndRenderBatches(searchTerm);
                     $.notify({ message: 'Dữ liệu lô sản phẩm không hợp lệ. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
                     return;
                 }
 
-                totalPages = data.totalPages;
-                tableBody.innerHTML = '';
-                const { adjustmentTotals, adjustmentDetails, adjustmentCounts } = await getAdjustmentData();
-
-                if (data.content && data.content.length > 0) {
-                    noDataRow.style.display = 'none';
-
-                    for (const batch of data.content) {
-                        const row = document.createElement('tr');
-                        row.setAttribute('data-id', batch.batchID);
-
-                        const importedQuantity = parseInt(batch.importedQuantity) || 0;
-                        const soldQuantity = parseInt(batch.soldQuantity) || 0;
-                        const totalAdjustment = adjustmentTotals[batch.batchID] || 0;
-                        const remainingQuantity = importedQuantity - soldQuantity + totalAdjustment;
-                        const adjustmentCount = adjustmentCounts[batch.batchID] || 0;
-
-                        const addAdjustmentTotal = adjustmentDetails[batch.batchID]
-                            ? adjustmentDetails[batch.batchID]
-                                .filter(adj => adj.adjustmentType === 'Add')
-                                .reduce((sum, adj) => sum + (parseInt(adj.quantity) || 0), 0)
-                            : 0;
-
-                        let stockInQuantity = 0;
-                        let shortageAlert = '';
-                        try {
-                            const stockInResponse = await fetch(`/api/stockindetails/quantity/${batch.batchID}`);
-                            if (stockInResponse.ok) {
-                                const stockInDetails = await stockInResponse.json();
-                                if (stockInDetails && Array.isArray(stockInDetails)) {
-                                    stockInQuantity = stockInDetails.reduce((sum, detail) => sum + (parseInt(detail.quantity) || 0), 0);
-                                }
-                            }
-                        } catch (error) {
-                            console.error(`Lỗi khi tải StockInDetails cho batchID ${batch.batchID}:`, error);
-                        }
-
-                        const temporaryImported = importedQuantity + addAdjustmentTotal;
-                        if (importedQuantity < stockInQuantity) {
-                            const shortage = stockInQuantity - importedQuantity;
-                            if (temporaryImported >= stockInQuantity && addAdjustmentTotal > 0) {
-                                shortageAlert = `<a href="javascript:void(0)" class="view-adjustment-history" data-batch-id="${batch.batchID}" data-imported="${importedQuantity}"><i class="ri-history-line" style="vertical-align: middle;"></i></a>`;
-                            } else {
-                                shortageAlert = `<a href="javascript:void(0)" class="shortage-alert" data-shortage="${shortage}" title="Thiếu ${shortage} đơn vị"><i class="ri-alert-line" style="color: red; vertical-align: middle;"></i></a>`;
-                            }
-                        } else if (temporaryImported >= stockInQuantity && addAdjustmentTotal > 0) {
-                            shortageAlert = `<a href="javascript:void(0)" class="view-adjustment-history" data-batch-id="${batch.batchID}" data-imported="${importedQuantity}"><i class="ri-history-line" style="vertical-align: middle;"></i></a>`;
-                        }
-
-                        let expiry = 'N/A';
-                        let productName = 'N/A';
-                        try {
-                            const detailResponse = await fetch(`/api/product-details/${batch.productDetailID}`);
-                            if (detailResponse.ok) {
-                                const detail = await detailResponse.json();
-                                expiry = detail.expiry || 'N/A';
-                                const detailName = detail.detailName || 'N/A';
-                                const productId = detail.productID || detail.productId || 'N/A';
-                                if (productId !== 'N/A') {
-                                    const productResponse = await fetch(`/api/products/${productId}/name`);
-                                    if (productResponse.ok) {
-                                        const name = await productResponse.text();
-                                        productName = `${name} (${detailName})`;
-                                        console.log(`[DEBUG] ID Sản Phẩm: ${productId}, Tên: ${productName}`);
-                                    } else {
-                                        productName = `N/A (${detailName})`;
-                                        console.error(`[LỖI] Không thể tải tên sản phẩm cho ID ${productId}`);
-                                    }
+                allBatches = await Promise.all(data.map(async batch => {
+                    let productName = 'N/A';
+                    try {
+                        const detailResponse = await fetch(`/api/product-details/${batch.productDetailID}`);
+                        if (detailResponse.ok) {
+                            const detail = await detailResponse.json();
+                            const detailName = detail.detailName || 'N/A';
+                            const productId = detail.productID || detail.productId || 'N/A';
+                            if (productId !== 'N/A') {
+                                const productResponse = await fetch(`/api/products/${productId}/name`);
+                                if (productResponse.ok) {
+                                    const name = await productResponse.text();
+                                    productName = `${name} (${detailName})`;
                                 } else {
                                     productName = `N/A (${detailName})`;
+                                    console.error(`[LỖI] Không thể tải tên sản phẩm cho ID ${productId}`);
                                 }
-                            }
-                        } catch (error) {
-                            console.error(`Lỗi khi tải Chi Tiết Sản Phẩm cho ID ${batch.productDetailID}:`, error);
-                        }
-
-                        let percentageUsed = null;
-                        if (batch.manufactureDate && expiry !== 'N/A' && !isNaN(parseInt(expiry))) {
-                            const manufactureDate = new Date(batch.manufactureDate);
-                            const expiryDate = new Date(manufactureDate);
-                            expiryDate.setMonth(expiryDate.getMonth() + parseInt(expiry));
-                            const today = new Date();
-                            const totalTime = expiryDate - manufactureDate;
-                            const usedTime = today - manufactureDate;
-                            percentageUsed = (usedTime / totalTime) * 100;
-                        }
-
-                        if (percentageUsed !== null) {
-                            if (percentageUsed >= 100) {
-                                row.classList.add('table-danger');
-                            } else if (percentageUsed >= 70) {
-                                row.style.backgroundColor = '#ffca2c';
-                            } else if (percentageUsed >= 50) {
-                                row.classList.add('table-warning');
+                            } else {
+                                productName = `N/A (${detailName})`;
                             }
                         }
+                    } catch (error) {
+                        console.error(`[LỖI] Lỗi khi tải Chi Tiết Sản Phẩm cho ID ${batch.productDetailID}:`, error);
+                    }
+                    return { ...batch, productName };
+                }));
+                filterAndRenderBatches(searchTerm);
+            } catch (error) {
+                console.error('Lỗi khi tải danh sách Lô Sản Phẩm:', error);
+                allBatches = [];
+                filterAndRenderBatches(searchTerm);
+                $.notify({ message: 'Không thể tải danh sách lô sản phẩm. Vui lòng kiểm tra kết nối hoặc thử lại.' }, { type: 'danger', delay: 3000 });
+            }
+        }
 
-                        row.innerHTML = `
+        // Filter and render product batches
+        async function filterAndRenderBatches(search = '') {
+            searchTerm = search;
+            updateURL(currentPage);
+            const { tableBody, noDataRow } = ensureElements();
+            if (!tableBody || !noDataRow) return;
+
+            // Filter batches based on search term
+            const filteredBatches = allBatches.filter(batch => {
+                const productName = batch.productName || 'N/A';
+                const manufactureDate = batch.manufactureDate ? formatDateToVietnamese(batch.manufactureDate) : 'N/A';
+                const searchLower = search.toLowerCase();
+                return productName.toLowerCase().includes(searchLower) || manufactureDate.includes(searchLower);
+            });
+            console.log('Filtered batches:', filteredBatches);
+
+            // Paginate filtered batches
+            const totalElements = filteredBatches.length;
+            totalPages = Math.ceil(totalElements / pageSize);
+
+            // Adjust currentPage if it exceeds totalPages after filtering
+            if (currentPage >= totalPages) {
+                currentPage = totalPages > 0 ? totalPages - 1 : 0;
+                updateURL(currentPage);
+            }
+
+            const startIndex = currentPage * pageSize;
+            const paginatedBatches = filteredBatches.slice(startIndex, startIndex + pageSize);
+
+            // Destroy existing DataTable if it exists
+            if ($.fn.DataTable.isDataTable('#table_id')) {
+                console.log('Destroying existing DataTable');
+                $('#table_id').DataTable().clear().destroy();
+            }
+
+            tableBody.innerHTML = '';
+            const { adjustmentTotals, adjustmentDetails, adjustmentCounts } = await getAdjustmentData();
+
+            if (paginatedBatches.length > 0) {
+                noDataRow.style.display = 'none';
+
+                for (const batch of paginatedBatches) {
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-id', batch.batchID);
+
+                    const importedQuantity = parseInt(batch.importedQuantity) || 0;
+                    const soldQuantity = parseInt(batch.soldQuantity) || 0;
+                    const totalAdjustment = adjustmentTotals[batch.batchID] || 0;
+                    const remainingQuantity = importedQuantity - soldQuantity + totalAdjustment;
+                    const adjustmentCount = adjustmentCounts[batch.batchID] || 0;
+
+                    const addAdjustmentTotal = adjustmentDetails[batch.batchID]
+                        ? adjustmentDetails[batch.batchID]
+                            .filter(adj => adj.adjustmentType === 'Add')
+                            .reduce((sum, adj) => sum + (parseInt(adj.quantity) || 0), 0)
+                        : 0;
+
+                    let stockInQuantity = 0;
+                    let shortageAlert = '';
+                    try {
+                        const stockInResponse = await fetch(`/api/stockindetails/quantity/${batch.batchID}`);
+                        if (stockInResponse.ok) {
+                            const stockInDetails = await stockInResponse.json();
+                            console.log(`[DEBUG] Raw API response for /api/stockindetails/quantity/${batch.batchID}:`, stockInDetails);
+                            if (typeof stockInDetails === 'number') {
+                                stockInQuantity = stockInDetails;
+                            } else if (stockInDetails && Array.isArray(stockInDetails)) {
+                                stockInQuantity = stockInDetails.reduce((sum, detail) => sum + (parseInt(detail.quantity) || 0), 0);
+                            } else {
+                                console.warn(`[WARN] Unexpected stockInDetails format for batchID ${batch.batchID}:`, stockInDetails);
+                            }
+                        } else {
+                            console.error(`[ERROR] API /api/stockindetails/quantity/${batch.batchID} failed with status: ${stockInResponse.status}`);
+                        }
+                        console.log(`[DEBUG] BatchID: ${batch.batchID}, importedQuantity: ${importedQuantity}, stockInQuantity: ${stockInQuantity}, addAdjustmentTotal: ${addAdjustmentTotal}, temporaryImported: ${importedQuantity + addAdjustmentTotal}`);
+                    } catch (error) {
+                        console.error(`[ERROR] Lỗi khi tải StockInDetails cho batchID ${batch.batchID}:`, error);
+                    }
+
+                    const temporaryImported = importedQuantity + addAdjustmentTotal;
+                    if (importedQuantity < stockInQuantity) {
+                        const shortage = stockInQuantity - importedQuantity;
+                        console.log(`[DEBUG] Shortage detected for batchID ${batch.batchID}, shortage: ${shortage}`);
+                        if (temporaryImported >= stockInQuantity && addAdjustmentTotal > 0) {
+                            shortageAlert = `<a href="javascript:void(0)" class="view-adjustment-history" data-batch-id="${batch.batchID}" data-imported="${importedQuantity}"><i class="ri-history-line" style="vertical-align: middle;"></i></a>`;
+                            console.log(`[DEBUG] Showing history icon for batchID ${batch.batchID}, temporaryImported: ${temporaryImported}, stockInQuantity: ${stockInQuantity}`);
+                        } else {
+                            shortageAlert = `<a href="javascript:void(0)" class="shortage-alert" data-shortage="${shortage}" data-type="shortage" title="Thiếu ${shortage} đơn vị"><span style="color: #ffc107; vertical-align: middle;">⚠️</span></a>`;
+                            console.log(`[DEBUG] Showing yellow warning emoji for shortage in batchID ${batch.batchID}, shortage: ${shortage}, shortageAlert: ${shortageAlert}`);
+                        }
+                    } else if (importedQuantity > stockInQuantity) {
+                        const excess = importedQuantity - stockInQuantity;
+                        shortageAlert = `<a href="javascript:void(0)" class="shortage-alert" data-excess="${excess}" data-type="excess" title="Số lượng nhập vượt quá số lượng nhập kho (${excess} đơn vị)"><span style="color: red; vertical-align: middle;">❗</span></a>`;
+                        console.log(`[DEBUG] Excess detected for batchID ${batch.batchID}, excess: ${excess}, shortageAlert: ${shortageAlert}`);
+                    } else if (temporaryImported >= stockInQuantity && addAdjustmentTotal > 0) {
+                        shortageAlert = `<a href="javascript:void(0)" class="view-adjustment-history" data-batch-id="${batch.batchID}" data-imported="${importedQuantity}"><i class="ri-history-line" style="vertical-align: middle;"></i></a>`;
+                        console.log(`[DEBUG] Showing history icon for batchID ${batch.batchID}, temporaryImported: ${temporaryImported}, stockInQuantity: ${stockInQuantity}`);
+                    } else {
+                        console.log(`[DEBUG] No shortage, excess, or adjustments for batchID ${batch.batchID}`);
+                    }
+                    console.log(`[DEBUG] shortageAlert HTML for batchID ${batch.batchID}: ${shortageAlert}`);
+
+                    let expiry = 'N/A';
+                    try {
+                        const detailResponse = await fetch(`/api/product-details/${batch.productDetailID}`);
+                        if (detailResponse.ok) {
+                            const detail = await detailResponse.json();
+                            expiry = detail.expiry || 'N/A';
+                        }
+                    } catch (error) {
+                        console.error(`[LỖI] Lỗi khi tải Chi Tiết Sản Phẩm cho ID ${batch.productDetailID}:`, error);
+                    }
+
+                    let percentageUsed = null;
+                    if (batch.manufactureDate && expiry !== 'N/A' && !isNaN(parseInt(expiry))) {
+                        const manufactureDate = new Date(batch.manufactureDate);
+                        const expiryDate = new Date(manufactureDate);
+                        expiryDate.setMonth(expiryDate.getMonth() + parseInt(expiry));
+                        const today = new Date();
+                        const totalTime = expiryDate - manufactureDate;
+                        const usedTime = today - manufactureDate;
+                        percentageUsed = (usedTime / totalTime) * 100;
+                    }
+
+                    if (percentageUsed !== null) {
+                        if (percentageUsed >= 100) {
+                            row.classList.add('table-danger');
+                        } else if (percentageUsed >= 70) {
+                            row.style.backgroundColor = '#ffca2c';
+                        } else if (percentageUsed >= 50) {
+                            row.classList.add('table-warning');
+                        }
+                    }
+
+                    row.innerHTML = `
                         <td>${batch.batchID || 'N/A'}</td>
-                        <td><a href="javascript:void(0)" class="detail-link" data-id="${batch.productDetailID}">${productName}</a></td>
+                        <td><a href="javascript:void(0)" class="detail-link" data-id="${batch.productDetailID}">${batch.productName || 'N/A'}</a></td>
                         <td>${batch.manufactureDate ? moment(batch.manufactureDate).format('DD/MM/YYYY') : 'N/A'}</td>
                         <td>${temporaryImported || importedQuantity || 'N/A'}${shortageAlert}</td>
                         <td>${soldQuantity || 0}</td>
@@ -776,17 +856,48 @@
                             </ul>
                         </td>
                     `;
-                        tableBody.appendChild(row);
-                    }
-                } else {
-                    noDataRow.style.display = '';
+                    console.log(`[DEBUG] Row inserted for batchID ${batch.batchID}, DOM content: ${row.querySelector('td:nth-child(4)').innerHTML}`);
+                    tableBody.appendChild(row);
                 }
+                console.log('[DEBUG] Table rendered with', paginatedBatches.length, 'rows');
+            } else {
+                noDataRow.style.display = '';
+                console.log('[DEBUG] No data to display, showing no-data-row');
+            }
 
-                renderPagination(data.totalPages, data.number);
-                debugPagination();
-            } catch (error) {
-                console.error('Lỗi khi tải Lô Sản Phẩm:', error);
-                $.notify({ message: 'Lỗi khi tải dữ liệu. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+            // Initialize DataTable
+            if (document.querySelector('#table_id')) {
+                console.log('Initializing new DataTable');
+                $('#table_id').DataTable({
+                    searching: false,
+                    paging: false,
+                    ordering: false,
+                    info: false,
+                    language: {
+                        emptyTable: "Không tìm thấy bản ghi nào"
+                    },
+                    columns: [
+                        { width: '12%' }, // Batch ID
+                        { width: '20%' }, // Product Detail
+                        { width: '12%' }, // Manufacture Date
+                        { width: '15%' }, // Imported Quantity
+                        { width: '12%' }, // Sold Quantity
+                        { width: '12%' }, // Remaining Quantity
+                        { width: '12%' }, // Adjustment Total
+                        { width: '15%' }  // Actions
+                    ],
+                    autoWidth: false
+                });
+            } else {
+                console.error('Không tìm thấy #table_id khi khởi tạo DataTable');
+            }
+
+            // Render pagination only if total elements >= 9
+            console.log('Rendering page:', currentPage, 'Total elements:', totalElements, 'Total pages:', totalPages);
+            if (totalElements >= 9 || totalPages > 1) {
+                renderPagination(totalPages, currentPage);
+            } else {
+                document.querySelector('#pagination-controls').innerHTML = '';
             }
         }
 
@@ -810,8 +921,8 @@
             }
             paginationControls.innerHTML = '';
 
-            totalPages = typeof totalPagesInput === 'number' && totalPagesInput > 0 ? totalPagesInput : 1;
-            currentPage = typeof currentPageInput === 'number' && currentPageInput >= 0 && currentPageInput < totalPages ? currentPageInput : 0;
+            totalPages = Math.max(1, totalPagesInput);
+            currentPage = Math.min(Math.max(0, currentPageInput), totalPages - 1);
 
             console.log('Đang hiển thị phân trang - tổng số trang:', totalPages, 'trang hiện tại:', currentPage);
 
@@ -822,40 +933,71 @@
                 paginationControls.appendChild(li);
             };
 
+            const addEllipsis = () => {
+                const li = document.createElement('li');
+                li.className = 'page-item disabled';
+                li.innerHTML = `<a class="page-link">...</a>`;
+                paginationControls.appendChild(li);
+            };
+
+            const added = new Set();
+
+            // Previous button
             addBtn('Trước', currentPage - 1, currentPage === 0);
 
-            const maxPagesToShow = 5;
-            let startPage = Math.max(0, currentPage - Math.floor(maxPagesToShow / 2));
-            let endPage = Math.min(totalPages, startPage + maxPagesToShow);
+            // Always show first page
+            addBtn(1, 0, false, currentPage === 0);
+            added.add(0);
 
-            if (endPage - startPage < maxPagesToShow) {
-                startPage = Math.max(0, endPage - maxPagesToShow);
+            // Form 1: Current page <= 2 (show pages 1, 2, 3)
+            if (currentPage <= 2) {
+                for (let i = 1; i <= 3 && i < totalPages - 1; i++) {
+                    if (!added.has(i)) {
+                        addBtn(i + 1, i, false, currentPage === i);
+                        added.add(i);
+                    }
+                }
+                if (totalPages > 5) addEllipsis();
             }
 
-            if (startPage > 0) {
-                addBtn(1, 0, false, currentPage === 0);
-                if (startPage > 1) {
-                    const ellipsis = document.createElement('li');
-                    ellipsis.className = 'page-item disabled';
-                    ellipsis.innerHTML = '<a class="page-link">...</a>';
-                    paginationControls.appendChild(ellipsis);
+            // Form 2: 3 <= currentPage <= totalPages - 3 (middle pages)
+            else if (currentPage >= 3 && currentPage <= totalPages - 3) {
+                const range = [currentPage - 1, currentPage, currentPage + 1];
+                for (let i of range) {
+                    if (!added.has(i)) {
+                        addBtn(i + 1, i, false, currentPage === i);
+                        added.add(i);
+                    }
+                }
+                addEllipsis();
+            }
+
+            // Form 3: currentPage >= totalPages - 2 (last pages)
+            else if (currentPage >= totalPages - 2) {
+                if (!added.has(1)) {
+                    addBtn(2, 1, false, currentPage === 1);
+                    added.add(1);
+                }
+                if (totalPages > 5) addEllipsis();
+                for (let i = totalPages - 3; i < totalPages - 1; i++) {
+                    if (i > 1 && !added.has(i)) {
+                        addBtn(i + 1, i, false, currentPage === i);
+                        added.add(i);
+                    }
                 }
             }
 
-            for (let i = startPage; i < endPage; i++) {
-                addBtn(i + 1, i, false, currentPage === i);
-            }
-
-            if (endPage < totalPages) {
-                if (endPage < totalPages - 1) {
-                    const ellipsis = document.createElement('li');
-                    ellipsis.className = 'page-item disabled';
-                    ellipsis.innerHTML = '<a class="page-link">...</a>';
-                    paginationControls.appendChild(ellipsis);
+            // Always show last page
+            if (totalPages > 1) {
+                if (!added.has(totalPages - 2) && totalPages - 2 > 0) {
+                    addBtn(totalPages - 1, totalPages - 2, false, currentPage === totalPages - 2);
                 }
-                addBtn(totalPages, totalPages - 1, false, currentPage === totalPages - 1);
+                if (!added.has(totalPages - 1)) {
+                    addBtn(totalPages, totalPages - 1, false, currentPage === totalPages - 1);
+                }
             }
 
+            // Next button
             addBtn('Tiếp', currentPage + 1, currentPage === totalPages - 1);
 
             paginationControls.onclick = (e) => {
@@ -864,9 +1006,12 @@
                 const page = parseInt(target.getAttribute('data-page'));
                 console.log('Nhấn phân trang - trang:', page, 'tổng số trang:', totalPages);
                 if (!isNaN(page) && page >= 0 && page < totalPages) {
-                    fetchProductBatches(page);
+                    currentPage = page;
+                    filterAndRenderBatches(searchTerm);
                 }
             };
+
+            debugPagination();
         }
 
         // Pikaday initialization for editManufactureDate
@@ -935,7 +1080,7 @@
                 const selectElement = document.getElementById('editProductDetailId');
                 populateProductDetailDropdown(selectElement, productDetailId);
 
-                // Xử lý ngày sản xuất
+                // Handle manufacture date
                 if (manufactureDate && manufactureDate !== '') {
                     try {
                         const date = new Date(manufactureDate);
@@ -1030,8 +1175,16 @@
             }
 
             if (shortageAlertBtn) {
-                const shortage = shortageAlertBtn.getAttribute('data-shortage');
-                $.notify({ message: `Thiếu ${shortage} đơn vị. Vui lòng yêu cầu nhập thêm hàng.` }, { type: 'warning', delay: 3000 });
+                const type = shortageAlertBtn.getAttribute('data-type');
+                if (type === 'shortage') {
+                    const shortage = shortageAlertBtn.getAttribute('data-shortage');
+                    console.log(`[DEBUG] Shortage alert clicked, shortage: ${shortage}`);
+                    $.notify({ message: `Thiếu ${shortage} đơn vị. Vui lòng yêu cầu nhập thêm hàng.` }, { type: 'warning', delay: 3000 });
+                } else if (type === 'excess') {
+                    const excess = shortageAlertBtn.getAttribute('data-excess');
+                    console.log(`[DEBUG] Excess alert clicked, excess: ${excess}`);
+                    $.notify({ message: `Lỗi: Số lượng nhập vượt quá số lượng nhập kho (${excess} đơn vị). Vui lòng kiểm tra dữ liệu.` }, { type: 'danger', delay: 3000 });
+                }
             }
 
             if (adjustmentDetailBtn) {
@@ -1065,14 +1218,14 @@
                                 const displayQuantity = adjustmentType === 'Remove' && quantity !== 'N/A' ? `-${quantity}` : quantity;
 
                                 tbody.innerHTML += `
-                            <tr>
-                                <td>${id}</td>
-                                <td>${displayQuantity}</td>
-                                <td>${reason}</td>
-                                <td>${adjustDate}</td>
-                                <td>${adjustmentType}</td>
-                            </tr>
-                        `;
+                                    <tr>
+                                        <td>${id}</td>
+                                        <td>${displayQuantity}</td>
+                                        <td>${reason}</td>
+                                        <td>${adjustDate}</td>
+                                        <td>${adjustmentType}</td>
+                                    </tr>
+                                `;
                             });
                         }
                         new bootstrap.Modal(document.getElementById('adjustmentDetailModal')).show();
@@ -1121,10 +1274,24 @@
             }
         });
 
+        // Real-time search
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const searchValue = this.value.trim();
+                console.log('Search input:', searchValue, 'Resetting to page 0');
+                currentPage = 0; // Reset to first page on search
+                filterAndRenderBatches(searchValue);
+            });
+        } else {
+            console.error('Ô tìm kiếm #searchInput không tìm thấy');
+            $.notify({ message: 'Ô tìm kiếm không tìm thấy. Vui lòng kiểm tra giao diện.' }, { type: 'danger', delay: 3000 });
+        }
+
         // Save edit product batch
         const saveEditBtn = document.getElementById('saveEditProductBatch');
         if (saveEditBtn) {
-            saveEditBtn.addEventListener('click', () => {
+            saveEditBtn.addEventListener('click', async () => {
                 const batchId = document.getElementById('editBatchId').value;
                 const productDetailId = document.getElementById('editProductDetailId').value;
                 const manufactureDate = document.getElementById('editManufactureDate').value;
@@ -1149,6 +1316,38 @@
                     return;
                 }
 
+                // Validate importedQuantity against stockInQuantity
+                try {
+                    const stockInResponse = await fetch(`/api/stockindetails/quantity/${batchId}`);
+                    let stockInQuantity = 0;
+                    if (stockInResponse.ok) {
+                        const stockInDetails = await stockInResponse.json();
+                        if (typeof stockInDetails === 'number') {
+                            stockInQuantity = stockInDetails;
+                        } else if (stockInDetails && Array.isArray(stockInDetails)) {
+                            stockInQuantity = stockInDetails.reduce((sum, detail) => sum + (parseInt(detail.quantity) || 0), 0);
+                        } else {
+                            console.warn(`[WARN] Unexpected stockInDetails format for batchID ${batchId}:`, stockInDetails);
+                        }
+                    } else {
+                        console.error(`[ERROR] API /api/stockindetails/quantity/${batchId} failed with status: ${stockInResponse.status}`);
+                        $.notify({ message: 'Lỗi khi kiểm tra số lượng nhập kho. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+                        return;
+                    }
+
+                    const parsedImportedQuantity = parseInt(importedQuantity);
+                    console.log(`[DEBUG] Edit batch validation for batchID ${batchId}, importedQuantity: ${parsedImportedQuantity}, stockInQuantity: ${stockInQuantity}`);
+
+                    if (parsedImportedQuantity > stockInQuantity) {
+                        $.notify({ message: `Số lượng nhập không được vượt quá số lượng nhập kho (${stockInQuantity} đơn vị).` }, { type: 'warning', delay: 3000 });
+                        return;
+                    }
+                } catch (error) {
+                    console.error(`[ERROR] Lỗi khi kiểm tra số lượng nhập kho cho batchID ${batchId}:`, error);
+                    $.notify({ message: 'Lỗi khi kiểm tra số lượng nhập kho. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+                    return;
+                }
+
                 const dateParts = manufactureDate.split('/');
                 const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`; // Send as YYYY-MM-DD
 
@@ -1158,6 +1357,8 @@
                     importedQuantity: parseInt(importedQuantity)
                 };
 
+                console.log(`[DEBUG] Submitting edit for batchID ${batchId}:`, formData);
+
                 fetch(`/api/product-batches/${batchId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
@@ -1166,11 +1367,13 @@
                     .then(response => {
                         if (!response.ok) return response.json().then(err => { throw err; });
                         $.notify({ message: 'Cập nhật Lô Sản Phẩm thành công!' }, { type: 'success', delay: 3000 });
-                        bootstrap.Modal.getInstance(document.getElementById('editProductBatchModal')).hide();
-                        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-                        document.body.classList.remove('modal-open');
-                        document.body.style.overflow = '';
-                        fetchProductBatches(currentPage);
+                        setTimeout(() => {
+                            bootstrap.Modal.getInstance(document.getElementById('editProductBatchModal')).hide();
+                            document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                            document.body.classList.remove('modal-open');
+                            document.body.style.overflow = '';
+                            fetchAllProductBatches(); // Refresh data after edit
+                        }, 500);
                     })
                     .catch(error => {
                         console.error('Lỗi khi cập nhật Lô Sản Phẩm:', error);
@@ -1201,25 +1404,28 @@
                 })
                     .then(response => {
                         if (!response.ok) throw new Error('Không thể xóa Lô Sản Phẩm');
-                        bootstrap.Modal.getInstance(modal).hide();
-                        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-                        document.body.classList.remove('modal-open');
-                        document.body.style.overflow = '';
-                        const doneModal = new bootstrap.Modal(document.getElementById('exampleModalToggle2'));
-                        doneModal.show();
-                        doneModal._element.addEventListener('hidden.bs.modal', () => {
+                        $.notify({ message: 'Xóa Lô Sản Phẩm thành công!' }, { type: 'success', delay: 3000 });
+                        setTimeout(() => {
+                            bootstrap.Modal.getInstance(modal).hide();
                             document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
                             document.body.classList.remove('modal-open');
                             document.body.style.overflow = '';
-                            if (!document.querySelector('#productBatchTableBody tr')) {
-                                document.getElementById('no-data-row').style.display = '';
-                            }
-                            fetchProductBatches(currentPage);
-                        }, { once: true });
+                            const doneModal = new bootstrap.Modal(document.getElementById('exampleModalToggle2'));
+                            doneModal.show();
+                            doneModal._element.addEventListener('hidden.bs.modal', () => {
+                                document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                                document.body.classList.remove('modal-open');
+                                document.body.style.overflow = '';
+                                if (!allBatches.length) {
+                                    document.getElementById('no-data-row').style.display = '';
+                                }
+                                fetchAllProductBatches(); // Refresh data after delete
+                            }, { once: true });
+                        }, 500);
                     })
                     .catch(error => {
                         console.error('Lỗi khi xóa Lô Sản Phẩm:', error);
-                        $.notify({ message: 'Lỗi khi xóa Lô Sản Phẩm. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+                        $.notify({ message: error.message || 'Lỗi khi xóa Lô Sản Phẩm. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
                         bootstrap.Modal.getInstance(modal).hide();
                         document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
                         document.body.classList.remove('modal-open');
@@ -1228,10 +1434,10 @@
             });
         }
 
-// Save new adjustment
+        // Save new adjustment
         const saveAdjustmentBtn = document.getElementById('saveAddAdjustment');
         if (saveAdjustmentBtn) {
-            saveAdjustmentBtn.addEventListener('click', () => {
+            saveAdjustmentBtn.addEventListener('click', async () => {
                 const batchId = document.getElementById('addAdjustmentBatchId').value;
                 const quantity = document.getElementById('addQuantity').value;
                 const reason = document.getElementById('addReason').value;
@@ -1264,43 +1470,122 @@
                     return;
                 }
 
-                const formData = {
-                    batchId: parseInt(batchId),
-                    quantity: Math.abs(parsedQuantity),
-                    adjustmentType,
-                    reason: reason || null
-                };
+                // Validate adjustment quantity
+                try {
+                    // Fetch batch data
+                    const batchResponse = await fetch(`/api/product-batches/${batchId}`);
+                    if (!batchResponse.ok) throw new Error(`Lỗi khi lấy thông tin lô ${batchId}: ${batchResponse.status}`);
+                    const batchData = await batchResponse.json();
+                    const importedQuantity = parseInt(batchData.importedQuantity) || 0;
+                    const soldQuantity = parseInt(batchData.soldQuantity) || 0;
 
-                fetch('/api/adjustments', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                })
-                    .then(response => {
-                        if (!response.ok) return response.json().then(err => { throw err; });
-                        $.notify({ message: 'Thêm điều chỉnh thành công!' }, { type: 'success', delay: 3000 });
-                        bootstrap.Modal.getInstance(document.getElementById('addAdjustmentModal')).hide();
-                        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-                        document.body.classList.remove('modal-open');
-                        document.body.style.overflow = '';
-                        fetchProductBatches(currentPage);
+                    // Fetch adjustment data for totalAdjustment
+                    const adjustmentResponse = await fetch(`/api/product-batches/adjustments?batchId=${batchId}`);
+                    let totalAdjustment = 0;
+                    if (adjustmentResponse.ok) {
+                        const adjustments = await adjustmentResponse.json();
+                        totalAdjustment = adjustments.adjustments
+                            ? adjustments.adjustments.reduce((sum, adj) => {
+                                const qty = parseInt(adj.quantity) || 0;
+                                return adj.adjustmentType === 'Add' ? sum + qty : sum - qty;
+                            }, 0)
+                            : 0;
+                    } else {
+                        console.warn(`[WARN] Không thể lấy điều chỉnh cho batchID ${batchId}, using totalAdjustment: 0`);
+                    }
+
+                    const remainingQuantity = importedQuantity - soldQuantity + totalAdjustment;
+                    console.log(`[DEBUG] Adjustment validation for batchID ${batchId}, importedQuantity: ${importedQuantity}, soldQuantity: ${soldQuantity}, totalAdjustment: ${totalAdjustment}, remainingQuantity: ${remainingQuantity}`);
+
+                    // Validate for Add adjustment
+                    if (adjustmentType === 'Add') {
+                        const stockInResponse = await fetch(`/api/stockindetails/quantity/${batchId}`);
+                        let stockInQuantity = 0;
+                        if (stockInResponse.ok) {
+                            const stockInDetails = await stockInResponse.json();
+                            if (typeof stockInDetails === 'number') {
+                                stockInQuantity = stockInDetails;
+                            } else if (stockInDetails && Array.isArray(stockInDetails)) {
+                                stockInQuantity = stockInDetails.reduce((sum, detail) => sum + (parseInt(detail.quantity) || 0), 0);
+                            } else {
+                                console.warn(`[WARN] Unexpected stockInDetails format for batchID ${batchId}:`, stockInDetails);
+                            }
+                        } else {
+                            console.error(`[ERROR] API /api/stockindetails/quantity/${batchId} failed with status: ${stockInResponse.status}`);
+                            $.notify({ message: 'Lỗi khi kiểm tra số lượng nhập kho. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+                            return;
+                        }
+
+                        const shortage = stockInQuantity - importedQuantity;
+                        console.log(`[DEBUG] Add adjustment check for batchID ${batchId}, stockInQuantity: ${stockInQuantity}, shortage: ${shortage}, parsedQuantity: ${parsedQuantity}`);
+
+                        if (shortage <= 0) {
+                            $.notify({ message: 'Không có số lượng thiếu để điều chỉnh nhập thêm.' }, { type: 'warning', delay: 3000 });
+                            return;
+                        }
+                        if (parsedQuantity > shortage) {
+                            $.notify({ message: `Số lượng nhập thêm không được vượt quá số lượng thiếu (${shortage} đơn vị).` }, { type: 'warning', delay: 3000 });
+                            return;
+                        }
+                    }
+
+                    // Validate for Remove adjustment
+                    if (adjustmentType === 'Remove') {
+                        console.log(`[DEBUG] Remove adjustment check for batchID ${batchId}, remainingQuantity: ${remainingQuantity}, parsedQuantity: ${parsedQuantity}`);
+                        if (Math.abs(parsedQuantity) > remainingQuantity) {
+                            $.notify({ message: `Số lượng hao hụt không được vượt quá số lượng còn lại (${remainingQuantity} đơn vị).` }, { type: 'warning', delay: 3000 });
+                            return;
+                        }
+                    }
+
+                    const formData = {
+                        batchId: parseInt(batchId),
+                        quantity: Math.abs(parsedQuantity),
+                        adjustmentType,
+                        reason: reason || null
+                    };
+
+                    console.log(`[DEBUG] Submitting adjustment for batchID ${batchId}:`, formData);
+
+                    fetch('/api/adjustments', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
                     })
-                    .catch(error => {
-                        console.error('Lỗi khi thêm điều chỉnh:', error);
-                        $.notify({ message: error.message || 'Lỗi khi thêm điều chỉnh. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
-                        bootstrap.Modal.getInstance(document.getElementById('addAdjustmentModal')).hide();
-                        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-                        document.body.classList.remove('modal-open');
-                        document.body.style.overflow = '';
-                    });
+                        .then(response => {
+                            if (!response.ok) return response.json().then(err => { throw err; });
+                            $.notify({ message: 'Thêm điều chỉnh thành công!' }, { type: 'success', delay: 3000 });
+                            setTimeout(() => {
+                                bootstrap.Modal.getInstance(document.getElementById('addAdjustmentModal')).hide();
+                                document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                                document.body.classList.remove('modal-open');
+                                document.body.style.overflow = '';
+                                fetchAllProductBatches(); // Refresh data after adjustment
+                            }, 500);
+                        })
+                        .catch(error => {
+                            console.error('Lỗi khi thêm điều chỉnh:', error);
+                            $.notify({ message: error.message || 'Lỗi khi thêm điều chỉnh. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+                            bootstrap.Modal.getInstance(document.getElementById('addAdjustmentModal')).hide();
+                            document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+                            document.body.classList.remove('modal-open');
+                            document.body.style.overflow = '';
+                        });
+                } catch (error) {
+                    console.error(`[ERROR] Lỗi khi kiểm tra số lượng cho batchID ${batchId}:`, error);
+                    $.notify({ message: 'Lỗi khi kiểm tra số lượng. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+                    return;
+                }
             });
         }
 
-        // Initial fetch with URL page parameter
+        // Initial fetch with URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const initialPage = parseInt(urlParams.get('page')) || 1;
-        if (initialPage > 0) currentPage = initialPage - 1;
-        fetchProductBatches(currentPage);
+        const initialSearch = urlParams.get('search') || '';
+        currentPage = initialPage > 0 ? initialPage - 1 : 0;
+        searchTerm = initialSearch;
+        fetchAllProductBatches();
     });
 </script>
 

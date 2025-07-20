@@ -124,7 +124,7 @@
                                                             </div>
                                                             <div class="col-sm-6">
                                                                 <label class="form-label-title">Đơn Giá</label>
-                                                                <input type="number" step="0.01" class="form-control" id="stockInDetailUnitPrice_0" required>
+                                                                <input type="number" step="100" class="form-control" id="stockInDetailUnitPrice_0" required>
                                                             </div>
                                                         </div>
                                                         <div class="row mt-2">
@@ -285,6 +285,13 @@
             stockInDetailsContainer: stockInDetailsContainer
         });
 
+        // Add input sanitization for time field
+        stockInTime.addEventListener('input', function () {
+            let value = stockInTime.value.replace(/[^0-9:]/g, ''); // Only allow numbers and colon
+            if (value.length > 5) value = value.slice(0, 5); // Limit to HH:MM format
+            stockInTime.value = value;
+        });
+
         // Load Suppliers
         $.ajax({
             url: 'http://localhost:8080/api/suppliers',
@@ -334,19 +341,19 @@
         try {
             stockInDatePicker = new Pikaday({
                 field: stockInDate,
-                format: 'DD-MM-YYYY', // Định dạng hiển thị
+                format: 'DD-MM-YYYY',
                 toString: function(date) {
                     return moment(date).format('DD-MM-YYYY');
                 },
                 parse: function(dateString) {
                     return moment(dateString, 'DD-MM-YYYY').toDate();
                 },
-                yearRange: 10, // Hiển thị 10 năm gần nhất (2015-2025)
-                minDate: new Date(2015, 0, 1), // Cho phép nhập tay từ 1950
-                maxDate: new Date(), // Không cho chọn ngày tương lai
-                defaultDate: new Date(), // Mặc định hôm nay (06-07-2025)
+                yearRange: 10,
+                minDate: new Date(2015, 0, 1),
+                maxDate: new Date(),
+                defaultDate: new Date(),
                 setDefaultDate: true,
-                firstDay: 1, // Thứ 2 là ngày đầu tuần
+                firstDay: 1,
                 i18n: {
                     previousMonth: 'Tháng trước',
                     nextMonth: 'Tháng sau',
@@ -357,7 +364,7 @@
                 onSelect: function(date) {
                     const formattedDate = moment(date).format('DD-MM-YYYY');
                     console.log("Ngày nhập kho được chọn:", formattedDate);
-                    stockInDate.value = formattedDate; // Lưu giá trị hiển thị DD-MM-YYYY
+                    stockInDate.value = formattedDate;
                 }
             });
             console.log("Pikaday khởi tạo thành công cho #stockInDate");
@@ -372,7 +379,7 @@
             try {
                 batchDatePicker = new Pikaday({
                     field: document.getElementById(`batchManufactureDate_${rowIndex}`),
-                    format: 'DD-MM-YYYY', // Định dạng hiển thị
+                    format: 'DD-MM-YYYY',
                     toString: function(date) {
                         return moment(date).format('DD-MM-YYYY');
                     },
@@ -464,8 +471,8 @@
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    console.log('Dữ liệu từ API /api/product-batches/available:', data); // Debug log
-                    const currentValue = selectElement.val(); // Lưu giá trị hiện tại
+                    console.log('Dữ liệu từ API /api/product-batches/available:', data);
+                    const currentValue = selectElement.val();
                     selectElement.empty();
                     selectElement.append('<option value="">Không chọn</option>');
                     if (!data || data.length === 0) {
@@ -476,7 +483,7 @@
                     }
                     $.each(data, function(index, batch) {
                         var id = batch.batchID || batch.id;
-                        if (id && !usedBatchIds.includes(parseInt(id))) { // Lọc các batch đã sử dụng
+                        if (id && !usedBatchIds.includes(parseInt(id))) {
                             selectElement.append(`<option value="${id}">Batch ID: ${id}</option>`);
                             console.log(`Thêm Batch ID: ${id} vào dropdown cho hàng ${rowIndex}`);
                         } else if (id) {
@@ -485,7 +492,6 @@
                             console.warn('Batch không có ID hợp lệ:', batch);
                         }
                     });
-                    // Khôi phục giá trị hiện tại nếu có
                     if (currentValue && currentValue !== "") {
                         selectElement.val(currentValue);
                     }
@@ -508,7 +514,6 @@
         let usedBatchIds = [];
         function updateUsedBatchIds() {
             // Không cập nhật usedBatchIds khi chỉ chọn, chỉ cập nhật sau khi gửi thành công
-            // Logic này sẽ được cập nhật trong success callback của fetch
         }
 
         // Initial load for row 0
@@ -522,59 +527,58 @@
             detailRowCount++;
             const rowId = `stockInDetailRow_${detailRowCount}`;
             const html = `
-            <div class="stock-in-detail-row mb-3" id="${rowId}">
-                <div class="row align-items-center">
-                    <div class="col-sm-6">
-                        <label class="form-label-title">Batch ID</label>
-                        <div class="input-group">
-                            <select class="form-control" id="batchID_${detailRowCount}" required onchange="resetNewBatchFields(${detailRowCount})">
-                                <option value="">Không chọn</option>
-                            </select>
-                            <button type="button" class="btn btn-primary" id="addNewBatch_${detailRowCount}" onclick="toggleNewBatch(${detailRowCount})">Thêm Batch Mới</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mt-2 new-batch-fields" id="newBatchFields_${detailRowCount}" style="display: none;">
-                    <div class="col-sm-6">
-                        <label class="form-label-title">Ngày Sản Xuất</label>
-                        <input id="batchManufactureDate_${detailRowCount}" class="form-control" type="text" placeholder="Chọn ngày sản xuất (DD-MM-YYYY)" required>
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="form-label-title">Số Lượng Nhập</label>
-                        <input type="number" class="form-control" id="batchImportedQuantity_${detailRowCount}" required>
-                    </div>
-                </div>
-                <div class="row mt-2 new-batch-fields" id="newBatchFields_${detailRowCount}_2" style="display: none;">
-                    <div class="col-sm-6">
-                        <label class="form-label-title">Product Detail ID</label>
-                        <select class="form-control" id="batchProductDetailID_${detailRowCount}" required onchange="updateDetailName(${detailRowCount})">
-                            <option value="">Chọn Product Detail</option>
+        <div class="stock-in-detail-row mb-3" id="${rowId}">
+            <div class="row align-items-center">
+                <div class="col-sm-6">
+                    <label class="form-label-title">Batch ID</label>
+                    <div class="input-group">
+                        <select class="form-control" id="batchID_${detailRowCount}" required onchange="resetNewBatchFields(${detailRowCount})">
+                            <option value="">Không chọn</option>
                         </select>
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-sm-6">
-                        <label class="form-label-title">Số Lượng</label>
-                        <input type="number" class="form-control" id="stockInDetailQuantity_${detailRowCount}" required>
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="form-label-title">Đơn Giá</label>
-                        <input type="number" step="0.01" class="form-control" id="stockInDetailUnitPrice_${detailRowCount}" required>
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-sm-12 text-end">
-                        <button type="button" class="btn btn-danger" onclick="removeDetailRow(${detailRowCount})">Xóa</button>
+                        <button type="button" class="btn btn-primary" id="addNewBatch_${detailRowCount}" onclick="toggleNewBatch(${detailRowCount})">Thêm Batch Mới</button>
                     </div>
                 </div>
             </div>
+            <div class="row mt-2 new-batch-fields" id="newBatchFields_${detailRowCount}" style="display: none;">
+                <div class="col-sm-6">
+                    <label class="form-label-title">Ngày Sản Xuất</label>
+                    <input id="batchManufactureDate_${detailRowCount}" class="form-control" type="text" placeholder="Chọn ngày sản xuất (DD-MM-YYYY)" required>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label-title">Số Lượng Nhập</label>
+                    <input type="number" class="form-control" id="batchImportedQuantity_${detailRowCount}" min="1" required>
+                </div>
+            </div>
+            <div class="row mt-2 new-batch-fields" id="newBatchFields_${detailRowCount}_2" style="display: none;">
+                <div class="col-sm-6">
+                    <label class="form-label-title">Product Detail ID</label>
+                    <select class="form-control" id="batchProductDetailID_${detailRowCount}" required onchange="updateDetailName(${detailRowCount})">
+                        <option value="">Chọn Product Detail</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-6">
+                    <label class="form-label-title">Số Lượng</label>
+                    <input type="number" class="form-control" id="stockInDetailQuantity_${detailRowCount}" min="1" required>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label-title">Đơn Giá</label>
+                    <input type="number" step="100" min="0" class="form-control" id="stockInDetailUnitPrice_${detailRowCount}" required>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-12 text-end">
+                    <button type="button" class="btn btn-danger" onclick="removeDetailRow(${detailRowCount})">Xóa</button>
+                </div>
+            </div>
+        </div>
         `;
             stockInDetailsContainer.insertAdjacentHTML('beforeend', html);
-            // Load Batches and Product Details for new row
             loadAvailableBatches($('#batchID_' + detailRowCount), detailRowCount);
             loadProductDetails($('#batchProductDetailID_' + detailRowCount), detailRowCount);
             initializeManufactureDatePicker(detailRowCount);
-            updateUsedBatchIds(); // Cập nhật danh sách Batch đã dùng
+            updateUsedBatchIds();
         });
 
         // Function to update detailName when Product Detail ID changes
@@ -596,8 +600,6 @@
                                     const detailName = productDetail.detailName || 'N/A';
                                     const displayName = `${productName} (${detailName})`;
                                     console.log(`Cập nhật tên cho Product Detail ID ${productDetailId} tại hàng ${rowIndex}: ${displayName}`);
-                                    // Cập nhật giao diện nếu cần (ví dụ: hiển thị tên bên cạnh dropdown)
-                                    // Hiện tại chỉ log để debug
                                 },
                                 error: function(xhr, status, error) {
                                     console.error(`Lỗi khi lấy tên sản phẩm cho Product ID ${productId} tại hàng ${rowIndex}:`, { status, error });
@@ -620,29 +622,26 @@
             const isVisible = fields.is(':visible');
 
             if (isVisible) {
-                // Cancel New Batch
                 fields.hide();
                 fields2.hide();
-                batchIdSelect.prop('disabled', false); // Enable Batch ID dropdown
-                batchIdSelect.prop('required', true);  // Required again
+                batchIdSelect.prop('disabled', false);
+                batchIdSelect.prop('required', true);
                 $('#addNewBatch_' + rowIndex).text('Thêm Batch Mới');
             } else {
-                // Add New Batch
                 fields.show();
                 fields2.show();
-                batchIdSelect.prop('disabled', true);  // Disable Batch ID dropdown
-                batchIdSelect.val("");                 // Reset về "Không chọn" cho hàng hiện tại
-                batchIdSelect.prop('required', false); // Not required when adding new
+                batchIdSelect.prop('disabled', true);
+                batchIdSelect.val("");
+                batchIdSelect.prop('required', false);
                 $('#addNewBatch_' + rowIndex).text('Hủy Thêm Batch');
             }
-            // Không gọi updateUsedBatchIds để tránh làm mất batchID cũ ở các hàng khác
         };
 
         // Function to remove a detail row
         window.removeDetailRow = function (rowIndex) {
             const row = document.getElementById(`stockInDetailRow_${rowIndex}`);
             if (row) row.remove();
-            updateUsedBatchIds(); // Cập nhật sau khi xóa
+            updateUsedBatchIds();
         };
 
         // Submit handler
@@ -651,8 +650,8 @@
 
             const supplierIdValue = supplierId.value;
             const warehouseIdValue = warehouseId.value;
-            const stockInDateValue = stockInDate.value; // DD-MM-YYYY
-            const stockInTimeValue = stockInTime.value; // HH:MM
+            const stockInDateValue = stockInDate.value;
+            const stockInTimeValue = stockInTime.value;
             const noteValue = note.value.trim();
 
             console.log('Giá trị nhập vào:', {
@@ -672,8 +671,8 @@
                 $.notify({ message: 'Định dạng ngày không hợp lệ. Vui lòng chọn lại (DD-MM-YYYY).' }, { type: 'warning', delay: 3000 });
                 return;
             }
-            if (!stockInTimeValue || !/^\d{2}:\d{2}$/.test(stockInTimeValue)) {
-                $.notify({ message: 'Định dạng giờ không hợp lệ. Vui lòng nhập lại (HH:MM).' }, { type: 'warning', delay: 3000 });
+            if (!stockInTimeValue || !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(stockInTimeValue)) {
+                $.notify({ message: 'Định dạng giờ không hợp lệ. Vui lòng nhập lại theo định dạng HH:MM (từ 00:00 đến 23:59, ví dụ: 14:30).' }, { type: 'warning', delay: 3000 });
                 return;
             }
             if (!noteValue) {
@@ -698,37 +697,63 @@
 
                 let detail = {};
                 if (batchID && batchID !== "" && (!batchManufactureDate || batchManufactureDate === "") && (!batchImportedQuantity || batchImportedQuantity === "") && (!batchProductDetailID || batchProductDetailID === "")) {
-                    // Sử dụng BatchID đã chọn (kiểm tra các trường newBatch rỗng)
-                    if (stockInDetailQuantity && stockInDetailUnitPrice) {
-                        detail = {
-                            quantity: parseInt(stockInDetailQuantity),
-                            unitPrice: parseFloat(stockInDetailUnitPrice),
-                            batchID: parseInt(batchID)
-                        };
-                        console.log(`Sử dụng Batch ID: ${batchID} cho StockInDetail ${i}`);
+                    if (!stockInDetailQuantity || !stockInDetailUnitPrice) {
+                        console.log(`Bỏ qua StockInDetail ${i} do dữ liệu không đầy đủ`);
+                        continue;
                     }
-                } else if (batchManufactureDate && batchImportedQuantity && batchProductDetailID && stockInDetailQuantity && stockInDetailUnitPrice) {
-                    // Tạo batch mới, thêm vào newBatches
-                    const [mDay, mMonth, mYear] = batchManufactureDate.split('-');
-                    if (!/^\d{2}-\d{2}-\d{4}$/.test(batchManufactureDate)) {
-                        $.notify({ message: `Định dạng ngày sản xuất cho Batch ${i} không hợp lệ. Vui lòng chọn lại (DD-MM-YYYY).` }, { type: 'warning', delay: 3000 });
+                    // Validate quantities and unit price
+                    if (parseInt(stockInDetailQuantity) <= 0) {
+                        $.notify({ message: `Số lượng chi tiết nhập kho tại hàng ${i} phải lớn hơn 0.` }, { type: 'warning', delay: 3000 });
+                        return;
+                    }
+                    if (parseFloat(stockInDetailUnitPrice) < 0) {
+                        $.notify({ message: `Đơn giá tại hàng ${i} không được nhỏ hơn 0.` }, { type: 'warning', delay: 3000 });
                         return;
                     }
                     detail = {
                         quantity: parseInt(stockInDetailQuantity),
                         unitPrice: parseFloat(stockInDetailUnitPrice),
-                        batchID: null // Sẽ được gán sau khi tạo batch mới
+                        batchID: parseInt(batchID)
+                    };
+                    console.log(`Sử dụng Batch ID: ${batchID} cho StockInDetail ${i}`);
+                } else if (batchManufactureDate && batchImportedQuantity && batchProductDetailID && stockInDetailQuantity && stockInDetailUnitPrice) {
+                    const [mDay, mMonth, mYear] = batchManufactureDate.split('-');
+                    if (!/^\d{2}-\d{2}-\d{4}$/.test(batchManufactureDate)) {
+                        $.notify({ message: `Định dạng ngày sản xuất cho Batch ${i} không hợp lệ. Vui lòng chọn lại (DD-MM-YYYY).` }, { type: 'warning', delay: 3000 });
+                        return;
+                    }
+                    // Validate quantities and unit price
+                    if (parseInt(stockInDetailQuantity) <= 0) {
+                        $.notify({ message: `Số lượng chi tiết nhập kho tại hàng ${i} phải lớn hơn 0.` }, { type: 'warning', delay: 3000 });
+                        return;
+                    }
+                    if (parseInt(batchImportedQuantity) <= 0) {
+                        $.notify({ message: `Số lượng nhập batch mới tại hàng ${i} phải lớn hơn 0.` }, { type: 'warning', delay: 3000 });
+                        return;
+                    }
+                    if (parseFloat(stockInDetailUnitPrice) < 0) {
+                        $.notify({ message: `Đơn giá tại hàng ${i} không được nhỏ hơn 0.` }, { type: 'warning', delay: 3000 });
+                        return;
+                    }
+                    if (parseInt(batchImportedQuantity) > parseInt(stockInDetailQuantity)) {
+                        $.notify({ message: `Số lượng nhập batch mới tại hàng ${i} không được vượt quá số lượng chi tiết nhập kho.` }, { type: 'warning', delay: 3000 });
+                        return;
+                    }
+                    detail = {
+                        quantity: parseInt(stockInDetailQuantity),
+                        unitPrice: parseFloat(stockInDetailUnitPrice),
+                        batchID: null
                     };
                     newBatches.push({
-                        manufactureDate: `${mYear}-${mMonth}-${mDay}`, // Chuyển sang YYYY-MM-DD
+                        manufactureDate: `${mYear}-${mMonth}-${mDay}`,
                         importedQuantity: parseInt(batchImportedQuantity),
                         productDetailID: parseInt(batchProductDetailID),
-                        soldQuantity: 0 // Mặc định
+                        soldQuantity: 0
                     });
                     console.log(`Tạo Batch mới cho StockInDetail ${i} với Manufacture Date: ${batchManufactureDate}`);
                 } else {
                     console.log(`Bỏ qua StockInDetail ${i} do dữ liệu không đầy đủ:`, { batchID, batchManufactureDate, batchImportedQuantity, batchProductDetailID, stockInDetailQuantity, stockInDetailUnitPrice });
-                    continue; // Bỏ qua nếu dữ liệu không đầy đủ
+                    continue;
                 }
 
                 if (Object.keys(detail).length > 0) {
@@ -768,20 +793,22 @@
                 .then(response => {
                     console.log('Phản hồi từ server:', { status: response.status, ok: response.ok });
                     if (!response.ok) {
-                        return response.json().then(err => { throw { status: response.status, error: err.error || 'Lỗi không xác định.' }; });
+                        return response.json().catch(() => {
+                            throw { status: response.status, error: 'Lỗi server không xác định.' };
+                        }).then(err => {
+                            throw { status: response.status, error: err.error || 'Lỗi server không xác định.' };
+                        });
                     }
                     return response.json();
                 })
                 .then(createdStockIn => {
                     console.log('StockIn được tạo thành công:', createdStockIn);
-                    // Cập nhật usedBatchIds sau khi gửi thành công
                     stockInDetails.forEach(detail => {
                         if (detail.batchID) {
                             usedBatchIds.push(detail.batchID);
                         }
                     });
                     $.notify({ message: 'Tạo Nhập Kho và Chi Tiết thành công!' }, { type: 'success', delay: 3000 });
-                    // Reset form
                     supplierId.value = '';
                     warehouseId.value = '';
                     stockInDate.value = '';
@@ -807,7 +834,7 @@
                         </div>
                         <div class="col-sm-6">
                             <label class="form-label-title">Số Lượng Nhập</label>
-                            <input type="number" class="form-control" id="batchImportedQuantity_0" required>
+                            <input type="number" class="form-control" id="batchImportedQuantity_0" min="1" required>
                         </div>
                     </div>
                     <div class="row mt-2 new-batch-fields" id="newBatchFields_0_2" style="display: none;">
@@ -821,11 +848,11 @@
                     <div class="row mt-2">
                         <div class="col-sm-6">
                             <label class="form-label-title">Số Lượng</label>
-                            <input type="number" class="form-control" id="stockInDetailQuantity_0" required>
+                            <input type="number" class="form-control" id="stockInDetailQuantity_0" min="1" required>
                         </div>
                         <div class="col-sm-6">
                             <label class="form-label-title">Đơn Giá</label>
-                            <input type="number" step="0.01" class="form-control" id="stockInDetailUnitPrice_0" required>
+                            <input type="number" step="100" min="0" class="form-control" id="stockInDetailUnitPrice_0" required>
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -840,16 +867,12 @@
                     loadAvailableBatches($('#batchID_0'), 0);
                     loadProductDetails($('#batchProductDetailID_0'), 0);
                     initializeManufactureDatePicker(0);
-                    // Redirect immediately to stockin list
                     window.location.href = 'http://localhost:8080/warehouse/stockin?page=1';
                 })
                 .catch(error => {
-                    console.error('Lỗi khi tạo StockIn:', { status: error.status, error: error.error });
-                    if (error.status === 400) {
-                        $.notify({ message: error.error || 'Dữ liệu không hợp lệ, vui lòng kiểm tra lại. Chi tiết: ' + JSON.stringify(error) }, { type: 'danger', delay: 3000 });
-                    } else {
-                        $.notify({ message: 'Đã xảy ra lỗi khi tạo Nhập Kho: ' + error.error }, { type: 'danger', delay: 3000 });
-                    }
+                    console.error('Lỗi khi tạo StockIn:', error);
+                    const errorMessage = error.error || 'Đã xảy ra lỗi khi tạo Nhập Kho. Vui lòng kiểm tra lại dữ liệu và thử lại.';
+                    $.notify({ message: errorMessage }, { type: 'danger', delay: 3000 });
                 });
         });
     });

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
@@ -70,26 +71,27 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="card-submit-button">
-                                        <button id="submitButton" class="btn btn-animation ms-auto" type="button">Thêm Mới</button>
-                                    </div>
+                                <div class="card-submit-button">
+                                    <button id="submitButton" class="btn btn-animation ms-auto" type="button">Thêm Mới</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- New Product Add End -->
-
-            <!-- footer Start -->
-            <div th:replace="BackEnd/fragments/WareHouse/footer::footer"></div>
-            <!-- footer End -->
         </div>
-        <!-- Container-fluid End -->
+        <!-- New Product Add End -->
+
+        <!-- footer Start -->
+        <div th:replace="BackEnd/fragments/WareHouse/footer::footer"></div>
+        <!-- footer End -->
     </div>
-    <!-- Page Body End -->
+    <!-- Container-fluid End -->
 </div>
+<!-- Page Body End -->
+
 <!-- page-wrapper End -->
 
 <!-- Modal Đăng Xuất -->
@@ -126,7 +128,7 @@
                 supplierName: !!supplierNameInput,
                 contactInfo: !!contactInfoInput
             });
-            alert('Lỗi giao diện, vui lòng kiểm tra console.');
+            $.notify({ message: 'Lỗi giao diện: Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
             return;
         }
 
@@ -139,7 +141,7 @@
                 autoProcessQueue: false,
                 maxFiles: 1,
                 acceptedFiles: "image/*",
-                addRemoveLinks: false, // Disable default addRemoveLinks to avoid duplicate links
+                addRemoveLinks: false,
                 dictDefaultMessage: "Kéo thả file hoặc nhấn để tải lên logo",
                 dictRemoveFile: "Xóa file",
                 dictInvalidFileType: "Chỉ chấp nhận file hình ảnh (jpg, png, ...)",
@@ -164,21 +166,20 @@
                         if (this.files.length > 1) {
                             this.removeFile(this.files[0]);
                         }
-                        // Hide the default message when a file is added
                         const dzMessage = document.querySelector('.dz-message');
                         if (dzMessage) dzMessage.style.display = 'none';
                     });
                     this.on("maxfilesexceeded", function (file) {
                         this.removeAllFiles();
                         this.addFile(file);
-                        alert("Chỉ được tải lên 1 file.");
+                        $.notify({ message: 'Chỉ được tải lên 1 file.' }, { type: 'danger', delay: 3000 });
                     });
                     this.on("thumbnail", function (file, dataUrl) {
                         console.log('Thumbnail generated for:', file.name);
                         if (file.previewElement) {
                             let img = file.previewElement.querySelector("img[data-dz-thumbnail]");
                             if (img) {
-                                img.src = dataUrl; // Set the image source
+                                img.src = dataUrl;
                             }
                         }
                     });
@@ -197,7 +198,7 @@
                         } else {
                             displayMessage += ': Đã xảy ra lỗi không xác định.';
                         }
-                        alert(displayMessage);
+                        $.notify({ message: displayMessage }, { type: 'danger', delay: 3000 });
                     });
                     this.on("success", function (file, response) {
                         console.log('Upload thành công:', response);
@@ -207,7 +208,7 @@
             console.log('Dropzone khởi tạo thành công.');
         } catch (error) {
             console.error('Lỗi khi khởi tạo Dropzone:', error);
-            alert('Không thể khởi tạo Dropzone. Vui lòng kiểm tra console.');
+            $.notify({ message: 'Lỗi khi khởi tạo Dropzone: Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
             return;
         }
 
@@ -218,37 +219,44 @@
             const contactInfo = contactInfoInput.value.trim();
             const logoFile = dropzone.files[0];
 
-            // Client-side validation
+            // Client-side validation to match updateSupplier
             if (!supplierName) {
-                alert('Vui lòng nhập Tên Nhà Cung Cấp.');
+                $.notify({ message: 'Vui lòng nhập Tên Nhà Cung Cấp.' }, { type: 'danger', delay: 3000 });
                 console.warn('Thiếu Tên Nhà Cung Cấp.');
                 return;
             }
-            if (!supplierName.match(/^[a-zA-Z\s\u00C0-\u00FF\u1EA0-\u1EFF]+$/)) {
-                alert('Tên Nhà Cung Cấp chỉ chứa chữ cái (tiếng Việt) và khoảng trắng.');
-                console.warn('Định dạng Tên Nhà Cung Cấp không hợp lệ.');
+            if (!supplierName.match(/^[a-zA-Z\s\u00C0-\u00FF\u0110\u0111\u1EA0-\u1EFF]+$/)) {
+                $.notify({ message: 'Tên nhà cung cấp chỉ được chứa chữ cái (tiếng Việt) và khoảng trắng.' }, { type: 'danger', delay: 3000 });
+                console.warn('Định dạng Tên Nhà Cung Cấp không hợp lệ:', supplierName);
                 return;
             }
             if (!contactInfo) {
-                alert('Vui lòng nhập Thông Tin Liên Hệ.');
+                $.notify({ message: 'Thông tin liên hệ là bắt buộc.' }, { type: 'danger', delay: 3000 });
                 console.warn('Thiếu Thông Tin Liên Hệ.');
                 return;
             }
-            if (!logoFile) {
-                alert('Vui lòng tải lên logo.');
-                console.warn('Thiếu logo.');
+            if (!contactInfo.match(/^0\d{9}$/) && !contactInfo.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+                $.notify({ message: 'Thông tin liên hệ phải là số điện thoại (10 chữ số, bắt đầu bằng 0) hoặc email hợp lệ.' }, { type: 'danger', delay: 3000 });
+                console.warn('Định dạng Thông Tin Liên Hệ không hợp lệ:', contactInfo);
+                return;
+            }
+            if (contactInfo.includes('@') && contactInfo.indexOf('@') !== contactInfo.lastIndexOf('@')) {
+                $.notify({ message: 'Email chỉ được chứa một ký tự @.' }, { type: 'danger', delay: 3000 });
+                console.warn('Email không hợp lệ:', contactInfo);
                 return;
             }
 
             const formData = new FormData();
             formData.append('supplierName', supplierName);
             formData.append('contactInfo', contactInfo);
-            formData.append('logo', logoFile);
+            if (logoFile) {
+                formData.append('logo', logoFile);
+            }
 
             console.log('Gửi FormData tới /api/suppliers/createSupplier', {
                 supplierName,
                 contactInfo,
-                logoFile: logoFile.name
+                logoFile: logoFile ? logoFile.name : 'No logo'
             });
 
             fetch('/api/suppliers/createSupplier', {
@@ -266,7 +274,7 @@
                 })
                 .then(createdSupplier => {
                     console.log('Nhà Cung Cấp được tạo:', createdSupplier);
-                    alert('Tạo Nhà Cung Cấp thành công!');
+                    $.notify({ message: 'Tạo Nhà Cung Cấp thành công!' }, { type: 'success', delay: 3000 });
 
                     supplierNameInput.value = '';
                     contactInfoInput.value = '';
@@ -276,20 +284,21 @@
                         console.log('Logo URL:', `/BackEnd/assets/imgproject/${createdSupplier.logo}?t=${Date.now()}`);
                     }
 
-                    // Redirect sau 1.5s
                     setTimeout(() => {
-                        window.location.href = '/warehouse/supplier';
+                        window.location.href = 'http://localhost:8080/warehouse/supplier';
                     }, 1500);
                 })
                 .catch(error => {
                     console.error('Lỗi:', error);
+                    let errorMessage = 'Lỗi khi tạo Nhà Cung Cấp: ';
                     if (error.status === 409) {
-                        alert(error.error || 'Tên Nhà Cung Cấp hoặc Thông Tin Liên Hệ đã tồn tại.');
+                        errorMessage += error.error || 'Tên Nhà Cung Cấp hoặc Thông Tin Liên Hệ đã tồn tại.';
                     } else if (error.status === 400) {
-                        alert(error.error || 'Dữ liệu không hợp lệ, vui lòng kiểm tra lại.');
+                        errorMessage += error.error || 'Dữ liệu không hợp lệ, vui lòng kiểm tra lại.';
                     } else {
-                        alert('Đã xảy ra lỗi khi tạo Nhà Cung Cấp: ' + error.error);
+                        errorMessage += error.error || 'Vui lòng kiểm tra console.';
                     }
+                    $.notify({ message: errorMessage }, { type: 'danger', delay: 3000 });
                     dropzone.removeAllFiles();
                 });
         });
@@ -420,7 +429,7 @@
     .dropzone .dz-message {
         text-align: center;
         width: 100%;
-        display: block; /* Default state when no file */
+        display: block;
     }
 
     .dropzone .dz-message .dz-message-content {
@@ -433,7 +442,6 @@
         color: #555;
     }
 
-    /* Ensure message is hidden when preview exists */
     .dropzone .dz-preview .dz-message {
         display: none;
     }

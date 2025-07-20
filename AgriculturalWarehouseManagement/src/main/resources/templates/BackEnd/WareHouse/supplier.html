@@ -15,6 +15,7 @@
     #table_id {
         width: 100%;
         min-width: 1000px; /* Force horizontal scrollbar for wide content */
+        table-layout: fixed; /* Ensure consistent column widths */
     }
 
     /* Override gray borders from Bootstrap for table */
@@ -22,6 +23,92 @@
     #table_id th,
     #table_id td {
         border-color: #e6f3f2 !important; /* Light green border */
+    }
+
+    /* Consistent text alignment and padding for table cells */
+    #table_id th,
+    #table_id td {
+        text-align: left; /* Default left alignment for all cells */
+        vertical-align: middle; /* Center vertically */
+        padding: 8px 12px; /* Consistent padding */
+        overflow: hidden;
+        text-overflow: ellipsis; /* Truncate long text with ellipsis */
+    }
+
+    /* Specific styles for STT column */
+    #table_id th:nth-child(1),
+    #table_id td:nth-child(1) {
+        text-align: center; /* Center STT numbers */
+        width: 25%; /* Requested width */
+    }
+
+    /* Specific styles for Logo column */
+    #table_id th:nth-child(2),
+    #table_id td:nth-child(2) {
+        width: 15%; /* Requested width */
+        text-align: center; /* Center logo */
+    }
+
+    /* Specific styles for Tên Nhà Cung Cấp column */
+    #table_id th:nth-child(3),
+    #table_id td:nth-child(3) {
+        width: 15%; /* Requested width */
+    }
+
+    /* Specific styles for Thông Tin Liên Hệ column */
+    #table_id th:nth-child(4),
+    #table_id td:nth-child(4) {
+        width: 20%; /* Requested width */
+        white-space: normal; /* Allow wrapping for contact info */
+        word-break: break-word; /* Break long words/emails */
+    }
+
+    /* Specific styles for Hành Động column */
+    #table_id th:nth-child(5),
+    #table_id td:nth-child(5) {
+        width: 25%; /* Requested width */
+        text-align: center; /* Center action icons */
+    }
+
+    /* Ensure images in Logo column are constrained */
+    #table_id .table-image img {
+        max-width: 50px;
+        max-height: 50px;
+        object-fit: contain;
+    }
+
+    /* Style for sortable column headers */
+    th.sortable {
+        cursor: pointer;
+        position: relative;
+        padding-right: 20px; /* Space for sort icon */
+    }
+
+    th.sortable::after {
+        content: '';
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 4px solid transparent;
+        border-top-color: #018F84; /* Default arrow color */
+        opacity: 0.5;
+    }
+
+    th.sortable.asc::after {
+        border-top-color: transparent;
+        border-bottom-color: #018F84; /* Up arrow for ascending */
+        opacity: 1;
+    }
+
+    th.sortable.desc::after {
+        border-bottom-color: transparent;
+        border-top-color: #018F84; /* Down arrow for descending */
+        opacity: 1;
+    }
+
+    th.sortable:hover::after {
+        opacity: 1; /* Highlight arrow on hover */
     }
 
     /* Center pagination and style items */
@@ -182,10 +269,10 @@
                                     <table class="table all-package theme-table" id="table_id">
                                         <thead>
                                         <tr>
+                                            <th class="sortable" data-sort="stt">STT</th>
                                             <th>Logo</th>
-                                            <th>Tên Nhà Cung Cấp</th>
+                                            <th class="sortable" data-sort="name">Tên Nhà Cung Cấp</th>
                                             <th>Thông Tin Liên Hệ</th>
-                                            <th>Sản Phẩm</th>
                                             <th>Hành Động</th>
                                         </tr>
                                         </thead>
@@ -279,28 +366,6 @@
     </div>
     <!-- Delete Modal Box End -->
 
-    <!-- Modal for Product details -->
-    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="productModalLabel">Chi Tiết Sản Phẩm</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="product-info">
-                        <p><strong>Tên Sản Phẩm:</strong> <span id="product-name">Sản Phẩm Mẫu</span></p>
-                        <p><strong>Giá Sản Phẩm:</strong> <span id="product-price">100.000 VNĐ</span></p>
-                        <p><strong>Mô Tả Sản Phẩm:</strong> <span id="product-description">Đây là mô tả mẫu.</span></p>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Modal Cập Nhật Nhà Cung Cấp -->
     <div class="modal fade" id="updateSupplierModal" tabindex="-1" aria-labelledby="updateSupplierModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -369,6 +434,10 @@
     document.addEventListener('DOMContentLoaded', function () {
         let currentPage = 0; // 0-based internally
         const pageSize = 5;
+        let searchTerm = ''; // Store current search term
+        let allSuppliers = []; // Store all suppliers for frontend filtering
+        let sortColumn = 'stt'; // Default sort column
+        let sortDirection = 'asc'; // Default sort direction
 
         function ensureElements() {
             let tableBody = document.querySelector('#supplier-table-body');
@@ -389,7 +458,7 @@
             if (!noDataRow) {
                 noDataRow = document.createElement('tr');
                 noDataRow.id = 'no-data-row';
-                noDataRow.innerHTML = '<td colspan="5" class="text-center" style="background-color: #e6f3f2; color: #555;">Không có dữ liệu trong bảng</td>';
+                noDataRow.innerHTML = '<td colspan="5" class="text-center" style="background-color: #e6f3f2; color: #555;">Không tìm thấy bản ghi nào</td>';
                 tableBody.appendChild(noDataRow);
             }
 
@@ -397,105 +466,205 @@
         }
 
         function updateURL(page) {
-            history.pushState({}, '', `?page=${page + 1}`); // 1-based for URL
+            const params = new URLSearchParams();
+            if (page > 0) params.set('page', page + 1); // 1-based for URL
+            history.pushState({}, '', `?${params.toString()}`);
         }
 
-        function fetchSuppliers(page = 0) {
-            currentPage = page;
-            updateURL(page);
-            const { tableBody, noDataRow } = ensureElements();
-            if (!tableBody || !noDataRow) return;
+        function fetchAllSuppliers() {
+            const url = `/api/suppliers/paginated?page=0&size=1000`;
+            console.log('Fetching all suppliers with URL:', url);
 
-            fetch(`/api/suppliers/paginated?page=${page}&size=${pageSize}`)
+            fetch(url, {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content || ''
+                }
+            })
                 .then(response => {
                     if (!response.ok) throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
                     return response.json();
                 })
                 .then(data => {
-                    if (!data || !data.content || typeof data.totalPages === 'undefined' || typeof data.number === 'undefined') {
+                    if (!data || !data.content || typeof data.totalPages === 'undefined') {
                         console.error('Phản hồi API không hợp lệ:', data);
-                        tableBody.innerHTML = '';
-                        noDataRow.style.display = '';
-                        renderPagination(0, 0);
+                        allSuppliers = [];
+                        filterAndRenderSuppliers(searchTerm);
                         return;
                     }
-
-                    tableBody.innerHTML = '';
-                    if (data.content && data.content.length > 0) {
-                        noDataRow.style.display = 'none';
-                        data.content.forEach(supplier => {
-                            const row = document.createElement('tr');
-                            row.setAttribute('data-id', supplier.supplierID);
-
-                            const imageCell = document.createElement('td');
-                            const imageDiv = document.createElement('div');
-                            imageDiv.classList.add('table-image');
-                            const img = document.createElement('img');
-                            img.src = supplier.logo || 'default-logo.png'; // Fallback if no logo
-                            img.classList.add('img-fluid');
-                            img.alt = 'Logo Nhà Cung Cấp';
-                            imageDiv.appendChild(img);
-                            imageCell.appendChild(imageDiv);
-                            row.appendChild(imageCell);
-
-                            const nameCell = document.createElement('td');
-                            const nameDiv = document.createElement('div');
-                            nameDiv.classList.add('user-name');
-                            nameDiv.innerHTML = `<span>${supplier.supplierName || 'N/A'}</span>`;
-                            nameCell.appendChild(nameDiv);
-                            row.appendChild(nameCell);
-
-                            const emailCell = document.createElement('td');
-                            emailCell.innerText = supplier.contactInfo || 'Chưa có thông tin liên hệ';
-                            row.appendChild(emailCell);
-
-                            const productCell = document.createElement('td');
-                            const productIcon = document.createElement('i');
-                            productIcon.classList.add('ri-product-hunt-line');
-                            productIcon.style.cursor = 'pointer';
-                            productIcon.addEventListener('click', function () {
-                                document.getElementById('product-name').innerText = 'Sản Phẩm Mẫu';
-                                document.getElementById('product-price').innerText = '100.000 VNĐ';
-                                document.getElementById('product-description').innerText = 'Đây là mô tả mẫu.';
-                                new bootstrap.Modal(document.getElementById('productModal')).show();
-                            });
-                            productCell.appendChild(productIcon);
-                            row.appendChild(productCell);
-
-                            const actionsCell = document.createElement('td');
-                            actionsCell.innerHTML = `
-                                <ul>
-                                    <li><a href="order-detail.html"><i class="ri-eye-line"></i></a></li>
-                                    <li><a href="javascript:void(0)" class="edit-btn" data-id="${supplier.supplierID}" data-name="${supplier.supplierName || ''}" data-contact="${supplier.contactInfo || ''}" data-logo="${supplier.logo || ''}"><i class="ri-pencil-line"></i></a></li>
-                                    <li><a href="javascript:void(0)" class="delete-btn" data-id="${supplier.supplierID}" data-bs-toggle="modal" data-bs-target="#exampleModalToggle"><i class="ri-delete-bin-line"></i></a></li>
-                                </ul>
-                            `;
-                            row.appendChild(actionsCell);
-
-                            tableBody.appendChild(row);
-                        });
-                    } else {
-                        noDataRow.style.display = '';
-                    }
-
-                    renderPagination(data.totalPages, data.number);
+                    allSuppliers = data.content;
+                    filterAndRenderSuppliers(searchTerm);
                 })
                 .catch(error => {
                     console.error('Lỗi khi tải danh sách Nhà Cung Cấp:', error);
-                    tableBody.innerHTML = '';
-                    noDataRow.style.display = '';
-                    renderPagination(0, 0);
+                    allSuppliers = [];
+                    filterAndRenderSuppliers(searchTerm);
+                    alert('Không thể tải danh sách nhà cung cấp. Vui lòng kiểm tra kết nối hoặc thử lại.');
                 });
+        }
+
+        function sortSuppliers(suppliers, pageIndex) {
+            return [...suppliers].sort((a, b) => {
+                let valueA, valueB;
+                if (sortColumn === 'stt') {
+                    // STT sorting is based on array index, so no actual data comparison
+                    // Ascending returns original order, descending reverses it
+                    return sortDirection === 'asc' ? 0 : -1;
+                } else if (sortColumn === 'name') {
+                    valueA = a.supplierName.toLowerCase();
+                    valueB = b.supplierName.toLowerCase();
+                }
+                if (valueA < valueB) return sortDirection === 'asc' ? -1 : 1;
+                if (valueA > valueB) return sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function updateSortIndicators() {
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.classList.remove('asc', 'desc');
+                if (th.getAttribute('data-sort') === sortColumn) {
+                    th.classList.add(sortDirection);
+                }
+            });
+        }
+
+        function filterAndRenderSuppliers(search = '') {
+            searchTerm = search;
+            updateURL(currentPage);
+            const { tableBody, noDataRow } = ensureElements();
+            if (!tableBody || !noDataRow) return;
+
+            // Filter suppliers based on search term
+            const filteredSuppliers = allSuppliers.filter(supplier =>
+                supplier.supplierName.toLowerCase().includes(search.toLowerCase())
+            );
+            console.log('Filtered suppliers:', filteredSuppliers);
+
+            // Sort suppliers
+            const sortedSuppliers = sortSuppliers(filteredSuppliers, currentPage);
+
+            // Paginate sorted suppliers
+            const totalElements = sortedSuppliers.length;
+            const totalPages = Math.ceil(totalElements / pageSize);
+
+            // Adjust currentPage if it exceeds totalPages after sorting
+            if (currentPage >= totalPages) {
+                currentPage = totalPages > 0 ? totalPages - 1 : 0;
+                updateURL(currentPage);
+            }
+
+            const startIndex = currentPage * pageSize;
+            const paginatedSuppliers = sortedSuppliers.slice(startIndex, startIndex + pageSize);
+
+            // Destroy existing DataTable if it exists
+            if ($.fn.DataTable.isDataTable('#table_id')) {
+                console.log('Destroying existing DataTable');
+                $('#table_id').DataTable().clear().destroy();
+            } else {
+                console.log('No existing DataTable to destroy');
+            }
+
+            // Clear table body
+            tableBody.innerHTML = '';
+            if (paginatedSuppliers.length > 0) {
+                noDataRow.style.display = 'none';
+                paginatedSuppliers.forEach((supplier, index) => {
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-id', supplier.supplierID);
+
+                    // STT Cell
+                    const sttCell = document.createElement('td');
+                    sttCell.innerText = sortColumn === 'stt' && sortDirection === 'desc'
+                        ? (totalElements - (currentPage * pageSize + index))
+                        : (currentPage * pageSize + index + 1);
+                    row.appendChild(sttCell);
+
+                    // Logo Cell
+                    const imageCell = document.createElement('td');
+                    const imageDiv = document.createElement('div');
+                    imageDiv.classList.add('table-image');
+                    const img = document.createElement('img');
+                    img.src = supplier.logo || 'default-logo.png';
+                    img.classList.add('img-fluid');
+                    img.alt = 'Logo Nhà Cung Cấp';
+                    imageDiv.appendChild(img);
+                    imageCell.appendChild(imageDiv);
+                    row.appendChild(imageCell);
+
+                    // Supplier Name Cell
+                    const nameCell = document.createElement('td');
+                    const nameDiv = document.createElement('div');
+                    nameDiv.classList.add('user-name');
+                    nameDiv.innerHTML = `<span>${supplier.supplierName || 'N/A'}</span>`;
+                    nameCell.appendChild(nameDiv);
+                    row.appendChild(nameCell);
+
+                    // Contact Info Cell
+                    const emailCell = document.createElement('td');
+                    emailCell.innerText = supplier.contactInfo || 'Chưa có thông tin liên hệ';
+                    row.appendChild(emailCell);
+
+                    // Actions Cell
+                    const actionsCell = document.createElement('td');
+                    actionsCell.innerHTML = `
+                        <ul>
+                            <li><a href="order-detail.html"><i class="ri-eye-line"></i></a></li>
+                            <li><a href="javascript:void(0)" class="edit-btn" data-id="${supplier.supplierID}" data-name="${supplier.supplierName || ''}" data-contact="${supplier.contactInfo || ''}" data-logo="${supplier.logo || ''}"><i class="ri-pencil-line"></i></a></li>
+                            <li><a href="javascript:void(0)" class="delete-btn" data-id="${supplier.supplierID}" data-bs-toggle="modal" data-bs-target="#exampleModalToggle"><i class="ri-delete-bin-line"></i></a></li>
+                        </ul>
+                    `;
+                    row.appendChild(actionsCell);
+
+                    tableBody.appendChild(row);
+                });
+            } else {
+                noDataRow.style.display = '';
+            }
+
+            // Initialize DataTable
+            if (document.querySelector('#table_id')) {
+                console.log('Initializing new DataTable');
+                $('#table_id').DataTable({
+                    searching: false,
+                    paging: false,
+                    ordering: false,
+                    info: false,
+                    language: {
+                        emptyTable: "Không tìm thấy bản ghi nào"
+                    },
+                    columns: [
+                        { width: '15%' }, // STT
+                        { width: '20%' }, // Logo
+                        { width: '25%' }, // Supplier Name
+                        { width: '20%' }, // Contact Info
+                        { width: '20%' }  // Actions
+                    ],
+                    autoWidth: false
+                });
+            } else {
+                console.error('Không tìm thấy #table_id khi khởi tạo DataTable');
+            }
+
+            // Render pagination only if total elements >= 6
+            console.log('Rendering page:', currentPage, 'Total elements:', totalElements, 'Total pages:', totalPages);
+            if (totalElements >= 6) {
+                renderPagination(totalPages, currentPage);
+            } else {
+                document.querySelector('#pagination-controls').innerHTML = '';
+            }
+
+            // Update sort indicators
+            updateSortIndicators();
         }
 
         function renderPagination(totalPages, currentPage) {
             const paginationControls = document.querySelector('#pagination-controls');
+            if (!paginationControls) return;
+
             paginationControls.innerHTML = '';
+            totalPages = Math.max(1, totalPages);
+            currentPage = Math.min(Math.max(0, currentPage), totalPages - 1);
 
-            totalPages = typeof totalPages === 'number' && totalPages > 0 ? totalPages : 0;
-            currentPage = typeof currentPage === 'number' && currentPage >= 0 ? currentPage : 0;
-
-            // Add button helper
             const addBtn = (label, page, disabled = false, active = false) => {
                 const li = document.createElement('li');
                 li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
@@ -503,80 +672,126 @@
                 paginationControls.appendChild(li);
             };
 
-            // Previous button
+            const addEllipsis = () => {
+                const li = document.createElement('li');
+                li.className = 'page-item disabled';
+                li.innerHTML = `<a class="page-link">...</a>`;
+                paginationControls.appendChild(li);
+            };
+
+            const added = new Set();
+
+            // Trước
             addBtn('Trước', currentPage - 1, currentPage === 0);
 
-            if (totalPages <= 1) {
-                addBtn(1, 0, false, true);
-            } else {
-                // Always show first page
-                addBtn(1, 0, false, currentPage === 0);
+            // Luôn luôn hiển thị trang 1
+            addBtn(1, 0, false, currentPage === 0);
+            added.add(0);
 
-                if (currentPage < totalPages - 3) {
-                    // Not in the last 3 pages
-                    if (currentPage <= 2) {
-                        // Show pages 2, 3, 4
-                        for (let i = 1; i < Math.min(4, totalPages - 1); i++) {
-                            addBtn(i + 1, i, false, currentPage === i);
-                        }
-                    } else {
-                        // Show currentPage - 1, currentPage, currentPage + 1
-                        if (currentPage - 1 > 1) addBtn(currentPage, currentPage - 1);
-                        addBtn(currentPage + 1, currentPage, false, true);
-                        if (currentPage + 1 < totalPages - 1) addBtn(currentPage + 2, currentPage + 1);
+            // Form 1: Trang hiện tại <= 2 (trang 1,2,3)
+            if (currentPage <= 2) {
+                for (let i = 1; i <= 3 && i < totalPages - 2; i++) {
+                    if (!added.has(i)) {
+                        addBtn(i + 1, i, false, currentPage === i);
+                        added.add(i);
                     }
+                }
+                if (totalPages > 6) addEllipsis();
+            }
 
-                    if (totalPages > 5 && currentPage < totalPages - 4) {
-                        // Add ellipsis before last two pages
-                        const ellipsis = document.createElement('li');
-                        ellipsis.className = 'page-item disabled';
-                        ellipsis.innerHTML = `<a class="page-link">...</a>`;
-                        paginationControls.appendChild(ellipsis);
+            // Form 2: 3 <= currentPage <= totalPages - 4 (giữa)
+            else if (currentPage >= 3 && currentPage <= totalPages - 4) {
+                const range = [currentPage - 1, currentPage, currentPage + 1];
+                for (let i of range) {
+                    if (!added.has(i)) {
+                        addBtn(i + 1, i, false, currentPage === i);
+                        added.add(i);
                     }
+                }
+                addEllipsis();
+            }
 
-                    // Last two pages
-                    if (totalPages > 2) addBtn(totalPages - 1, totalPages - 2, false, currentPage === totalPages - 2);
-                    addBtn(totalPages, totalPages - 1, false, currentPage === totalPages - 1);
-                } else {
-                    // In the last 3 pages (currentPage >= totalPages - 3)
-                    if (totalPages > 5) {
-                        // Add ellipsis after page 1
-                        const ellipsis = document.createElement('li');
-                        ellipsis.className = 'page-item disabled';
-                        ellipsis.innerHTML = `<a class="page-link">...</a>`;
-                        paginationControls.appendChild(ellipsis);
-                    }
-
-                    // Show last four pages (e.g., 9, 10, 11, 12)
-                    for (let i = totalPages - 4; i < totalPages; i++) {
-                        if (i > 1) { // Skip if already shown (e.g., page 1)
-                            addBtn(i + 1, i, false, currentPage === i);
-                        }
+            // Form 3: currentPage >= totalPages - 3 (cuối)
+            else if (currentPage >= totalPages - 3) {
+                if (!added.has(1)) {
+                    addBtn(2, 1, false, currentPage === 1);
+                    added.add(1);
+                }
+                if (totalPages > 6) addEllipsis();
+                for (let i = totalPages - 4; i < totalPages - 1; i++) {
+                    if (i > 1 && !added.has(i)) {
+                        addBtn(i + 1, i, false, currentPage === i);
+                        added.add(i);
                     }
                 }
             }
 
-            // Next button
-            addBtn('Tiếp', currentPage + 1, currentPage === totalPages - 1);
-
-            // Handle click
-            paginationControls.onclick = (e) => {
-                const target = e.target.closest('.page-link');
-                if (!target) return;
-                const page = parseInt(target.getAttribute('data-page'));
-                if (!isNaN(page) && page >= 0 && page < totalPages) {
-                    fetchSuppliers(page);
+            // Luôn hiện trang cuối cùng
+            if (totalPages > 1) {
+                if (!added.has(totalPages - 2) && totalPages - 2 > 0) {
+                    addBtn(totalPages - 1, totalPages - 2, false, currentPage === totalPages - 2);
                 }
-            };
+                if (!added.has(totalPages - 1)) {
+                    addBtn(totalPages, totalPages - 1, false, currentPage === totalPages - 1);
+                }
+            }
+
+            // Sau
+            addBtn('Sau', currentPage + 1, currentPage === totalPages - 1);
         }
 
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function () {
-            const searchTerm = this.value.trim().toLowerCase();
-            fetchSuppliers(0); // Reset to first page on search
-            // Note: Server-side search filtering should be implemented in the API
+        // Handle pagination and sorting clicks with event delegation
+        document.addEventListener('click', function (e) {
+            const pageLink = e.target.closest('.page-link');
+            const sortHeader = e.target.closest('th.sortable');
+
+            if (pageLink) {
+                e.preventDefault();
+                const page = parseInt(pageLink.getAttribute('data-page'));
+                const totalPages = Math.ceil(
+                    allSuppliers.filter(supplier =>
+                        supplier.supplierName.toLowerCase().includes(searchTerm.toLowerCase())
+                    ).length / pageSize
+                );
+
+                console.log('Clicked page:', page, 'Total pages:', totalPages, 'Search term:', searchTerm, 'Current page before update:', currentPage);
+
+                if (!isNaN(page) && page >= 0 && page < totalPages) {
+                    currentPage = page;
+                    filterAndRenderSuppliers(searchTerm);
+                } else {
+                    console.warn('Invalid page click:', page);
+                }
+            }
+
+            if (sortHeader) {
+                const column = sortHeader.getAttribute('data-sort');
+                if (column === sortColumn) {
+                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortColumn = column;
+                    sortDirection = 'asc';
+                }
+                console.log('Sorting by:', sortColumn, sortDirection);
+                // Do not reset currentPage to 0; adjust it only if it exceeds totalPages
+                filterAndRenderSuppliers(searchTerm);
+            }
         });
 
+        // Real-time search
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const searchValue = this.value.trim();
+                console.log('Search input:', searchValue, 'Resetting to page 0');
+                currentPage = 0; // Reset to first page on search
+                filterAndRenderSuppliers(searchValue);
+            });
+        } else {
+            console.error('Ô tìm kiếm #searchInput không tìm thấy');
+        }
+
+        // Handle edit and delete buttons
         document.addEventListener('click', function (event) {
             const deleteBtn = event.target.closest('.delete-btn');
             const editBtn = event.target.closest('.edit-btn');
@@ -632,18 +847,18 @@
                 })
                     .then(response => {
                         if (response.ok) {
-                            document.querySelector(`tr[data-id="${supplierID}"]`)?.remove();
+                            allSuppliers = allSuppliers.filter(s => s.supplierID !== supplierID);
                             const doneModal = new bootstrap.Modal(document.getElementById('exampleModalToggle2'));
                             doneModal.show();
                             doneModal._element.addEventListener('hidden.bs.modal', function () {
                                 document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
                                 document.body.classList.remove('modal-open');
                                 document.body.style.overflow = '';
-                                if (!document.querySelector('#supplier-table-body tr')) {
+                                if (!allSuppliers.length) {
                                     document.getElementById('no-data-row').style.display = '';
                                 }
-                                fetchSuppliers(currentPage);
-                            }, { once: true });
+                                filterAndRenderSuppliers(searchTerm);
+                            });
                         } else {
                             alert('Không thể xóa Nhà Cung Cấp.');
                         }
@@ -659,8 +874,13 @@
             const normalizedName = supplierName.trim().replace(/\s+/g, ' ');
             const normalizedContact = contactInfo.trim();
 
-            if (!normalizedName || !normalizedName.match(/^[a-zA-Z\s\u00C0-\u00FF\u1EA0-\u1EFF]+$/) || !normalizedContact) {
-                alert('Vui lòng nhập thông tin hợp lệ.');
+            if (!normalizedName || !normalizedName.match(/^[a-zA-Z\s\u00C0-\u00FF\u0110\u0111\u1EA0-\u1EFF]+$/)) {
+                $.notify({ message: 'Tên nhà cung cấp chỉ được chứa chữ cái (tiếng Việt) và khoảng trắng.' }, { type: 'warning', delay: 3000 });
+                return;
+            }
+
+            if (!normalizedContact) {
+                $.notify({ message: 'Thông tin liên hệ là bắt buộc.' }, { type: 'warning' , delay: 3000});
                 return;
             }
 
@@ -669,25 +889,44 @@
             formData.append('contactInfo', normalizedContact);
             if (logoFile) formData.append('logo', logoFile);
 
-            fetch('/api/suppliers/' + supplierID, { method: 'PUT', body: formData })
+            fetch('/api/suppliers/' + supplierID, {
+                method: 'PUT',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content
+                },
+                body: formData
+            })
                 .then(response => {
                     if (!response.ok) return response.json().then(err => { throw err; });
                     return response.json();
                 })
-                .then(() => {
-                    bootstrap.Modal.getInstance(document.getElementById('updateSupplierModal')).hide();
+                .then(updatedSupplier => {
+                    const updatedId = parseInt(updatedSupplier.supplierID);
+                    const index = allSuppliers.findIndex(s => parseInt(s.supplierID) === updatedId);
+                    if (index !== -1) {
+                        allSuppliers[index] = updatedSupplier;
+                    } else {
+                        allSuppliers.push(updatedSupplier);
+                    }
+
+                    const modalInstance = bootstrap.Modal.getInstance(document.getElementById('updateSupplierModal'));
+                    if (modalInstance) modalInstance.hide();
+
                     document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
                     document.body.classList.remove('modal-open');
                     document.body.style.overflow = '';
+
                     document.getElementById('logo').value = '';
-                    alert('Cập nhật Nhà Cung Cấp thành công!');
-                    fetchSuppliers(currentPage);
+                    $.notify({ message: 'Cập nhật Nhà Cung Cấp thành công!' }, { type: 'success' , delay: 3000});
+                    filterAndRenderSuppliers(searchTerm);
                 })
                 .catch(error => {
                     console.error('Lỗi khi cập nhật Nhà Cung Cấp:', error);
-                    alert(error.message || 'Lỗi khi cập nhật Nhà Cung Cấp.');
+                    const errorMessage = error?.error || error?.message || 'Lỗi khi cập nhật Nhà Cung Cấp.';
+                    $.notify({ message: errorMessage }, { type: 'danger', delay: 3000 });
                 });
         }
+
 
         const saveSupplierBtn = document.getElementById('saveSupplierBtn');
         if (saveSupplierBtn) {
@@ -700,12 +939,13 @@
             });
         }
 
-        // Initial fetch with URL update
+        // Initial fetch with URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const initialPage = parseInt(urlParams.get('page')) || 1;
-        if (initialPage > 0) currentPage = initialPage - 1; // Convert 1-based URL to 0-based
-        fetchSuppliers(currentPage);
+        currentPage = initialPage > 0 ? initialPage - 1 : 0;
+        fetchAllSuppliers();
     });
 </script>
+
 </body>
 </html>
