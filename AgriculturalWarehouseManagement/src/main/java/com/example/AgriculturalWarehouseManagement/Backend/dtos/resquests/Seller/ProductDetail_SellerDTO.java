@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDetail_SellerDTO {
+    private Long userId; // 🆕 ID của người bán đang tạo detail
+
     @NotNull(message = "Product ID không được để trống")
     private Long productId;
 

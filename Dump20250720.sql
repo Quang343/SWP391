@@ -231,7 +231,7 @@ CREATE TABLE `categoryweight` (
   `weight` double DEFAULT NULL,
   `categoryid` bigint NOT NULL,
   PRIMARY KEY (`categoryweightid`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -240,7 +240,7 @@ CREATE TABLE `categoryweight` (
 
 LOCK TABLES `categoryweight` WRITE;
 /*!40000 ALTER TABLE `categoryweight` DISABLE KEYS */;
-INSERT INTO `categoryweight` VALUES (1,'g',1000,2),(2,'g',200,2),(3,'kg',1,3),(4,'kg',1,2),(5,'g',150,2),(6,'g',10,2),(7,'g',2,2),(8,'g',3,2),(9,'g',4,2),(10,'l',39,8),(11,'g',200,1),(12,'',2,2),(13,'kg',1414,2),(14,'kg',4141,2),(15,'g',12,2),(16,'kg',22,2),(17,'g',1221,3);
+INSERT INTO `categoryweight` VALUES (1,'g',100,2),(2,'g',200,2),(3,'g',150,2),(4,'g',250,2),(5,'g',300,2),(6,'g',400,2),(7,'g',700,2),(8,'g',44224,2),(9,'g',242424,1),(10,'g',422442,2),(11,'g',11,2),(12,'g',114,2),(13,'g',11,3),(14,'g',42554,2),(15,'g',4255,2),(16,'g',22,3),(17,'g',141441,2),(18,'g',33,3);
 /*!40000 ALTER TABLE `categoryweight` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -357,7 +357,7 @@ CREATE TABLE `gallery` (
   PRIMARY KEY (`galleryid`),
   KEY `ProductID` (`ProductID`),
   CONSTRAINT `gallery_ibfk_1` FOREIGN KEY (`ProductID`) REFERENCES `product` (`ProductID`)
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -366,7 +366,7 @@ CREATE TABLE `gallery` (
 
 LOCK TABLES `gallery` WRITE;
 /*!40000 ALTER TABLE `gallery` DISABLE KEYS */;
-INSERT INTO `gallery` VALUES (40,57,'17b8573d-8f2e-47dc-8055-616927cf594d.jpg'),(42,5,'d1f315d6-9bb2-46c7-bd43-3a512004e885.jpg'),(43,5,'8b0114d7-15b4-49af-b27c-d6980bfda8ef.jpg'),(44,5,'21d5d427-f11c-43ea-afa6-df02b03db95c.webp'),(45,5,'9e193b97-211e-4ab3-ab00-0696e867d0fb.jpg');
+INSERT INTO `gallery` VALUES (40,57,'17b8573d-8f2e-47dc-8055-616927cf594d.jpg'),(42,5,'d1f315d6-9bb2-46c7-bd43-3a512004e885.jpg'),(43,5,'8b0114d7-15b4-49af-b27c-d6980bfda8ef.jpg'),(44,5,'21d5d427-f11c-43ea-afa6-df02b03db95c.webp'),(45,5,'9e193b97-211e-4ab3-ab00-0696e867d0fb.jpg'),(50,6,'6b41b5da-c586-437b-95e6-e3182f32be4e.webp');
 /*!40000 ALTER TABLE `gallery` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -550,7 +550,7 @@ CREATE TABLE `product` (
   PRIMARY KEY (`ProductID`),
   KEY `CategoryID` (`CategoryID`),
   CONSTRAINT `product_ibfk_1` FOREIGN KEY (`CategoryID`) REFERENCES `category` (`CategoryID`)
-) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -559,7 +559,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (5,2,'Fresh Mango','Sweet mangoes harvested from organic farms.','INACTIVE'),(6,2,'Dragon Fruit','Red-flesh dragon fruit, rich in antioxidants.','INACTIVE'),(7,3,'Jasmine Rice','Fragrant jasmine rice, long grain.','ACTIVE'),(8,3,'Brown Rice','Unpolished brown rice with high fiber.','ACTIVE'),(9,1,'Potatoes','Naturally grown.','OUT_OF_STOCK'),(12,8,'Thằng Hoàng FPT','','INACTIVE'),(13,1,'Gạo ST25','Gạo thơm đặc sản Sóc Trăng','INACTIVE'),(14,2,'Mít Thái','Mít ngọt, múi to','ACTIVE'),(15,3,'Cà rốt Đà Lạt','Tươi ngon, ngọt','ACTIVE'),(16,1,'Gạo Lứt','Tốt cho sức khỏe','ACTIVE'),(17,2,'Sầu riêng Ri6','Cơm vàng, hạt lép','INACTIVE'),(18,3,'Khoai lang Nhật','Ruột tím, dẻo','ACTIVE'),(19,1,'Gạo Nàng Hương','Thơm, dẻo mềm','ACTIVE'),(20,2,'Xoài Cát Chu','Ngọt thanh','ACTIVE'),(21,3,'Cải bó xôi','Xanh tươi, sạch','ACTIVE'),(22,1,'Gạo Tám Thái','Dẻo thơm','INACTIVE'),(23,2,'Dưa hấu ruột đỏ','Ngọt mát','ACTIVE'),(24,3,'Củ cải trắng','Trồng theo hướng hữu cơ','ACTIVE'),(25,1,'Gạo nếp cái hoa vàng','Dẻo mềm, dùng làm xôi','ACTIVE'),(26,2,'Cam sành','Ngọt, ít hạt','ACTIVE'),(27,3,'Rau muống','Tươi, không hóa chất','ACTIVE'),(28,1,'Gạo hữu cơ','Không hóa chất, tốt cho sức khỏe','ACTIVE'),(29,2,'Chuối tiêu','Chín cây tự nhiên','ACTIVE'),(30,3,'Bí đỏ','Ngọt, mềm','INACTIVE'),(31,1,'Gạo ST24','Đặc sản miền Tây','INACTIVE'),(32,2,'Táo đỏ','Ngọt, giòn','INACTIVE'),(33,3,'Cải thìa','Tươi, sạch','ACTIVE'),(34,1,'Gạo Hương Lài','Thơm dịu, mềm cơm','ACTIVE'),(35,2,'Ổi không hạt','Ngọt, giòn','ACTIVE'),(36,3,'Rau dền','Màu đẹp, nhiều dinh dưỡng','ACTIVE'),(37,1,'Gạo Thơm Jasmine','Dẻo, mềm, thích hợp cho cơm gia đình','ACTIVE'),(38,2,'Dưa lưới','Ngọt mát, trồng theo công nghệ cao','ACTIVE'),(39,3,'Rau cải xanh','Thu hoạch trong ngày, rau sạch','ACTIVE'),(40,1,'Gạo Tài Nguyên','Đặc sản miền Tây, cơm mềm','ACTIVE'),(41,2,'Lê Hàn Quốc','Giòn ngọt, nhập khẩu chính ngạch','ACTIVE'),(42,3,'Đậu bắp','Giòn, ít xơ, sạch','ACTIVE'),(43,1,'Gạo Bắc Hương','Thơm, mềm, ít nở','ACTIVE'),(44,2,'Nho đỏ Ninh Thuận','Không hạt, ngọt dịu','ACTIVE'),(45,3,'Cà chua bi','Tươi, dùng cho salad','ACTIVE'),(46,1,'Gạo Nhật','Dẻo, hạt tròn, dùng cho sushi','INACTIVE'),(47,2,'Mận hậu','Giòn, vị chua ngọt','ACTIVE'),(48,3,'Cải bẹ xanh','Phù hợp nấu canh, luộc','ACTIVE'),(49,1,'Gạo Campuchia','Hạt dài, thơm nhẹ','ACTIVE'),(50,2,'Thanh long ruột đỏ','Ngọt, đẹp mắt','ACTIVE'),(51,3,'Mồng tơi','Tốt cho tiêu hoá, nhiều chất nhầy','ACTIVE'),(53,2,'Quýt đường','Ngọt đậm, ít hạt','ACTIVE'),(56,2,'Đu đủ','Chín cây, ngọt mềm','INACTIVE'),(57,2,'Nhãn Lồng Hưng Yên','Thơm, ngon','ACTIVE'),(60,1,'sdsd','sđsds','ACTIVE'),(61,4,'sđsds','sđsds','ACTIVE'),(62,3,'sdsđs','ds','ACTIVE'),(63,1,'sđs','sđssd','ACTIVE'),(64,1,'fsffdfd','dffdfd','ACTIVE'),(65,8,'sfssds','sdfsdfsd','INACTIVE'),(66,7,'safsfsd','sdffsdfsdfsd','ACTIVE'),(67,2,'sdffsdsdf','sdfsdf','INACTIVE'),(68,1,'scsd','sccs','ACTIVE'),(69,3,'cds','sccs','OUT_OF_STOCK');
+INSERT INTO `product` VALUES (5,2,'Fresh Mango','Sweet mangoes harvested from organic farms.','INACTIVE'),(6,2,'Dragon Fruit','Red-flesh dragon fruit, rich in antioxidants.','INACTIVE'),(7,3,'Jasmine Rice','Fragrant jasmine rice, long grain.','INACTIVE'),(8,3,'Brown Rice','Unpolished brown rice with high fiber.','ACTIVE'),(9,1,'Potatoes','Naturally grown.','OUT_OF_STOCK'),(12,8,'Thằng Hoàng FPT','','INACTIVE'),(13,1,'Gạo ST25','Gạo thơm đặc sản Sóc Trăng','INACTIVE'),(14,2,'Mít Thái','Mít ngọt, múi to','ACTIVE'),(15,3,'Cà rốt Đà Lạt','Tươi ngon, ngọt','INACTIVE'),(16,1,'Gạo Lứt','Tốt cho sức khỏe','ACTIVE'),(17,2,'Sầu riêng Ri6','Cơm vàng, hạt lép','INACTIVE'),(18,3,'Khoai lang Nhật','Ruột tím, dẻo','ACTIVE'),(19,1,'Gạo Nàng Hương','Thơm, dẻo mềm','ACTIVE'),(20,2,'Xoài Cát Chu','Ngọt thanh','ACTIVE'),(21,3,'Cải bó xôi','Xanh tươi, sạch','ACTIVE'),(22,1,'Gạo Tám Thái','Dẻo thơm','INACTIVE'),(23,2,'Dưa hấu ruột đỏ','Ngọt mát','ACTIVE'),(24,3,'Củ cải trắng','Trồng theo hướng hữu cơ','ACTIVE'),(25,1,'Gạo nếp cái hoa vàng','Dẻo mềm, dùng làm xôi','ACTIVE'),(26,2,'Cam sành','Ngọt, ít hạt','ACTIVE'),(27,3,'Rau muống','Tươi, không hóa chất','ACTIVE'),(28,1,'Gạo hữu cơ','Không hóa chất, tốt cho sức khỏe','ACTIVE'),(29,2,'Chuối tiêu','Chín cây tự nhiên','ACTIVE'),(30,3,'Bí đỏ','Ngọt, mềm','INACTIVE'),(31,1,'Gạo ST24','Đặc sản miền Tây','INACTIVE'),(32,2,'Táo đỏ','Ngọt, giòn','INACTIVE'),(33,3,'Cải thìa','Tươi, sạch','ACTIVE'),(34,1,'Gạo Hương Lài','Thơm dịu, mềm cơm','ACTIVE'),(35,2,'Ổi không hạt','Ngọt, giòn','ACTIVE'),(36,3,'Rau dền','Màu đẹp, nhiều dinh dưỡng','ACTIVE'),(37,1,'Gạo Thơm Jasmine','Dẻo, mềm, thích hợp cho cơm gia đình','ACTIVE'),(38,2,'Dưa lưới','Ngọt mát, trồng theo công nghệ cao','ACTIVE'),(39,3,'Rau cải xanh','Thu hoạch trong ngày, rau sạch','ACTIVE'),(40,1,'Gạo Tài Nguyên','Đặc sản miền Tây, cơm mềm','ACTIVE'),(41,2,'Lê Hàn Quốc','Giòn ngọt, nhập khẩu chính ngạch','ACTIVE'),(42,3,'Đậu bắp','Giòn, ít xơ, sạch','ACTIVE'),(43,1,'Gạo Bắc Hương','Thơm, mềm, ít nở','ACTIVE'),(44,2,'Nho đỏ Ninh Thuận','Không hạt, ngọt dịu','ACTIVE'),(45,3,'Cà chua bi','Tươi, dùng cho salad','ACTIVE'),(46,1,'Gạo Nhật','Dẻo, hạt tròn, dùng cho sushi','INACTIVE'),(47,2,'Mận hậu','Giòn, vị chua ngọt','ACTIVE'),(48,3,'Cải bẹ xanh','Phù hợp nấu canh, luộc','ACTIVE'),(49,1,'Gạo Campuchia','Hạt dài, thơm nhẹ','ACTIVE'),(50,2,'Thanh long ruột đỏ','Ngọt, đẹp mắt','ACTIVE'),(51,3,'Mồng tơi','Tốt cho tiêu hoá, nhiều chất nhầy','ACTIVE'),(53,2,'Quýt đường','Ngọt đậm, ít hạt','ACTIVE'),(56,2,'Đu đủ','Chín cây, ngọt mềm','INACTIVE'),(57,2,'Nhãn Lồng Hưng Yên','Thơm, ngon','ACTIVE'),(60,1,'sdsd','sđsds','ACTIVE'),(61,4,'sđsds','sđsds','ACTIVE'),(62,3,'sdsđs','ds','ACTIVE'),(63,1,'sđs','sđssd','ACTIVE'),(64,1,'fsffdfd','dffdfd','ACTIVE'),(65,8,'sfssds','sdfsdfsd','INACTIVE'),(66,7,'safsfsd','sdffsdfsdfsd','ACTIVE'),(67,2,'sdffsdsdf','sdfsdf','INACTIVE'),(68,1,'scsd','sccs','ACTIVE'),(69,3,'cds','sccs','OUT_OF_STOCK'),(70,2,'sádaads','14414','ACTIVE'),(71,1,'gfffgfg','fgfggf','ACTIVE'),(72,2,'sđsads','dsaasdsd','ACTIVE'),(73,1,'vvvf','vfvf','ACTIVE');
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -621,7 +621,7 @@ CREATE TABLE `productdetail` (
 
 LOCK TABLES `productdetail` WRITE;
 /*!40000 ALTER TABLE `productdetail` DISABLE KEYS */;
-INSERT INTO `productdetail` VALUES (1,5,15000,1,'1000 g','ACTIVE',1),(2,6,15000,10,'200 g','ACTIVE',2),(3,8,20000,1,'1 kg','ACTIVE',3),(4,6,111111,1,'500 g','ACTIVE',1),(5,17,1111111,1,'500 g','ACTIVE',1),(6,23,22222,1,'1 kg','ACTIVE',4),(7,6,1212212,3,'1 kg','INACTIVE',4),(8,5,10000,1,'150 g','ACTIVE',5),(9,5,1,1,'10 g','ACTIVE',6),(10,5,2,2,'2 g','ACTIVE',7),(11,5,3,3,'3 g','ACTIVE',8),(12,5,4,4,'4.0g','ACTIVE',9),(13,12,10000,1,'39.0l','ACTIVE',10),(14,16,100,10,'200.0 g','ACTIVE',11),(15,9,10,10,'200 g','ACTIVE',11),(16,6,1,1,'2 ','ACTIVE',12),(17,5,1,1,'1414 kg','ACTIVE',13),(18,5,414,4,'4141 kg','INACTIVE',14),(19,5,12,12,'12 g','ACTIVE',15),(20,5,12,122,'22 kg','ACTIVE',16),(21,21,1,1,'1221 g','ACTIVE',17);
+INSERT INTO `productdetail` VALUES (1,5,10000,1,'300 g','INACTIVE',5),(2,5,15000,1,'200 g','INACTIVE',2),(3,5,11111,11,'400 g','ACTIVE',6),(4,6,1000,111,'200 g','ACTIVE',2),(5,5,111111,1,'700 g','INACTIVE',7),(6,6,141414,1414,'100 g','ACTIVE',1),(7,5,42,24,'44224 g','ACTIVE',8),(8,9,1414,1441,'242424 g','ACTIVE',9),(9,5,1,1,'422442 g','ACTIVE',10),(10,5,1,1,'11 g','ACTIVE',11),(11,5,1,1,'114 g','ACTIVE',12),(12,8,1,1,'11 g','ACTIVE',13),(13,5,4,4,'4255 g','INACTIVE',15),(14,14,4,4,'300 g','INACTIVE',5),(15,6,41,14,'300 g','ACTIVE',5),(16,15,414,14,'11 g','ACTIVE',13),(17,15,24,2424,'22 g','INACTIVE',16),(18,14,42424,244242,'250 g','ACTIVE',4),(19,18,121,1212,'11 g','ACTIVE',13),(20,5,41,14,'141441 g','ACTIVE',17),(21,8,14,41,'33 g','ACTIVE',18);
 /*!40000 ALTER TABLE `productdetail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -695,7 +695,7 @@ CREATE TABLE `soldbyseller` (
   KEY `FKfr72eyepebfj2juqqin6fijqd` (`userid`),
   CONSTRAINT `FK46p0njok9v3e5hkwr81xq3i7w` FOREIGN KEY (`productdetailid`) REFERENCES `productdetail` (`ProductDetailID`),
   CONSTRAINT `FKfr72eyepebfj2juqqin6fijqd` FOREIGN KEY (`userid`) REFERENCES `user` (`UserID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -704,7 +704,7 @@ CREATE TABLE `soldbyseller` (
 
 LOCK TABLES `soldbyseller` WRITE;
 /*!40000 ALTER TABLE `soldbyseller` DISABLE KEYS */;
-INSERT INTO `soldbyseller` VALUES (1,2,9);
+INSERT INTO `soldbyseller` VALUES (1,2,9),(2,13,7),(3,14,2),(4,15,2),(5,16,2),(6,17,2),(7,18,2),(8,19,2),(9,20,2),(10,21,2);
 /*!40000 ALTER TABLE `soldbyseller` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -926,7 +926,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,2,'warehouse_tom','Tom Carter','tom.jpg','hashed_pw1','tom@company.com','0911000001','Warehouse Zone A','Male','Active','1985-11-01','2025-06-09 09:13:38','836271','2025-06-09 09:13:38',NULL,NULL),(2,3,'sales_linda','Linda Green','linda.jpg','hashed_pw2','linda@company.com','0911000002','Sales Office 2','Female','Active','1991-08-20','2025-06-09 09:13:38','274918','2025-06-09 09:13:38',NULL,NULL),(3,4,'delivery_jake','Jake White','jake.jpg','hashed_pw3','jake@delivery.com','0911000003','Delivery Hub B','Male','Active','1993-04-10','2025-06-09 09:13:38','591027','2025-06-09 09:13:38',NULL,NULL),(4,5,'customer_sara','Sara Smith','sara.jpg','hashed_pw4','sara@gmail.com','0911000004','789 Main St','Female','Active','1998-12-30','2025-06-09 09:13:38','109482','2025-06-09 09:13:38',NULL,NULL),(5,6,'Guest User','Guest User',NULL,'hashed_pw5','guest@anonymous.com','0911000005','N/A','Male','Active','2000-01-01','2025-06-09 09:13:38','000000','2025-06-09 02:22:20',NULL,NULL),(6,7,'content_ann','Ann Writer','ann.jpg','hashed_pw6','ann@content.com','0911000006','Content Dept.','Female','Active','1990-06-15','2025-06-09 09:13:38','847362','2025-06-09 09:13:38',NULL,NULL),(7,8,'support_mike','Mike Support','mike.jpg','hashed_pw7','mike@support.com','0911000007','Support Center','Male','Active','1987-03-05','2025-06-09 09:13:38','294753','2025-06-09 09:13:38',NULL,NULL),(8,1,'admin','admin',NULL,'admin123','admin102@gmail.com','102102102','Street_xxx','Male','Active',NULL,'2025-06-09 02:15:02','102102','2025-06-09 02:15:02',NULL,NULL),(9,5,'user01','user123',NULL,'user123','123@gmail.com','0912345682','Mountain','Other','Ban',NULL,'2025-06-09 02:23:54','123123','2025-06-09 02:35:32',NULL,NULL),(11,6,'Hoang Ngu','Hoang Ngu',NULL,'123456','chiennguyena8k22@gmail.com','0379366518','Ba Vì','Male','Active','2025-05-29','2025-06-24 14:54:28','0','2025-06-24 23:27:39',NULL,NULL);
+INSERT INTO `user` VALUES (1,2,'warehouse_tom','Nói Hay Như Đài','tom.jpg','123456','tom@company.com','0911000011','Warehouse Zone A','Nam','Active','2004-05-29','2025-06-09 09:13:38','836271','2025-07-16 06:52:05',NULL,NULL),(2,3,'Tk_Hoàng_FPTU','Người Ba Vì Tôi','avatar.png','123456','linda@company.com','0911000000','Sales Office 2','Nữ','Active','2000-08-20','2025-06-09 09:13:38','274918','2025-07-18 09:20:53',NULL,NULL),(3,4,'delivery_jake','Jake White','jake.jpg','hashed_pw3','jake@delivery.com','0911000003','Delivery Hub B','Male','Active','1993-04-10','2025-06-09 09:13:38','591027','2025-06-09 09:13:38',NULL,NULL),(4,5,'customer_sara','Sara Smith','sara.jpg','hashed_pw4','sara@gmail.com','0911000004','789 Main St','Female','Active','1998-12-30','2025-06-09 09:13:38','109482','2025-06-09 09:13:38',NULL,NULL),(5,6,'Guest User','Guest User',NULL,'hashed_pw5','guest@anonymous.com','0911000005','N/A','Male','Active','2000-01-01','2025-06-09 09:13:38','000000','2025-06-09 02:22:20',NULL,NULL),(6,7,'content_ann','Ann Writer','ann.jpg','hashed_pw6','ann@content.com','0911000006','Content Dept.','Female','Active','1990-06-15','2025-06-09 09:13:38','847362','2025-06-09 09:13:38',NULL,NULL),(7,8,'support_mike','Mike Support','avatar.jpg','hashed_pw7','mike@support.com','0911000007','Support Center','Nữ','Active','1987-03-05','2025-06-09 09:13:38','294753','2025-07-16 23:58:37',NULL,NULL),(8,1,'admin','admin',NULL,'admin123','admin102@gmail.com','102102102','Street_xxx','Male','Active',NULL,'2025-06-09 02:15:02','102102','2025-06-09 02:15:02',NULL,NULL),(9,5,'user01','user123',NULL,'user123','123@gmail.com','0912345682','Mountain','Other','Ban',NULL,'2025-06-09 02:23:54','123123','2025-06-09 02:35:32',NULL,NULL),(11,6,'Hoang Ngu','Hoang Ngu',NULL,'123456','chiennguyena8k22@gmail.com','0379366518','Ba Vì','Male','Active','2025-05-29','2025-06-24 14:54:28','0','2025-06-24 23:27:39',NULL,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1026,4 +1026,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-03  2:45:16
+-- Dump completed on 2025-07-20 16:29:25

@@ -16,4 +16,6 @@ public class ProductDetailResponseDTO {
     private double price;
     private int expiry;
     private String status;
+    private String sellerEmail; // ✅ thêm dòng này
+
 }

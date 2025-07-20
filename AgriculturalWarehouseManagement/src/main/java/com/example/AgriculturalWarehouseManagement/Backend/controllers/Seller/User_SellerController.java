@@ -6,6 +6,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.services.seller.User_
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -47,6 +48,18 @@ public class User_SellerController {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(Map.of("error", "Lỗi server"));
+        }
+    }
+
+    @PostMapping("/{userId}/avatar")
+    public ResponseEntity<?> uploadAvatar(@PathVariable int userId, @RequestParam("file") MultipartFile file) {
+        try {
+            String avatarUrl = userService.saveAvatar(userId, file);
+            return ResponseEntity.ok(Map.of("avatarUrl", avatarUrl));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("error", "Không thể upload ảnh."));
         }
     }
 

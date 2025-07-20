@@ -4,8 +4,16 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller.User_SellerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -63,6 +71,7 @@ public class User_SellerServiceImpl implements User_SellerService {
                 .phone(user.getPhone())
                 .username(user.getUserName()) // map lại đúng username
                 .password(user.getPassword())
+                .image(user.getImage()) // 👈 Bổ sung dòng này
                 .build();
     }
 
@@ -89,6 +98,55 @@ public class User_SellerServiceImpl implements User_SellerService {
         user.setPassword(newPassword);
         userRepository.save(user);
     }
+
+    @Value("${app.upload.product-dir}")
+    private String rootUploadDir;
+
+    @Override
+    public String saveAvatar(int userId, MultipartFile file) throws Exception {
+        // Kiểm tra định dạng file
+        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+        String extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
+
+        if (extension.equals("webp")) {
+            throw new IllegalArgumentException("Định dạng ảnh không được hỗ trợ (webp). Vui lòng chọn PNG hoặc JPG.");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+
+        // Đọc ảnh gốc
+        BufferedImage originalImage = ImageIO.read(file.getInputStream());
+        if (originalImage == null) {
+            throw new IllegalArgumentException("File không phải là ảnh hợp lệ.");
+        }
+
+        // Cắt về hình vuông (center crop)
+        int width = originalImage.getWidth();
+        int height = originalImage.getHeight();
+        int squareSize = Math.min(width, height);
+        int x = (width - squareSize) / 2;
+        int y = (height - squareSize) / 2;
+        BufferedImage cropped = originalImage.getSubimage(x, y, squareSize, squareSize);
+
+        // Tạo đường dẫn thư mục upload
+        Path uploadDir = Paths.get(rootUploadDir, "Seller", String.valueOf(userId));
+        if (!Files.exists(uploadDir)) {
+            Files.createDirectories(uploadDir);
+        }
+
+        // Tên cố định
+        String newFileName = "avatar." + extension;
+        Path outputPath = uploadDir.resolve(newFileName);
+        ImageIO.write(cropped, extension, outputPath.toFile());
+
+        // Cập nhật tên vào DB
+        user.setImage(newFileName);
+        userRepository.save(user);
+
+        return "/seller/" + userId + "/" + newFileName;
+    }
+
 
 
 }

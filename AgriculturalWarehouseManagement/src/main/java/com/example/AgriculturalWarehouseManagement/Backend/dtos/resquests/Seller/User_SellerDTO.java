@@ -19,4 +19,5 @@ public class User_SellerDTO {
     private String phone;
     private String username;
     private String password;
+    private String image;
 }

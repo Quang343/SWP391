@@ -7,6 +7,8 @@ import com.example.AgriculturalWarehouseManagement.Backend.models.*;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller.CategoryWeight_SellerRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller.ProductDetail_SellerRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller.SoldBySellerRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller.User_SellerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,8 @@ public class ProductDetail_SellerService implements IProductDetail_SellerService
     private final ProductDetail_SellerRepository productDetailRepository;
     private final ProductRepository productRepository;
     private final CategoryWeight_SellerRepository categoryWeightRepository;
+    private final SoldBySellerRepository soldBySellerRepository;
+    private final User_SellerRepository userRepository;
 
     @Override
     public ProductDetail createProductDetail(ProductDetail_SellerDTO dto) {
@@ -39,7 +43,7 @@ public class ProductDetail_SellerService implements IProductDetail_SellerService
                     return categoryWeightRepository.save(newWeight);
                 });
 
-        // Kiểm tra nếu ProductDetail với Product + Weight này đã tồn tại
+        // Kiểm tra trùng
         String formattedWeight = dto.getWeight() % 1 == 0
                 ? String.valueOf(dto.getWeight().intValue())
                 : dto.getWeight().toString();
@@ -50,7 +54,7 @@ public class ProductDetail_SellerService implements IProductDetail_SellerService
                     + formattedWeight + " " + dto.getUnit() + " cho sản phẩm này.");
         }
 
-        // Tạo ProductDetail mới
+        // ✅ Tạo ProductDetail
         ProductDetail detail = ProductDetail.builder()
                 .productID(product)
                 .categoryWeightID(weight)
@@ -60,8 +64,18 @@ public class ProductDetail_SellerService implements IProductDetail_SellerService
                 .status(ProductDetailStatus.valueOf(dto.getStatus()))
                 .build();
 
+        detail = productDetailRepository.save(detail);
 
-        return productDetailRepository.save(detail);
+        // ✅ Gán user (seller) → Bảng SoldBySeller
+        User seller = userRepository.findById(dto.getUserId().intValue())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+
+        SoldBySeller link = new SoldBySeller();
+        link.setProductDetail(detail);
+        link.setUser(seller);
+        soldBySellerRepository.save(link);
+
+        return detail;
     }
 
     @Override
@@ -133,15 +147,21 @@ public class ProductDetail_SellerService implements IProductDetail_SellerService
     @Override
     public List<ProductDetailResponseDTO> getProductDetailsByProductIdAsDTO(Long productId) {
         List<ProductDetail> details = productDetailRepository.findByProductID_Id(productId);
-        return details.stream().map(detail -> ProductDetailResponseDTO.builder()
-                .id(detail.getProductDetailId())
-                .productName(detail.getProductID().getName())
-                .detailName(detail.getDetailName())
-                .price(detail.getPrice())
-                .expiry(detail.getExpiry())
-                .status(detail.getStatus().name())
-                .build()
-        ).collect(Collectors.toList());
+        return details.stream().map(detail -> {
+            List<SoldBySeller> sellers = soldBySellerRepository.findByProductDetail(detail);
+            String email = sellers.isEmpty() ? "N/A" : sellers.get(0).getUser().getEmail(); // giả sử lấy 1 seller đầu tiên
+
+            return ProductDetailResponseDTO.builder()
+                    .id(detail.getProductDetailId())
+                    .productName(detail.getProductID().getName())
+                    .detailName(detail.getDetailName())
+                    .price(detail.getPrice())
+                    .expiry(detail.getExpiry())
+                    .status(detail.getStatus().name())
+                    .sellerEmail(email) // ✅ gán email
+                    .build();
+        }).collect(Collectors.toList());
     }
+
 
 }
