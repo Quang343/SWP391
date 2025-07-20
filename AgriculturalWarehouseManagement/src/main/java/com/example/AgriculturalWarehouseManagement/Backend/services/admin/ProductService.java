@@ -98,6 +98,12 @@ public class ProductService implements IProductService {
         return productImageRepository.save(productImage);
     }
 
+    public String getProductNameById(Integer productId) {
+        return productRepository.findById(Long.valueOf(productId))
+                .map(product -> product.getName())
+                .orElse(null);
+    }
+
     //    chiến_seller
     public void save(Product product) {
         productRepository.save(product);

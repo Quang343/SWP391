@@ -6,8 +6,9 @@ import com.example.AgriculturalWarehouseManagement.Backend.models.StockInDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StockInDetailRepository extends JpaRepository<StockInDetail, Integer> {
     List<StockInDetail> findByStockInID(StockIn stockInID);
-    List<StockInDetail> findByBatchID(ProductBatch batchId);
+    Optional<StockInDetail> findByBatchID(ProductBatch batch);
 }

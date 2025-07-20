@@ -5,7 +5,9 @@ import com.example.AgriculturalWarehouseManagement.Backend.models.ProductBatch;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductDetail;
 import com.example.AgriculturalWarehouseManagement.Backend.models.StockIn;
 import com.example.AgriculturalWarehouseManagement.Backend.models.StockInDetail;
+import org.springframework.stereotype.Component;
 
+@Component
 public class StockInDetailMapper {
     public static StockInDetailDTO toDTO(StockInDetail stockindetail) {
         if (stockindetail == null) {

@@ -99,4 +99,4 @@ public class SupplierService {
     public void deleteSupplier(Integer supplierID) {
         supplierRepository.deleteById(supplierID);
     }
-    }
+}

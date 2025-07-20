@@ -39,5 +39,7 @@ public class ProductDetail {
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
     private ProductDetailStatus status;
+
+
 }
 

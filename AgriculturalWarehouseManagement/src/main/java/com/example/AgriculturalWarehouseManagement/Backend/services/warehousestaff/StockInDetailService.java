@@ -29,6 +29,9 @@ public class StockInDetailService {
     @Autowired
     private ProductBatchRepository productBatchRepository;
 
+    @Autowired
+    private StockInDetailMapper stockInDetailMapper;
+
 
     public StockInDetailDTO createStockInDetail(StockInDetailDTO stockInDetailDTO) {
         StockInDetail stockInDetail = StockInDetailMapper.toEntity(stockInDetailDTO);
@@ -39,6 +42,15 @@ public class StockInDetailService {
         }
         stockInDetail = stockInDetailRepository.save(stockInDetail);
         return StockInDetailMapper.toDTO(stockInDetail);
+    }
+
+    // Hàm mới để lấy giá nhập
+    public Integer getImportPriceByBatchId(Integer batchId) {
+        StockInDetailDTO stockInDetailDTO = findByBatchId(batchId);
+        if (stockInDetailDTO == null || stockInDetailDTO.getUnitPrice() == null) {
+            throw new RuntimeException("No stock in detail or unit price found for batch ID: " + batchId);
+        }
+        return stockInDetailDTO.getUnitPrice();
     }
 
     public List<StockInDetailDTO> getAllStockInDetails() {
@@ -62,15 +74,15 @@ public class StockInDetailService {
     }
 
 
-    public List<StockInDetailDTO> findByBatchId(Integer batchId) {
+    public StockInDetailDTO findByBatchId(Integer batchId) {
         if (batchId == null || batchId <= 0) {
             throw new IllegalArgumentException("Invalid Batch ID");
         }
         ProductBatch batch = productBatchRepository.findById(batchId)
                 .orElseThrow(() -> new IllegalArgumentException("ProductBatch not found with ID: " + batchId));
-        return stockInDetailRepository.findByBatchID(batch).stream()
-                .map(StockInDetailMapper::toDTO)
-                .collect(Collectors.toList());
+        StockInDetail stockInDetail = stockInDetailRepository.findByBatchID(batch)
+                .orElseThrow(() -> new IllegalArgumentException("StockInDetail not found for Batch ID: " + batchId));
+        return stockInDetailMapper.toDTO(stockInDetail);
     }
 
     public StockInDetailDTO updateStockInDetail(Integer id, StockInDetailDTO stockInDetailDTO) {

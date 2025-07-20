@@ -3,13 +3,14 @@ package com.example.AgriculturalWarehouseManagement.Backend.models;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Order;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Warehouse;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+        import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -32,10 +33,15 @@ public class StockOut {
 
 
     @Column(name = "stockoutdate")
-    private LocalDate stockOutDate;
+    private LocalDateTime stockOutDate;
 
     @Lob
     @Column(name = "note")
     private String note;
+
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private StockOutStatus status;
+
 
 }

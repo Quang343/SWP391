@@ -11,6 +11,8 @@ import java.util.List;
 public interface IOrderService {
     Order createOrder(OrderDTO orderDTO);
 
+    List<Order> findByStatus(String status);
+
     Order findById(Long id);
 
     List<Order> findByUser(User user);
@@ -27,5 +29,5 @@ public interface IOrderService {
 
     boolean isExistsByOrderCode(String orderCode);
 
-    //List<Order> findByStatus(String status);
+
 }

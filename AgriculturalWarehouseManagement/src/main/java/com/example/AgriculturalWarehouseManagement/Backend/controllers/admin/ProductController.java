@@ -50,6 +50,15 @@ public class ProductController {
         return "BackEnd/Admin/All_Products";
     }
 
+    @GetMapping("/api/products/{productId}/name")
+    public ResponseEntity<String> getProductName(@PathVariable Integer productId) {
+        String productName = productService.getProductNameById(productId);
+        if (productName == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(productName);
+    }
+
     @GetMapping("/admin/add_product")
     public String showCreateForm(Model model) {
         List<Category> categories = categoryService.findAll();

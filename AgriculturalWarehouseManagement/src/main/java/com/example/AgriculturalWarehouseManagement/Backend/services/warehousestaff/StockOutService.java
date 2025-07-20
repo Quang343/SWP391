@@ -1,22 +1,29 @@
 package com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.StockOutDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.StockOutDetailDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.mappers.StockOutDetailMapper;
 import com.example.AgriculturalWarehouseManagement.Backend.mappers.StockOutMapper;
-import com.example.AgriculturalWarehouseManagement.Backend.models.Order;
-import com.example.AgriculturalWarehouseManagement.Backend.models.StockOut;
-import com.example.AgriculturalWarehouseManagement.Backend.models.Warehouse;
-import com.example.AgriculturalWarehouseManagement.Backend.repositorys.OrderRepository;
-import com.example.AgriculturalWarehouseManagement.Backend.repositorys.StockOutRepository;
-import com.example.AgriculturalWarehouseManagement.Backend.repositorys.WarehouseRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.models.*;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.*;
+import com.example.AgriculturalWarehouseManagement.Backend.services.admin.OrderDetailService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.admin.OrderService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class StockOutService {
+
+    @Autowired
+    private StockOutDetailRepository stockOutDetailRepository;
+
     @Autowired
     private StockOutRepository stockOutRepository;
 
@@ -28,6 +35,24 @@ public class StockOutService {
 
     @Autowired
     private StockOutMapper stockOutMapper;
+
+    @Autowired
+    private OrderDetailService orderDetailService;
+
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
+
+    @Autowired
+    private ProductBatchRepository productBatchRepository;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private StockOutDetailService stockOutDetailService;
+
+    @Autowired
+    private StockOutDetailMapper stockOutDetailMapper;
 
     public List<StockOutDTO> getAllStockOuts() {
         return stockOutRepository.findAll().stream()
@@ -41,42 +66,135 @@ public class StockOutService {
         return stockOutMapper.toDTO(stockOut);
     }
 
+    @Transactional
     public StockOutDTO createStockOut(StockOutDTO stockOutDTO) {
+        System.out.println("Debug - Creating StockOut with DTO: " + stockOutDTO);
+        if (stockOutDTO.getWarehouseID() == null) {
+            throw new RuntimeException("WarehouseID cannot be null");
+        }
+        if (stockOutDTO.getOrderID() == null) {
+            throw new RuntimeException("OrderID cannot be null");
+        }
         StockOut stockOut = stockOutMapper.toEntity(stockOutDTO);
-        if (stockOutDTO.getWarehouseID() != null) {
-            Warehouse warehouse = warehouseRepository.findById(stockOutDTO.getWarehouseID())
-                    .orElseThrow(() -> new RuntimeException("Warehouse not found"));
-            stockOut.setWarehouseID(warehouse);
-        }
-        if (stockOutDTO.getOrderID() != null) {
-            Order order = orderRepository.findById(Long.valueOf(stockOutDTO.getOrderID()))
-                    .orElseThrow(() -> new RuntimeException("Order not found"));
-            stockOut.setOrderID(order);
-        }
+        Warehouse warehouse = warehouseRepository.findById(stockOutDTO.getWarehouseID())
+                .orElseThrow(() -> new RuntimeException("Warehouse not found for ID: " + stockOutDTO.getWarehouseID()));
+        Order order = orderRepository.findById(Long.valueOf(stockOutDTO.getOrderID()))
+                .orElseThrow(() -> new RuntimeException("Order not found for ID: " + stockOutDTO.getOrderID()));
+        stockOut.setWarehouseID(warehouse);
+        stockOut.setOrderID(order);
+        // Use provided stockOutDate if present, otherwise use current time
+        stockOut.setStockOutDate(LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")));
+        stockOut.setStatus(StockOutStatus.EXPORTED);
+
+        System.out.println("Debug - Saving StockOut: " + stockOut);
         StockOut savedStockOut = stockOutRepository.save(stockOut);
+
+        // Create and save StockOutDetails
+        List<OrderDetail> orderDetails = orderDetailService.findOrderDetailsByOrderId(Long.valueOf(stockOutDTO.getOrderID()));
+        if (orderDetails.isEmpty()) {
+            throw new RuntimeException("No OrderDetails found for orderID: " + stockOutDTO.getOrderID());
+        }
+        System.out.println("Debug - Found OrderDetails: " + orderDetails.size());
+        List<StockOutDetailDTO> stockOutDetailDTOs = stockOutDetailService.createStockOutDetailsFromOrderDetails(savedStockOut.getId(), orderDetails);
+        System.out.println("Debug - Created StockOutDetailDTOs: " + stockOutDetailDTOs.size());
+        stockOutDetailService.saveStockOutDetails(stockOutDetailDTOs);
+
+        // Update Order status to STOCK_OUT
+        System.out.println("Debug - Updating Order ID: " + order.getId() + " status to STOCK_OUT");
+        order.setStatus("STOCK_OUT");
+        orderRepository.save(order);
+        System.out.println("Debug - Order ID: " + order.getId() + " status updated to: " + order.getStatus());
+
         return stockOutMapper.toDTO(savedStockOut);
     }
 
-    public StockOutDTO updateStockOut(Integer id, StockOutDTO stockOutDTO) {
-        StockOut stockOut = stockOutRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("StockOut not found"));
-        stockOut.setStockOutDate(stockOutDTO.getStockOutDate());
-        stockOut.setNote(stockOutDTO.getNote());
-        if (stockOutDTO.getWarehouseID() != null) {
-            Warehouse warehouse = warehouseRepository.findById(stockOutDTO.getWarehouseID())
-                    .orElseThrow(() -> new RuntimeException("Warehouse not found"));
-            stockOut.setWarehouseID(warehouse);
+    @Transactional
+    public List<StockOut> getStockOutsByOrderId(Long orderId) {
+        return stockOutRepository.findByOrderID_Id(orderId);
+    }
+
+    @Transactional
+    public List<StockOutDetailDTO> processCanceledOrderReturns() {
+        List<StockOutDetailDTO> returnedDetailsToDisplay = new ArrayList<>();
+
+        // 1. Tìm các Order bị hủy
+        List<Order> canceledOrders = orderService.findByStatus("CANCELLED");
+        if (canceledOrders.isEmpty()) return returnedDetailsToDisplay;
+
+        List<Long> canceledOrderIds = canceledOrders.stream()
+                .map(Order::getId)
+                .collect(Collectors.toList());
+
+        // 2. Tìm các StockOut có status = RETURNED và thuộc các đơn bị hủy
+        List<StockOut> returnedStockOutsForDisplay = stockOutRepository
+                .findByOrderID_IdInAndStatus(canceledOrderIds, StockOutStatus.RETURNED);
+
+        List<Integer> returnedStockOutIdsForDisplay = returnedStockOutsForDisplay.stream()
+                .map(StockOut::getId)
+                .collect(Collectors.toList());
+
+        List<StockOutDetail> returnedDetailsForDisplay = stockOutDetailRepository
+                .findByStockOutID_IdIn(returnedStockOutIdsForDisplay);
+
+        // 3. RESET soldQuantity về 0 cho tất cả ProductBatch
+        List<ProductBatch> allBatches = (List<ProductBatch>) productBatchRepository.findAll();
+        for (ProductBatch batch : allBatches) {
+            batch.setSoldQuantity(0);
         }
-        if (stockOutDTO.getOrderID() != null) {
-            Order order = orderRepository.findById(Long.valueOf(stockOutDTO.getOrderID()))
-                    .orElseThrow(() -> new RuntimeException("Order not found"));
-            stockOut.setOrderID(order);
+
+        // 4. Cộng lại soldQuantity từ các StockOut có status = EXPORTED
+        List<StockOut> exportedStockOuts = stockOutRepository.findByStatus(StockOutStatus.EXPORTED);
+        List<Integer> exportedStockOutIds = exportedStockOuts.stream()
+                .map(StockOut::getId)
+                .collect(Collectors.toList());
+
+        List<StockOutDetail> allExportedDetails = stockOutDetailRepository
+                .findByStockOutID_IdIn(exportedStockOutIds);
+
+        for (StockOutDetail detail : allExportedDetails) {
+            ProductBatch batch = detail.getBatchID();
+            batch.setSoldQuantity(batch.getSoldQuantity() + detail.getQuantity());
         }
+
+        productBatchRepository.saveAll(allBatches);
+
+        // 5. Chuẩn bị danh sách hiển thị (dòng RETURNED)
+        for (StockOutDetail detail : returnedDetailsForDisplay) {
+            StockOutDetailDTO dto = stockOutDetailMapper.toDTO(detail);
+            dto.setQuantity(-detail.getQuantity()); // Hiển thị âm để biểu thị là trả hàng
+            returnedDetailsToDisplay.add(dto);
+        }
+
+        return returnedDetailsToDisplay;
+    }
+
+
+    public List<StockOutDTO> getCanceledOrdersWithExportedStockOuts() {
+        // Lấy danh sách Order có status = CANCELLED
+        List<Order> canceledOrders = orderService.findByStatus("CANCELLED");
+        if (canceledOrders.isEmpty()) {
+            return List.of(); // Trả về danh sách rỗng nếu không có Order bị hủy
+        }
+
+        // Lấy danh sách orderId từ các Order bị hủy
+        List<Long> canceledOrderIds = canceledOrders.stream()
+                .map(Order::getId)
+                .collect(Collectors.toList());
+
+        // Lấy tất cả StockOut liên quan có status = EXPORTED
+        List<StockOut> exportedStockOuts = stockOutRepository.findByOrderID_IdInAndStatus(canceledOrderIds, StockOutStatus.EXPORTED);
+        return exportedStockOuts.stream()
+                .map(stockOutMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public StockOutDTO updateStockOutStatusToReturned(Integer stockOutId) {
+        StockOut stockOut = stockOutRepository.findById(stockOutId)
+                .orElseThrow(() -> new RuntimeException("StockOut not found for ID: " + stockOutId));
+        stockOut.setStatus(StockOutStatus.RETURNED);
         StockOut updatedStockOut = stockOutRepository.save(stockOut);
         return stockOutMapper.toDTO(updatedStockOut);
     }
 
-    public void deleteStockOut(Integer id) {
-        stockOutRepository.deleteById(id);
-    }
 }

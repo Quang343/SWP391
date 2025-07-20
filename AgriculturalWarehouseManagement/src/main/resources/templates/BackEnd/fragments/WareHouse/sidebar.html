@@ -1,9 +1,9 @@
-<!-- Page Sidebar Start-->
+<!-- Bắt đầu Thanh bên (Sidebar) -->
 <div class="sidebar-wrapper" th:fragment="sidebar">
     <div id="sidebarEffect"></div>
     <div>
         <div class="logo-wrapper logo-wrapper-center">
-            <a th:href="@{/warehouse}" data-bs-original-title="" title="">
+            <a th:href="@{/warehouse}" title="">
                 <img class="img-fluid for-white" th:src="@{/Backend/assets/images/logo/full-white.png}" alt="logo">
             </a>
             <div class="back-btn">
@@ -16,8 +16,7 @@
         <div class="logo-icon-wrapper">
             <a th:href="@{/warehouse}">
                 <img class="img-fluid main-logo main-white" th:src="@{/Backend/assets/images/logo/logo.png}" alt="logo">
-                <img class="img-fluid main-logo main-dark" th:src="@{/Backend/assets/images/logo/logo-white.png}"
-                     alt="logo">
+                <img class="img-fluid main-logo main-dark" th:src="@{/Backend/assets/images/logo/logo-white.png}" alt="logo">
             </a>
         </div>
         <nav class="sidebar-main">
@@ -32,108 +31,78 @@
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" th:href="@{/warehouse}">
                             <i class="ri-home-line"></i>
-                            <span>Dashboard</span>
+                            <span>Trang chủ</span>
                         </a>
                     </li>
 
                     <li class="sidebar-list">
                         <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-store-3-line"></i>
-                            <span>Stock In</span>
+                            <span>Nhập kho</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li>
-                                <a th:href="@{/warehouse/stockin}">Stock In</a>
-                            </li>
-                            <li>
-                                <a th:href="@{/warehouse/addstockin}">Add Stock In</a>
-                            </li>
-
-                            <li>
-                                <a th:href="@{/warehouse/stockindetail}">Stock In Detail</a>
-                            </li>
+                            <li><a th:href="@{/warehouse/stockin}">Danh sách nhập kho</a></li>
+                            <li><a th:href="@{/warehouse/addstockin}">Tạo phiếu nhập</a></li>
+                            <li><a th:href="@{/warehouse/stockindetail}">Chi tiết nhập kho</a></li>
                         </ul>
                     </li>
 
                     <li class="sidebar-list">
                         <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-list-check-2"></i>
-                            <span>Stock Out</span>
+                            <span>Xuất kho</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li>
-                                <a th:href="@{/warehouse/stockout}">Stock Out</a>
-                            </li>
-                            <li>
-                                <a th:href="@{/warehouse/addstockout}">Add Stock Out</a>
-                            </li>
-
-                            <li>
-                                <a th:href="@{/warehouse/stockoutdetail}">Stock Out Detail</a>
-                            </li>
+                            <li><a th:href="@{/warehouse/stockout}">Danh sách xuất kho</a></li>
+                            <li><a th:href="@{/warehouse/addstockout}">Tạo phiếu xuất</a></li>
+                            <li><a th:href="@{/warehouse/returnstockout}">Yêu cầu trả về</a></li>
+                            <li><a th:href="@{/warehouse/stockoutdetail}">Chi tiết xuất kho</a></li>
                         </ul>
                     </li>
 
                     <li class="sidebar-list">
                         <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-list-settings-line"></i>
-                            <span>Product Batch</span>
+                            <span>Lô sản phẩm</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li>
-                                <a th:href="@{/warehouse/productbatch}">Product Batch</a>
-                            </li>
-                            <li>
-                                <a th:href="@{/warehouse/addproductbatch}">Add Product Batch</a>
-                            </li>
+                            <li><a th:href="@{/warehouse/productbatch}">Danh sách lô</a></li>
+                            <li><a th:href="@{/warehouse/addproductbatch}">Thêm lô mới</a></li>
                         </ul>
                     </li>
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-user-3-line"></i>
-                            <span>Suppliers</span>
+                            <span>Nhà cung cấp</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li>
-                                <a th:href="@{/warehouse/supplier}">All Suppliers</a>
-                            </li>
-                            <li>
-                                <a th:href="@{/warehouse/addsupplier}">Add Suppliers</a>
-                            </li>
+                            <li><a th:href="@{/warehouse/supplier}">Danh sách nhà cung cấp</a></li>
+                            <li><a th:href="@{/warehouse/addsupplier}">Thêm nhà cung cấp</a></li>
                         </ul>
                     </li>
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-user-3-line"></i>
-                            <span>Adjustment</span>
+                            <span>Điều chỉnh</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li>
-                                <a th:href="@{/warehouse/adjustment}">Adjustment</a>
-                            </li>
-                            <li>
-                                <a th:href="@{/warehouse/notification}">Notification</a>
-                            </li>
+                            <li><a th:href="@{/warehouse/adjustment}">Danh sách điều chỉnh</a></li>
+                            <li><a th:href="@{/warehouse/notification}">Thông báo</a></li>
                         </ul>
                     </li>
 
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-archive-line"></i>
-                            <span>Device</span>
+                            <span>Thiết bị</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li>
-                                <a th:href="@{/warehouse/device}">All Device</a>
-                            </li>
-                            <li>
-                                <a th:href="@{/warehouse/adddevice}">Add Device</a>
-                            </li>
+                            <li><a th:href="@{/warehouse/device}">Danh sách thiết bị</a></li>
+                            <li><a th:href="@{/warehouse/adddevice}">Thêm thiết bị</a></li>
                         </ul>
                     </li>
-
 
                 </ul>
             </div>
@@ -144,4 +113,4 @@
         </nav>
     </div>
 </div>
-<!-- Page Sidebar Ends-->
+<!-- Kết thúc Thanh bên -->

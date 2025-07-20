@@ -1,8 +1,136 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
+<style>
+    /* Ensure table is scrollable horizontally if content overflows */
+    .table-responsive {
+        overflow-x: auto;
+        margin-bottom: 0; /* Remove extra margin to keep pagination close */
+        position: relative; /* Context for scrollbar */
+    }
 
+    /* Ensure table takes full width but triggers scrollbar if needed */
+    #table_id {
+        width: 100%;
+        min-width: 1000px; /* Force horizontal scrollbar for wide content */
+    }
+
+    /* Override gray borders from Bootstrap for table */
+    #table_id.table,
+    #table_id th,
+    #table_id td {
+        border-color: #e6f3f2 !important; /* Light green border */
+    }
+
+    /* Center pagination and style items */
+    #pagination-controls {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center;
+        margin-top: 12px; /* Ensure below scrollbar */
+        margin-bottom: 20px; /* Space below pagination */
+        position: relative; /* Ensure proper stacking */
+        z-index: 10; /* Below footer and sidebar */
+        max-width: 100%; /* Prevent overflow */
+    }
+
+    #pagination-controls .page-item {
+        margin: 0 2.5px; /* 5px gap between items */
+    }
+
+    #pagination-controls .page-link {
+        border-radius: 4px;
+        padding: 6px 12px;
+        color: #018F84; /* Text color for number pages */
+        font-size: 14px; /* Match theme typography */
+        cursor: pointer; /* Ensure clickable appearance */
+        border: 1px solid #018F84; /* Border matches theme */
+        background-color: transparent; /* Default background */
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    /* Style for Previous and Next buttons */
+    #pagination-controls .page-item:first-child .page-link,
+    #pagination-controls .page-item:last-child .page-link {
+        background-color: #018F84; /* Green background */
+        color: #fff; /* White text */
+        border-color: #018F84;
+    }
+
+    /* Style for active page */
+    #pagination-controls .page-item.active .page-link {
+        background-color: #018F84; /* Green background */
+        border-color: #018F84;
+        color: #fff;
+        box-shadow: none; /* No glowing effect */
+    }
+
+    /* Style for disabled buttons */
+    #pagination-controls .page-item.disabled .page-link {
+        color: #018F84; /* Green text */
+        border-color: #e6f3f2; /* Light green border */
+        background-color: #e6f3f2; /* Light green background */
+        pointer-events: none;
+        cursor: default;
+    }
+
+    /* Hover effect for non-disabled, non-active number pages */
+    #pagination-controls .page-link:hover:not(.disabled .page-link):not(.active .page-link):not(:first-child .page-link):not(:last-child .page-link) {
+        background-color: #e6f3f2; /* Light green on hover */
+        color: #018F84;
+    }
+
+    /* Hover effect for Previous/Next when not disabled */
+    #pagination-controls .page-item:not(.disabled):first-child .page-link:hover,
+    #pagination-controls .page-item:not(.disabled):last-child .page-link:hover {
+        background-color: #016f6a; /* Darker green on hover */
+        color: #fff;
+    }
+
+    /* Ensure footer is above pagination but below sidebar */
+    .footer {
+        z-index: 20 !important; /* Above pagination */
+    }
+
+    /* Ensure sidebar is above footer and pagination */
+    .sidebar-wrapper {
+        position: fixed;
+        z-index: 30 !important; /* Above footer and pagination */
+    }
+
+    /* Ensure modals and offcanvas are above sidebar, footer, and pagination */
+    .modal,
+    .offcanvas {
+        z-index: 1050 !important; /* Above sidebar, footer, and pagination */
+    }
+
+    .modal-backdrop {
+        z-index: 1040 !important; /* Below modal/offcanvas, above sidebar and footer */
+    }
+
+    /* Style for search bar and button */
+    .btn-theme {
+        background-color: #018F84;
+        color: #fff;
+        border-color: #018F84;
+    }
+
+    .btn-theme:hover {
+        background-color: #016f6a;
+        color: #fff;
+        border-color: #016f6a;
+    }
+
+    .search-bar input {
+        border: 1px solid #e6f3f2;
+    }
+
+    .search-bar input:focus {
+        border-color: #018F84;
+        box-shadow: 0 0 5px rgba(1, 143, 132, 0.3);
+    }
+</style>
 <body>
 <!-- tap on top start-->
 <div class="tap-top">
@@ -19,7 +147,7 @@
     <!-- Page Body Start-->
     <div class="page-body-wrapper">
         <!-- Page Sidebar Start-->
-        <div th:replace="BackEnd/fragments/WareHouse/sidebar::sidebar"></div>
+        <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
         <!-- Page Sidebar Ends-->
 
         <!-- Container-fluid starts-->
@@ -29,14 +157,20 @@
                     <div class="col-sm-12">
                         <div class="card card-table">
                             <div class="card-body">
-                                <div class="title-header option-title d-sm-flex d-block">
-                                    <h5>Adjustment List</h5>
-                                    <div class="right-options">
-                                        <ul>
-                                            <li>
-                                                <a class="btn btn-solid" th:href="@{/warehouse/addadjustment}">Add Adjustment</a>
-                                            </li>
-                                        </ul>
+                                <div class="title-header option-title">
+                                    <!-- Dòng 1: chỉ Danh Sách Điều Chỉnh -->
+                                    <div class="first-line">
+                                        <h5>Danh Sách Điều Chỉnh</h5>
+                                    </div>
+
+                                    <!-- Dòng 2: Thêm Điều Chỉnh và Tìm Kiếm bên phải -->
+                                    <div class="second-line" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                                        <a th:href="@{/warehouse/addadjustment}" class="align-items-center btn btn-theme d-flex">
+                                            <i data-feather="plus"></i> Thêm Điều Chỉnh
+                                        </a>
+                                        <div class="search-bar">
+                                            <input type="text" class="form-control" placeholder="Tìm kiếm..." id="searchInput">
+                                        </div>
                                     </div>
                                 </div>
                                 <div>
@@ -44,13 +178,13 @@
                                         <table class="table all-package theme-table table-product" id="table_id">
                                             <thead>
                                             <tr>
-                                                <th>Adjustment ID</th>
-                                                <th>Batch ID</th>
-                                                <th>Quantity</th>
-                                                <th>Adjust Date</th>
-                                                <th>Reason</th>
-                                                <th>Type</th>
-                                                <th>Action</th>
+                                                <th>Mã Điều Chỉnh</th>
+                                                <th>Mã Lô Hàng</th>
+                                                <th>Số Lượng</th>
+                                                <th>Ngày Điều Chỉnh</th>
+                                                <th>Lý Do</th>
+                                                <th>Loại</th>
+                                                <th>Hành Động</th>
                                             </tr>
                                             </thead>
                                             <tbody id="adjustmentTableBody">
@@ -58,6 +192,8 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                    <!-- Pagination Controls -->
+                                    <ul id="pagination-controls" class="pagination"></ul>
                                 </div>
                             </div>
                         </div>
@@ -66,32 +202,23 @@
             </div>
             <!-- Container-fluid Ends-->
 
-            <div class="container-fluid">
-                <!-- footer start-->
-                <footer class="footer">
-                    <div class="row">
-                        <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+            <div th:replace="~{BackEnd/fragments/WareHouse/footer::footer}"></div>
         </div>
     </div>
 </div>
 <!-- page-wrapper End-->
 
-<!-- Modal Start -->
+<!-- Modal Đăng Xuất -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
-                <p>Are you sure you want to log out?</p>
+                <h5 class="modal-title" id="staticBackdropLabel">Đăng Xuất</h5>
+                <p>Bạn có chắc chắn muốn đăng xuất?</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="button-box">
-                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-                    <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">Không</button>
+                    <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Có</button>
                 </div>
             </div>
         </div>
@@ -99,43 +226,43 @@
 </div>
 <!-- Modal End -->
 
-<!-- Edit Adjustment Modal -->
+<!-- Modal Sửa Điều Chỉnh -->
 <div class="modal fade" id="editAdjustmentModal" tabindex="-1" aria-labelledby="editAdjustmentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editAdjustmentModalLabel">Edit Adjustment</h5>
+                <h5 class="modal-title" id="editAdjustmentModalLabel">Sửa Điều Chỉnh</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="editAdjustmentForm">
                     <input type="hidden" id="editAdjustmentId">
                     <div class="mb-3">
-                        <label for="editBatchId" class="form-label">Batch (Optional)</label>
+                        <label for="editBatchId" class="form-label">Lô Sản Phẩm (Tùy Chọn)</label>
                         <select class="form-select" id="editBatchId">
-                            <option value="">None</option>
+                            <option value="">Không chọn</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="editQuantity" class="form-label">Adjustment Quantity</label>
+                        <label for="editQuantity" class="form-label">Số Lượng Điều Chỉnh</label>
                         <input type="number" class="form-control" id="editQuantity" required>
                     </div>
                     <div class="mb-3">
-                        <label for="editReason" class="form-label">Reason</label>
+                        <label for="editReason" class="form-label">Lý Do</label>
                         <textarea class="form-control" id="editReason" rows="3"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="editAdjustmentType" class="form-label">Adjustment Type</label>
+                        <label for="editAdjustmentType" class="form-label">Loại Điều Chỉnh</label>
                         <select class="form-select" id="editAdjustmentType" required>
-                            <option value="Add">Add</option>
-                            <option value="Remove">Remove</option>
+                            <option value="Add">Nhập Thêm</option>
+                            <option value="Remove">Hao Hụt</option>
                         </select>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="saveEditAdjustment">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="saveEditAdjustment">Lưu Thay Đổi</button>
             </div>
         </div>
     </div>
@@ -146,19 +273,19 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header d-block text-center">
-                <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure?</h5>
+                <h5 class="modal-title w-100" id="exampleModalLabel22">Bạn Có Chắc Chắn?</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="remove-box">
-                    <p>Bạn có chắc chắn muốn xóa Adjustment này?</p>
+                    <p>Bạn có chắc chắn muốn xóa Điều Chỉnh này?</p>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
-                <button type="button" class="btn btn-animation btn-md fw-bold confirm-delete">Yes</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Không</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold confirm-delete">Có</button>
             </div>
         </div>
     </div>
@@ -168,7 +295,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel12">Done!</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel12">Hoàn Thành!</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
@@ -181,16 +308,19 @@
                             <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
                         </svg>
                     </div>
-                    <h4 class="text-content">It's Removed.</h4>
+                    <h4 class="text-content">Đã Xóa.</h4>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
 </div>
 <!-- Delete Modal Box End -->
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <!-- latest js -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
@@ -229,7 +359,129 @@
 
 <!-- Custom JS for API call -->
 <script>
+    function formatDateToVietnamese(dateString) {
+        if (!dateString || dateString === 'N/A') {
+            return 'N/A';
+        }
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) {
+                console.warn('[CẢNH BÁO] Ngày không hợp lệ:', dateString);
+                return 'N/A';
+            }
+            // Cộng 7 tiếng nếu dữ liệu trả về là UTC
+            const vnTime = new Date(date.getTime());
+            const day = String(vnTime.getDate()).padStart(2, '0');
+            const month = String(vnTime.getMonth() + 1).padStart(2, '0');
+            const year = vnTime.getFullYear();
+            const hours = String(vnTime.getHours()).padStart(2, '0');
+            const minutes = String(vnTime.getMinutes()).padStart(2, '0');
+            const seconds = String(vnTime.getSeconds()).padStart(2, '0');
+            return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
+        } catch (error) {
+            console.error('[LỖI] Lỗi phân tích ngày:', dateString, error);
+            return 'N/A';
+        }
+    }
+
+    // Format batchID to custom format: BAT + [First letter of supplier] + "-" + [ID + 1000 in Base36] + "-" + [Manufacture date as MMdd]
+    function formatBatchID(batchID, manufactureDate) {
+        try {
+
+
+            // Convert ID + 1000 to Base36
+            const offsetID = parseInt(batchID) + 1000;
+            const base36ID = offsetID.toString(36).toUpperCase();
+
+            // Format manufacture date to MMdd
+            let datePart = '0000';
+            if (manufactureDate && manufactureDate !== 'N/A') {
+                const date = new Date(manufactureDate);
+                if (!isNaN(date.getTime())) {
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    datePart = `${month}${day}`;
+                }
+            }
+
+            return `BAT-${base36ID}-${datePart}`;
+        } catch (error) {
+            console.error('[ERROR] Error formatting batchID:', batchID, error);
+            return batchID || 'N/A';
+        }
+    }
+
     $(document).ready(function() {
+        // Disable DataTables to prevent interference
+        if ($.fn.DataTable && $.fn.DataTable.isDataTable('#table_id')) {
+            $('#table_id').DataTable().destroy();
+            console.log('DataTables disabled for #table_id');
+        }
+
+        let currentPage = 0; // 0-based internally
+        let totalPages = 1; // Global variable to track total pages
+        const pageSize = 5;
+        let batchData = {}; // Store batch data for mapping
+
+        // Bind pagination click events at the document level
+        $(document).off('click.pagination', '#pagination-controls .page-link').on('click.pagination', '#pagination-controls .page-link', function(e) {
+            e.preventDefault();
+            const page = parseInt($(this).data('page'));
+            console.log('Nhấn phân trang - trang:', page, 'tổng số trang:', totalPages);
+            if (!isNaN(page) && page >= 0 && page < totalPages) {
+                fetchAdjustments(page);
+            }
+        });
+
+        // Debug pagination DOM
+        function debugPagination() {
+            const paginationItems = $('#pagination-controls .page-link');
+            console.log('Số mục phân trang:', paginationItems.length, 'HTML:', $('#pagination-controls').html());
+        }
+
+        // Fetch all product batches to get supplierName and manufactureDate
+        function fetchAllProductBatches() {
+            return $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/api/product-batches',
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    batchData = {};
+                    $.each(data, function(index, batch) {
+                        let supplierName = 'Unknown';
+                        let manufactureDate = batch.manufactureDate || 'N/A';
+                        try {
+                            $.ajax({
+                                url: `/AgriculturalWarehouseManagementApplication/api/product-details/${batch.productDetailID}`,
+                                method: 'GET',
+                                async: false,
+                                dataType: 'json',
+                                success: function(detail) {
+                                    supplierName = detail.supplierName || 'Unknown';
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error(`[ERROR] Lỗi khi tải Chi Tiết Sản Phẩm cho ID ${batch.productDetailID}:`, status, error);
+                                }
+                            });
+                        } catch (error) {
+                            console.error(`[ERROR] Lỗi khi tải Chi Tiết Sản Phẩm cho ID ${batch.productDetailID}:`, error);
+                        }
+                        const id = batch.batchID || batch.id;
+                        batchData[id] = {
+                            batchId: id,
+                            supplierName: supplierName,
+                            manufactureDate: manufactureDate
+                        };
+                    });
+                    console.log('[DEBUG] Batch data loaded:', batchData);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi khi tải danh sách Lô:', status, error);
+                    $.notify({ message: 'Không thể tải danh sách Lô. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+                }
+            });
+        }
+
         // Populate Batch dropdown
         function populateBatchDropdown(selectElement, selectedId) {
             $.ajax({
@@ -238,131 +490,211 @@
                 dataType: 'json',
                 success: function(data) {
                     selectElement.empty();
-                    selectElement.append('<option value="">None</option>');
+                    selectElement.append('<option value="">Không chọn</option>');
                     if (!data || data.length === 0) {
                         return;
                     }
                     $.each(data, function(index, batch) {
-                        var id = batch.batchID || batch.id;
+                        const id = batch.batchID || batch.id;
                         if (id) {
-                            var selected = id == selectedId ? 'selected' : '';
-                            selectElement.append(`<option value="${id}" ${selected}>Batch ID: ${id}</option>`);
+                            const formattedBatchID = formatBatchID(id, batchData[id]?.manufactureDate, batchData[id]?.supplierName);
+                            const selected = id == selectedId ? 'selected' : '';
+                            selectElement.append(`<option value="${id}" ${selected}>${formattedBatchID}</option>`);
                         }
                     });
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error fetching Batches: ', status, error);
-                    alert('Unable to load Batch list. Check console.');
+                    console.error('Lỗi khi tải danh sách Lô:', status, error);
+                    $.notify({ message: 'Không thể tải danh sách Lô. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
                 }
             });
         }
 
-        // Load Adjustments
-        function loadAdjustments() {
-            $.ajax({
-                url: '/AgriculturalWarehouseManagementApplication/api/adjustments',
-                method: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    var tbody = $('#adjustmentTableBody');
-                    tbody.empty();
-                    if (!data || data.length === 0) {
-                        tbody.append('<tr><td colspan="7">No data</td></tr>');
-                        return;
-                    }
+        function ensureElements() {
+            let tableBody = $('#adjustmentTableBody');
+            let noDataRow = $('#no-data-row');
 
-                    $.ajax({
-                        url: '/AgriculturalWarehouseManagementApplication/api/product-batches',
-                        method: 'GET',
-                        dataType: 'json',
-                        success: function(batches) {
-                            var batchMap = {};
-                            $.each(batches, function(index, batch) {
-                                batchMap[batch.batchId || batch.id] = batch.batchId || 'No ID';
-                            });
-
-                            $.each(data, function(index, adjustment) {
-                                var batchId = adjustment.batch || adjustment.batchId;
-                                var mappedBatchId = batchMap[batchId] || batchId || 'N/A';
-
-                                var row = '<tr>' +
-                                    '<td>' + (adjustment.id || 'N/A') + '</td>' +
-                                    '<td>' + mappedBatchId + '</td>' +
-                                    '<td>' + (adjustment.quantity || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.adjustDate || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.reason || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.adjustmentType || 'N/A') + '</td>' +
-                                    '<td>' +
-                                    '<ul class="action-list">' +
-                                    '<li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="' + (adjustment.id || '') + '" data-batch-id="' + (batchId || '') + '" data-quantity="' + (adjustment.quantity || '') + '" data-reason="' + (adjustment.reason || '') + '" data-adjustment-type="' + (adjustment.adjustmentType || '') + '"><i class="ri-pencil-line"></i></a></li>' +
-                                    '<li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="' + (adjustment.id || '') + '"><i class="ri-delete-bin-line"></i></a></li>' +
-                                    '</ul>' +
-                                    '</td>' +
-                                    '</tr>';
-                                tbody.append(row);
-                            });
-
-                            $('.edit-adjustment').on('click', function() {
-                                var adjustmentId = $(this).data('adjustment-id');
-                                var batchId = $(this).data('batch-id');
-                                var quantity = $(this).data('quantity');
-                                var reason = $(this).data('reason');
-                                var adjustmentType = $(this).data('adjustment-type');
-
-                                if (!adjustmentId) {
-                                    alert('Adjustment ID không hợp lệ.');
-                                    return;
-                                }
-
-                                $('#editAdjustmentId').val(adjustmentId);
-                                $('#editQuantity').val(quantity);
-                                $('#editReason').val(reason);
-                                $('#editAdjustmentType').val(adjustmentType);
-                                populateBatchDropdown($('#editBatchId'), batchId);
-
-                                $('#editAdjustmentModal').modal('show');
-                            });
-
-                            $('.delete-adjustment').on('click', function(e) {
-                                e.preventDefault();
-                                var adjustmentId = $(this).data('adjustment-id');
-                                if (!adjustmentId) {
-                                    alert('Adjustment ID không hợp lệ.');
-                                    return;
-                                }
-                                $('.confirm-delete').data('adjustment-id', adjustmentId);
-                                $('#exampleModalToggle').modal('show');
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error fetching Batches: ', status, error);
-                            alert('Unable to load Batch list. Check console.');
-                            $.each(data, function(index, adjustment) {
-                                var batchId = adjustment.batch || adjustment.batchId;
-                                var row = '<tr>' +
-                                    '<td>' + (adjustment.id || 'N/A') + '</td>' +
-                                    '<td>' + (batchId || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.quantity || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.adjustDate || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.reason || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.adjustmentType || 'N/A') + '</td>' +
-                                    '<td>' +
-                                    '<ul class="action-list">' +
-                                    '<li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="' + (adjustment.id || '') + '" data-batch-id="' + (batchId || '') + '" data-quantity="' + (adjustment.quantity || '') + '" data-reason="' + (adjustment.reason || '') + '" data-adjustment-type="' + (adjustment.adjustmentType || '') + '"><i class="ri-pencil-line"></i></a></li>' +
-                                    '<li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="' + (adjustment.id || '') + '"><i class="ri-delete-bin-line"></i></a></li>' +
-                                    '</ul>' +
-                                    '</td>' +
-                                    '</tr>';
-                                tbody.append(row);
-                            });
-                        }
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error('Lỗi khi gọi API /api/adjustments: ', status, error);
-                    alert('Lỗi khi tải dữ liệu: ' + error + '. Kiểm tra console.');
+            if (!tableBody.length) {
+                const table = $('#table_id');
+                if (table.length) {
+                    tableBody = $('<tbody id="adjustmentTableBody"></tbody>');
+                    table.append(tableBody);
+                } else {
+                    console.error('Table #table_id not found');
+                    return null;
                 }
+            }
+
+            if (!noDataRow.length) {
+                noDataRow = $('<tr id="no-data-row"><td colspan="7" class="text-center">Không có dữ liệu trong bảng</td></tr>');
+                tableBody.append(noDataRow);
+            }
+
+            return { tableBody, noDataRow };
+        }
+
+        function updateURL(page) {
+            history.pushState({}, '', `?page=${page + 1}`); // 1-based for URL
+        }
+
+        function fetchAdjustments(page = 0) {
+            currentPage = page;
+            updateURL(page);
+            const { tableBody, noDataRow } = ensureElements();
+            if (!tableBody || !noDataRow) return;
+
+            console.log('Đang tải điều chỉnh cho trang:', page);
+
+            // Fetch batches first to ensure batchData is populated
+            $.when(fetchAllProductBatches()).done(function() {
+                $.ajax({
+                    url: `/AgriculturalWarehouseManagementApplication/api/adjustments/paginatedAdjustment?page=${page}&size=${pageSize}`,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log('Phản hồi API:', data);
+                        if (!data || !data.content || typeof data.totalPages === 'undefined' || typeof data.number === 'undefined') {
+                            console.error('Dữ liệu phản hồi không hợp lệ:', data);
+                            tableBody.empty();
+                            noDataRow.show();
+                            renderPagination(0, 0);
+                            return;
+                        }
+
+                        totalPages = data.totalPages; // Update global totalPages
+                        tableBody.empty();
+
+                        if (data.content && data.content.length > 0) {
+                            noDataRow.hide();
+                            $.each(data.content, function(index, adjustment) {
+                                var batchId = adjustment.batchId;
+                                var mappedBatchId = batchData[batchId]
+                                    ? formatBatchID(batchId, batchData[batchId].manufactureDate, batchData[batchId].supplierName)
+                                    : batchId || 'N/A';
+
+                                var row = $('<tr></tr>').attr('data-id', adjustment.id || '');
+                                row.append(`<td>${adjustment.id || 'N/A'}</td>`);
+                                row.append(`<td>${mappedBatchId}</td>`);
+                                row.append(`<td>${adjustment.quantity || 'N/A'}</td>`);
+                                row.append(`<td>${formatDateToVietnamese(adjustment.adjustDate)}</td>`);
+                                row.append(`<td>${adjustment.reason || 'N/A'}</td>`);
+                                row.append(`<td>${adjustment.adjustmentType === 'Add' ? 'Nhập Thêm' : adjustment.adjustmentType === 'Remove' ? 'Hao Hụt' : 'N/A'}</td>`);
+                                row.append(`
+                                    <td>
+                                        <ul class="action-list">
+                                            <li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="${adjustment.id || ''}" data-batch-id="${batchId || ''}" data-quantity="${adjustment.quantity || ''}" data-reason="${adjustment.reason || ''}" data-adjustment-type="${adjustment.adjustmentType || ''}"><i class="ri-pencil-line"></i></a></li>
+                                            <li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="${adjustment.id || ''}"><i class="ri-delete-bin-line"></i></a></li>
+                                        </ul>
+                                    </td>
+                                `);
+                                tableBody.append(row);
+                            });
+
+                            bindActionEvents();
+                        } else {
+                            noDataRow.show();
+                        }
+
+                        renderPagination(data.totalPages, data.number);
+                        debugPagination();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Lỗi khi tải Điều Chỉnh:', status, error);
+                        $.notify({ message: 'Không thể tải danh sách Điều Chỉnh. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+                        tableBody.empty();
+                        noDataRow.show();
+                        renderPagination(0, 0);
+                        debugPagination();
+                    }
+                });
             });
+        }
+
+        function bindActionEvents() {
+            $('.edit-adjustment').off('click.edit').on('click.edit', function() {
+                var adjustmentId = $(this).data('adjustment-id');
+                var batchId = $(this).data('batch-id');
+                var quantity = $(this).data('quantity');
+                var reason = $(this).data('reason');
+                var adjustmentType = $(this).data('adjustment-type');
+
+                if (!adjustmentId) {
+                    $.notify({ message: 'ID Điều Chỉnh không hợp lệ.' }, { type: 'warning', delay: 3000 });
+                    return;
+                }
+
+                $('#editAdjustmentId').val(adjustmentId);
+                $('#editQuantity').val(quantity);
+                $('#editReason').val(reason);
+                $('#editAdjustmentType').val(adjustmentType);
+                populateBatchDropdown($('#editBatchId'), batchId);
+
+                $('#editAdjustmentModal').modal('show');
+            });
+
+            $('.delete-adjustment').off('click.delete').on('click.delete', function(e) {
+                e.preventDefault();
+                var adjustmentId = $(this).data('adjustment-id');
+                if (!adjustmentId) {
+                    $.notify({ message: 'ID Điều Chỉnh không hợp lệ.' }, { type: 'warning', delay: 3000 });
+                    return;
+                }
+                $('.confirm-delete').data('adjustment-id', adjustmentId);
+                $('#exampleModalToggle').modal('show');
+            });
+        }
+
+        function renderPagination(totalPagesInput, currentPageInput) {
+            const paginationControls = $('#pagination-controls');
+            paginationControls.empty();
+
+            totalPages = typeof totalPagesInput === 'number' && totalPagesInput > 0 ? totalPagesInput : 1;
+            currentPage = typeof currentPageInput === 'number' && currentPageInput >= 0 && currentPageInput < totalPages ? currentPageInput : 0;
+
+            console.log('Đang hiển thị phân trang - tổng số trang:', totalPages, 'trang hiện tại:', currentPage);
+
+            const addBtn = (label, page, disabled = false, active = false) => {
+                const li = $('<li></li>').addClass('page-item');
+                if (disabled) li.addClass('disabled');
+                if (active) li.addClass('active');
+                li.html(`<a class="page-link" href="javascript:void(0)" data-page="${page}">${label}</a>`);
+                paginationControls.append(li);
+            };
+
+            // Previous button
+            addBtn('Trước', currentPage - 1, currentPage === 0);
+
+            // Always show first page
+            addBtn(1, 0, false, currentPage === 0);
+
+            // If totalPages is 1, only show page 1
+            if (totalPages === 1) {
+                return;
+            }
+
+            // Show up to 3 pages around currentPage, avoiding duplicates
+            const startPage = Math.max(2, currentPage);
+            const endPage = Math.min(totalPages - 1, currentPage + 2);
+
+            if (totalPages > 3 && currentPage > 1) {
+                paginationControls.append('<li class="page-item disabled"><a class="page-link">...</a></li>');
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                addBtn(i, i - 1, false, currentPage === i - 1);
+            }
+
+            if (totalPages > 4 && currentPage < totalPages - 2) {
+                paginationControls.append('<li class="page-item disabled"><a class="page-link">...</a></li>');
+            }
+
+            // Always show last page if totalPages > 1
+            if (totalPages > 1) {
+                addBtn(totalPages, totalPages - 1, false, currentPage === totalPages - 1);
+            }
+
+            // Next button
+            addBtn('Tiếp', currentPage + 1, currentPage === totalPages - 1);
         }
 
         // Save Edited Adjustment
@@ -374,11 +706,11 @@
             var adjustmentType = $('#editAdjustmentType').val();
 
             if (!quantity || isNaN(parseInt(quantity))) {
-                alert('Vui lòng nhập số lượng hợp lệ.');
+                $.notify({ message: 'Vui lòng nhập số lượng hợp lệ.' }, { type: 'warning', delay: 3000 });
                 return;
             }
             if (!adjustmentType) {
-                alert('Vui lòng chọn loại Adjustment.');
+                $.notify({ message: 'Vui lòng chọn loại Điều Chỉnh.' }, { type: 'warning', delay: 3000 });
                 return;
             }
 
@@ -396,13 +728,18 @@
                 data: JSON.stringify(formData),
                 dataType: 'json',
                 success: function(response) {
-                    alert('Cập nhật Adjustment thành công!');
+                    $.notify({ message: 'Cập nhật Điều Chỉnh thành công!' }, { type: 'success', delay: 3000 });
                     $('#editAdjustmentModal').modal('hide');
-                    loadAdjustments();
+                    $('.modal-backdrop').remove(); // Ensure backdrop is removed
+                    $('body').removeClass('modal-open').css('overflow', '');
+                    fetchAdjustments(currentPage);
                 },
                 error: function(xhr, status, error) {
-                    console.error('Lỗi khi sửa Adjustment: ', status, error);
-                    alert('Lỗi khi sửa Adjustment: ' + (xhr.responseText || 'Kiểm tra console.'));
+                    console.error('Lỗi khi sửa Điều Chỉnh:', status, error);
+                    $.notify({ message: 'Lỗi khi sửa Điều Chỉnh: ' + (xhr.responseText || 'Vui lòng kiểm tra console.') }, { type: 'danger', delay: 3000 });
+                    $('#editAdjustmentModal').modal('hide');
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open').css('overflow', '');
                 }
             });
         });
@@ -412,7 +749,7 @@
             e.preventDefault();
             var adjustmentId = $(this).data('adjustment-id');
             if (!adjustmentId) {
-                alert('Adjustment ID không hợp lệ.');
+                $.notify({ message: 'ID Điều Chỉnh không hợp lệ.' }, { type: 'warning', delay: 3000 });
                 return;
             }
 
@@ -422,23 +759,36 @@
                 headers: { 'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content') },
                 success: function() {
                     $('#exampleModalToggle').modal('hide');
+                    $('.modal-backdrop').remove(); // Ensure backdrop is removed
+                    $('body').removeClass('modal-open').css('overflow', '');
                     if ($('#exampleModalToggle2').length > 0) {
-                        $('#exampleModalToggle2').modal('show');
+                        $('#exampleModalToggle2').modal('show').on('hidden.bs.modal', function() {
+                            $(this).off('hidden.bs.modal');
+                            $('.modal-backdrop').remove();
+                            $('body').removeClass('modal-open').css('overflow', '');
+                            $.notify({ message: 'Xóa Điều Chỉnh thành công!' }, { type: 'success', delay: 3000 });
+                            fetchAdjustments(currentPage);
+                        });
                     } else {
-                        alert('Xóa Adjustment thành công!');
+                        $.notify({ message: 'Xóa Điều Chỉnh thành công!' }, { type: 'success', delay: 3000 });
+                        fetchAdjustments(currentPage);
                     }
-                    loadAdjustments();
                 },
                 error: function(xhr, status, error) {
-                    console.error('Lỗi khi xóa Adjustment: ', status, error);
-                    alert('Lỗi khi xóa Adjustment: ' + (xhr.responseText || 'Kiểm tra console.'));
+                    console.error('Lỗi khi xóa Điều Chỉnh:', status, error);
+                    $.notify({ message: 'Lỗi khi xóa Điều Chỉnh: ' + (xhr.responseText || 'Vui lòng kiểm tra console.') }, { type: 'danger', delay: 3000 });
                     $('#exampleModalToggle').modal('hide');
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open').css('overflow', '');
                 }
             });
         });
 
-        // Load Adjustments initially
-        loadAdjustments();
+        // Initial fetch with URL update
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialPage = parseInt(urlParams.get('page')) || 1;
+        if (initialPage > 0) currentPage = initialPage - 1; // Convert 1-based URL to 0-based
+        fetchAdjustments(currentPage);
     });
 </script>
 

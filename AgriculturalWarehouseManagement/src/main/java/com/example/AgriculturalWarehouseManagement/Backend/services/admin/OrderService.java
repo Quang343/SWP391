@@ -2,10 +2,8 @@ package com.example.AgriculturalWarehouseManagement.Backend.services.admin;
 
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.OrderDTO;
-import com.example.AgriculturalWarehouseManagement.Backend.models.Order;
-import com.example.AgriculturalWarehouseManagement.Backend.models.OrderStatus;
-import com.example.AgriculturalWarehouseManagement.Backend.models.User;
-import com.example.AgriculturalWarehouseManagement.Backend.models.Voucher;
+import com.example.AgriculturalWarehouseManagement.Backend.models.*;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.OrderDetailRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.OrderRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.UserRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.VoucherRepository;
@@ -24,7 +22,15 @@ public class OrderService implements IOrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final VoucherRepository voucherRepository;
+    private final OrderDetailRepository orderDetailRepository;
     private final Random random = new Random();
+
+    @Override
+    public List<Order> findByStatus(String status) {
+        return orderRepository.findByStatus(status);
+    }
+
+
 
     @Override
     public Order createOrder(OrderDTO orderDTO) {

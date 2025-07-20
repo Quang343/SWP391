@@ -2,6 +2,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.mappers;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.StockOutDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.StockOut;
+import com.example.AgriculturalWarehouseManagement.Backend.models.StockOutStatus;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,6 +17,7 @@ public class StockOutMapper {
         stockOutDTO.setOrderID(Math.toIntExact(stockOut.getOrderID() != null ? stockOut.getOrderID().getId() : null));
         stockOutDTO.setStockOutDate(stockOut.getStockOutDate());
         stockOutDTO.setNote(stockOut.getNote());
+        stockOutDTO.setStatus(stockOut.getStatus());
         return stockOutDTO;
     }
 
@@ -27,7 +29,7 @@ public class StockOutMapper {
         stockOut.setId(stockOutDTO.getId());
         // Note: Warehouse and Order entities are not set here; they are handled in the service layer
         stockOut.setStockOutDate(stockOutDTO.getStockOutDate());
-        stockOut.setNote(stockOutDTO.getNote());
+        stockOut.setStatus(stockOutDTO.getStatus());
         return stockOut;
     }
 }

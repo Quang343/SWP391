@@ -41,4 +41,11 @@ public class ProductImageService implements  IProductImageService{
         return productImageRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product image not found"));
     }
+    @Override
+    public ProductImage findFirstByProduct(Product product) {
+        return productImageRepository.findAllByProduct(product)
+                .stream()
+                .findFirst()
+                .orElse(null);
+    }
 }

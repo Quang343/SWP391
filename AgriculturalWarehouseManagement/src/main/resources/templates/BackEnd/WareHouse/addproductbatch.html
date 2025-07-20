@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
 
@@ -10,20 +10,16 @@
 </div>
 <!-- tap on tap end -->
 
-<!-- page-wrapper start -->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
-    <!-- Page Header Start-->
+    <!-- Header -->
     <div th:replace="~{BackEnd/fragments/WareHouse/header::header}"></div>
-    <!-- Page Header Ends-->
 
-    <!-- Page Body start -->
     <div class="page-body-wrapper">
-        <!-- Page Sidebar Start-->
+        <!-- Sidebar -->
         <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
-        <!-- Page Sidebar Ends-->
 
+        <!-- Content -->
         <div class="page-body">
-            <!-- New Product Batch Add Start -->
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
@@ -32,16 +28,15 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="card-header-2">
-                                            <h5>Thêm Product Batch</h5>
+                                            <h5>Thêm Lô Sản Phẩm</h5>
                                         </div>
 
                                         <form id="productBatchForm" class="theme-form theme-form-2 mega-form">
                                             <div class="mb-4 row align-items-center">
-                                                <label class="form-label-title col-sm-3 mb-0">Product Detail</label>
+                                                <label class="form-label-title col-sm-3 mb-0">Chi Tiết Sản Phẩm</label>
                                                 <div class="col-sm-9">
                                                     <select id="productDetailId" name="productDetailID" class="js-example-basic-single w-100" required>
-                                                        <option value="" disabled selected>Chọn Product Detail</option>
-                                                        <!-- Options sẽ được populated động -->
+                                                        <option value="" disabled selected>Chọn Chi Tiết Sản Phẩm</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -49,19 +44,21 @@
                                             <div class="mb-4 row align-items-center">
                                                 <label class="col-sm-3 col-form-label form-label-title">Ngày sản xuất</label>
                                                 <div class="col-sm-9">
-                                                    <input id="manufactureDate" name="manufactureDate" class="form-control" type="date" required>
+                                                    <input id="manufactureDate" name="manufactureDate" class="form-control" type="text" placeholder="Chọn ngày sản xuất" required>
                                                 </div>
                                             </div>
 
                                             <div class="mb-4 row align-items-center">
-                                                <label class="col-sm-3 col-form-label form-label-title">Số lượng nhập</label>
+                                                <label class="col-sm-3 col-form-label form-label-title">Số lượng</label>
                                                 <div class="col-sm-9">
                                                     <input id="importedQuantity" name="importedQuantity" class="form-control" type="number" min="1" step="1" value="1" required>
                                                 </div>
                                             </div>
 
-                                            <div class="card-submit-button">
-                                                <button id="submitProductBatch" class="btn btn-animation ms-auto" type="button">Submit</button>
+                                            <div class="card-submit-button d-flex justify-content-end">
+                                                <button id="submitProductBatch" class="btn btn-animation" type="button">
+                                                    <i class="ri-check-line"></i> Thêm mới
+                                                </button>
                                             </div>
                                         </form>
                                     </div>
@@ -71,32 +68,19 @@
                     </div>
                 </div>
             </div>
-            <!-- New Product Batch Add End -->
 
-            <!-- footer Start -->
-            <div class="container-fluid">
-                <footer class="footer">
-                    <div class="row">
-                        <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-                        </div>
-                    </div>
-                </footer>
-            </div>
-            <!-- footer End -->
+            <!-- Footer -->
+            <div th:replace="BackEnd/fragments/WareHouse/footer::footer"></div>
         </div>
-        <!-- Container-fluid End -->
     </div>
-    <!-- Page Body End -->
 </div>
-<!-- page-wrapper End -->
 
-<!-- Modal Start -->
+<!-- Modal Đăng xuất -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                <h5 class="modal-title" id="staticBackdropLabel">Đăng xuất</h5>
+                <h5 class="modal-title">Đăng xuất</h5>
                 <p>Bạn có chắc chắn muốn đăng xuất?</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="button-box">
@@ -107,160 +91,243 @@
         </div>
     </div>
 </div>
-<!-- Modal End -->
 
-<!-- latest js -->
+<!-- CSS Pikaday -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+<!-- Tùy chỉnh CSS cho lịch -->
+<style>
+    /* Làm gọn dropdown chọn năm/tháng */
+    .pika-select {
+        padding: 4px 8px;
+        font-size: 14px;
+        max-width: 90px;
+    }
+
+    /* Lịch hiển thị nổi rõ */
+    .pika-single {
+        z-index: 9999 !important;
+        border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* Ngày đang được chọn (màu xanh đậm) */
+    .pika-button.pika-selected,
+    .pika-button:hover.pika-selected {
+        background-color: #28a745 !important; /* Xanh lá */
+        color: white !important;
+        border-radius: 6px;
+    }
+
+    /* Ngày hover (xanh nhạt) */
+    .pika-button:hover {
+        background-color: #a3d9a5 !important; /* Xanh lá nhạt */
+        color: black !important;
+        border-radius: 6px;
+    }
+
+    /* Hôm nay gạch chân */
+    .pika-button.is-today {
+        border-bottom: 2px solid #28a745 !important;
+    }
+
+    /* Bo góc cho ngày thường */
+    .pika-button {
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+    }
+</style>
+
+<!-- Scripts -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
-
-<!-- Bootstrap js -->
 <script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
-
-<!-- feather icon js -->
 <script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
 <script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
-
-<!-- scrollbar simplebar js -->
 <script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
 <script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
-
-<!-- Sidebar js -->
 <script th:src="@{/Backend/assets/js/config.js}"></script>
-
-<!-- customizer js -->
 <script th:src="@{/Backend/assets/js/customizer.js}"></script>
-
-<!-- Plugins js -->
 <script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
 <script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
 <script th:src="@{/Backend/assets/js/notify/index.js}"></script>
-
-<!-- Data table js -->
 <script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
 <script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
-
-<!-- sidebar effect -->
 <script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
-
-<!-- Theme js -->
 <script th:src="@{/Backend/assets/js/script.js}"></script>
 
-<!-- JavaScript cho form ProductBatch -->
+<!-- Pikaday JS -->
+<script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+
+<!-- JavaScript xử lý form và Pikaday -->
 <script>
-    if (typeof $ === 'undefined') {
-        console.error('jQuery không được tải. Kiểm tra đường dẫn: /Backend/assets/js/jquery-3.6.0.min.js');
-        alert('jQuery không hoạt động được hỗ trợ. Vui lòng kiểm tra console.');
-    } else {
-        $(document).ready(function() {
-            // Populate ProductDetail dropdown
-            $.ajax({
-                url: '/AgriculturalWarehouseManagementApplication/api/product-details',
-                method: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    console.log('Phản hồi từ /api/product-details: ', data);
-                    var select = $('#productDetailId');
-                    select.empty();
-                    select.append('<option value="" disabled selected>Chọn Product Detail</option>');
+    $(document).ready(function () {
+        // Kiểm tra input #manufactureDate
+        const manufactureDateInput = document.getElementById('manufactureDate');
+        if (!manufactureDateInput) {
+            console.error("Lỗi: Không tìm thấy input #manufactureDate");
+            $.notify({ message: 'Lỗi: Không tìm thấy trường ngày sản xuất.' }, { type: 'danger' });
+            return;
+        }
 
-                    if (!data || data.length === 0) {
-                        console.warn('Không có ProductDetails.');
-                        select.append('<option value="" disabled>Không có Product Detail</option>');
-                        select.prop('disabled', true);
-                        alert('Không có ProductDetail nào để chọn.');
-                        return;
-                    }
+        // Kiểm tra tải thư viện Pikaday và Moment
+        if (typeof Pikaday === 'undefined' || typeof moment === 'undefined') {
+            console.error("Lỗi: Pikaday hoặc Moment không tải được. Kiểm tra CDN hoặc đường dẫn.");
+            $.notify({ message: 'Lỗi: Không tải được thư viện lịch. Vui lòng kiểm tra console.' }, { type: 'danger' });
+            return;
+        }
 
-                    console.log('Kiểm tra trường productDetailId trong dữ liệu:', data[0]);
-                    $.each(data, function(index, detail) {
-                        var id = detail.productDetailID || detail.id;
-                        if (id) {
-                            select.append(`<option value="${id}">${detail.detailName || 'Không có tên'} (ID: ${id})</option>`);
-                            console.log(`Đã thêm option: ID=${id}, Name=${detail.detailName}`);
-                        } else {
-                            console.warn('Dữ liệu không có productDetailId hoặc id: ', detail);
-                        }
-                    });
-                }, error: function(xhr, status, error) {
-                    console.error('Lỗi khi lấy ProductDetails: ', status, error, xhr.responseText);
-                    alert('Không thể tải danh sách Product Detail. Kiểm tra console.');
+        // Khởi tạo Pikaday
+        let picker;
+        try {
+            picker = new Pikaday({
+                field: manufactureDateInput,
+                format: 'DD-MM-YYYY', // Định dạng: DD-MM-YYYY
+                yearRange: 10, // Hiển thị 10 năm gần nhất (2015-2025)
+                minDate: new Date(2015, 0, 1), // Cho phép nhập tay từ 1950
+                maxDate: new Date(), // Không cho chọn ngày tương lai
+                defaultDate: new Date(), // Mặc định hôm nay (03-07-2025)
+                setDefaultDate: true,
+                firstDay: 1, // Thứ 2 là ngày đầu tuần
+                i18n: {
+                    previousMonth: 'Tháng trước',
+                    nextMonth: 'Tháng sau',
+                    months: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+                    weekdays: ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'],
+                    weekdaysShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']
+                },
+                onSelect: function(date) {
+                    const formattedDate = moment(date).format('DD-MM-YYYY');
+                    console.log("Ngày được chọn:", formattedDate, "| Năm:", date.getFullYear());
+                    manufactureDateInput.value = formattedDate;
+                },
+                onOpen: function() {
+                    console.log("Mở lịch, năm hiện tại:", this.getMoment().year());
+                    console.log("Phạm vi năm trong dropdown:", new Date().getFullYear() - 10, "-", new Date().getFullYear());
                 }
             });
+            console.log("Pikaday khởi tạo thành công cho #manufactureDate");
+        } catch (error) {
+            console.error("Lỗi khởi tạo Pikaday:", error);
+            $.notify({ message: 'Lỗi khởi tạo lịch. Vui lòng kiểm tra console.' }, { type: 'danger' });
+        }
 
-            // Xử lý sự kiện click nút Submit
-            $('#submitProductBatch').on('click', function() {
-                // Lấy giá trị từ form
-                var productDetailId = $('#productDetailId').val();
-                var manufactureDate = $('#manufactureDate').val();
-                var importedQuantity = $('#importedQuantity').val();
+        // Load ProductDetail vào dropdown từ danh sách ProductDetails
+        $.ajax({
+            url: '/AgriculturalWarehouseManagementApplication/api/product-details', // Lấy danh sách tất cả product-details
+            method: 'GET',
+            dataType: 'json',
+            success: function (productDetails) {
+                const select = $('#productDetailId');
+                select.empty().append('<option value="" disabled selected>Chọn Chi Tiết Sản Phẩm</option>');
 
-                // Kiểm tra giá trị dropdown
-                console.log('Giá trị productDetailId được chọn: ', productDetailId);
-
-                // Kiểm tra nghiêm ngặt
-                if (!productDetailId || productDetailId === '' || isNaN(parseInt(productDetailId))) {
-                    console.error('productDetailID không hợp lệ: ', productDetailId);
-                    alert('Vui lòng chọn một Product Detail hợp lệ.');
-                    return;
-                }
-                if (!manufactureDate) {
-                    console.error('manufactureDate không hợp lệ: ', manufactureDate);
-                    alert('Vui lòng chọn ngày sản xuất.');
-                    return;
-                }
-                if (!importedQuantity || parseInt(importedQuantity) < 1) {
-                    console.error('importedQuantity không hợp lệ: ', importedQuantity);
-                    alert('Vui lòng nhập số lượng hợp lệ (tối thiểu 1).');
+                if (!productDetails || productDetails.length === 0) {
+                    select.append('<option value="" disabled>Không có dữ liệu ProductDetail</option>').prop('disabled', true);
+                    $.notify({ message: 'Không có dữ liệu ProductDetail' }, { type: 'warning' });
                     return;
                 }
 
-                // Tạo payload khớp với backend
-                var formData = {
-                    productDetailID: parseInt(productDetailId),
-                    manufactureDate: manufactureDate,
-                    importedQuantity: parseInt(importedQuantity)
-                };
+                $.each(productDetails, function (i, productDetail) {
+                    const productDetailId = productDetail.productDetailID || productDetail.id;
+                    const detailName = productDetail.detailName || 'N/A';
+                    const productId = productDetail.productID || 'N/A';
 
-                console.log('Gửi payload tới /AgriculturalWarehouseManagementApplication/api/product-batches: ', formData);
-
-                // Gửi yêu cầu AJAX
-                $.ajax({
-                    url: '/AgriculturalWarehouseManagementApplication/api/product-batches',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(formData),
-                    dataType: 'json',
-                    success: function(response) {
-                        console.log('ProductBatch đã được thêm: ', response);
-                        alert('Thêm ProductBatch thành công');
-                        $('#productBatchForm')[0].reset();
-                        $('#productDetailId').val('');
-                    }, error: function(xhr, status, error) {
-                        console.error('Lỗi khi thêm ProductBatch: ', status, error, xhr.responseText);
-                        alert('Lỗi khi thêm ProductBatch: ' + xhr.responseText);
+                    if (productDetailId !== 'N/A' && productId !== 'N/A') {
+                        $.ajax({
+                            url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/products/${productId}/name`,
+                            method: 'GET',
+                            async: false,
+                            success: function(productName) {
+                                const displayName = `${productName} (${detailName})`;
+                                select.append(`<option value="${productDetailId}">${displayName}</option>`);
+                                console.log(`ProductDetail ID: ${productDetailId}, Product ID: ${productId}, Tên hiển thị: ${displayName}`);
+                            },
+                            error: function(xhr, status, error) {
+                                const displayName = `N/A (${detailName})`;
+                                select.append(`<option value="${productDetailId}">${displayName}</option>`);
+                                console.error(`Lỗi khi lấy tên sản phẩm cho Product ID ${productId}:`, { status, error });
+                            }
+                        });
+                    } else {
+                        const displayName = `N/A (${detailName})`;
+                        select.append(`<option value="${productDetailId}">${displayName}</option>`);
+                        console.log(`ProductDetail ID: ${productDetailId}, Product ID không hợp lệ`);
                     }
                 });
-            });
+            },
+            error: function (xhr) {
+                $.notify({ message: 'Lỗi khi tải danh sách ProductDetail' }, { type: 'danger' });
+            }
+        });
 
-            // Đảm bảo input importedQuantity có hành vi spinner
-            $('#importedQuantity').on('input', function() {
-                var value = parseInt($(this).val());
-                if (isNaN(value) || value < 1) {
-                    $(this).val(1);
-                }
-            });
+        // Submit form
+        $('#submitProductBatch').on('click', function () {
+            const productDetailId = $('#productDetailId').val();
+            const manufactureDate = $('#manufactureDate').val();
+            const importedQuantity = $('#importedQuantity').val();
 
-            // Gỡ lỗi lựa chọn dropdown
-            $('#productDetailId').on('change', function() {
-                var selectedValue = $(this).val();
-                console.log('Đã chọn productDetailID: ', selectedValue);
-                if (selectedValue) {
-                    console.log('Option đã chọn: ', $(this).find('option:selected').text());
+            if (!productDetailId || isNaN(parseInt(productDetailId))) {
+                $.notify({ message: 'Vui lòng chọn Chi Tiết Sản Phẩm hợp lệ.' }, { type: 'warning' });
+                return;
+            }
+            if (!manufactureDate) {
+                $.notify({ message: 'Vui lòng nhập ngày sản xuất.' }, { type: 'warning' });
+                return;
+            }
+            if (!importedQuantity || parseInt(importedQuantity) < 1) {
+                $.notify({ message: 'Số lượng nhập phải lớn hơn 0.' }, { type: 'warning' });
+                return;
+            }
+
+            // Kiểm tra định dạng ngày
+            const dateRegex = /^(\d{2})-(\d{2})-(\d{4})$/;
+            if (!dateRegex.test(manufactureDate)) {
+                $.notify({ message: 'Định dạng ngày không hợp lệ. Vui lòng chọn ngày hợp lệ.' }, { type: 'warning' });
+                return;
+            }
+
+            // Chuyển định dạng ngày về YYYY-MM-DD
+            const dateParts = manufactureDate.split('-');
+            const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+            console.log("Ngày gửi API:", formattedDate);
+
+            const formData = {
+                productDetailID: parseInt(productDetailId),
+                manufactureDate: formattedDate,
+                importedQuantity: parseInt(importedQuantity)
+            };
+
+            $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/api/product-batches',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    $.notify({ message: 'Thêm Lô Sản Phẩm thành công!' }, { type: 'success' });
+                    $('#productBatchForm')[0].reset();
+                    $('#productDetailId').val('');
+                    if (picker) {
+                        picker.setDate(new Date());
+                    }
+
+                    // Redirect sau 1.5s
+                    setTimeout(() => {
+                        window.location.href = '/AgriculturalWarehouseManagementApplication/warehouse/productbatch';
+                    }, 1500);
+                },
+                error: function (xhr) {
+                    $.notify({ message: 'Lỗi khi thêm Lô Sản Phẩm: ' + xhr.responseText }, { type: 'danger' });
                 }
             });
         });
-    }
+
+        // Giữ importedQuantity luôn >= 1
+        $('#importedQuantity').on('input', function () {
+            if (parseInt($(this).val()) < 1) {
+                $(this).val(1);
+            }
+        });
+    });
 </script>
-
 </body>
-
 </html>

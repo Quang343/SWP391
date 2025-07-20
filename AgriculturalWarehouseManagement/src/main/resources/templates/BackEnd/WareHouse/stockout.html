@@ -1,7 +1,127 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="BackEnd/fragments/WareHouse/head::head"></head>
+<head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
+
+<style>
+    /* Ensure table is scrollable horizontally if content overflows */
+    .table-responsive {
+        overflow-x: auto;
+        margin-bottom: 0; /* Remove extra margin to keep pagination close */
+        position: relative; /* Context for scrollbar */
+    }
+
+    /* Ensure table takes full width but triggers scrollbar if needed */
+    #table_id {
+        width: 100%;
+        min-width: 1100px; /* Increased to accommodate status column */
+    }
+
+    /* Override gray borders from Bootstrap for table */
+    #table_id.table,
+    #table_id th,
+    #table_id td {
+        border-color: #e6f3f2 !important; /* Replace gray with light green */
+    }
+
+    /* Center pagination and style items */
+    #pagination-controls {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center;
+        margin-top: 8px; /* Small gap below table/scrollbar */
+        margin-bottom: 20px; /* Space below pagination */
+        position: relative; /* Ensure proper stacking */
+        z-index: 10; /* Lower than modal backdrop and footer */
+        max-width: 100%; /* Ensure it doesn't overflow container */
+    }
+
+    #pagination-controls .page-item {
+        margin: 0 2.5px; /* 5px gap between items */
+    }
+
+    #pagination-controls .page-link {
+        border-radius: 4px;
+        padding: 6px 12px;
+        color: #018F84; /* Text color for number pages */
+        font-size: 14px; /* Match theme typography */
+        cursor: pointer; /* Ensure clickable appearance */
+        border: 1px solid #018F84; /* Border matches theme */
+        background-color: transparent; /* Default background */
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    /* Style for Previous and Next buttons */
+    #pagination-controls .page-item:first-child .page-link,
+    #pagination-controls .page-item:last-child .page-link {
+        background-color: #018F84; /* Green background */
+        color: #fff; /* White text */
+        border-color: #018F84;
+    }
+
+    /* Style for active page */
+    #pagination-controls .page-item.active .page-link {
+        background-color: #018F84; /* Green background */
+        border-color: #018F84;
+        color: #fff; /* White text */
+    }
+
+    /* Style for disabled buttons */
+    #pagination-controls .page-item.disabled .page-link {
+        color: #018F84; /* Green text */
+        border-color: #e6f3f2; /* Light green border */
+        background-color: #e6f3f2; /* Light green background */
+        pointer-events: none;
+        cursor: default;
+    }
+
+    /* Hover effect for non-disabled, non-active number pages */
+    #pagination-controls .page-link:hover:not(.disabled .page-link):not(.active .page-link):not(:first-child .page-link):not(:last-child .page-link) {
+        background-color: #e6f3f2; /* Light green on hover */
+        color: #018F84;
+    }
+
+    /* Hover effect for Previous/Next */
+    #pagination-controls .page-item:not(.disabled):first-child .page-link:hover,
+    #pagination-controls .page-item:not(.disabled):last-child .page-link:hover {
+        background-color: #016f6a; /* Darker green on hover */
+        color: #fff;
+    }
+
+    /* Style for search bar and button */
+    .btn-theme {
+        background-color: #018F84; /* Match theme color */
+        color: #fff;
+        border-color: #018F84;
+    }
+
+    .btn-theme:hover {
+        background-color: #016f6a; /* Darker green on hover */
+        color: #fff;
+        border-color: #016f6a;
+    }
+
+    .search-bar input {
+        border: 1px solid #e6f3f2; /* Light green border */
+    }
+
+    .search-bar input:focus {
+        border-color: #018F84; /* Darker green on focus */
+        box-shadow: 0 0 5px rgba(1, 143, 132, 0.3);
+    }
+
+    /* Style for status column */
+    .status-returned {
+        color: #ff0000; /* Red for RETURNED */
+        font-weight: bold;
+    }
+
+    .status-exported {
+        color: #008000; /* Green for EXPORTED */
+        font-weight: bold;
+    }
+</style>
 
 <body>
 <!-- tap on top start-->
@@ -13,13 +133,13 @@
 <!-- page-wrapper Start-->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
     <!-- Page Header Start-->
-    <div th:replace="BackEnd/fragments/WareHouse/header::header"></div>
+    <div th:replace="~{BackEnd/fragments/WareHouse/header::header}"></div>
     <!-- Page Header Ends-->
 
     <!-- Page Body Start-->
     <div class="page-body-wrapper">
         <!-- Page Sidebar Start-->
-        <div th:replace="BackEnd/fragments/WareHouse/sidebar::sidebar"></div>
+        <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
         <!-- Page Sidebar Ends-->
 
         <!-- StockOut section Start -->
@@ -31,27 +151,40 @@
                         <div class="card card-table">
                             <div class="card-body">
                                 <div class="title-header option-title">
-                                    <h5>StockOut List</h5>
-                                    <a th:href="@{/warehouse/addstockout}" class="btn btn-solid">Add new StockOut</a>
-                                </div>
-                                <div>
-                                    <div class="table-responsive">
-                                        <table class="table all-package order-table theme-table" id="table_id">
-                                            <thead>
-                                            <tr>
-                                                <th>StockOut ID</th>
-                                                <th>Warehouse ID</th>
-                                                <th>Order ID</th>
-                                                <th>Date</th>
-                                                <th>Note</th>
-                                                <th>Option</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody id="stockOutTableBody">
-                                            <!-- Dữ liệu sẽ được tải động bằng JavaScript -->
-                                            </tbody>
-                                        </table>
+                                    <!-- Dòng 1: chỉ StockOut List -->
+                                    <div class="first-line">
+                                        <h5>Danh sách Xuất kho</h5>
                                     </div>
+
+                                    <!-- Dòng 2: Add new StockOut và Search -->
+                                    <div class="second-line" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                                        <a th:href="@{/warehouse/addstockout}" class="align-items-center btn btn-theme d-flex">
+                                            <i data-feather="plus"></i> Thêm Xuất kho
+                                        </a>
+                                        <div class="search-bar">
+                                            <input type="text" class="form-control" placeholder="Tìm kiếm..." id="searchInputStockOut">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table all-package order-table theme-table" id="table_id">
+                                        <thead>
+                                        <tr>
+                                            <th>ID Xuất kho</th>
+                                            <th>Kho hàng</th>
+                                            <th>Đơn hàng</th>
+                                            <th>Ngày Xuất kho</th>
+                                            <th>Ghi chú</th>
+                                            <th>Trạng thái</th> <!-- Thêm cột trạng thái -->
+                                            <th>Hành động</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="stockOutTableBody">
+                                        <tr>
+                                            <td colspan="7">Đang tải dữ liệu...</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -59,6 +192,7 @@
                 </div>
             </div>
             <!-- Table End -->
+            <div th:replace="BackEnd/fragments/WareHouse/footer::footer"></div>
         </div>
         <!-- StockOut section End -->
     </div>
@@ -66,136 +200,23 @@
 </div>
 <!-- page-wrapper End -->
 
-<!-- Modal start -->
+<!-- Logout Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
-                <p>Are you sure you want to log out?</p>
+                <h5 class="modal-title" id="staticBackdropLabel">Đăng xuất</h5>
+                <p>Bạn có chắc chắn muốn đăng xuất?</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="button-box">
-                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-                    <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">Không</button>
+                    <button type="button" th:onclick="|window.location='@{/backend/login}'|" class="btn btn--yes btn-primary">Có</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!-- Modal end -->
-
-<!-- Delete Modal Box Start -->
-<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle" aria-hidden="true" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header d-block text-center">
-                <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure ?</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="remove-box">
-                    <p>Are you sure you want to delete this StockOut?</p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
-                <button type="button" class="btn btn-animation btn-md fw-bold" id="confirmDeleteBtn">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle2" aria-hidden="true" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel12">Done!</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="remove-box text-center">
-                    <div class="wrapper">
-                        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-                        </svg>
-                    </div>
-                    <h4 class="text-content">StockOut removed successfully.</h4>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Delete Modal Box End -->
-
-<!-- Offcanvas Box Start -->
-<div class="offcanvas offcanvas-end order-offcanvas" tabindex="-1" id="order-details"
-     aria-labelledby="offcanvasExampleLabel" aria-expanded="false">
-    <div class="offcanvas-header">
-        <h4 class="offcanvas-title" id="offcanvasExampleLabel">StockOut #<span id="offcanvasStockOutId"></span></h4>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-    <div class="offcanvas-body">
-        <div class="order-date">
-            <h6 id="offcanvasStockOutDate"></h6>
-            <a href="javascript:void(0)" class="d-block mt-1">Cancel StockOut</a>
-        </div>
-
-        <div class="accordion accordion-flush custome-accordion" id="accordionFlushExample">
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="flush-headingOne">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                        Details
-                    </button>
-                </h2>
-                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
-                     data-bs-parent="#accordionFlushExample">
-                    <div class="accordion-body">
-                        <p><strong>Warehouse ID:</strong> <span id="offcanvasWarehouseId"></span></p>
-                        <p><strong>Order ID:</strong> <span id="offcanvasOrderId"></span></p>
-                        <p><strong>Note:</strong> <span id="offcanvasNote"></span></p>
-                    </div>
-                </div>
-            </div>
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="flush-headingTwo">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-                        StockOut Details
-                    </button>
-                </h2>
-                <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo"
-                     data-bs-parent="#accordionFlushExample">
-                    <div class="accordion-body">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Order Detail ID</th>
-                                <th>Batch ID</th>
-                                <th>Quantity</th>
-                            </tr>
-                            </thead>
-                            <tbody id="stockOutDetailTable">
-                            <!-- Dữ liệu sẽ được tải động -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Offcanvas Box End -->
+<!-- Modal End -->
 
 <!-- Latest js -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
@@ -216,132 +237,136 @@
 <script th:src="@{/Backend/assets/js/checkbox-all-check.js}"></script>
 
 <!-- Custom JavaScript -->
-<!-- Chỉ hiển thị phần <script> đã sửa đổi; các phần khác giữ nguyên -->
 <script>
-    $(document).ready(function() {
-        // Tải dữ liệu StockOut
-        function loadStockOuts() {
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('[DEBUG] Initializing page at ' + new Date().toISOString());
+
+        // DOM Elements
+        const stockOutTableBody = document.getElementById('stockOutTableBody');
+        const searchInputStockOut = document.getElementById('searchInputStockOut');
+
+        // Validate DOM elements
+        console.log('[DEBUG] Validating DOM elements');
+        if (!stockOutTableBody) {
+            console.error('[ERROR] Missing stockOutTableBody element');
+            alert('Lỗi giao diện, vui lòng kiểm tra console.');
+            return;
+        }
+        console.log('[DEBUG] All DOM elements found');
+
+        // Function to format date to HH:mm:ss DD/MM/YYYY
+        function formatDateToVietnamese(dateString) {
+            if (!dateString || dateString === 'N/A') {
+                return 'N/A';
+            }
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    console.warn('[WARN] Invalid date:', dateString);
+                    return 'N/A';
+                }
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const seconds = String(date.getSeconds()).padStart(2, '0');
+                return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
+            } catch (error) {
+                console.error('[ERROR] Error parsing date:', dateString, error);
+                return 'N/A';
+            }
+        }
+
+        // Function to format status with color
+        function formatStatus(status) {
+            if (!status) return 'N/A';
+            switch (status.toUpperCase()) {
+                case 'RETURNED':
+                    return `<span class="status-returned">Đã trả hàng</span>`;
+                case 'EXPORTED':
+                    return `<span class="status-exported">Đã xuất kho</span>`;
+                default:
+                    return status;
+            }
+        }
+
+        // Load StockOuts
+        function loadStockOuts(searchTerm = '') {
+            console.log('[DEBUG] Loading stockouts from /AgriculturalWarehouseManagementApplication/api/stockouts');
             $.ajax({
-                url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockouts',
+                url: '/AgriculturalWarehouseManagementApplication/api/stockouts',
                 method: 'GET',
                 dataType: 'json',
+                beforeSend: function() {
+                    console.log('[DEBUG] Sending GET request to /AgriculturalWarehouseManagementApplication/api/stockouts');
+                },
                 success: function(data) {
-                    var tbody = $('#stockOutTableBody');
-                    tbody.empty();
-                    $.each(data, function(index, stockOut) {
-                        // Chỉ lấy tên Warehouse
-                        $.ajax({
-                            url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/warehouses/' + stockOut.warehouseID,
-                            method: 'GET',
-                            dataType: 'json',
-                            success: function(warehouseResponse) {
-                                var warehouseName = warehouseResponse.warehouseName || 'N/A';
-                                var orderDisplay = stockOut.orderID ? `Đơn hàng #${stockOut.orderID}` : 'N/A';
-                                var row = '<tr data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockout-id="' + stockOut.id + '">' +
-                                    '<td>' + stockOut.id + '</td>' +
-                                    '<td>' + warehouseName + '</td>' +
-                                    '<td>' + orderDisplay + '</td>' +
-                                    '<td>' + (stockOut.stockOutDate ? new Date(stockOut.stockOutDate).toLocaleDateString() : 'N/A') + '</td>' +
-                                    '<td>' + (stockOut.note || 'N/A') + '</td>' +
-                                    '<td>' +
-                                    '<ul>' +
-                                    '<li><a href="/AgriculturalWarehouseManagementApplication/warehouse/stockoutdetail?stockOutId=' + stockOut.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
-                                    '<li><a href="javascript:void(0)"><i class="ri-pencil-line"></i></a></li>' +
-                                    '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockout-id="' + stockOut.id + '"><i class="ri-delete-bin-line"></i></a></li>' +
-                                    '<li><a class="btn btn-sm btn-solid text-white" href="order-tracking.html">Theo dõi</a></li>' +
-                                    '</ul>' +
-                                    '</td>' +
-                                    '</tr>';
-                                tbody.append(row);
-                            },
-                            error: function(jqXHR, textStatus, errorThrown) {
-                                console.error('Lỗi khi lấy Warehouse: ', textStatus, errorThrown);
-                                var orderDisplay = stockOut.orderID ? `Đơn hàng #${stockOut.orderID}` : 'N/A';
-                                var row = '<tr data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockout-id="' + stockOut.id + '">' +
-                                    '<td>' + stockOut.id + '</td>' +
-                                    '<td>N/A</td>' +
-                                    '<td>' + orderDisplay + '</td>' +
-                                    '<td>' + (stockOut.stockOutDate ? new Date(stockOut.stockOutDate).toLocaleDateString() : 'N/A') + '</td>' +
-                                    '<td>' + (stockOut.note || 'N/A') + '</td>' +
-                                    '<td>' +
-                                    '<ul>' +
-                                    '<li><a href="/warehouse/stockoutdetail?stockOutId=' + stockOut.id + '" class="view-detail"><i class="ri-eye-line"></i></a></li>' +
-                                    '<li><a href="javascript:void(0)"><i class="ri-pencil-line"></i></a></li>' +
-                                    '<li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockout-id="' + stockOut.id + '"><i class="ri-delete-bin-line"></i></a></li>' +
-                                    '<li><a class="btn btn-sm btn-solid text-white" href="order-tracking.html">Theo dõi</a></li>' +
-                                    '</ul>' +
-                                    '</td>' +
-                                    '</tr>';
-                                tbody.append(row);
+                    console.log('[DEBUG] Response from /AgriculturalWarehouseManagementApplication/api/stockouts:', JSON.stringify(data, null, 2));
+                    stockOutTableBody.innerHTML = '';
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(stockOut => {
+                            const id = stockOut.id;
+                            const warehouseId = stockOut.warehouseID || 'N/A';
+                            const orderId = stockOut.orderID ? `Đơn hàng #${stockOut.orderID}` : 'N/A';
+                            const stockOutDate = formatDateToVietnamese(stockOut.stockOutDate);
+                            const note = stockOut.note || 'Không có ghi chú';
+                            const status = formatStatus(stockOut.status); // Format status with color
+                            if (id && (!searchTerm ||
+                                id.toString().includes(searchTerm) ||
+                                warehouseId.toString().includes(searchTerm) ||
+                                orderId.includes(searchTerm) ||
+                                stockOutDate.includes(searchTerm) ||
+                                note.includes(searchTerm) ||
+                                stockOut.status?.toUpperCase().includes(searchTerm.toUpperCase()))) {
+                                stockOutTableBody.innerHTML += `
+                                    <tr>
+                                        <td>${id}</td>
+                                        <td>${warehouseId}</td>
+                                        <td>${orderId}</td>
+                                        <td>${stockOutDate}</td>
+                                        <td>${note}</td>
+                                        <td>${status}</td> <!-- Thêm cột trạng thái -->
+                                        <td>
+                                            <a href="/warehouse/stockoutdetail?stockOutId=${id}" class="btn btn-sm btn-primary view-details-btn">Xem Chi tiết</a>
+                                        </td>
+                                    </tr>
+                                `;
+                                console.log('[DEBUG] Added stockout:', { id, warehouseId, orderId, stockOutDate, note, status });
                             }
                         });
-                    });
+                        if (stockOutTableBody.innerHTML === '') {
+                            stockOutTableBody.innerHTML = '<tr><td colspan="7">Không có xuất kho phù hợp với tìm kiếm.</td></tr>';
+                        }
+                    } else {
+                        console.warn('[WARN] No stockouts found or invalid data:', data);
+                        stockOutTableBody.innerHTML = '<tr><td colspan="7">Không có xuất kho.</td></tr>';
+                    }
                 },
                 error: function(xhr, status, error) {
-                    console.error('Lỗi khi tải StockOuts: ', status, error);
-                    $('#stockOutTableBody').html('<tr><td colspan="6">Không thể tải dữ liệu. Kiểm tra console.</td></tr>');
+                    console.error('[ERROR] Failed to load stockouts:', {
+                        url: '/AgriculturalWarehouseManagementApplication/api/stockouts',
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        response: xhr.responseText ? JSON.stringify(JSON.parse(xhr.responseText), null, 2) : 'No response body',
+                        error: error
+                    });
+                    stockOutTableBody.innerHTML = '<tr><td colspan="7">Lỗi tải dữ liệu.</td></tr>';
                 }
             });
         }
 
-        // Tải chi tiết StockOut và StockOutDetails vào offcanvas
-        $(document).on('show.bs.offcanvas', '#order-details', function(event) {
-            var stockOutId = $(event.relatedTarget).data('stockout-id');
-            $('#offcanvasStockOutId').text(stockOutId);
-            $.when(
-                $.ajax({ url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockouts/' + stockOutId, method: 'GET', dataType: 'json' }),
-                $.ajax({ url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockoutdetails/stockout/' + stockOutId, method: 'GET', dataType: 'json' })
-            ).done(function(stockOutResponse, stockOutDetailsResponse) {
-                var stockOut = stockOutResponse[0];
-                var stockOutDetails = stockOutDetailsResponse[0];
-                $('#offcanvasStockOutDate').text(stockOut.stockOutDate ? new Date(stockOut.stockOutDate).toLocaleString() : 'N/A');
-                $('#offcanvasWarehouseId').text(stockOut.warehouseID ? stockOut.warehouseID : 'N/A');
-                $('#offcanvasOrderId').text(stockOut.orderID ? stockOut.orderID : 'N/A');
-                $('#offcanvasNote').text(stockOut.note || 'N/A');
-
-                // Tải StockOutDetails
-                var detailTbody = $('#stockOutDetailTable');
-                detailTbody.empty();
-                $.each(stockOutDetails, function(index, detail) {
-                    var row = '<tr>' +
-                        '<td>' + (detail.orderDetailID || 'N/A') + '</td>' +
-                        '<td>' + (detail.batchID || 'N/A') + '</td>' +
-                        '<td>' + (detail.quantity || 'N/A') + '</td>' +
-                        '</tr>';
-                    detailTbody.append(row);
-                });
-            }).fail(function(jqXHR, textStatus, errorThrown) {
-                console.error('Lỗi khi tải chi tiết StockOut: ', textStatus, errorThrown);
+        // Search functionality
+        if (searchInputStockOut) {
+            searchInputStockOut.addEventListener('input', function() {
+                const searchTerm = this.value.trim();
+                console.log('[DEBUG] Search term:', searchTerm);
+                loadStockOuts(searchTerm);
             });
-        });
+        }
 
-        // Xóa StockOut
-        $('#confirmDeleteBtn').on('click', function() {
-            var stockOutId = $('#exampleModalToggle').data('stockout-id');
-            if (stockOutId) {
-                $.ajax({
-                    url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockouts/' + stockOutId,
-                    method: 'DELETE',
-                    success: function() {
-                        $('#exampleModalToggle').modal('hide');
-                        $('#exampleModalToggle2').modal('show');
-                        loadStockOuts(); // Tải lại bảng sau khi xóa
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Lỗi khi xóa StockOut: ', status, error);
-                        alert('Không thể xóa StockOut. Kiểm tra console.');
-                    }
-                });
-            }
-        });
-
-        // Gán stockout-id cho modal xóa
-        $(document).on('click', '[data-bs-target="#exampleModalToggle"]', function() {
-            var stockOutId = $(this).data('stockout-id');
-            $('#exampleModalToggle').data('stockout-id', stockOutId);
-        });
-
-        // Khởi tạo bảng
+        // Initialize
+        console.log('[DEBUG] Starting initialization');
         loadStockOuts();
     });
 </script>

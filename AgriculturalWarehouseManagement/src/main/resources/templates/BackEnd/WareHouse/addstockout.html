@@ -23,107 +23,40 @@
         <!-- Page Sidebar Ends-->
 
         <div class="page-body">
-            <!-- New StockOut Add Start -->
+            <!-- Pending Orders List Table -->
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-12">
-                        <div class="row">
-                            <div class="col-sm-8 m-auto">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="card-header-2">
-                                            <h5>Thêm Thông tin Xuất kho</h5>
-                                        </div>
-
-                                        <div class="theme-form theme-form-2 mega-form">
-                                            <!-- Warehouse Dropdown -->
-                                            <div class="mb-4 row align-items-center">
-                                                <label class="form-label-title col-sm-3 mb-0">Kho hàng</label>
-                                                <div class="col-sm-9">
-                                                    <select id="warehouseId" class="form-control" required>
-                                                        <option value="">Chọn Kho hàng</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <!-- Order ID (Hidden) -->
-                                            <input type="hidden" id="orderId">
-
-                                            <!-- StockOut Date (Native Date Picker) -->
-                                            <div class="mb-4 row align-items-center">
-                                                <label class="col-sm-3 col-form-label form-label-title">Ngày Xuất kho</label>
-                                                <div class="col-sm-9">
-                                                    <input id="stockOutDate" name="stockOutDate" class="form-control" type="date" required>
-                                                </div>
-                                            </div>
-
-                                            <!-- Note -->
-                                            <div class="mb-4 row align-items-center">
-                                                <label class="form-label-title col-sm-3 mb-0">Ghi chú</label>
-                                                <div class="col-sm-9">
-                                                    <input id="note" class="form-control" type="text" placeholder="Nhập Ghi chú">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="card-submit-button">
-                                        <button id="submitButton" class="btn btn-animation ms-auto" type="button">Gửi</button>
-                                    </div>
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-header-2">
+                                    <h5>Danh sách Đơn hàng Chờ Xuất kho</h5>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Order List Table -->
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="card-header-2">
-                                            <h5>Danh sách Đơn hàng Chờ Xuất kho</h5>
-                                        </div>
-                                        <div class="table-responsive">
-                                            <table class="table table-borderless">
-                                                <thead>
-                                                <tr>
-                                                    <th>ID Đơn hàng</th>
-                                                    <th>Tên Đơn hàng</th>
-                                                    <th>Hành động</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody id="orderTableBody">
-                                                <tr th:each="order : ${orders}">
-                                                    <td th:text="${order.id}"></td>
-                                                    <td th:text="${order.orderName ?: 'Đơn hàng #' + order.id}"></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-primary create-stockout-btn" th:attr="data-order-id=${order.id}">Tạo Xuất kho</button>
-                                                    </td>
-                                                </tr>
-                                                <tr th:unless="${orders}">
-                                                    <td colspan="3">Không có đơn hàng nào chờ xuất kho.</td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                                <div class="table-responsive">
+                                    <table class="table table-borderless">
+                                        <thead>
+                                        <tr>
+                                            <th>ID Đơn hàng</th>
+                                            <th>Tên Đơn hàng</th>
+                                            <th>Hành động</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="orderTableBody">
+                                        <tr>
+                                            <td colspan="3">Đang tải dữ liệu...</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- New StockOut Add End -->
+            <!-- Pending Orders List End -->
 
             <!-- footer Start -->
-            <div class="container-fluid">
-                <footer class="footer">
-                    <div class="row">
-                        <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Bản quyền 2022 © Chủ đề Fastkart bởi pixelstrap</p>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+            <div th:replace="BackEnd/fragments/WareHouse/footer::footer"></div>
             <!-- footer End -->
         </div>
         <!-- Container-fluid End -->
@@ -132,7 +65,40 @@
 </div>
 <!-- page-wrapper End -->
 
-<!-- Modal Start -->
+<!-- StockOut Modal -->
+<div class="modal fade" id="stockOutModal" tabindex="-1" aria-labelledby="stockOutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="stockOutModalLabel">Tạo Xuất kho</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="modalOrderId">
+                <div class="mb-3">
+                    <label for="modalWarehouseId" class="form-label">Kho hàng</label>
+                    <select id="modalWarehouseId" class="form-control" required>
+                        <option value="">Chọn Kho hàng</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="modalStockOutDate" class="form-label">Ngày Xuất kho</label>
+                    <input id="modalStockOutDate" class="form-control" type="text" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="modalNote" class="form-label">Ghi chú</label>
+                    <input id="modalNote" class="form-control" type="text" placeholder="Nhập Ghi chú">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" id="modalSubmitButton" class="btn btn-primary" disabled>Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Logout Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -170,151 +136,240 @@
 <!-- Custom JavaScript -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('DOM đã tải xong, khởi tạo script...');
+        console.log('[DEBUG] Initializing page at ' + new Date().toISOString());
 
-        // Khởi tạo các phần tử DOM
-        const warehouseId = document.getElementById('warehouseId');
-        const orderId = document.getElementById('orderId');
-        const stockOutDate = document.getElementById('stockOutDate');
-        const note = document.getElementById('note');
-        const submitButton = document.getElementById('submitButton');
+        // DOM Elements
+        const orderTableBody = document.getElementById('orderTableBody');
+        const modalOrderId = document.getElementById('modalOrderId');
+        const modalWarehouseId = document.getElementById('modalWarehouseId');
+        const modalStockOutDate = document.getElementById('modalStockOutDate');
+        const modalNote = document.getElementById('modalNote');
+        const modalSubmitButton = document.getElementById('modalSubmitButton');
+        const stockOutModal = new bootstrap.Modal(document.getElementById('stockOutModal'));
 
-        if (!warehouseId || !orderId || !stockOutDate || !note || !submitButton) {
-            console.error('Thiếu các phần tử DOM:', {
-                warehouseId: !!warehouseId,
-                orderId: !!orderId,
-                stockOutDate: !!stockOutDate,
-                note: !!note,
-                submitButton: !!submitButton
+        // Validate DOM elements
+        console.log('[DEBUG] Validating DOM elements');
+        if (!orderTableBody || !modalOrderId || !modalWarehouseId || !modalStockOutDate || !modalNote || !modalSubmitButton) {
+            console.error('[ERROR] Missing DOM elements:', {
+                orderTableBody: !!orderTableBody,
+                modalOrderId: !!modalOrderId,
+                modalWarehouseId: !!modalWarehouseId,
+                modalStockOutDate: !!modalStockOutDate,
+                modalNote: !!modalNote,
+                modalSubmitButton: !!modalSubmitButton
             });
-            alert('Lỗi giao diện, vui lòng kiểm tra console.');
+            $.notify({ message: 'Lỗi giao diện, vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
             return;
         }
-        console.log('Các phần tử DOM được tìm thấy:', {
-            warehouseId: warehouseId,
-            orderId: orderId,
-            stockOutDate: stockOutDate,
-            note: note,
-            submitButton: submitButton
-        });
+        console.log('[DEBUG] All DOM elements found');
 
-        // Tải danh sách Warehouses
-        console.log('Bắt đầu tải danh sách Warehouses...');
-        $.ajax({
-            url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/warehouses',
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                console.log('Danh sách Warehouses được tải thành công:', data);
-                warehouseId.innerHTML = '<option value="">Chọn Kho hàng</option>';
-                $.each(data, function(index, warehouse) {
-                    const warehouseIdValue = warehouse.warehouseId || warehouse.id;
-                    const warehouseNameValue = warehouse.warehouseName || warehouse.name;
-                    if (warehouseIdValue && warehouseNameValue) {
-                        warehouseId.innerHTML += `<option value="${warehouseIdValue}">${warehouseNameValue}</option>`;
-                        console.log(`Thêm Warehouse: ID=${warehouseIdValue}, Name=${warehouseNameValue}`);
-                    } else {
-                        console.warn('Dữ liệu Warehouse không hợp lệ:', warehouse);
-                    }
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Lỗi khi tải Warehouses:', {
-                    status: status,
-                    error: error,
-                    response: xhr.responseText
-                });
-                warehouseId.innerHTML = '<option value="">Lỗi tải Warehouses</option>';
-            }
-        });
+        // Warehouse Data
+        let warehouses = [];
 
-        // Xử lý nút "Tạo Xuất kho" trong bảng đơn hàng
-        $('.create-stockout-btn').on('click', function() {
-            const selectedOrderId = $(this).data('order-id');
-            console.log('Đã chọn đơn hàng ID:', selectedOrderId);
-            orderId.value = selectedOrderId;
-            stockOutDate.value = new Date().toISOString().split('T')[0]; // Đặt ngày hiện tại
-            note.value = `Xuất kho cho đơn hàng #${selectedOrderId}`;
-            alert(`Đã chọn đơn hàng #${selectedOrderId}. Vui lòng chọn kho và gửi form.`);
-        });
-
-        // Xử lý gửi form
-        submitButton.addEventListener('click', function () {
-            console.log('Nút Gửi được nhấn.');
-
-            const warehouseIdValue = warehouseId.value;
-            const orderIdValue = orderId.value;
-            const stockOutDateValue = stockOutDate.value;
-            const noteValue = note.value.trim();
-
-            console.log('Giá trị nhập vào:', {
-                warehouseIdValue: warehouseIdValue,
-                orderIdValue: orderIdValue,
-                stockOutDateValue: stockOutDateValue,
-                noteValue: noteValue
+        // Update Modal Submit Button State
+        function updateModalSubmitButtonState() {
+            const isValid = modalWarehouseId.value;
+            modalSubmitButton.disabled = !isValid;
+            console.log('[DEBUG] Modal submit button state:', {
+                isValid: isValid,
+                warehouseId: modalWarehouseId.value
             });
+        }
 
-            // Kiểm tra dữ liệu
-            if (!warehouseIdValue) {
-                alert('Vui lòng chọn kho hàng.');
-                console.warn('Thiếu warehouseId.');
-                return;
-            }
-            if (!stockOutDateValue) {
-                alert('Vui lòng chọn ngày xuất kho.');
-                console.warn('Thiếu stockOutDate.');
-                return;
-            }
-
-            const stockOutData = {
-                warehouseID: parseInt(warehouseIdValue),
-                orderID: orderIdValue ? parseInt(orderIdValue) : null,
-                stockOutDate: stockOutDateValue,
-                note: noteValue || null
-            };
-
-            console.log('Dữ liệu StockOut chuẩn bị gửi:', stockOutData);
-
-            fetch('/AgriculturalWarehouseManagementApplication/api/stockouts', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(stockOutData)
-            })
-                .then(response => {
-                    console.log('Phản hồi từ server:', {
-                        status: response.status,
-                        ok: response.ok
-                    });
-                    if (!response.ok) {
-                        return response.json().then(err => {
-                            throw { status: response.status, error: err.error || 'Lỗi không xác định.' };
-                        });
-                    }
-                    return response.json();
-                })
-                .then(createdStockOut => {
-                    console.log('StockOut được tạo thành công:', createdStockOut);
-                    alert('Tạo StockOut thành công!');
-                    warehouseId.value = '';
-                    orderId.value = '';
-                    stockOutDate.value = '';
-                    note.value = '';
-                    console.log('Form đã được reset.');
-                })
-                .catch(error => {
-                    console.error('Lỗi khi tạo StockOut:', {
-                        status: error.status,
-                        error: error.error
-                    });
-                    if (error.status === 400) {
-                        alert(error.error || 'Dữ liệu không hợp lệ, vui lòng kiểm tra lại.');
-                    } else {
-                        alert('Lỗi khi tạo StockOut: ' + error.error);
-                    }
-                });
+        // Add change listener for modal validation
+        console.log('[DEBUG] Adding event listener for warehouse input');
+        modalWarehouseId.addEventListener('change', function() {
+            console.log('[DEBUG] Warehouse ID changed:', modalWarehouseId.value);
+            updateModalSubmitButtonState();
         });
+
+        // Load Warehouses
+        function loadWarehouses() {
+            console.log('[DEBUG] Loading warehouses from /AgriculturalWarehouseManagementApplication/api/warehouses');
+            $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/api/warehouses',
+                method: 'GET',
+                dataType: 'json',
+                beforeSend: function() {
+                    console.log('[DEBUG] Sending GET request to /AgriculturalWarehouseManagementApplication/api/warehouses');
+                },
+                success: function(data) {
+                    console.log('[DEBUG] Response from /AgriculturalWarehouseManagementApplication/api/warehouses:', JSON.stringify(data, null, 2));
+                    warehouses = Array.isArray(data) ? data : [];
+                    modalWarehouseId.innerHTML = '<option value="">Chọn Kho hàng</option>';
+                    if (warehouses.length > 0) {
+                        warehouses.forEach(warehouse => {
+                            const id = warehouse.warehouseId || warehouse.id;
+                            const name = warehouse.warehouseName || warehouse.name;
+                            if (id && name) {
+                                modalWarehouseId.innerHTML += `<option value="${id}">${name}</option>`;
+                                console.log('[DEBUG] Added warehouse:', { id: id, name: name });
+                            } else {
+                                console.warn('[WARN] Invalid warehouse data:', warehouse);
+                            }
+                        });
+                    } else {
+                        console.warn('[WARN] No warehouses found or invalid data:', data);
+                        modalWarehouseId.innerHTML = '<option value="">Không có kho hàng</option>';
+                    }
+                    updateModalSubmitButtonState();
+                },
+                error: function(xhr, status, error) {
+                    console.error('[ERROR] Failed to load warehouses:', {
+                        url: '/AgriculturalWarehouseManagementApplication/api/warehouses',
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        response: xhr.responseText ? JSON.stringify(JSON.parse(xhr.responseText), null, 2) : 'No response body',
+                        error: error
+                    });
+                    modalWarehouseId.innerHTML = '<option value="">Lỗi tải kho</option>';
+                    updateModalSubmitButtonState();
+                }
+            });
+        }
+
+        // Load Pending Orders
+        function loadPendingOrders() {
+            console.log('[DEBUG] Loading pending orders from /AgriculturalWarehouseManagementApplication/warehouse/api/addstockout');
+            $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/warehouse/api/addstockout',
+                method: 'GET',
+                dataType: 'json',
+                beforeSend: function() {
+                    console.log('[DEBUG] Sending GET request to /AgriculturalWarehouseManagementApplication/warehouse/api/addstockout');
+                },
+                success: function(data) {
+                    console.log('[DEBUG] Response from /AgriculturalWarehouseManagementApplication/warehouse/api/addstockout:', JSON.stringify(data, null, 2));
+                    orderTableBody.innerHTML = '';
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(order => {
+                            const id = order.id;
+                            const name = order.orderName || `Đơn hàng #${id}`;
+                            if (id) {
+                                orderTableBody.innerHTML += `
+                                <tr>
+                                    <td>${id}</td>
+                                    <td>${name}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary create-stockout-btn" data-order-id="${id}" data-bs-toggle="modal" data-bs-target="#stockOutModal">Tạo Xuất kho</button>
+                                    </td>
+                                </tr>
+                            `;
+                                console.log('[DEBUG] Added order:', { id: id, name: name });
+                            } else {
+                                console.warn('[WARN] Invalid order data:', order);
+                            }
+                        });
+                    } else {
+                        console.warn('[WARN] No orders found or invalid data:', data);
+                        orderTableBody.innerHTML = '<tr><td colspan="3">Không có đơn hàng chờ xuất kho.</td></tr>';
+                    }
+                    bindTableActions();
+                },
+                error: function(xhr, status, error) {
+                    console.error('[ERROR] Failed to load orders:', {
+                        url: '/AgriculturalWarehouseManagementApplication/warehouse/api/addstockout',
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        response: xhr.responseText ? JSON.stringify(JSON.parse(xhr.responseText), null, 2) : 'No response body',
+                        error: error
+                    });
+                    orderTableBody.innerHTML = '<tr><td colspan="3">Lỗi tải dữ liệu.</td></tr>';
+                }
+            });
+        }
+
+        // Bind Table Actions
+        function bindTableActions() {
+            console.log('[DEBUG] Binding table actions');
+            $('.create-stockout-btn').on('click', function() {
+                const orderID = parseInt($(this).data('order-id'));
+                console.log('[DEBUG] Create StockOut button clicked for Order ID:', orderID);
+                modalOrderId.value = orderID;
+                modalStockOutDate.value = new Date().toLocaleString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }); // Display current date and time in VN format
+                modalNote.value = `Xuất kho nhanh cho đơn hàng #${orderID}`;
+                modalWarehouseId.value = ''; // Reset warehouse selection
+                console.log('[DEBUG] Modal initialized:', {
+                    orderId: modalOrderId.value,
+                    stockOutDate: modalStockOutDate.value,
+                    note: modalNote.value,
+                    warehouseId: modalWarehouseId.value
+                });
+                updateModalSubmitButtonState();
+                stockOutModal.show();
+            });
+        }
+
+        // Create StockOut
+        modalSubmitButton.addEventListener('click', function() {
+            const warehouseValue = modalWarehouseId.value;
+            const orderValue = modalOrderId.value;
+            const parsedWarehouseID = warehouseValue ? parseInt(warehouseValue) : null;
+            const parsedOrderID = orderValue ? parseInt(orderValue) : null;
+            const data = {
+                warehouseID: parsedWarehouseID,
+                orderID: parsedOrderID,
+                stockOutDate: new Date().toISOString(), // Send current date and time in ISO format
+                note: modalNote.value.trim() || null
+            };
+            console.log('[DEBUG] StockOut data prepared for submission:', JSON.stringify(data, null, 2));
+
+            if (!data.warehouseID || isNaN(data.warehouseID)) {
+                console.warn('[WARN] Invalid warehouseID:', warehouseValue);
+                $.notify({ message: 'Vui lòng chọn kho hàng hợp lệ.' }, { type: 'warning', delay: 3000 });
+                return;
+            }
+            if (!data.orderID || isNaN(data.orderID)) {
+                console.warn('[WARN] Invalid orderID:', orderValue);
+                $.notify({ message: 'Lỗi: Đơn hàng không hợp lệ.' }, { type: 'warning', delay: 3000 });
+                return;
+            }
+
+            // Create StockOut
+            console.log('[DEBUG] Sending POST request to /api/stockouts:', JSON.stringify(data, null, 2));
+            $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/api/stockouts',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                beforeSend: function() {
+                    console.log('[DEBUG] POST request initiated to /AgriculturalWarehouseManagementApplication/api/stockouts');
+                },
+                success: function(response) {
+                    console.log('[DEBUG] Success response from /AgriculturalWarehouseManagementApplication/api/stockouts:', JSON.stringify(response, null, 2));
+                    $.notify({ message: 'Tạo StockOut và StockOutDetails thành công!' }, { type: 'success', delay: 3000 });
+                    setTimeout(() => {
+                        stockOutModal.hide();
+                        loadPendingOrders();
+                    }, 500);
+                    // Chuyển hướng về /warehouse/stockout sau 1 giây
+                    setTimeout(() => {
+                        window.location.href = 'http://localhost:8080/AgriculturalWarehouseManagementApplication/warehouse/stockout';
+                    }, 1000);
+                },
+                error: function(xhr, status, error) {
+                    console.error('[ERROR] Failed to create StockOut:', {
+                        url: '/AgriculturalWarehouseManagementApplication/api/stockouts',
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        response: xhr.responseText ? JSON.stringify(JSON.parse(xhr.responseText), null, 2) : 'No response body',
+                        error: error
+                    });
+                    $.notify({ message: 'Lỗi khi tạo StockOut: ' + (xhr.responseJSON?.message || 'Vui lòng kiểm tra dữ liệu và thử lại.') }, { type: 'danger', delay: 3000 });
+                }
+            });
+        });
+
+        // Initialize
+        console.log('[DEBUG] Starting initialization');
+        loadWarehouses();
+        loadPendingOrders();
     });
 </script>
 
