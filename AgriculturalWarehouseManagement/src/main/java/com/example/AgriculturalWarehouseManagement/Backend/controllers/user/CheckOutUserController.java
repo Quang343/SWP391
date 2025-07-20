@@ -140,6 +140,13 @@ public class CheckOutUserController {
                 session.removeAttribute("errorMessageCheckOut");
             }
 
+            Object errorMessageWallets = session.getAttribute("errorMessageWallets");
+            if (errorMessageWallets != null) {
+                model.addAttribute("errorMessageWallets", errorMessageWallets.toString());
+                session.removeAttribute("errorMessageWallets");
+            }
+
+
             return "FrontEnd/Home/checkout";
         }
 

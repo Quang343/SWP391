@@ -7,6 +7,6 @@ import java.util.List;
 //@author: Đào Huy Hoàng
 
 public interface IBlogCategoryService {
-    BlogCategory findById(Long id);
+    BlogCategory findById(Integer id);
     List<BlogCategory> findAll();
 }

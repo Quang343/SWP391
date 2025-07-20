@@ -1,26 +1,105 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.bloger;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ProductDetailUserResponse;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Blog;
+import com.example.AgriculturalWarehouseManagement.Backend.models.CommentBlog;
+import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.services.bloger.BlogService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.bloger.CommentBlogService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.bloger.UserServiceBlog;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.ProductDetailUserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
+
+//@author: Đào Huy Hoàng
 
 @Controller
+@RequiredArgsConstructor
 public class BlogController {
 
-    @Autowired
-    private BlogService blogService;
+    private final BlogService blogService;
+    private final CommentBlogService commentBlogService;
+    private final UserServiceBlog userServiceBlog; // Cap nhat them
+    private final HttpSession session;
+    private final ProductDetailUserService productDetailUserService;
 
-    @Autowired
-    private jakarta.servlet.http.HttpSession session;
+    @RequestMapping("/blog-detail")
+    public String blogdetail(@RequestParam(value = "id", required = false) Integer id, Model model) {
 
+        if (id == null) {
+            return "redirect:/blog-list";
+        }
+
+        Blog blog = blogService.getBlogById(id);
+
+        if (blog == null || id <= 0) {
+            return "FrontEnd/Home/error_404";
+        }
+        model.addAttribute("blog", blog);
+
+        // Recent posts
+        model.addAttribute("recentBlogs", blogService.getRecentBlogs(4));
+
+        // Load Comments
+        model.addAttribute("comments", commentBlogService.getCommentsByBlogId(id));
+
+        return "FrontEnd/Home/blog-detail";
+    }
+
+    @PostMapping("/blog-detail/comment")
+    public String postComment(@RequestParam("blogId") Integer blogId,
+                              @RequestParam("commentText") String commentText,
+                              HttpSession session,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            Object sessionAccount = session.getAttribute("account");
+
+            if (sessionAccount instanceof UserResponse userResponse) {
+                User user = userServiceBlog.findById(userResponse.getUserID());
+
+                if (user == null) {
+                    redirectAttributes.addFlashAttribute("error", "Không tìm thấy người dùng.");
+                    return "redirect:/login";
+                }
+
+                Blog blog = blogService.getBlogById(blogId);
+                if (blog == null) {
+                    redirectAttributes.addFlashAttribute("error", "Không tìm thấy blog.");
+                    return "redirect:/blog-list";
+                }
+
+                CommentBlog comment = CommentBlog.builder()
+                        .blog(blog)
+                        .user(user)
+                        .commentText(commentText)
+                        .status("Active")
+                        .build();
+
+                commentBlogService.save(comment);
+                return "redirect:/blog-detail?id=" + blogId;
+            }
+
+            redirectAttributes.addFlashAttribute("error", "Bạn cần đăng nhập để bình luận.");
+            return "redirect:/login";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi khi đăng bình luận: " + e.getMessage());
+            return "redirect:/blog-detail?id=" + blogId;
+        }
+    }
 
     @RequestMapping("/blog-list")
     public String bloglist(
@@ -62,34 +141,12 @@ public class BlogController {
         model.addAttribute("endPage", endPage);
         model.addAttribute("maxPages", maxPages);
 
+        // Trending Products
+        List<ProductDetailUserResponse> trendingProducts = productDetailUserService.getTrendingProducts();
+        model.addAttribute("trendingProducts", trendingProducts);
+
         return "FrontEnd/Home/blog-list";
     }
-
-
-    @RequestMapping("/blog-detail")
-    public String blogdetail(@RequestParam(value = "id", required = false) Integer id, Model model) {
-
-        if (id == null) {
-            return "redirect:/blog-list";
-        }
-
-        Blog blog = blogService.getBlogById(id);
-
-        if (blog == null || id <= 0) {
-            return "FrontEnd/Home/error_404";
-        }
-        model.addAttribute("blog", blog);
-
-        // Lấy 4 bài viết mới nhất cho sidebar/recent posts
-        model.addAttribute("recentBlogs", blogService.getRecentBlogs(4));
-
-        // (Có thể lấy thêm comment nếu muốn)
-        // List<CommentBlog> comments = commentBlogService.getByBlogId(id);
-        // model.addAttribute("comments", comments);
-
-        return "FrontEnd/Home/blog-detail"; // Đường dẫn file html đúng với cấu trúc project
-    }
-
 
     @RequestMapping("/blog-grid")
     public String bloggrid(
@@ -124,35 +181,6 @@ public class BlogController {
         return "FrontEnd/Home/blog-grid";
     }
 
-    // CRUD
-
-//    @RequestMapping("/my-blog")
-//    public String myBlog(Model model) {
-//        // User user = userService.findByUsername("daohuyhoang507@gmail.com"); // hoặc username/email test
-//        User user = userService.findById(1L); // lấy user id = 1
-//        List<Blog> myBlogs = blogService.getBlogsByUser(user.getUserId());
-//        model.addAttribute("blogs", myBlogs);
-//        model.addAttribute("user", user);
-//        return "FrontEnd/Home/my-blog";
-//    }
-
-    // Tạm k dùng thymleaf
-//    @RequestMapping("/my-blog")
-//    public String myBlog(
-//            @RequestParam(defaultValue = "1") int page,
-//            @RequestParam(defaultValue = "3") int size,
-//            Model model) {
-//        User user = userService.findById(1L); // Lấy user tạm thời
-//        Page<Blog> blogPage = blogService.getBlogsByUserPage(user.getUserId(), page - 1, size); // page-1 cho PageRequest
-//
-//        int totalPages = blogPage.getTotalPages();
-//        model.addAttribute("blogs", blogPage.getContent());
-//        model.addAttribute("currentPage", page);
-//        model.addAttribute("totalPages", totalPages);
-//        model.addAttribute("user", user);
-//        return "FrontEnd/Home/my-blog";
-//    }
-
     @RequestMapping("/my-blog")
     public String myBlog() {
         Object sessionAccount = session.getAttribute("account");
@@ -162,57 +190,14 @@ public class BlogController {
         return "FrontEnd/Home/my-blog";
     }
 
-
-
-    // Lấy thông tin blog của user / Cách 1
-//    @RequestMapping("/my-blog")
-//    public String myBlog(Model model, Principal principal) {
-//        if (principal == null) {
-//            return "redirect:/login"; // Chưa login thì cho về login
-//        }
-//
-//        String username = principal.getName(); // Lấy username từ phiên đăng nhập
-//        User user = userService.findByUsername(username); // Lấy user từ DB
-//
-//        if (user == null) {
-//            return "FrontEnd/Home/error_404"; // Nếu user không tồn tại
-//        }
-//
-//        List<Blog> myBlogs = blogService.getBlogsByUser(user.getUserId()); // Lấy blog theo user
-//        model.addAttribute("blogs", myBlogs);
-//        model.addAttribute("user", user);
-//
-//        return "FrontEnd/Home/my-blog";
-//    }
-
-    // Cách 2: Giúp các chỗ khác không cần gọi lại findByUsername nữa. Tiện cho các request sau!
-//    @RequestMapping("/my-blog")
-//    public String myBlog(Model model, Principal principal, HttpSession session) {
-//        if (principal == null) {
-//            return "redirect:/login";
-//        }
-//
-//        // Kiểm tra trong session đã có user chưa, chưa có thì lấy từ DB và lưu lại
-//        User user = (User) session.getAttribute("user");
-//        if (user == null) {
-//            String username = principal.getName();
-//            user = userService.findByUsername(username);
-//            if (user == null) {
-//                return "FrontEnd/Home/error_404";
-//            }
-//            session.setAttribute("user", user); // Lưu vào session để lần sau dùng
-//        }
-//
-//        List<Blog> myBlogs = blogService.getBlogsByUser(user.getUserId());
-//        model.addAttribute("blogs", myBlogs);
-//        model.addAttribute("user", user);
-//
-//        return "FrontEnd/Home/my-blog";
-//    }
-
     @RequestMapping("/admin/blog")
     public String adminBlog() {
         System.out.println("Vào tới controller adminBlog");
         return "BackEnd/Blog/All_Blog";
+    }
+
+    @RequestMapping("/admin/add_blog")
+    public String adminAddBlog() {
+        return "BackEnd/Blog/Add_Blog";
     }
 }

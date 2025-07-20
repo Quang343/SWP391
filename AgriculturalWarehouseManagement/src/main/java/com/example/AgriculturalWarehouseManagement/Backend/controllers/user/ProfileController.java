@@ -6,6 +6,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilte
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.OrderUsersService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserCustomerService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.WalletsUsersService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.WishlistServices;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpSession;
@@ -40,6 +41,9 @@ public class ProfileController {
 
     @Autowired
     private OrderUsersService orderUsersService;
+
+    @Autowired
+    private WalletsUsersService walletsUsersService;
 
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
@@ -92,7 +96,7 @@ public class ProfileController {
             }
 
             if (session.getAttribute("successChangePassword") != null) {
-                String successChangePassword= (String) session.getAttribute("successChangePassword");
+                String successChangePassword = (String) session.getAttribute("successChangePassword");
                 model.addAttribute("successChangePassword", successChangePassword);
                 session.removeAttribute("successChangePassword");
             }
@@ -107,6 +111,9 @@ public class ProfileController {
             // Total Wishlist
             List<ProductUserHomepageResponse> wishlistResponses = wishlistServices.getListOfWishlist(userEntity.getUserId());
             model.addAttribute("totalWishlist", wishlistResponses.size());
+
+            WalletsResponse walletsResponse = walletsUsersService.getBalanceWallet(userEntity.getUserId());
+            model.addAttribute("walletsResponse", walletsResponse);
 
             return "FrontEnd/Home/userDashboard";
 
@@ -201,6 +208,38 @@ public class ProfileController {
 
         }
     }
+
+    @PostMapping("/cancellOrder")
+    public String cancelOrder(@RequestParam("orderId")  String orderId) {
+
+        String token = (String) session.getAttribute("authToken");
+
+        if (token == null) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+
+        // Giải mã token
+        Claims claims = jwtTokenFilter.decodeToken(token);
+        if (claims == null) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+
+        // Lấy thông tin người dùng từ claims
+        String email = claims.getSubject();
+        User userEntity = userCustomerService.loadUserByEmail(email);
+
+        if (userEntity == null) {
+            session.invalidate();
+            return "redirect:/login";
+        } else {
+//            System.out.println("hello" + orderId);
+            ResponseResult<OrderUserResponse> orderUserResponseResponseResult = orderUsersService.cancelOrder((String) orderId, userEntity.getUserId());
+            return "redirect:/profileUser";
+        }
+    }
+
 
 
 

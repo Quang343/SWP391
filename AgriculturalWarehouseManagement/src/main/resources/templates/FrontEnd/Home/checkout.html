@@ -143,9 +143,11 @@
                                                class="lord-icon">
                                     </lord-icon>
                                 </div>
-                                <div id="quantityErrorDiv" th:if="${errorMessageCheckOut != null}" th:text="${errorMessageCheckOut}"
+                                <div id="quantityErrorDiv" th:if="${errorMessageCheckOut != null}"
+                                     th:text="${errorMessageCheckOut}"
                                      class="alert-danger shake-10s"
                                      style="display: inline-block;margin-left: 65%; padding: 10px">
+
                                 </div>
                                 <script>
                                     var errorMessageDiv = document.getElementById('quantityErrorDiv');
@@ -156,6 +158,43 @@
                                         }, 10000); // 10 giây
                                     }
                                 </script>
+
+                                <div id="errorWallet" th:if="${errorMessageWallets != null}"
+                                     th:text="${errorMessageWallets}"
+                                     class="alert-danger shake-10s"
+                                     style="display: inline-block;margin-left: 65%; padding: 10px">
+                                </div>
+                                <div id="nap" th:if="${errorMessageWallets != null}"
+                                     style="display: inline-block;margin-left: 65%; padding: 10px">
+                                    <form th:action="@{/depositWallet}" method="post">
+
+                                        <input type="number" name="subTotal" th:if="${subTotal != null}"
+                                               th:value="${subTotal}" hidden>
+                                        <input type="number" name="voucherId" th:if="${voucherId != null}"
+                                               th:value="${voucherId}" hidden>
+                                        <input type="number" name="percentDiscount"
+                                               th:if="${percentDiscount != null}"
+                                               th:value="${percentDiscount}" hidden>
+                                        <input type="number" name="totalPrice" th:if="${totalPrice != null}"
+                                               th:value="${totalPrice}" hidden>
+                                        <button class="btn deal-button glow-btn"
+                                                style="background-color: #e6f5f3; color: #0da487">
+                                            <i data-feather="zap"></i>
+                                            <span>Nạp Ví Tiền</span>
+                                        </button>
+                                    </form>
+                                </div>
+                                <script>
+                                    var errorWallet = document.getElementById('errorWallet');
+                                    var nap = document.getElementById('nap');
+                                    if (errorWallet) {
+                                        setTimeout(function () {
+                                            errorWallet.style.display = 'none';
+                                            nap.style.display = 'none';
+                                        }, 10000); // 10 giây
+                                    }
+                                </script>
+
                                 <div class="checkout-box">
 
                                     <div class="checkout-title">
@@ -177,7 +216,9 @@
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="radio"
                                                                    name="addressId" th:value="${address.addressBookId}"
-                                                                   th:onclick="|updateAddressId(${address.addressBookId})|">
+                                                                   th:onclick="|updateAddressId(${address.addressBookId})|"
+                                                                   th:checked="${session.saveAddress != null and address.addressBookId.toString() == session.saveAddress.toString()}"
+                                                            >
                                                         </div>
 
                                                         <div class="label">
@@ -252,10 +293,41 @@
                                                         <div class="custom-form-check form-check mb-0">
                                                             <label class="form-check-label" for="wallet">
                                                                 <input class="form-check-input mt-0" type="radio"
-                                                                       name="flexRadioDefault" id="wallet" checked>Quét QR OCB</label>
+                                                                       name="flexRadioDefault" id="wallet" checked>Quét
+                                                                QR OCB</label>
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </div>
+
+                                            <div>
+                                                <button type="submit" form="qrForm"
+                                                        class="btn theme-bg-color text-white btn-md w-100 mt-4 fw-bold">
+                                                    Thanh toán bằng QR
+                                                </button>
+                                            </div>
+
+                                            <div>
+
+                                                <form th:action="@{/validateCheckOutByWallet}" method="POST"
+                                                      class="right-side-summery-box">
+                                                    <input type="number" name="addressId" id="addressIdFormTwo"
+                                                           th:value="${session.saveAddress != null ? session.saveAddress : 0}" hidden/>
+                                                    <input type="number" name="subTotal" th:if="${subTotal != null}"
+                                                           th:value="${subTotal}" hidden>
+                                                    <input type="number" name="voucherId" th:if="${voucherId != null}"
+                                                           th:value="${voucherId}" hidden>
+                                                    <input type="number" name="percentDiscount"
+                                                           th:if="${percentDiscount != null}"
+                                                           th:value="${percentDiscount}" hidden>
+                                                    <input type="number" name="totalPrice" th:if="${totalPrice != null}"
+                                                           th:value="${totalPrice}" hidden>
+
+                                                    <button type="submit"
+                                                            class="btn theme-bg-color text-white btn-md w-100 mt-4 fw-bold">
+                                                        Thanh toán bằng ví
+                                                    </button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -275,7 +347,7 @@
                     </button>
                 </div>
 
-                <form th:action="@{/validateCheckOut}" method="POST" class="right-side-summery-box">
+                <form id="qrForm" th:action="@{/validateCheckOut}" method="POST" class="right-side-summery-box">
                     <div class="summery-box-2">
                         <div class="summery-header">
                             <h3>Đơn đặt hàng mùa hè</h3>
@@ -296,7 +368,7 @@
                         </ul>
 
                         <ul class="summery-total">
-                            <input type="number" name="addressId" id="addressId" value="0" hidden/>
+                            <input type="number" name="addressId" id="addressId" th:value="${session.saveAddress != null ? session.saveAddress : 0}" hidden/>
                             <li th:if="${percentDiscount != null}">
                                 <h4>Tổng trước voucher</h4>
                                 <h4 th:text="${#numbers.formatInteger(subTotal, 0, 'POINT') + '₫'}"
@@ -324,13 +396,12 @@
                         function updateAddressId(addressId) {
                             // Cập nhật giá trị addressId vào trường input ẩn
                             document.getElementById("addressId").value = addressId;
+                            document.getElementById("addressIdFormTwo").value = addressId;
                             console.log("hello" + addressId)
                         }
                     </script>
-                    <button type="submit" class="btn theme-bg-color text-white btn-md w-100 mt-4 fw-bold">Đặt hàng
-                    </button>
-                </form>
 
+                </form>
             </div>
         </div>
     </div>

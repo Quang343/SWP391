@@ -29,9 +29,10 @@ public class Blog {
     @Column(name = "blogcategoryid")
     private Integer blogCategoryID;
 
-//    @ManyToOne(fetch = FetchType.LAZY) // Sửa bổ sung
-//    @JoinColumn(name = "blogcategoryid", referencedColumnName = "blogcategoryid")
-//    private BlogCategory blogCategory;
+    @ManyToOne(fetch = FetchType.LAZY) // Sửa bổ sung
+    @JoinColumn(name = "blogcategoryid", referencedColumnName = "blogcategoryid"
+            , insertable = false, updatable = false)
+    private BlogCategory blogCategory;
 
 
     @NotBlank(message = "Tiêu đề không được để trống")

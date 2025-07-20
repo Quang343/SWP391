@@ -45,6 +45,9 @@ public class OrderUsersService {
     private OrderReviewRepository orderReviewRepository;
 
     @Autowired
+    private WalletsRepository walletsRepository;
+
+    @Autowired
     private jakarta.servlet.http.HttpSession session;
 
     public ResponseResult<CheckOutResponse> insertOrderAndOrderDetail(CheckOutRequest checkOutRequest, long orderCode, int accountId) {
@@ -205,6 +208,41 @@ public class OrderUsersService {
         } else {
             return getListOrders(userId);
         }
+    }
+
+    public ResponseResult<OrderUserResponse> cancelOrder(String orderId, int accountId) {
+        Optional<Order> orderOpt = orderRepository.findById(Long.parseLong(orderId));
+        if (orderOpt.isPresent()) {
+            Order order = orderOpt.get();
+            order.setStatus("CANCELLED");
+            orderRepository.save(order);
+
+
+            Optional<User> userOpt = userRepository.findByUserIdNative(accountId);
+
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                Optional<Wallets> walletsOpt = walletsRepository.findByUser(user);
+
+                if (walletsOpt.isPresent()) {
+                    Wallets wallet = walletsOpt.get();
+
+                    BigDecimal currentBalance = wallet.getBalance();
+                    BigDecimal plusAmount = order.getTotalAmount();
+
+                    BigDecimal updatedBalance = currentBalance.add(plusAmount);
+                    wallet.setBalance(updatedBalance);
+
+                    walletsRepository.save(wallet);
+                } else {
+                    System.out.println("Ví không tồn tại cho user ID: " + accountId);
+                }
+            } else {
+                System.out.println("User không tồn tại với ID: " + accountId);
+            }
+        }
+
+        return new ResponseResult<>("SUCCESS", "", true);
     }
 }
 

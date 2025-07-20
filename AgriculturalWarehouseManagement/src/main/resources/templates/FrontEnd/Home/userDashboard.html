@@ -72,7 +72,7 @@
             z-index: 1;
             padding: 10px 12px;
             color: white;
-            background-color: #3b82f6;
+            background-color: #689aec;
             border: none;
             font-weight: bold;
             font-size: 14px;
@@ -84,7 +84,7 @@
             content: "";
             position: absolute;
             inset: 0;
-            background-color: #3b82f6; /* giống nền gốc */
+            background-color: #689aec; /* giống nền gốc */
             border-radius: inherit;
             z-index: -2;
         }
@@ -140,6 +140,17 @@
             font-weight: 600;
             padding: 4px 6px;
             color: white;
+            border-radius: 4px;
+        }
+
+        .div2 {
+            font-size: 12px;
+            background: linear-gradient(-90deg, #e13636 0%, #d82035 100%);
+            margin-left: calc(9px + 11 * (100vw - 320px) / 1600);
+            font-weight: 600;
+            padding: 4px 6px;
+            color: white;
+            margin-bottom: 5px;
             border-radius: 4px;
         }
     </style>
@@ -307,6 +318,9 @@
                                                 <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
                                             </svg>
                                         </span>
+                                    <h3 class="glow-btn" style="font-size: 20px;margin-top: 10px"
+                                        th:text="${'Ví tiền: ' + #numbers.formatInteger(walletsResponse.getBalance(), 0, 'POINT') + '₫'}"></h3>
+
                                 </div>
 
                                 <div class="dashboard-user-name">
@@ -341,7 +355,8 @@
                                                      class="blur-up lazyload" alt="">
                                                 <div class="total-detail">
                                                     <h5>Tổng yêu thích</h5>
-                                                    <h3 th:if="${totalWishlist != null}" th:text="${totalWishlist}">32158</h3>
+                                                    <h3 th:if="${totalWishlist != null}" th:text="${totalWishlist}">
+                                                        32158</h3>
                                                 </div>
                                             </div>
                                         </div>
@@ -370,6 +385,7 @@
                             <div class="dashboard-order">
                                 <div class="title">
                                     <h2>Lịch sử đơn hàng của tôi</h2>
+                                    <h2>(Chỉ được hủy đơn hàng trong 24 giờ đã Order, khi hủy sẽ hoàn tiền)</h2>
                                     <span class="title-leaf title-leaf-gray">
                                             <svg class="icon-width bg-gray">
                                                 <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
@@ -390,6 +406,23 @@
                                                     <div th:if="${order.status == 'PENDING'}" th:text="${'Đang chờ'}"
                                                          class="div1">Đang chờ
                                                     </div>
+                                                    <div th:if="${order.status == 'PENDING' and T(java.time.Duration).between(order.orderDate, T(java.time.LocalDateTime).now()).toHours() < 24}">
+                                                        <form th:action="@{/cancellOrder}" method="post">
+                                                            <input name="orderId" type="text"
+                                                                   th:value="${order.orderId}" hidden=""/>
+
+                                                            <button type="submit" class="div2"
+                                                                    style="cursor: pointer; border: none">
+                                                                Hủy
+                                                            </button>
+
+
+                                                        </form>
+
+
+                                                    </div>
+
+
                                                     <span th:if="${order.status == 'CONFIRMED'}"
                                                           th:text="${'Đã xác nhận'}"
                                                           class="success-bg">Đã xác nhận</span>
@@ -751,7 +784,8 @@
                                             và tạo tài khoản mới. Bạn không thể đăng ký email đã xóa</p>
                                     </div>
 
-                                    <button class="btn theme-bg-color btn-md fw-bold mt-4 text-white">Xóa tài khoản của tôi
+                                    <button class="btn theme-bg-color btn-md fw-bold mt-4 text-white">Xóa tài khoản của
+                                        tôi
                                     </button>
                                 </div>
                             </form>

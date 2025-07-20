@@ -156,4 +156,25 @@ public class UserResponse {
     public void setStatusGG(String statusGG) {
         this.statusGG = statusGG;
     }
+
+    @Override
+    public String toString() {
+        return "UserResponse{" +
+                "userID=" + userID +
+                ", role=" + role +
+                ", userName='" + userName + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", address='" + address + '\'' +
+                ", gender='" + gender + '\'' +
+                ", status='" + status + '\'' +
+                ", dob='" + dob + '\'' +
+                ", createAt=" + createAt +
+                ", lastUpdateAt=" + lastUpdateAt +
+                ", googleID='" + googleID + '\'' +
+                ", statusGG='" + statusGG + '\'' +
+                '}';
+    }
 }

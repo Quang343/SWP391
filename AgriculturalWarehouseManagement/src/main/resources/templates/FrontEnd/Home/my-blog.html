@@ -4,30 +4,83 @@
 <head th:replace="FrontEnd/fragments/head::head">
 
     <style>
+
+        /* Căn giữa ảnh trong container */
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            object-fit: contain; /* Hoặc 'cover' nếu bạn muốn ảnh phủ toàn bộ container */
+            max-width: 100%; /* Đảm bảo ảnh đáp ứng và không vượt quá chiều rộng của container */
+            height: auto; /* Giữ tỷ lệ ảnh khi thay đổi kích thước */
+        }
+
+        /* Căn giữa tất cả các phần tử trong profile box */
+        .profile-box {
+            display: flex;
+            justify-content: center; /* Căn giữa theo chiều ngang */
+            align-items: center; /* Căn giữa theo chiều dọc */
+            padding: 0;
+            margin: 0;
+            height: 100%; /* Đảm bảo chiều cao của box là 100% */
+        }
+
+        /* Mẫu cho background của ảnh */
+        .cover-image {
+            width: 100%; /* Đảm bảo ảnh cover chiếm toàn bộ chiều rộng */
+            height: 200px; /* Tùy chỉnh chiều cao của ảnh cover */
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Kiểm tra và sửa layout cho các phần tử trong profile */
+        .profile-contain {
+            text-align: center; /* Căn giữa văn bản */
+        }
+
+        /* Nếu bạn muốn thêm padding hoặc margin cho các phần tử trong profile */
+        .profile-name {
+            margin-top: 10px;
+        }
+
+        .cover-icon input[type="file"] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Màu nền của các trang đã chọn */
         ul.custom-pagination li.page-item.active > a.page-link,
         ul.custom-pagination li.page-item.active > span.page-link {
-            background-color: #198754 !important;
+            background-color: #19a877 !important; /* Màu xanh bạn muốn */
             color: #fff !important;
             border: none !important;
         }
 
-        ul.custom-pagination .page-link, ul.custom-pagination .page-link:focus {
-            color: #198754 !important;
+        /* Màu cho các nút phân trang chưa chọn */
+        ul.custom-pagination .page-link {
+            color: #198754 !important; /* Màu chữ xanh đậm */
             border-radius: 6px !important;
             min-width: 38px;
             text-align: center;
             box-shadow: none !important;
         }
 
+        /* Màu khi hover lên nút phân trang */
         ul.custom-pagination .page-link:hover {
-            background-color: #e5f6ee !important;
+            background-color: #e5f6ee !important; /* Màu nền sáng khi hover */
             color: #198754 !important;
         }
 
-        #input-status, #input-category {
-            appearance: auto !important;
-            -webkit-appearance: auto !important;
-            -moz-appearance: auto !important;
+        /* Thêm sự ưu tiên cho phân trang khi chọn */
+        .pagination .page-item.active .page-link {
+            background-color: #19a877 !important; /* Màu xanh Fastkart */
+            border-color: #19a877 !important;
+            color: #fff !important;
+            font-weight: 600;
+            border-radius: 10px;
         }
 
     </style>
@@ -129,22 +182,27 @@
                     </div>
                     <div class="profile-box">
                         <div class="cover-image">
-                            <img th:src="@{/assets/images/inner-page/cover-img.jpg}" class="img-fluid blur-up lazyload"
+                            <img th:src="@{FrontEnd/assets/images/inner-page/cover-img.jpg}"
+                                 class="img-fluid blur-up lazyload"
                                  alt="">
                         </div>
 
                         <div class="profile-contain">
                             <div class="profile-image">
-                                <div class="position-relative">
-                                    <img th:src="@{/assets/images/vendor-page/logo.png}"
-                                         class="blur-up lazyload update_img" alt="">
+                                <div class="position-relative" style="display: flex;justify-content: center; padding-left: 9px">
+                                    <img th:src="${session.account.getImageUrl}"
+                                         class="blur-up lazyload update_img" alt="more image"
+                                         accept=".jpg,.jpeg,.png,.gif,.webp,image/*" style="position: absolute;margin-top: -65px">
+
+
                                 </div>
                             </div>
 
                             <div class="profile-name">
-                                <h3>Đào Huy Hoàng</h3>
-                                <h6 class="text-content">daohuyhoang507@gmail.com</h6>
+                                <h3 th:text="${session.account.getUserName}">Your username</h3>
+                                <h6 class="text-content" th:text="${session.account.getEmail}">Your email</h6>
                             </div>
+
                         </div>
                     </div>
 
@@ -152,18 +210,19 @@
 
 
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="pills-product-tab" data-bs-toggle="pill"
+                            <a href="#pills-tabContent" class="nav-link active" id="pills-dashboard-tab"
+                               data-bs-toggle="pill" data-bs-target="#pills-dashboard" role="tab"><i
+                                    data-feather="home"></i>
+                                DashBoard</a>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link " id="pills-product-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-product" type="button" role="tab"><i
                                     data-feather="shopping-bag"></i>My Blog
                             </button>
                         </li>
 
-                        <li class="nav-item" role="presentation">
-                            <a href="#pills-tabContent" class="nav-link" id="pills-dashboard-tab"
-                               data-bs-toggle="pill" data-bs-target="#pills-dashboard" role="tab"><i
-                                    data-feather="home"></i>
-                                DashBoard</a>
-                        </li>
 
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-order-tab" data-bs-toggle="pill"
@@ -182,186 +241,77 @@
                 </button>
                 <div class="dashboard-right-sidebar">
                     <div class="tab-content" id="pills-tabContent">
-                        <div class="tab-pane fade" id="pills-dashboard" role="tabpanel">
+                        <div class="tab-pane fade show active" id="pills-dashboard" role="tabpanel">
                             <div class="dashboard-home">
                                 <div class="title">
-                                    <h2>My Dashboard</h2>
+                                    <h2>Trang tổng quan của tôi</h2>
                                     <span class="title-leaf">
-            <svg class="icon-width bg-gray">
-                <use xlink:href="@{/assets/svg/leaf.svg#leaf}"></use>
-            </svg>
-        </span>
+                                            <svg class="icon-width bg-gray">
+                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                                            </svg>
+                                        </span>
                                 </div>
 
                                 <div class="dashboard-user-name">
-                                    <h6 class="text-content">Hello, <b class="text-title">Vicki E. Pope</b></h6>
-                                    <p class="text-content">From your My Account Dashboard you have the ability to
-                                        view a snapshot of your recent account activity and update your account
-                                        information. Select a link below to view or edit information.</p>
+                                    <h6 class="text-content">Xin chào,<b class="text-title"
+                                                                         th:text="${session.account.getUserName}">Your
+                                        username</b></h6>
+                                    <p class="text-content">Từ tài khoản Dashboard, bạn có thể xem hoạt động gần đây và
+                                        cập nhật thông tin tài khoản..</p>
                                 </div>
 
                                 <div class="total-box">
                                     <div class="row g-sm-4 g-3">
                                         <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
                                             <div class="total-contain">
-                                                <img th:src="@{/assets/images/svg/order.svg}"
+                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}"
                                                      class="img-1 blur-up lazyload" alt="">
-                                                <img th:src="@{/assets/images/svg/order.svg}" class="blur-up lazyload"
+                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}"
+                                                     class="blur-up lazyload"
                                                      alt="">
                                                 <div class="total-detail">
-                                                    <h5>Total Products</h5>
-                                                    <h3>25</h3>
+                                                    <h5>Tổng số Blog</h5>
+                                                    <h3 id="totalBlogsCount">0</h3>
+                                                    <!-- Số lượng blog sẽ được cập nhật ở đây -->
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
                                             <div class="total-contain">
-                                                <img th:src="@{/assets/images/svg/pending.svg}"
+                                                <img th:src="@{FrontEnd/assets/images/svg/wishlist.svg}"
                                                      class="img-1 blur-up lazyload" alt="">
-                                                <img th:src="@{/assets/images/svg/pending.svg}" class="blur-up lazyload"
-                                                     alt="">
-                                                <div class="total-detail">
-                                                    <h5>Total Sales</h5>
-                                                    <h3>12550</h3>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
-                                            <div class="total-contain">
-                                                <img th:src="@{/assets/images/svg/wishlist.svg}"
-                                                     class="img-1 blur-up lazyload" alt="">
-                                                <img th:src="@{/assets/images/svg/wishlist.svg}"
+                                                <img th:src="@{FrontEnd/assets/images/svg/wishlist.svg}"
                                                      class="blur-up lazyload" alt="">
                                                 <div class="total-detail">
-                                                    <h5>Order Pending</h5>
-                                                    <h3>36</h3>
+                                                    <h5>Tổng yêu thích</h5>
+                                                    <h3 th:if="${totalWishlist != null}" th:text="${totalWishlist}">
+                                                        32158</h3>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Charts -->
                                 <div class="row g-4">
                                     <div class="col-xxl-6">
-                                        <div class="dashboard-bg-box">
-                                            <div id="chart"></div>
+                                        <div class="dashboard-content-title">
+                                            <h4>Thông tin
+                                            </h4>
+                                        </div>
+                                        <div class="dashboard-detail">
+                                            <h6 class="text-content" th:text="${session.account.getFullName}">Your
+                                                fullname</h6>
+                                            <h6 class="text-content" th:text="${session.account.getEmail}">Your
+                                                email</h6>
                                         </div>
                                     </div>
 
-                                    <div class="col-xxl-6">
-                                        <div class="dashboard-bg-box">
-                                            <div id="sale"></div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Trending Products -->
-                                    <div class="col-xxl-6">
-                                        <div class="table-responsive dashboard-bg-box">
-                                            <div class="dashboard-title mb-4">
-                                                <h3>Trending Products</h3>
-                                            </div>
-
-                                            <table class="table product-table">
-                                                <thead>
-                                                <tr>
-                                                    <th scope="col">Images</th>
-                                                    <th scope="col">Product Name</th>
-                                                    <th scope="col">Price</th>
-                                                    <th scope="col">Sales</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr>
-                                                    <td class="product-image">
-                                                        <img th:src="@{/assets/images/vegetable/product/1.png}"
-                                                             class="img-fluid" alt="">
-                                                    </td>
-                                                    <td><h6>Fantasy Crunchy Choco Chip Cookies</h6></td>
-                                                    <td><h6>$25.69</h6></td>
-                                                    <td><h6>152</h6></td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td class="product-image">
-                                                        <img th:src="@{/assets/images/vegetable/product/2.png}"
-                                                             class="img-fluid" alt="">
-                                                    </td>
-                                                    <td><h6>Peanut Butter Bite Premium Butter Cookies 600 g</h6></td>
-                                                    <td><h6>$35.36</h6></td>
-                                                    <td><h6>34</h6></td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td class="product-image">
-                                                        <img th:src="@{/assets/images/vegetable/product/3.png}"
-                                                             class="img-fluid" alt="">
-                                                    </td>
-                                                    <td><h6>Yumitos Chilli Sprinkled Potato Chips 100 g</h6></td>
-                                                    <td><h6>$78.55</h6></td>
-                                                    <td><h6>78</h6></td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td class="product-image">
-                                                        <img th:src="@{/assets/images/vegetable/product/4.png}"
-                                                             class="img-fluid" alt="">
-                                                    </td>
-                                                    <td><h6>healthy Long Life Toned Milk 1 L</h6></td>
-                                                    <td><h6>$32.98</h6></td>
-                                                    <td><h6>135</h6></td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-
-                                    <!-- Recent Orders -->
-                                    <div class="col-xxl-6">
-                                        <div class="order-tab dashboard-bg-box">
-                                            <div class="dashboard-title mb-4">
-                                                <h3>Recent Order</h3>
-                                            </div>
-
-                                            <div class="table-responsive">
-                                                <table class="table order-table">
-                                                    <thead>
-                                                    <tr>
-                                                        <th scope="col">Order ID</th>
-                                                        <th scope="col">Product Name</th>
-                                                        <th scope="col">Status</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <tr>
-                                                        <td class="product-image">#254834</td>
-                                                        <td><h6>Choco Chip Cookies</h6></td>
-                                                        <td><label class="success">Shipped</label></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="product-image">#355678</td>
-                                                        <td><h6>Premium Butter Cookies</h6></td>
-                                                        <td><label class="danger">Pending</label></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="product-image">#647536</td>
-                                                        <td><h6>Sprinkled Potato Chips</h6></td>
-                                                        <td><label class="success">Shipped</label></td>
-                                                    </tr>
-
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
-
                         </div>
 
-                        <div class="tab-pane fade show active" id="pills-product" role="tabpanel">
+                        <div class="tab-pane fade " id="pills-product" role="tabpanel">
                             <div class="product-tab">
                                 <div class="title">
                                     <h2>All Blog</h2>
@@ -658,7 +608,10 @@
                     </div>
                     <div class="mb-3">
                         <label for="input-thumbnail" class="form-label">Ảnh Thumbnail</label>
-                        <input type="file" class="form-control" id="input-thumbnail" accept="image/*">
+                        <input type="file" class="form-control" id="input-thumbnail" accept="image/*"
+                               onchange="previewImage(event)">
+                        <img id="thumbnailPreview" style="max-width: 100%; margin-top: 10px; display: none;"
+                             alt="Preview Image"/>
                     </div>
                 </form>
             </div>
@@ -803,45 +756,38 @@
 
     function renderPagination(currentPage, totalPages) {
         let html = '';
-        // Nút về Đầu (<<)
+
+        // Hiện PREVIOUS nếu không phải trang 1
         if (currentPage > 1) {
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(1);return false;" title="Trang đầu"><i class="fa-solid fa-angle-double-left"></i></a></li>`;
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage - 1});return false;">PREVIOUS</a></li>`;
         }
-        // Nút về trước (<)
-        if (currentPage > 1) {
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage - 1});return false;" title="Trang trước"><i class="fa-solid fa-angle-left"></i></a></li>`;
-        }
-        // Tính sliding window
-        let range = 2;
-        let start = Math.max(1, currentPage - range);
-        let end = Math.min(totalPages, currentPage + range);
-        // ... trái nếu cần
-        if (start > 1) {
+
+        // Luôn hiện trang 1
+        html += `<li class="page-item${currentPage === 1 ? " active" : ""}"><a class="page-link" href="#" onclick="gotoPage(1);return false;">1</a></li>`;
+
+        // Nếu currentPage > 3, hiện ...
+        if (currentPage > 3) {
             html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
         }
-        // Các số trang
-        for (let i = start; i <= end; i++) {
-            if (i === currentPage) {
-                html += `<li class="page-item active">
-            <a class="page-link" href="#" style="background-color:#198754;color:#fff;border:none;" onclick="gotoPage(${i});return false;">${i}</a>
-        </li>`;
-            } else {
-                html += `<li class="page-item">
-            <a class="page-link" href="#" onclick="gotoPage(${i});return false;">${i}</a>
-        </li>`;
-            }
+
+        // Hiện các trang trước/sau currentPage (nếu có)
+        for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+            html += `<li class="page-item${i === currentPage ? " active" : ""}"><a class="page-link" href="#" onclick="gotoPage(${i});return false;">${i}</a></li>`;
         }
-        // ... phải nếu cần
-        if (end < totalPages) {
+
+        // Nếu currentPage < totalPages - 2, hiện ...
+        if (currentPage < totalPages - 2) {
             html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
         }
-        // Nút sau (>)
-        if (currentPage < totalPages) {
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage + 1});return false;" title="Trang sau"><i class="fa-solid fa-angle-right"></i></a></li>`;
+
+        // Luôn hiện trang cuối nếu > 1
+        if (totalPages > 1) {
+            html += `<li class="page-item${currentPage === totalPages ? " active" : ""}"><a class="page-link" href="#" onclick="gotoPage(${totalPages});return false;">${totalPages}</a></li>`;
         }
-        // Nút cuối (>>)
+
+        // Hiện NEXT nếu không phải trang cuối
         if (currentPage < totalPages) {
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${totalPages});return false;" title="Trang cuối"><i class="fa-solid fa-angle-double-right"></i></a></li>`;
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage + 1});return false;">NEXT</a></li>`;
         }
 
         document.getElementById("pagination").innerHTML = html;
@@ -989,6 +935,26 @@
             });
     }
 
+    // Hàm để preview ảnh khi người dùng chọn file
+    function previewImage(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('thumbnailPreview');
+
+        // Kiểm tra nếu có file được chọn
+        if (file) {
+            const reader = new FileReader();  // Tạo đối tượng FileReader để đọc file
+
+            // Khi file được đọc xong
+            reader.onload = function () {
+                preview.src = reader.result;  // Đặt đường dẫn ảnh đã đọc vào src của img
+                preview.style.display = 'block';  // Hiển thị thẻ img
+            };
+
+            reader.readAsDataURL(file);  // Đọc file dưới dạng base64
+        }
+    }
+
+
     // Edit model
     let currentEditBlogId = null;
 
@@ -1118,6 +1084,23 @@
                 alert("Lỗi xoá blog: " + (err.response?.data || "Không rõ nguyên nhân"));
             });
     }
+
+    // dem
+    function loadTotalBlogs() {
+        axios.get(`${CONTEXT_PATH}/api/my-blog/total-blogs`)
+            .then(res => {
+                const totalBlogs = res.data;
+                document.querySelector("#totalBlogsCount").textContent = totalBlogs;
+            })
+            .catch(err => {
+                console.error("Lỗi khi lấy tổng số blog:", err);
+            });
+    }
+
+    // Gọi hàm loadTotalBlogs khi trang tải
+    document.addEventListener('DOMContentLoaded', function () {
+        loadTotalBlogs();
+    });
 
 </script>
 

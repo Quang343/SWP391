@@ -5,7 +5,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.services.bloger;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.bloger.BlogRecentDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Blog;
 import com.example.AgriculturalWarehouseManagement.Backend.models.BlogStatus;
-import com.example.AgriculturalWarehouseManagement.Backend.repositorys.blog.BlogRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.bloger.BlogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -66,7 +66,6 @@ public class BlogService {
     // Lấy blog cá nhân (không phân trang)
     public List<Blog> getBlogsByUser(Long userId) {
         return blogRepository.findByUserIdWithDetail(userId);
-        // hoặc: return blogRepository.findByUserID(userId);
     }
 
     public Page<Blog> getBlogsByUserPage(Long userId, int page, int size) {
@@ -86,9 +85,7 @@ public class BlogService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return blogRepository.findByUserIDOrderByCreatedAtDesc(userId, pageable);
     }
-//    public void deleteById(Integer id) {
-//        blogRepository.deleteById(id);
-//    }
+
     public void deleteById(Integer id) {
         Blog blog = blogRepository.findById(id).orElse(null);
         if (blog != null) {
@@ -97,11 +94,30 @@ public class BlogService {
         }
     }
 
-    // Admin CRUD
+
     public Page<Blog> getAllBlogsPage(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        // method này có @EntityGraph → fetch blogCategory đầy đủ
         return blogRepository.findAll(pageable);
     }
+
+//    public Long countBlogsByUser(Long userId, BlogStatus status) {
+//        return blogRepository.countBlogsByUserAndStatus(userId, status);  // Đếm blog với status cụ thể
+//    }
+//
+//    public Long countAllBlogsByUser(Long userId) {
+//        return blogRepository.countBlogsByUser(userId);  // Đếm tất cả blog của user không phân biệt trạng thái
+//    }
+
+    // Đếm số lượng blog của user theo trạng thái
+//    public Long countBlogsByUser(int userId, BlogStatus status) {
+//        return blogRepository.countBlogsByUserAndStatus(userId, status);
+//    }
+//
+//    // Đếm số lượng blog của user không phân biệt trạng thái
+//    public Long countAllBlogsByUser(int userId) {
+//        return blogRepository.countBlogsByUser(userId);
+//    }
 
 
 }

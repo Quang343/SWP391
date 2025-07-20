@@ -10,14 +10,17 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.U
 import com.example.AgriculturalWarehouseManagement.Backend.models.Role;
 import com.example.AgriculturalWarehouseManagement.Backend.models.UpdateProfileHistory;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Wallets;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.RoleRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.UpdateProfileHistoryRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.UserRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.WalletsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,6 +34,9 @@ public class UserCustomerService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private WalletsRepository walletsRepository;
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -100,6 +106,10 @@ public class UserCustomerService {
         user.setStatusGG("Inactive");
         userRepository.save(user);
 
+        Wallets wallets = new Wallets();
+        wallets.setUser(user);
+        wallets.setBalance(BigDecimal.ZERO);
+        walletsRepository.save(wallets);
     }
 
     public User loadUserByEmail(String email) {
