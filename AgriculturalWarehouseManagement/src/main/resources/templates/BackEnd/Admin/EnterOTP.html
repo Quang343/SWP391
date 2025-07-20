@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+          content="Cuba admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
+    <meta name="keywords"
+          content="admin template, Cuba admin template, dashboard template, flat admin template, responsive admin template, web app">
+    <meta name="author" content="pixelstrap">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <link rel="icon" href="assets/images/favicon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="assets/images/favicon.png" type="image/x-icon">
+    <title>Fastkart - sign up</title>
+
+    <!-- Google font -->
+    <link
+            href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+            rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+          integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
+          crossorigin="anonymous"/>
+
+    <!-- Fontawesome css -->
+    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/font-awesome.css}">
+
+    <!-- Themify icon -->
+    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/themify.css}">
+
+    <!-- Feather icon -->
+    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/feather-icon.css}">
+
+    <!-- Bootstrap css -->
+    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/bootstrap.css}">
+
+    <!-- App css -->
+    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/style.css}">
+    <style>
+        #custom-toast-container {
+            position: fixed;
+            top: 32px;
+            right: 32px;
+            z-index: 999999;
+        }
+
+        .custom-toast {
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            border-radius: 2px;
+            padding: 20px 0;
+            min-width: 400px;
+            max-width: 450px;
+            border-left: 4px solid;
+            box-shadow: 0 5px 8px rgba(0, 0, 0, 0.08);
+            transition: all linear 0.3s;
+        }
+
+        @keyframes custom-slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(calc(100% + 32px));
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes custom-fadeOut {
+            to {
+                opacity: 0;
+            }
+        }
+
+        .custom-toast--success {
+            border-color: #47d864;
+        }
+
+        .custom-toast--success .custom-toast__icon {
+            color: #47d864;
+        }
+
+        .custom-toast--info {
+            border-color: #2f86eb;
+        }
+
+        .custom-toast--info .custom-toast__icon {
+            color: #2f86eb;
+        }
+
+        .custom-toast--warning {
+            border-color: #ffc021;
+        }
+
+        .custom-toast--warning .custom-toast__icon {
+            color: #ffc021;
+        }
+
+        .custom-toast--error {
+            border-color: #ff623d;
+        }
+
+        .custom-toast--error .custom-toast__icon {
+            color: #ff623d;
+        }
+
+        .custom-toast + .custom-toast {
+            margin-top: 16px;
+        }
+
+        .custom-toast__icon {
+            font-size: 24px;
+            padding: 0 16px;
+        }
+
+        .custom-toast__close {
+            font-size: 20px;
+            color: rgba(0, 0, 0, 0.3);
+            padding: 0 16px;
+            cursor: pointer;
+        }
+
+        .custom-toast__body {
+            flex-grow: 1;
+        }
+
+        .custom-toast__title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .custom-toast__msg {
+            font-size: 14px;
+            color: #888;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        button.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        a.disabled {
+            pointer-events: none; /* Không cho click */
+            text-decoration: none;
+            cursor: default;
+        }
+    </style>
+
+
+</head>
+
+<body>
+
+<section class="log-in-section section-b-space">
+    <a href="" class="logo-login">
+        <img th:src="@{/BackEnd/assets/images/logo/1.png}" class="img-fluid">
+    </a>
+    <div class="container w-100">
+        <div class="row justify-content-center">
+            <div class="col-xl-5 col-lg-6">
+                <form id="otpForm" method="post">
+                    <input type="hidden" name="email" th:value="${session.resetEmail}" />
+                    <div class="log-in-box">
+                        <div class="log-in-title text-center mb-3">
+                            <h3>Vui lòng nhập mã xác thực OTP</h3>
+                            <h5>Mã đã được gửi tới <span id="maskedEmail" class="fw-bold"></span></h5>
+                        </div>
+
+                        <div id="otp" class="row row-cols-6 g-2 justify-content-center">
+                            <div><input class="form-control text-center otp-input" type="text" maxlength="1" id="otp1"></div>
+                            <div><input class="form-control text-center otp-input" type="text" maxlength="1" id="otp2"></div>
+                            <div><input class="form-control text-center otp-input" type="text" maxlength="1" id="otp3"></div>
+                            <div><input class="form-control text-center otp-input" type="text" maxlength="1" id="otp4"></div>
+                            <div><input class="form-control text-center otp-input" type="text" maxlength="1" id="otp5"></div>
+                            <div><input class="form-control text-center otp-input" type="text" maxlength="1" id="otp6"></div>
+                        </div>
+
+                        <!-- Thông báo lỗi hoặc thành công -->
+                        <div id="otpMessage" class="alert d-none mt-3" role="alert"></div>
+
+                        <div class="send-box pt-4 text-center">
+                            <h5>
+                                Không nhận được mã?
+                                <a href="#" id="resendOtpBtn" class="theme-color fw-bold disabled">Gửi lại</a>
+                            </h5>
+                            <div class="mt-2">
+                                <span style="font-size: 1rem">Thời gian còn lại: <span id="countdown" class="fw-bold text-danger"></span> giây</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn submit-btn btn-animation w-100 mt-3">Xác minh</button>
+
+                        <div id="loadingSpinner" style="display: none; text-align: center; margin-top: 10px;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="custom-toast-container"></div>
+
+<!-- login section end -->
+
+<!-- latest js -->
+<script src="https://cdn.jsdelivr.net/npm/vietnam-provinces@1.0.0/dist/vietnam-provinces.min.js"></script>
+<script th:src="@{/BackEnd/assets/js/jquery-3.6.0.min.js}"></script>
+
+
+<!-- Bootstrap js -->
+<script th:src="@{/BackEnd/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+
+<!-- Theme js -->
+<script th:src="@{/BackEnd/assets/js/script.js}"></script>
+</body>
+
+
+<!--<script>-->
+<!--    document.addEventListener("DOMContentLoaded", () => {-->
+<!--        const email = document.querySelector("input[name='email']").value;-->
+<!--        const messageBox = document.getElementById("otpMessage");-->
+<!--        const maskedEmailSpan = document.getElementById("maskedEmail");-->
+
+<!--        // Ẩn email thật (ví dụ: kh@gmail.com -> **@gmail.com)-->
+<!--        function maskEmail(email) {-->
+<!--            if (!email) return '';-->
+<!--            const [user, domain] = email.split("@");-->
+<!--            return "*".repeat(Math.min(user.length, 3)) + "@" + domain;-->
+<!--        }-->
+
+<!--        if (email) {-->
+<!--            maskedEmailSpan.innerText = maskEmail(email);-->
+<!--        } else {-->
+<!--            maskedEmailSpan.innerText = "[No email found]";-->
+<!--        }-->
+
+<!--        document.getElementById("otpForm").addEventListener("submit", function (e) {-->
+<!--            e.preventDefault();-->
+
+<!--            const digits = [-->
+<!--                document.getElementById("otp1").value,-->
+<!--                document.getElementById("otp2").value,-->
+<!--                document.getElementById("otp3").value,-->
+<!--                document.getElementById("otp4").value,-->
+<!--                document.getElementById("otp5").value,-->
+<!--                document.getElementById("otp6").value-->
+<!--            ];-->
+
+<!--            if (digits.some(d => d.trim() === "" || isNaN(d))) {-->
+<!--                customToast({-->
+<!--                    title: "Thất bại!",-->
+<!--                    message: "Please enter all 6 digits.",-->
+<!--                    type: "error",-->
+<!--                    duration: 3000-->
+<!--                });-->
+<!--                return;-->
+<!--            }-->
+
+<!--            const otp = parseInt(digits.join(""));-->
+
+<!--            const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');-->
+<!--            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');-->
+
+<!--            fetch(`/AgriculturalWarehouseManagementApplication/forgotPassword/verifyOtp?otp=${otp}&email=${encodeURIComponent(email)}`, {-->
+<!--                method: "POST",-->
+<!--                headers: {-->
+<!--                    [csrfHeader]: csrfToken,-->
+<!--                }-->
+<!--            })-->
+<!--                .then(async res => {-->
+<!--                    if (res.ok) {-->
+<!--                        customToast({-->
+<!--                            title: "Thành công!",-->
+<!--                            message: "Xác thực OTP thành công",-->
+<!--                            type: "success",-->
+<!--                            duration: 3000-->
+<!--                        });-->
+<!--                        setTimeout(() => {-->
+<!--                            window.location.href = '/AgriculturalWarehouseManagementApplication/forgotPassword/resetPasswordForm';-->
+<!--                        }, 1000);-->
+<!--                    } else {-->
+<!--                        const errorMsg = await res.json();-->
+<!--                        customToast({-->
+<!--                            title: "Thất bại!",-->
+<!--                            message: errorMsg.error || "OTP đã hết hạn!",-->
+<!--                            type: "error",-->
+<!--                            duration: 3000-->
+<!--                        });-->
+<!--                    }-->
+<!--                })-->
+<!--                .catch(err => {-->
+<!--                    console.error(err);-->
+<!--                    customToast({-->
+<!--                        title: "Lỗi hệ thống!",-->
+<!--                        message: "Không thể kết nối tới máy chủ. Vui lòng thử lại sau.",-->
+<!--                        type: "error",-->
+<!--                        duration: 5000-->
+<!--                    });-->
+<!--                });-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
+<script>
+
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const emailInput = document.querySelector("input[name='email']");
+        const email = emailInput ? emailInput.value : "";
+        const maskedEmailSpan = document.getElementById("maskedEmail");
+        const resendBtn = document.getElementById("resendOtpBtn");
+        const countdownEl = document.getElementById("countdown");
+        const spinner = document.getElementById('loadingSpinner');
+        const submitBtn = document.querySelector(".submit-btn");
+
+        let countdown = 120;
+        let timer;
+
+        // Ẩn email (vd: ***@gmail.com)
+        function maskEmail(email) {
+            if (!email) return "";
+            const [user, domain] = email.split("@");
+            return "*".repeat(Math.min(user.length, 3)) + "@" + domain;
+        }
+
+        function startCountdown(seconds) {
+            countdown = seconds;
+            resendBtn.disabled = true; // Vô hiệu hóa nút
+            resendBtn.classList.add("disabled"); // Thêm class nếu cần styling
+            countdownEl.innerText = countdown;
+            timer = setInterval(() => {
+                countdown--;
+                countdownEl.innerText = countdown;
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    resendBtn.disabled = false;
+                    resendBtn.classList.remove("disabled");
+                    customToast({
+                        title: "Hết thời gian!",
+                        message: "Mã OTP đã hết hiệu lực.",
+                        type: "warning",
+                        duration: 3000
+                    });
+                }
+            }, 1000);
+        }
+
+        function sendOtpAgain() {
+            const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+            resendBtn.disabled = true;
+            resendBtn.classList.add('disabled');
+            submitBtn.disabled = true;
+            spinner.style.display = "block";
+
+            fetch(`/AgriculturalWarehouseManagementApplication/forgotPassword/resendOtp`, {
+                method: "POST",
+                headers: {
+                    [csrfHeader]: csrfToken,
+                }
+            }).then(async res => {
+                resendBtn.disabled = true;
+                submitBtn.disabled = false;
+                spinner.style.display = "none";
+                if (res.ok) {
+                    customToast({
+                        title: "Thành công!",
+                        message: "Mã OTP mới đã được gửi đến email.",
+                        type: "success",
+                        duration: 3000
+                    });
+                    clearInterval(timer);
+                    startCountdown(120); // bắt đầu lại đếm ngược
+                } else {
+                    const err = await res.json();
+                    customToast({
+                        title: "Thất bại!",
+                        message: err.error || "Không thể gửi lại mã OTP.",
+                        type: "error",
+                        duration: 3000
+                    });
+                }
+            }).catch(err => {
+                console.error(err);
+                customToast({
+                    title: "Lỗi hệ thống!",
+                    message: "Không thể kết nối tới máy chủ.",
+                    type: "error",
+                    duration: 3000
+                });
+            });
+        }
+
+        if (email) {
+            maskedEmailSpan.innerText = maskEmail(email);
+            startCountdown(120);
+        }
+
+        resendBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            sendOtpAgain();
+        });
+
+        document.getElementById("otpForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const digits = Array.from({ length: 6 }, (_, i) => document.getElementById(`otp${i + 1}`).value.trim());
+            if (digits.some(d => d === "" || isNaN(d))) {
+                customToast({
+                    title: "Thất bại!",
+                    message: "Vui lòng nhập đầy đủ 6 chữ số OTP.",
+                    type: "error",
+                    duration: 3000
+                });
+                return;
+            }
+
+            const otp = digits.join("");
+            const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+
+            fetch(`/AgriculturalWarehouseManagementApplication/forgotPassword/verifyOtp?otp=${otp}&email=${encodeURIComponent(email)}`, {
+                method: "POST",
+                headers: {
+                    [csrfHeader]: csrfToken,
+                }
+            })
+                .then(async res => {
+                    if (res.ok) {
+                        customToast({
+                            title: "Thành công!",
+                            message: "Xác thực OTP thành công.",
+                            type: "success",
+                            duration: 2000
+                        });
+                        clearInterval(timer);
+                        setTimeout(() => {
+                            window.location.href = '/AgriculturalWarehouseManagementApplication/forgotPassword/resetPasswordForm';
+                        }, 2000);
+                    } else {
+                        const contentType = res.headers.get("content-type");
+                        if (contentType && contentType.includes("application/json")) {
+                            const errorData = await res.json();
+                            customToast({
+                                title: "Thất bại!",
+                                message: errorData.error || "OTP không hợp lệ hoặc đã hết hạn.",
+                                type: "error",
+                                duration: 3000
+                            });
+                        } else {
+                            const errorText = await res.text();
+                            customToast({
+                                title: "Thất bại!",
+                                message: errorText || "Lỗi không xác định!",
+                                type: "error",
+                                duration: 3000
+                            });
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    customToast({
+                        title: "Lỗi hệ thống!",
+                        message: "Không thể kết nối đến máy chủ.",
+                        type: "error",
+                        duration: 4000
+                    });
+                });
+        });
+    });
+</script>
+
+
+<script>
+    function customToast({ title = "", message = "", type = "info", duration = 3000 }) {
+        const main = document.getElementById("custom-toast-container");
+        if (main) {
+            const toast = document.createElement("div");
+
+            const autoRemoveId = setTimeout(function () {
+                main.removeChild(toast);
+            }, duration + 1000);
+
+            toast.onclick = function (e) {
+                if (e.target.closest(".custom-toast__close")) {
+                    main.removeChild(toast);
+                    clearTimeout(autoRemoveId);
+                }
+            };
+
+            const icons = {
+                success: "fas fa-check-circle",
+                info: "fas fa-info-circle",
+                warning: "fas fa-exclamation-circle",
+                error: "fas fa-exclamation-circle"
+            };
+            const icon = icons[type];
+            const delay = (duration / 1000).toFixed(2);
+
+            toast.classList.add("custom-toast", `custom-toast--${type}`);
+            toast.style.animation = `custom-slideInLeft ease .3s, custom-fadeOut linear 1s ${delay}s forwards`;
+
+            toast.innerHTML = `
+                <div class="custom-toast__icon">
+                    <i class="${icon}"></i>
+                </div>
+                <div class="custom-toast__body">
+                    <h3 class="custom-toast__title">${title}</h3>
+                    <p class="custom-toast__msg">${message}</p>
+                </div>
+                <div class="custom-toast__close">
+                    <i class="fas fa-times"></i>
+                </div>
+            `;
+            main.appendChild(toast);
+        }
+    }
+
+    // function showSuccessToast() {
+    //     customToast({
+    //         title: "Thành công!",
+    //         message: "Bạn đã đăng ký thành công tài khoản.",
+    //         type: "success",
+    //         duration: 5000
+    //     });
+    // }
+    //
+    // function showErrorToast() {
+    //     customToast({
+    //         title: "Thất bại!",
+    //         message: "Có lỗi xảy ra, vui lòng thử lại.",
+    //         type: "error",
+    //         duration: 5000
+    //     });
+    // }
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const inputs = document.querySelectorAll(".otp-input");
+
+        inputs.forEach((input, index) => {
+            input.addEventListener("input", (e) => {
+                const value = e.target.value;
+                if (value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener("keydown", (e) => {
+                if (e.key === "Backspace" && !e.target.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+
+            // Cho phép chỉ nhập số
+            input.addEventListener("keypress", (e) => {
+                if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // Tự focus vào ô đầu tiên khi trang load
+        inputs[0].focus();
+    });
+</script>
+
+</html>

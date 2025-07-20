@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="BackEnd/fragments/Admin/head::head"></head>
+<style>
+
+    .table-product .table tbody tr td,
+    .table-product .table thead tr th{
+        text-align: center;
+    }
+
+    .custom-dropdown-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .custom-dropdown-toggle {
+        cursor: pointer;
+    }
+
+    .custom-dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: white;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        list-style: none;
+        margin-top: 3px;
+        display: none !important;
+        z-index: 999;
+        padding: 16px 12px;
+        border-radius: 7px;
+    }
+
+    .custom-dropdown-menu li a {
+        display: block;
+        padding: 0.7rem 1rem;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-radius: 7px
+    }
+
+    .custom-dropdown-menu li a:hover {
+        background-color: #f2f2f2;
+    }
+
+    .custom-dropdown-wrapper.show .custom-dropdown-menu {
+        display: block !important;
+    }
+
+    .btn-primary.custom-dropdown-toggle{
+        background-color: #fff !important;
+        color: #0da487 !important;
+        border: 1px solid #0da487;
+        font-size: 1rem;
+        transition: all 0.5s ease;
+    }
+
+    .btn-primary.custom-dropdown-toggle i{
+        font-size: 20px;
+    }
+
+    .btn-primary.custom-dropdown-toggle:focus{
+        background-color: #0da487 !important;
+        color: #fff !important;
+    }
+
+    div.dataTables_filter {
+        margin-bottom: 1rem;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        padding: 7px;
+        font-size: 16px;
+    }
+
+    /* Nút bình thường */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        display: inline-block;
+        padding: 8px 15px;
+        margin: 0 4px;
+        border: 1px solid #dee2e6;
+        background-color: #fff;
+        color: rgb(13 191 174) !important;
+        border-radius: .5rem;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        font-size: 1rem;
+    }
+
+    /* Trang hiện tại */
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background-color: rgb(13 191 174) !important;
+        color: white !important;
+        border-color: rgb(13 191 174) !important;
+        font-weight: bold;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.disabled) {
+        color: #fff !important;
+        background-color: rgb(13 191 174) !important;
+        border-color: rgb(13 191 174) !important;
+        background-image: none !important;
+    }
+
+    #exampleModalToggle .modal-body p{
+        font-size: 1rem;
+    }
+
+</style>
+<body>
+<!-- tap on top start -->
+<div class="tap-top">
+    <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <!-- Page Header Start-->
+    <div th:replace="BackEnd/fragments/Admin/header::header"></div>
+    <!-- Page Header Ends-->
+
+    <!-- Page Body Start -->
+    <div class="page-body-wrapper">
+        <!-- Page Sidebar Start-->
+        <div th:replace="BackEnd/fragments/Admin/sidebar::sidebar"></div>
+        <!-- Page Sidebar Ends-->
+
+        <!-- Container-fluid starts-->
+        <div class="page-body">
+            <!-- All User Table Start -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card card-table">
+                            <div class="card-body">
+                                <div class="title-header option-title">
+                                    <h5>Phân quyền tài khoản</h5>
+                                </div>
+
+                                <div class="table-responsive table-product">
+                                    <table class="table all-package theme-table" id="table_id">
+                                        <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Email đăng nhập</th>
+                                            <th>Vai trò hiện tại</th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr th:each="user, init: ${users}">
+                                            <td th:text="${init.count}"></td>
+                                            <td th:text="${user.email}"></td>
+                                            <td th:text="${user.role.name}"></td>
+<!--                                            <td>[[${user.userId}]]</td>-->
+                                            <td>
+                                                <div class="custom-dropdown-wrapper">
+                                                    <button class="btn btn-primary custom-dropdown-toggle">
+                                                        Gán vai trò <i class="middle ri-arrow-down-s-line"></i>
+                                                    </button>
+                                                    <ul class="custom-dropdown-menu">
+                                                        <li th:each="role : ${roles}">
+                                                            <a href="#"
+                                                                th:attr="data-user-id=${user.userId}, data-role=${role.name}"
+                                                                th:text="${role.name}">
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div> <!-- table responsive -->
+                            </div> <!-- card-body -->
+                        </div>
+                        <!-- card -->
+                    </div> <!-- col -->
+                </div> <!-- row -->
+            </div> <!-- container-fluid -->
+            <!-- All Table Ends-->
+
+            <!-- footer start-->
+            <div th:replace="BackEnd/fragments/Admin/footer::footer"></div>
+            <!-- footer end-->
+        </div>
+        <!-- Container-fluid end -->
+    </div>
+    <!-- Page Body End -->
+
+    <!-- Modal Start -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                    <p>Are you sure you want to log out?</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="button-box">
+                        <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                        <button type="button" class="btn btn--yes btn-primary">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal End -->
+</div>
+
+<!-- Delete Modal Box Start -->
+<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle" aria-hidden="true" tabindex="-1">
+    <input type="hidden" id="deleteOrderId">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-block text-center">
+                <h5 class="modal-title w-100" id="exampleModalLabel22">Gán vai trò</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="remove-box">
+                    <p>Bạn có chắc chắn muốn xoá đơn hàng này không?</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Huỷ bỏ</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold"
+                        id="confirmAssignBtn"
+                        data-bs-dismiss="modal">Xác nhận
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle2" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="exampleModalLabel12">Hoàn tất</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="remove-box text-center">
+                    <div class="wrapper">
+                        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                        </svg>
+                    </div>
+                    <h4 id="modal-result" class="text-content">Xoá thành công</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Modal Box End -->
+
+<!-- latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- Bootstrap js -->
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+
+<!-- feather icon js -->
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+
+<!-- scrollbar simplebar js -->
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+
+<!-- Sidebar js -->
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+
+<!-- customizer js -->
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+
+<!-- Plugins js -->
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+
+<!-- Data table js -->
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+
+<!-- all checkbox select js -->
+<script th:src="@{/Backend/assets/js/checkbox-all-check.js}"></script>
+
+<!-- sidebar effect -->
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+
+<!-- Theme js -->
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+
+<script>
+    $(document).ready(function () {
+        if ($.fn.DataTable.isDataTable('#table_id')) {
+            $('#table_id').DataTable().destroy(); // Hủy bảng cũ nếu đã khởi tạo
+        }
+        $('#table_id').DataTable({
+            paging: true, // Bật phân trang
+            searching: true, // Bật tìm kiếm
+            ordering: true, // Cho phép sắp xếp
+            info: true, // Hiển thị thông tin phân trang ("Hiển thị x đến y của z bản ghi")
+            pageLength: 5, // Số dòng mặc định trên mỗi trang
+            lengthMenu: [ [5, 10, 20, 50, -1], [5, 10, 20, 50, "Tất cả"] ], // Tùy chọn dropdown số dòng
+            language: {
+                search: "",
+                searchPlaceholder: "Tìm kiếm...",
+                emptyTable: "Không có dữ liệu để hiển thị",
+                zeroRecords: "Không tìm thấy kết quả phù hợp",
+                info: "Hiển thị _START_ đến _END_ trong _TOTAL_ bản ghi",
+                paginate: {
+                    first: "Đầu",
+                    last: "Cuối",
+                    next: "Sau",
+                    previous: "Trước"
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dropdowns = document.querySelectorAll(".custom-dropdown-wrapper");
+
+        dropdowns.forEach(dropdown => {
+            const toggle = dropdown.querySelector(".custom-dropdown-toggle");
+
+            toggle.addEventListener("click", function (e) {
+                e.stopPropagation();
+                // Toggle class 'show' to open/close dropdown
+                dropdown.classList.toggle("show");
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener("click", function () {
+            dropdowns.forEach(dropdown => dropdown.classList.remove("show"));
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        let currentUserId = null;
+        let currentRole = null;
+        let currentRow = null;
+
+        document.querySelectorAll(".custom-dropdown-menu a").forEach(item => {
+            item.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                currentUserId = this.dataset.userId;
+                currentRole = this.dataset.role;
+                currentRow = this.closest("tr");
+
+                // Hiển thị modal xác nhận
+                const modal = new bootstrap.Modal(document.getElementById('exampleModalToggle'));
+
+                document.getElementById('deleteOrderId').value = currentUserId;
+                document.getElementById('exampleModalLabel22').textContent = 'Gán vai trò';
+                document.querySelector('#exampleModalToggle .modal-body p').textContent =
+                    `Bạn có chắc chắn muốn gán vai trò "${currentRole}" cho người dùng có ID ${currentUserId}?`;
+
+                modal.show();
+            });
+        });
+
+        document.getElementById("confirmAssignBtn").addEventListener("click", function () {
+            const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+            fetch(`/AgriculturalWarehouseManagementApplication/admin/users/${currentUserId}/role`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify({ role: currentRole })
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error("Lỗi khi cập nhật vai trò");
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Cập nhật lại cột "Vai trò hiện tại" trên bảng
+                        if (currentRow) {
+                            currentRow.querySelector("td:nth-child(3)").textContent = data.roleName;
+                        }
+
+                        // Hiển thị modal hoàn tất
+                        document.getElementById('modal-result').textContent = `Đã gán vai trò "${data.roleName}" thành công`;
+                        const modal2 = new bootstrap.Modal(document.getElementById('exampleModalToggle2'));
+                        modal2.show();
+                        setTimeout(() => {
+                            const modalInstance = bootstrap.Modal.getInstance(document.getElementById('exampleModalToggle2'));
+                            if (modalInstance) {
+                                modalInstance.hide();
+                            }
+                        }, 1500);
+                    } else {
+                        alert("Lỗi: " + data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error("Lỗi khi gọi API:", err);
+                    alert("Đã xảy ra lỗi.");
+                });
+        });
+    });
+</script>
+
+
+
+</body>
+</html>

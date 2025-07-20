@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="BackEnd/fragments/WareHouse/head::head"></head>
+
+<body>
+<!-- tap on top start -->
+<div class="tap-top">
+    <i data-feather="chevrons-up"></i>
+</div>
+<!-- tap on tap end -->
+
+<!-- page-wrapper Start -->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <!-- Page Header Start-->
+    <div th:replace="BackEnd/fragments/WareHouse/header::header"></div>
+    <!-- Page Header Ends-->
+
+    <!-- Page Body Start-->
+    <div class="page-body-wrapper">
+        <!-- Page Sidebar Start-->
+        <div th:replace="BackEnd/fragments/WareHouse/sidebar::sidebar"></div>
+        <!-- Page Sidebar Ends-->
+
+        <!-- tracking section start -->
+        <div class="page-body">
+            <!-- tracking table start -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="title-header title-header-block package-card">
+                                    <div>
+                                        <h5>StockOut #<span id="stockOutId"></span></h5>
+                                    </div>
+                                    <div class="card-order-section">
+                                        <ul>
+                                            <li id="stockOutDate"></li>
+                                            <li id="itemCount"></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="bg-inner cart-section order-details-table">
+                                    <div class="row g-4">
+                                        <div class="col-xl-8">
+                                            <div class="table-responsive table-details">
+                                                <table class="table cart-table table-borderless">
+                                                    <thead>
+                                                    <tr>
+                                                        <th colspan="2">Items</th>
+                                                        <th class="text-end" colspan="2">
+                                                            <a href="javascript:void(0)"
+                                                               class="theme-color">Edit
+                                                                Items</a>
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+
+                                                    <tbody id="stockOutDetailTable">
+                                                    <!-- Dữ liệu sẽ được tải động bằng JavaScript -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-4">
+                                            <div class="order-success">
+                                                <div class="row g-4">
+                                                    <h4>Summary</h4>
+                                                    <ul class="order-details">
+                                                        <li>StockOut ID: <span id="stockOutIdSummary"></span></li>
+                                                        <li>StockOut Date: <span id="stockOutDateSummary"></span></li>
+                                                        <li>Warehouse ID: <span id="warehouseIdSummary"></span></li>
+                                                        <li>Order ID: <span id="orderIdSummary"></span></li>
+                                                        <li>Item Count: <span id="itemCountSummary"></span></li>
+                                                    </ul>
+
+                                                    <h4>Warehouse Information</h4>
+                                                    <ul class="order-details">
+                                                        <li id="warehouseName">Warehouse Name</li>
+                                                        <li>568, Suite Ave.</li>
+                                                        <li>Australia, 235153 Contact No. 48465465465</li>
+                                                    </ul>
+
+                                                    <div class="delivery-sec">
+                                                        <h3>Expected Date of Delivery: <span id="expectedDeliveryDate"></span>
+                                                        </h3>
+                                                        <a href="order-tracking.html">Track Order</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- section end -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- tracking table end -->
+
+            <div class="container-fluid">
+                <!-- footer start-->
+                <footer class="footer">
+                    <div class="row">
+                        <div class="col-md-12 footer-copyright text-center">
+                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        <!-- tracking section End -->
+    </div>
+</div>
+<!-- page-wrapper End -->
+
+<!-- Modal start -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                <p>Are you sure you want to log out?</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="button-box">
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                    <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal end -->
+
+<!-- latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+
+<!-- Custom JavaScript -->
+<script>
+    $(document).ready(function() {
+        // Check stockOutId from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const stockOutId = urlParams.get('stockOutId');
+        if (!stockOutId) {
+            alert('Please select a StockOut ID from the StockOut list first.');
+            window.location.href = '/AgriculturalWarehouseManagementApplication/warehouse/stockout';
+            return;
+        }
+        console.log('StockOut ID from URL:', stockOutId);
+
+        // Display StockOut ID
+        $('#stockOutId').text(stockOutId);
+        $('#stockOutIdSummary').text(stockOutId);
+
+        // Load StockOut and StockOutDetail data
+        $.when(
+            $.ajax({ url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockouts/${stockOutId}`, method: 'GET', dataType: 'json' }),
+            $.ajax({ url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockoutdetails/stockout/${stockOutId}`, method: 'GET', dataType: 'json' }),
+            $.ajax({ url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/warehouses/${stockOutId}`, method: 'GET', dataType: 'json' }).fail(function() { return { warehouseName: 'N/A' }; })
+        ).done(function(stockOutResponse, stockOutDetailsResponse, warehouseResponse) {
+            const stockOut = stockOutResponse[0];
+            const stockOutDetails = stockOutDetailsResponse[0];
+            const warehouse = warehouseResponse[0];
+            console.log('StockOut data:', stockOut);
+            console.log('StockOutDetail data:', stockOutDetails);
+
+            // Populate StockOut summary
+            const stockOutDate = stockOut.stockOutDate ? new Date(stockOut.stockOutDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
+            $('#stockOutDate').text(stockOutDate);
+            $('#stockOutDateSummary').text(stockOutDate);
+            $('#warehouseIdSummary').text(stockOut.warehouseID || 'N/A');
+            $('#orderIdSummary').text(stockOut.orderID || 'N/A');
+            $('#itemCount').text(`${stockOutDetails.length} items`);
+            $('#itemCountSummary').text(stockOutDetails.length);
+            $('#warehouseName').text(warehouse.warehouseName || 'N/A');
+            $('#expectedDeliveryDate').text(new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+
+            // Populate StockOutDetail table
+            const tbody = $('#stockOutDetailTable');
+            tbody.empty();
+            $.each(stockOutDetails, function(index, detail) {
+                const row = `
+                    <tr class="table-order">
+                        <td>
+                            <a href="javascript:void(0)">
+                                <img src="assets/images/profile/${index + 1}.jpg" class="img-fluid blur-up lazyload" alt="">
+                            </a>
+                        </td>
+                        <td>
+                            <p>Order Detail ID</p>
+                            <h5>${detail.orderDetailID || 'N/A'}</h5>
+                        </td>
+                        <td>
+                            <p>Batch ID</p>
+                            <h5>${detail.batchID || 'N/A'}</h5>
+                        </td>
+                        <td>
+                            <p>Quantity</p>
+                            <h5>${detail.quantity || 'N/A'}</h5>
+                        </td>
+                    </tr>
+                `;
+                tbody.append(row);
+            });
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error('Error loading StockOut or StockOutDetail:', {
+                status: textStatus,
+                error: errorThrown,
+                response: jqXHR.responseText
+            });
+            $('#stockOutDetailTable').html('<tr><td colspan="4">Failed to load details. Check console.</td></tr>');
+        });
+    });
+</script>
+
+</body>
+</html>
