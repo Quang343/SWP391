@@ -3,14 +3,12 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilter;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
-import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserCustomerService;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class MovePageRoleLoginController {
@@ -22,7 +20,7 @@ public class MovePageRoleLoginController {
     private JwtTokenFilter jwtTokenFilter;
 
     @Autowired
-    private UserService userService;
+    private UserCustomerService userCustomerService;
 
     @GetMapping("/movePageRole")
     public String MovePageRole(Model model) {
@@ -43,7 +41,7 @@ public class MovePageRoleLoginController {
 
         // Lấy thông tin người dùng từ claims
         String email = claims.getSubject();
-        User userEntity = userService.loadUserByEmail(email);
+        User userEntity = userCustomerService.loadUserByEmail(email);
 
         if (userEntity == null) {
             session.invalidate();
@@ -53,7 +51,7 @@ public class MovePageRoleLoginController {
                 return "redirect:/login";
             } else if (userEntity.getRole().getRoleName().equals("user")) {
 
-                UserResponse userResponse = userService.getUser(userEntity);
+                UserResponse userResponse = userCustomerService.getUser(userEntity);
                 session.setAttribute("account", userResponse);
                 session.setAttribute("accountId", userResponse.getUserID());
                 session.setAttribute("accountImage", userResponse.getImageUrl());
@@ -63,7 +61,7 @@ public class MovePageRoleLoginController {
             } else if (userEntity.getRole().getRoleName().equals("blogger")) {
                 return "redirect:/login";
             } else if (userEntity.getRole().getRoleName().equals("seller")) {
-                UserResponse userResponse = userService.getUser(userEntity);
+                UserResponse userResponse = userCustomerService.getUser(userEntity);
                 session.setAttribute("account", userResponse);
                 return "redirect:/seller-dashboard";
             } else if (userEntity.getRole().getRoleName().equals("warehourestaff")) {

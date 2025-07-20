@@ -492,7 +492,7 @@
                                                 const userId = "[[${session.accountId}]]";
                                                 console.log("hello--------" + userId)
                                                 // console.log("Account ID from session: [[${session.accountId}]]");
-                                                const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/addressBook/${userId}`);
+                                                const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/addressBook/${userId}`);
 
                                                 const addressBooks = response.data;
                                                 const container = document.getElementById("addressBookContainer");
@@ -1069,7 +1069,7 @@
 
         try {
             // Gửi PUT request đến server bằng axios
-            const response = await axios.post('http://localhost:8080/AgriculturalWarehouseManagement/addressBook', addressBookRequest);
+            const response = await axios.post('http://localhost:8080/AgriculturalWarehouseManagementApplication/addressBook', addressBookRequest);
 
             showAlert('success', 'Thêm thành công !!!');
 
@@ -1352,7 +1352,7 @@
             };
 
             try {
-                const response = await axios.put(`http://localhost:8080/AgriculturalWarehouseManagement/addressBook/${userId}/${addressBookId}`, addressBookRequest);
+                const response = await axios.put(`http://localhost:8080/AgriculturalWarehouseManagementApplication/addressBook/${userId}/${addressBookId}`, addressBookRequest);
 
                 if (response.status === 200) {
 
@@ -1511,7 +1511,7 @@
             }
 
             try {
-                const response = await axios.delete(`http://localhost:8080/AgriculturalWarehouseManagement/addressBook/${userId}/${addressBookId}`);
+                const response = await axios.delete(`http://localhost:8080/AgriculturalWarehouseManagementApplication/addressBook/${userId}/${addressBookId}`);
                 const active = response.data.active;
 
                 showAlert('success', response.data.message);

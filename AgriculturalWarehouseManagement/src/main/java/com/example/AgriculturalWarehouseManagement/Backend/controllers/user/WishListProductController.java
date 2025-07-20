@@ -7,7 +7,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.W
 import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilter;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.CartUserService;
-import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserCustomerService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.WishlistServices;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class WishListProductController {
     private JwtTokenFilter jwtTokenFilter;
 
     @Autowired
-    private UserService userService;
+    private UserCustomerService userCustomerService;
 
     @Autowired
     private WishlistServices wishlistServices;
@@ -55,7 +55,7 @@ public class WishListProductController {
 
         // Lấy thông tin người dùng từ claims
         String email = claims.getSubject();
-        User userEntity = userService.loadUserByEmail(email);
+        User userEntity = userCustomerService.loadUserByEmail(email);
 
         if (userEntity == null) {
             session.invalidate();
@@ -115,7 +115,7 @@ public class WishListProductController {
 
         // Lấy thông tin người dùng từ claims
         String email = claims.getSubject();
-        User userEntity = userService.loadUserByEmail(email);
+        User userEntity = userCustomerService.loadUserByEmail(email);
 
         if (userEntity == null) {
             session.invalidate();
@@ -147,7 +147,7 @@ public class WishListProductController {
 
         // Lấy thông tin người dùng từ claims
         String email = claims.getSubject();
-        User userEntity = userService.loadUserByEmail(email);
+        User userEntity = userCustomerService.loadUserByEmail(email);
 
         if (userEntity == null) {
             session.invalidate();

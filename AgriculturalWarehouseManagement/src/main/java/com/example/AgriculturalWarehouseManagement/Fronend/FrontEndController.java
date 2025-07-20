@@ -28,19 +28,6 @@ public class FrontEndController {
         return "FrontEnd/Home/cart";
     }
 
-    @RequestMapping("/blog-list")
-    public String bloglist() {
-        return "FrontEnd/Home/blog-list";
-    }
-   @RequestMapping("/blog-detail")
-    public String blogdetail(){
-        return "FrontEnd/Home/blog-detail";
-    }
-
-    @RequestMapping("/blog-grid")
-    public String bloggrid(){
-        return "FrontEnd/Home/blog-grid" ;
-    }
 
 
 }

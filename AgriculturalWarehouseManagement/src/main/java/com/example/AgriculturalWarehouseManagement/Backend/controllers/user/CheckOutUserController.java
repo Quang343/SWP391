@@ -25,7 +25,7 @@ public class CheckOutUserController {
     private JwtTokenFilter jwtTokenFilter;
 
     @Autowired
-    private UserService userService;
+    private UserCustomerService userCustomerService;
 
     @Autowired
     private AddressBookService addressBookService;
@@ -59,7 +59,7 @@ public class CheckOutUserController {
 
         // Lấy thông tin người dùng từ claims
         String email = claims.getSubject();
-        User userEntity = userService.loadUserByEmail(email);
+        User userEntity = userCustomerService.loadUserByEmail(email);
 
         if (userEntity == null) {
             session.invalidate();
@@ -164,7 +164,7 @@ public class CheckOutUserController {
 
         // Lấy thông tin người dùng từ claims
         String email = claims.getSubject();
-        User userEntity = userService.loadUserByEmail(email);
+        User userEntity = userCustomerService.loadUserByEmail(email);
 
         if (userEntity == null) {
             session.invalidate();

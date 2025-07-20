@@ -71,7 +71,7 @@
 
                                         try {
 
-                                            const response = await axios.post(`http://localhost:8080/AgriculturalWarehouseManagement/addToCart/${productId}/${userId}`);
+                                            const response = await axios.post(`http://localhost:8080/AgriculturalWarehouseManagementApplication/addToCart/${productId}/${userId}`);
 
                                             if (response.data.status === "SUCCESS") {
                                                 const message = response.data.message;

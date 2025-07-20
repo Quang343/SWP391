@@ -43,11 +43,11 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a th:href="@{/admin/product}">Prodcts</a>
+                                <a th:href="@{/admin/products}">Products</a>
                             </li>
 
                             <li>
-                                <a th:href="@{/admin/addproduct}">Add New Products</a>
+                                <a th:href="@{/admin/add_product}">Add New Products</a>
                             </li>
                         </ul>
                     </li>
@@ -59,11 +59,11 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a th:href="@{/admin/category}">Category List</a>
+                                <a th:href="@{/admin/categories}">Category List</a>
                             </li>
 
                             <li>
-                                <a th:href="@{/admin/addcategory}">Add New Category</a>
+                                <a th:href="@{/admin/add_category}">Add New Category</a>
                             </li>
                         </ul>
                     </li>
@@ -91,10 +91,10 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a th:href="@{/admin/user}">All users</a>
+                                <a th:href="@{/admin/users}">All users</a>
                             </li>
                             <li>
-                                <a th:href="@{/admin/adduser}">Add new user</a>
+                                <a th:href="@{/admin/add_user}">Add new user</a>
                             </li>
                         </ul>
                     </li>
@@ -106,10 +106,10 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a href="role.html">All roles</a>
+                                <a th:href="@{/admin/roles}">All roles</a>
                             </li>
                             <li>
-                                <a href="create-role.html">Create Role</a>
+                                <a th:href="@{/admin/add_role}">Create Role</a>
                             </li>
                         </ul>
                     </li>
@@ -128,11 +128,11 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a th:href="@{/admin/orderlist}">Order List</a>
+                                <a th:href="@{/admin/orders}">Order List</a>
                             </li>
-                            <li>
-                                <a th:href="@{/admin/orderdetail}">Order Detail</a>
-                            </li>
+                            <!--                            <li>-->
+                            <!--                                <a th:href="@{/admin/order_details}">Order Detail</a>-->
+                            <!--                            </li>-->
                             <li>
                                 <a th:href="@{/admin/ordertracking}">Order Tracking</a>
                             </li>
@@ -142,11 +142,12 @@
                     <li class="sidebar-list">
                         <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                             <i class="ri-focus-3-line"></i>
-                            <span>Localization</span>
+                            <span>Blog Management</span>
+                            <!--                            Hoàng thêm-->
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a href="translation.html">Translation</a>
+                                <a th:href="@{/admin/blog}">All blog</a>
                             </li>
 
                             <li>
@@ -162,11 +163,11 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li>
-                                <a th:href="@{/admin/coupon}">Coupon List</a>
+                                <a th:href="@{/admin/vouchers}">Coupon List</a>
                             </li>
 
                             <li>
-                                <a th:href="@{/admin/createcoupon}">Create Coupon</a>
+                                <a th:href="@{/admin/add_coupon}">Create New Coupon</a>
                             </li>
                         </ul>
                     </li>

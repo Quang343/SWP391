@@ -45,55 +45,7 @@
 <!-- Breadcrumb Section End -->
 
 <!-- Poster Section Start -->
-<section>
-    <div class="container-fluid-lg">
-        <div class="row">
-            <div class="col-12">
-                <div class="slider-1 slider-animate product-wrapper no-arrow">
-                    <div>
-                        <div class="banner-contain-2 hover-effect">
-                            <img th:src="@{FrontEnd/assets/images/shop/1.jpg}" class="bg-img rounded-3 blur-up lazyload"
-                                 alt="">
-                            <div
-                                    class="banner-detail p-center-right position-relative shop-banner ms-auto banner-small">
-                                <div>
-                                    <h2>Trái cây và rau củ lành mạnh, bổ dưỡng và ngon miệng</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div>
-                        <div class="banner-contain-2 hover-effect">
-                            <img th:src="@{FrontEnd/assets/images/shop/1.jpg}" class="bg-img rounded-3 blur-up lazyload"
-                                 alt="">
-                            <div
-                                    class="banner-detail p-center-right position-relative shop-banner ms-auto banner-small">
-                                <div>
-                                    <h2>Trái cây và rau củ lành mạnh, bổ dưỡng và ngon miệng</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="banner-contain-2 hover-effect">
-                            <img th:src="@{FrontEnd/assets/images/shop/1.jpg}" class="bg-img rounded-3 blur-up lazyload"
-                                 alt="">
-                            <div
-                                    class="banner-detail p-center-right position-relative shop-banner ms-auto banner-small">
-                                <div>
-                                    <h2>Trái cây và rau củ lành mạnh, bổ dưỡng và ngon miệng</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    </div>
-</section>
 <!-- Poster Section End -->
 
 
@@ -366,7 +318,7 @@
                                                         btn.prop('disabled', true);
                                                         console.log("hello" + id);
                                                         try {
-                                                            await axios.post(`http://localhost:8080/AgriculturalWarehouseManagement/wishlistProduct/${userId}/${id}`);
+                                                            await axios.post(`http://localhost:8080/AgriculturalWarehouseManagementApplication/wishlistProduct/${userId}/${id}`);
                                                         } catch (e) {
                                                             console.error(e);
                                                             toast('❌ Error');
@@ -434,7 +386,7 @@
 
                                                     try {
 
-                                                        const response = await axios.post(`http://localhost:8080/AgriculturalWarehouseManagement/addToCart/${productId}/${userId}`);
+                                                        const response = await axios.post(`http://localhost:8080/AgriculturalWarehouseManagementApplication/addToCart/${productId}/${userId}`);
 
                                                         if (response.data.status === "SUCCESS") {
                                                             const message = response.data.message;
@@ -718,7 +670,7 @@
                                     if (productIdInput) productIdInput.value = productId;
 
                                     try {
-                                        const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/productDetailAPI/${productId}`);
+                                        const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/productDetailAPI/${productId}`);
                                         const productDetails = response.data;
 
                                         weightSelect.innerHTML = '';
@@ -887,7 +839,7 @@
                 console.log("home" + userId)
                 try {
                     // Gọi API lấy giỏ hàng bằng axios
-                    const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/listCart/${userId}`);
+                    const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/listCart/${userId}`);
 
                     const cartUserResponses = response.data.active;
                     let sizeListCart = 0;
@@ -951,7 +903,7 @@
 
             async function updateTotalCart(userId) {
                 try {
-                    let response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/totalCart/${userId}`);
+                    let response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/totalCart/${userId}`);
                     if (response.data.status === "SUCCESS") {
                         document.getElementById(`total-cart`).innerText = `${response.data.data.totalCart.toLocaleString()}₫`;
                     } else {

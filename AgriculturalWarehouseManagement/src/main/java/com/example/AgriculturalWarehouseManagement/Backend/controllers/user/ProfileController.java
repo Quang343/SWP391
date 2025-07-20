@@ -5,30 +5,22 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.*
 import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilter;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.OrderUsersService;
-import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserCustomerService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.WishlistServices;
 import io.jsonwebtoken.Claims;
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.http.Part;
-import org.hibernate.event.spi.SaveOrUpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.util.List;
 
 @Controller
@@ -41,7 +33,7 @@ import java.util.List;
 public class ProfileController {
 
     @Autowired
-    private UserService userService;
+    private UserCustomerService userCustomerService;
 
     @Autowired
     private WishlistServices wishlistServices;
@@ -74,7 +66,7 @@ public class ProfileController {
 
         // Lấy thông tin người dùng từ claims
         String email = claims.getSubject();
-        User userEntity = userService.loadUserByEmail(email);
+        User userEntity = userCustomerService.loadUserByEmail(email);
 
         if (userEntity == null) {
             session.invalidate();
@@ -132,11 +124,11 @@ public class ProfileController {
 
         System.out.println(profileRequest.toString());
 
-        ResponseResult<ProfileResponse> result = userService.editProfileUser(profileRequest);
+        ResponseResult<ProfileResponse> result = userCustomerService.editProfileUser(profileRequest);
 
         if (result.isActive()) {
-            User userEntity = userService.loadUserByEmail(profileRequest.getEmail());
-            UserResponse userResponse = userService.getUser(userEntity);
+            User userEntity = userCustomerService.loadUserByEmail(profileRequest.getEmail());
+            UserResponse userResponse = userCustomerService.getUser(userEntity);
             session.setAttribute("account", userResponse);
         } else {
             session.setAttribute("errorUpdateProfile", result.getMessage());
@@ -153,7 +145,7 @@ public class ProfileController {
 
     @PostMapping("/profileUserEdit/image")
     public String editProfileUserImage(@RequestParam("image") MultipartFile file,
-                                       @Value("${app.upload.user-dir}") String uploadDir,
+                                       @Value("${app.upload.product-dir}" + "/User") String uploadDir,
                                        HttpSession session) throws IOException {
         UserResponse userResponseSession = (UserResponse) session.getAttribute("account");
 
@@ -172,14 +164,14 @@ public class ProfileController {
             file.transferTo(filePath.toFile());
 
             // lưu đường dẫn truy cập công khai (trình duyệt sẽ dùng đường dẫn này)
-            imagePath = "/AgriculturalWarehouseManagement/FrontEnd/assets/images/inner-page/user/" + fileName;
+            imagePath = "/AgriculturalWarehouseManagementApplication/FrontEnd/assets/images/inner-page/user/" + fileName;
         }
 
-        ResponseResult<User> result = userService.editProfileUserImage(userResponseSession.getEmail(), imagePath, file);
+        ResponseResult<User> result = userCustomerService.editProfileUserImage(userResponseSession.getEmail(), imagePath, file);
         System.out.println("hello" + result.getStatus());
         if (result.isActive()) {
-            User userEntity = userService.loadUserByEmail(userResponseSession.getEmail());
-            UserResponse userResponse = userService.getUser(userEntity);
+            User userEntity = userCustomerService.loadUserByEmail(userResponseSession.getEmail());
+            UserResponse userResponse = userCustomerService.getUser(userEntity);
             session.setAttribute("account", userResponse);
             session.setAttribute("accountImage", userResponse.getImageUrl());
             return "redirect:/profileUser";
@@ -193,12 +185,12 @@ public class ProfileController {
     public String editProfileUserPassword(@RequestParam("oldPassword") String oldPassword,
                                           @RequestParam("newPassword") String newPassword) {
         UserResponse userResponseSession = (UserResponse) session.getAttribute("account");
-        ResponseResult<User> checkOldPassword = userService.checkOldPassword(userResponseSession.getEmail(), oldPassword);
+        ResponseResult<User> checkOldPassword = userCustomerService.checkOldPassword(userResponseSession.getEmail(), oldPassword);
         if (!checkOldPassword.isActive()) {
             session.setAttribute("errorChangePassword", checkOldPassword.getMessage());
             return "redirect:/profileUser";
         } else {
-            ResponseResult<User> result = userService.changePassword(userResponseSession.getEmail(), newPassword);
+            ResponseResult<User> result = userCustomerService.changePassword(userResponseSession.getEmail(), newPassword);
             if (result.isActive()) {
                 session.setAttribute("successChangePassword", result.getMessage());
                 return "redirect:/profileUser";

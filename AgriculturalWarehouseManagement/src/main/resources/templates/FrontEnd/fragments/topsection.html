@@ -207,7 +207,7 @@
                                                                     btn.prop('disabled', true);
                                                                     console.log("hello"+id);
                                                                     try {
-                                                                        await axios.post(`http://localhost:8080/AgriculturalWarehouseManagement/wishlistProduct/${userId}/${id}`);
+                                                                        await axios.post(`http://localhost:8080/AgriculturalWarehouseManagementApplication/wishlistProduct/${userId}/${id}`);
                                                                     } catch (e) {
                                                                         console.error(e); toast('❌ Error');
                                                                     } finally {

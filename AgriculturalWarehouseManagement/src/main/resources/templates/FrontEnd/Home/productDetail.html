@@ -665,7 +665,7 @@
                                                         btn.prop('disabled', true);
                                                         console.log("hello" + id);
                                                         try {
-                                                            await axios.post(`http://localhost:8080/AgriculturalWarehouseManagement/wishlistProduct/${userId}/${id}`);
+                                                            await axios.post(`http://localhost:8080/AgriculturalWarehouseManagementApplication/wishlistProduct/${userId}/${id}`);
                                                         } catch (e) {
                                                             console.error(e);
                                                             toast('❌ Error');
@@ -734,7 +734,7 @@
 
                                                     try {
 
-                                                        const response = await axios.post(`http://localhost:8080/AgriculturalWarehouseManagement/addToCart/${productId}/${userId}`);
+                                                        const response = await axios.post(`http://localhost:8080/AgriculturalWarehouseManagementApplication/addToCart/${productId}/${userId}`);
 
                                                         if (response.data.status === "SUCCESS") {
                                                             const message = response.data.message;
@@ -875,7 +875,7 @@
                 console.log("home" + userId)
                 try {
                     // Gọi API lấy giỏ hàng bằng axios
-                    const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/listCart/${userId}`);
+                    const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/listCart/${userId}`);
 
                     const cartUserResponses = response.data.active;
                     let sizeListCart = 0;
@@ -939,7 +939,7 @@
 
             async function updateTotalCart(userId) {
                 try {
-                    let response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/totalCart/${userId}`);
+                    let response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/totalCart/${userId}`);
                     if (response.data.status === "SUCCESS") {
                         document.getElementById(`total-cart`).innerText = `${response.data.data.totalCart.toLocaleString()}₫`;
                     } else {
@@ -1004,7 +1004,7 @@
                                     if (productIdInput) productIdInput.value = productId;
 
                                     try {
-                                        const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/productDetailAPI/${productId}`);
+                                        const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/productDetailAPI/${productId}`);
                                         const productDetails = response.data;
 
                                         weightSelect.innerHTML = '';
@@ -1383,7 +1383,7 @@
 
         if (commentProductId) {
             try {
-                const response = await axios.put(`http://localhost:8080/AgriculturalWarehouseManagement/dislike/${commentProductId}`);
+                const response = await axios.put(`http://localhost:8080/AgriculturalWarehouseManagementApplication/dislike/${commentProductId}`);
 
                 console.log(response.data);
 
@@ -1434,7 +1434,7 @@
 
         if (commentProductId) {
             try {
-                const response = await axios.put(`http://localhost:8080/AgriculturalWarehouseManagement/like/${commentProductId}`);
+                const response = await axios.put(`http://localhost:8080/AgriculturalWarehouseManagementApplication/like/${commentProductId}`);
 
                 console.log(response.data);
 

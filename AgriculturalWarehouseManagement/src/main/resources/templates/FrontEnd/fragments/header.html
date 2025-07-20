@@ -254,7 +254,7 @@
                                         }
 
                                         try {
-                                            const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/searchProduct/${encodeURIComponent(keyword)}`);
+                                            const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/searchProduct/${encodeURIComponent(keyword)}`);
                                             const products = response.data;
 
                                             if (!products || products.length === 0) {
@@ -280,7 +280,7 @@
                                     function renderList(items) {
                                         list.innerHTML = items.map(p => `
                                             <li class="list-group-item p-0" style="width: 39%">
-                                              <a href="http://localhost:8080/AgriculturalWarehouseManagement/productDetail?productId=${p.productId}"
+                                              <a href="http://localhost:8080/AgriculturalWarehouseManagementApplication/productDetail?productId=${p.productId}"
                                                  class="d-flex align-items-center gap-2 text-decoration-none text-dark px-2 py-1">
                                                 <img src="${p.imageUrlGallery}" alt="" style="width:40px;height:40px;object-fit:cover;">
                                                 <span>${p.productName}</span>
@@ -345,7 +345,7 @@
                                                     try {
                                                         const userId = "[[${session.accountId}]]";
                                                         console.log("hello--------" + userId);
-                                                        const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/listCart/${userId}`);
+                                                        const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/listCart/${userId}`);
                                                         const cartUserResponses = response.data.active;
                                                         let sizeListCart = 0;
                                                         if (cartUserResponses) {
@@ -532,16 +532,21 @@
                                                data-bs-toggle="dropdown">Blog</a>
                                             <ul class="dropdown-menu">
                                                 <li>
-                                                    <a class="dropdown-item" href="blog-detail.html">Blog Detail</a>
+                                                    <a class="dropdown-item" href="blog-detail">Blog Detail</a>
                                                 </li>
                                                 <li>
-                                                    <a class="dropdown-item" href="blog-grid.html">Blog Grid</a>
+                                                    <a class="dropdown-item" href="blog-grid">Blog Grid</a>
                                                 </li>
                                                 <li>
-                                                    <a class="dropdown-item" href="blog-list.html">Blog List</a>
+                                                    <a class="dropdown-item" href="blog-list">Blog List</a>
+                                                </li>
+
+                                                <li th:if="${session.account != null}">
+                                                    <a class="dropdown-item" href="my-blog" >My Blog </a>
                                                 </li>
                                             </ul>
                                         </li>
+
 
                                         <li class="nav-item dropdown new-nav-item">
                                             <a class="nav-link dropdown-toggle" href="javascript:void(0)"

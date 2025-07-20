@@ -4,7 +4,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.components.GenerateOT
 import com.example.AgriculturalWarehouseManagement.Backend.components.SendVerificationEmail;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ResponseResult;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
-import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserCustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ForgotPasswordController {
 
     @Autowired
-    private UserService userService;
+    private UserCustomerService userCustomerService;
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -39,7 +39,7 @@ public class ForgotPasswordController {
     @PostMapping("/forgotPassword")
     public String forgotPasswordSubmit(@ModelAttribute("email") String email, Model model) {
 
-        User user = userService.loadUserByEmail(email);
+        User user = userCustomerService.loadUserByEmail(email);
 
         if (user != null) {
             if (user.getStatusGG().equals("Active")) {
@@ -111,7 +111,7 @@ public class ForgotPasswordController {
     @PostMapping("/changeForgotPassword")
     public String changeForgotPasswordSubmit(@ModelAttribute("changePassword") String changePassword, Model model) {
         String email = (String) session.getAttribute("emailOtp");
-        ResponseResult<User> messageChangePassword = userService.changePassword(email, changePassword);
+        ResponseResult<User> messageChangePassword = userCustomerService.changePassword(email, changePassword);
 
         if (messageChangePassword.getMessage() == null || messageChangePassword.getMessage().equals("")) {
             model.addAttribute("errorChangePassword", "Không tìm thấy email");

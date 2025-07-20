@@ -5,11 +5,10 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.R
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.GoogleAccountRequest;
 import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilter;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
-import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserCustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -22,7 +21,7 @@ public class LoginByGoogleController {
     private jakarta.servlet.http.HttpSession session;
 
     @Autowired
-    UserService userService;
+    UserCustomerService userCustomerService;
 
     @Autowired
     JwtTokenFilter jwtTokenFilter;
@@ -38,10 +37,10 @@ public class LoginByGoogleController {
         String accessToken = googleLogin.getToken(code);
         GoogleAccountRequest googleAccountRequest = googleLogin.getUserInfo(accessToken);
 
-        User user = userService.loadUserByEmail(googleAccountRequest.getEmail());
+        User user = userCustomerService.loadUserByEmail(googleAccountRequest.getEmail());
         System.out.println(googleAccountRequest.toString());
         if (user == null) {
-            ResponseResult<User> resultLoginGG = userService.inserUserGGService(googleAccountRequest);
+            ResponseResult<User> resultLoginGG = userCustomerService.inserUserGGService(googleAccountRequest);
 
             String token = jwtTokenFilter.generateToken(googleAccountRequest.getEmail());
             session.setAttribute("authToken", token);

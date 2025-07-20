@@ -114,7 +114,7 @@ public class OrderDetailUsersController {
     public String editOrderReviewImage(@RequestParam("image") MultipartFile file,
                                        @RequestParam(name = "orderReviewId",  defaultValue = "0") int orderReviewId,
                                        @RequestParam(name = "orderCode",  defaultValue = "0") String orderCode,
-                                       @Value("${app.upload.user-dir}") String uploadDir,
+                                       @Value("${app.upload.product-dir}" + "/User") String uploadDir,
                                        HttpSession session) throws IOException {
 
         // Giữ ảnh cũ nếu không có ảnh mới
@@ -130,7 +130,7 @@ public class OrderDetailUsersController {
             file.transferTo(filePath.toFile());
 
             // Tạo đường dẫn public (dùng trong <img>)
-            imagePath = "/AgriculturalWarehouseManagement/FrontEnd/assets/images/inner-page/user/" + fileName;
+            imagePath = "/AgriculturalWarehouseManagementApplication/FrontEnd/assets/images/inner-page/user/" + fileName;
 
         }
 

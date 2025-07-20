@@ -1,14 +1,12 @@
 package com.example.AgriculturalWarehouseManagement.Backend.services.user;
 
 import com.example.AgriculturalWarehouseManagement.Backend.components.CapitalizedEachWord;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.AddressBookRequest;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.ProfileRequest;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ProfileResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ResponseResult;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.GoogleAccountRequest;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.RegisterRequestDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
-import com.example.AgriculturalWarehouseManagement.Backend.models.MyAddressBook;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Role;
 import com.example.AgriculturalWarehouseManagement.Backend.models.UpdateProfileHistory;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
@@ -20,15 +18,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Service
-public class UserService {
+public class UserCustomerService {
 
     @Autowired
     private UserRepository userRepository;

@@ -252,7 +252,7 @@
 
                                             try {
 
-                                                const response = await axios.post(`http://localhost:8080/AgriculturalWarehouseManagement/addToCartProductDetail/${productDetailId}/${userId}`);
+                                                const response = await axios.post(`http://localhost:8080/AgriculturalWarehouseManagementApplication/addToCartProductDetail/${productDetailId}/${userId}`);
 
                                                 if (response.data.status === "SUCCESS") {
                                                     const message = response.data.message;
@@ -478,7 +478,7 @@
                 console.log("home" + userId)
                 try {
                     // Gọi API lấy giỏ hàng bằng axios
-                    const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/listCart/${userId}`);
+                    const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/listCart/${userId}`);
 
                     const cartUserResponses = response.data.active;
                     let sizeListCart = 0;
@@ -542,7 +542,7 @@
 
             async function updateTotalCart(userId) {
                 try {
-                    let response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/totalCart/${userId}`);
+                    let response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/totalCart/${userId}`);
                     if (response.data.status === "SUCCESS") {
                         document.getElementById(`total-cart`).innerText = `${response.data.data.totalCart.toLocaleString('vi-VN')}₫`;
                     } else {

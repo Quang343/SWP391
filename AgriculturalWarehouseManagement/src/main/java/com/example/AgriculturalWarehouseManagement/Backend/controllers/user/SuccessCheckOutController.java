@@ -1,9 +1,7 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 
 import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilter;
-import com.example.AgriculturalWarehouseManagement.Backend.models.User;
-import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
-import io.jsonwebtoken.Claims;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserCustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +18,7 @@ public class SuccessCheckOutController {
     private JwtTokenFilter jwtTokenFilter;
 
     @Autowired
-    private UserService userService;
+    private UserCustomerService userCustomerService;
 
     @GetMapping("/successCheckOut")
     public String cancelCheckOut(@RequestParam(name = "orderCode", defaultValue = "215732") long orderCode,

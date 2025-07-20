@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" >
+
+<head th:replace="BackEnd/fragments/Admin/head::head"></head>
+<style>
+    .col-stt {
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
+    .alert-success {
+        background-color: #d1e7dd !important;
+        color: #0c0c0c !important;
+    }
+    #autoDismissAlert {
+        transition: opacity 0.8s ease-in-out, transform 0.4s ease;
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    #autoDismissAlert.hide {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+</style>
+<body>
+<!-- tap on top start-->
+<div class="tap-top">
+    <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end-->
+
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <!-- Page Header Start-->
+    <div th:replace="BackEnd/fragments/Admin/header::header"></div>
+    <!-- Page Header Ends-->
+
+    <!-- Page Body Start-->
+    <div class="page-body-wrapper">
+        <!-- Page Sidebar Start-->
+        <div th:replace="BackEnd/fragments/Admin/sidebar::sidebar"></div>
+        <!-- Page Sidebar Ends-->
+
+        <!-- Container-fluid starts-->
+        <div class="page-body">
+            <div class="container-fluid">
+                <div id="autoDismissAlert" th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fa fa-check-circle me-2"></i>
+                    <span th:text="${successMessage}">Success message here</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fa fa-exclamation-triangle me-2"></i>
+                    <span th:text="${errorMessage}">Error message here</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card card-table">
+                            <div class="card-body">
+                                <div class="title-header option-title d-sm-flex d-block">
+                                    <h5>Blogs List</h5>
+                                    <div class="right-options">
+                                        <ul>
+                                            <li>
+                                                <a href="javascript:void(0)">import</a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:void(0)">Export</a>
+                                            </li>
+                                            <li>
+                                                <a class="btn btn-solid" th:href="@{/admin/add_product}">Add Blog</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                                <div class="search-box">
+                                    <label>Search:<input type="search" class="" placeholder="" aria-controls="table_id"></label>
+                                </div>
+                                <div>
+                                    <div class="table-responsive dashboard-bg-box" style="overflow-x:auto; width:100%;">
+                                        <table class="table blog-table" style="min-width: 1000px;">
+                                            <!--Bảng Blog-->
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">Number</th>
+                                                <th scope="col">Images</th>
+                                                <th scope="col">Content</th>
+                                                <th scope="col">Title</th>
+                                                <th scope="col">Author</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Created At</th>
+                                                <th scope="col">Edit / Delete</th>
+
+                                            </tr>
+                                            </thead>
+
+
+                                            <tbody id="blogTableBody">
+                                            <!-- Blog rows sẽ được JS thêm vào đây -->
+                                            </tbody>
+                                        </table>
+                                        <!-- Pagination -->
+                                        <nav>
+                                            <ul class="pagination justify-content-center custom-pagination" id="pagination">
+                                                <!-- JS sẽ render ra các nút ở đây -->
+                                            </ul>
+
+                                        </nav>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+
+            <div th:replace="BackEnd/fragments/Admin/footer::footer"></div>
+
+        </div>
+    </div>
+</div>
+<!-- page-wrapper End-->
+
+<!-- Modal Start -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                <p>Are you sure you want to log out?</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="button-box">
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                    <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal End -->
+
+<!-- Delete Modal Box Start -->
+<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-block text-center">
+                <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure ?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="remove-box">
+                    <p>The permission for the use/group, preview is inherited from the object, object will create a
+                        new permission for this object</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-target="#exampleModalToggle2"
+                        data-bs-toggle="modal" data-bs-dismiss="modal">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle2" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="exampleModalLabel12">Done!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="remove-box text-center">
+                    <div class="wrapper">
+                        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                        </svg>
+                    </div>
+                    <h4 class="text-content">It's Removed.</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Modal Box End -->
+
+<!-- latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- Bootstrap js -->
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+
+<!-- feather icon js -->
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+
+<!-- scrollbar simplebar js -->
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+
+<!-- Sidebar js -->
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+
+<!-- customizer js -->
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+
+<!-- Plugins js -->
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+
+<!-- Data table js -->
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+
+<!-- sidebar effect -->
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+
+<!-- Theme js -->
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+<script>
+    setTimeout(function () {
+        const alertNode = document.getElementById('autoDismissAlert');
+        if (alertNode) {
+            alertNode.classList.add('hide');
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(alertNode);
+                bsAlert.close(); // Đóng hoàn toàn
+            }, 800); // Chờ hiệu ứng hoàn tất
+        }
+    }, 5000);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    const CONTEXT_PATH = "/AgriculturalWarehouseManagementApplication";
+    const ADMIN_BLOG_API = `${CONTEXT_PATH}/api/admin-blog/page`;
+    const pageSize = 10;
+
+    function loadAdminBlogPage(page = 1) {
+        axios.get(`${ADMIN_BLOG_API}?page=${page}&size=${pageSize}`)
+            .then(res => {
+                const data = res.data || {};
+                renderAdminBlogs(data.blogs, data.currentPage, pageSize);
+                renderPagination(data.currentPage, data.totalPages);
+            })
+            .catch(err => {
+                console.error('Lỗi lấy dữ liệu:', err);
+            });
+    }
+
+    function renderAdminBlogs(blogs, currentPage, pageSize) {
+        const tbody = document.getElementById("blogTableBody");
+        tbody.innerHTML = "";
+        blogs.forEach((blog, idx) => {
+            const thumbnail = blog.thumbnail || "no-image.png";
+            const imageSrc = `${CONTEXT_PATH}/blog/${thumbnail}`;
+            const color = getStatusColor(blog.status);
+            tbody.innerHTML += `
+            <tr>
+                <td class="col-stt">${(currentPage - 1) * pageSize + idx + 1}</td>
+                <td>
+                    <img src="${imageSrc}" style="max-width:90px; max-height:54px; border-radius:6px; object-fit:cover;" alt="">
+                </td>
+                <td>${blog.content && blog.content.length > 40 ? blog.content.substring(0, 40) + '...' : blog.content || ''}</td>
+                <td>${blog.title || ""}</td>
+                <td><b><i>${blog.author || ""}</i></b></td>
+                <td>${blog.blogCategoryName || ""}</td>
+                <td><span style="font-weight:bold;color:${color}">${blog.status}</span></td>
+                <td>${formatDate(blog.createdAt)}</td>
+                <td>
+                    <a href="javascript:void(0)" onclick="openEditBlogModal(${blog.blogID})"><i data-feather="edit"></i></a>
+                    <a href="javascript:void(0)" onclick="deleteBlog(${blog.blogID})"><i data-feather="trash-2"></i></a>
+                </td>
+            </tr>
+            `;
+        });
+        if (window.feather) feather.replace();
+    }
+
+    function renderPagination(currentPage, totalPages) {
+        let html = '';
+        if (currentPage > 1) {
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(1);return false;" title="Trang đầu"><i class="fa-solid fa-angle-double-left"></i></a></li>`;
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage - 1});return false;" title="Trang trước"><i class="fa-solid fa-angle-left"></i></a></li>`;
+        }
+        let range = 2;
+        let start = Math.max(1, currentPage - range);
+        let end = Math.min(totalPages, currentPage + range);
+        if (start > 1) html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        for (let i = start; i <= end; i++) {
+            if (i === currentPage) {
+                html += `<li class="page-item active"><a class="page-link" href="#" onclick="gotoPage(${i});return false;">${i}</a></li>`;
+            } else {
+                html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${i});return false;">${i}</a></li>`;
+            }
+        }
+        if (end < totalPages) html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        if (currentPage < totalPages) {
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage + 1});return false;" title="Trang sau"><i class="fa-solid fa-angle-right"></i></a></li>`;
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${totalPages});return false;" title="Trang cuối"><i class="fa-solid fa-angle-double-right"></i></a></li>`;
+        }
+        document.getElementById("pagination").innerHTML = html;
+    }
+
+    function gotoPage(page) {
+        loadAdminBlogPage(page);
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('vi-VN');
+    }
+
+    function getStatusColor(status) {
+        switch (status) {
+            case 'ACTIVE': return '#198754';
+            case 'INACTIVE': return '#6c757d';
+            case 'DRAFT': return '#f39c12';
+            case 'PENDING': return '#0dcaf0';
+            case 'PUBLISHED': return '#20c997';
+            case 'DELETED': return '#dc3545';
+            default: return '#212529';
+        }
+    }
+
+    // Load dữ liệu khi vào trang
+    document.addEventListener('DOMContentLoaded', function () {
+        loadAdminBlogPage(1);
+    });
+</script>
+
+</body>
+</html>

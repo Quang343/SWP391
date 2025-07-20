@@ -1,10 +1,9 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ResponseResult;
-import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilter;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
-import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserCustomerService;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class DeleteAccountController {
 
     @Autowired
-    private UserService userService;
+    private UserCustomerService userCustomerService;
 
     @Autowired
     private jakarta.servlet.http.HttpSession session;
@@ -43,11 +42,11 @@ public class DeleteAccountController {
 
         // Lấy thông tin người dùng từ claims
         String email = claims.getSubject();
-        User userEntity = userService.loadUserByEmail(email);
+        User userEntity = userCustomerService.loadUserByEmail(email);
 
         if (deleteAccount != null) {
 
-            ResponseResult<User> result = userService.deleteAccount(userEntity.getEmail());
+            ResponseResult<User> result = userCustomerService.deleteAccount(userEntity.getEmail());
 
             if (result.isActive()){
                 session.invalidate();

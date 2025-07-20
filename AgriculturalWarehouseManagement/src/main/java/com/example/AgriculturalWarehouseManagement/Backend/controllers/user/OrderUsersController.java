@@ -4,7 +4,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.Ch
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.CheckOutResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ResponseResult;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.OrderUsersService;
-import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserCustomerService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,7 +20,7 @@ import java.io.IOException;
 public class OrderUsersController {
 
     @Autowired
-    private UserService userService;
+    private UserCustomerService userCustomerService;
 
     @Autowired
     private OrderUsersService orderUsersService;

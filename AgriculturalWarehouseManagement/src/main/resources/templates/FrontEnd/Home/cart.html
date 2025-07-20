@@ -129,7 +129,7 @@
                                             btn.prop('disabled', true);
 
                                             try {
-                                                const response = await axios.delete(`http://localhost:8080/AgriculturalWarehouseManagement/deleteCart/${cartId}`);
+                                                const response = await axios.delete(`http://localhost:8080/AgriculturalWarehouseManagementApplication/deleteCart/${cartId}`);
                                                 if (response.data.status === "SUCCESS") {
                                                     const message = response.data.message;
 
@@ -336,7 +336,7 @@
 
             // Gọi API để cập nhật số lượng sản phẩm
             try {
-                let response = await axios.put(`http://localhost:8080/AgriculturalWarehouseManagement/quantityCartProductDetail/${cartId}/${productDetailId}/${quantityValue}`);
+                let response = await axios.put(`http://localhost:8080/AgriculturalWarehouseManagementApplication/quantityCartProductDetail/${cartId}/${productDetailId}/${quantityValue}`);
                 if (response.data.status === "SUCCESS") {
                     // Lấy cartId từ response và từ phần tử h5
                     let totalPrice = response.data.data.totalPrice;
@@ -390,7 +390,7 @@
 
     async function updateTotalCart(userId) {
         try {
-            let response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/totalCart/${userId}`);
+            let response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/totalCart/${userId}`);
             if (response.data.status === "SUCCESS") {
                 document.getElementById(`total-cart`).innerText = `${response.data.data.totalCart.toLocaleString('vi-VN')}₫`;
             } else {
@@ -403,7 +403,7 @@
 
     async function getSizeCartHead(userId) {
         try {
-            const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagement/listCart/${userId}`);
+            const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/listCart/${userId}`);
             const sizeCartHeadElement = document.getElementById('sizeCartHead');
             if (response.data.status === "SUCCESS") {
                 document.getElementById(`sizeCartHead`).innerText = `${response.data.data.length}`;

@@ -5,12 +5,10 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.C
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ResponseResult;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilter;
-import com.example.AgriculturalWarehouseManagement.Backend.models.ContactUsUser;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
-import com.example.AgriculturalWarehouseManagement.Backend.repositorys.UserRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.AddressBookService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.ContactUserService;
-import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserCustomerService;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,7 +24,7 @@ public class ContactUsUserController {
     private AddressBookService addressBookService;
 
     @Autowired
-    private UserService userService;
+    private UserCustomerService userCustomerService;
 
     @Autowired
     private ContactUserService contactUserService;
@@ -61,7 +59,7 @@ public class ContactUsUserController {
 
         // Lấy thông tin người dùng từ claims
         String email = claims.getSubject();
-        User userEntity = userService.loadUserByEmail(email);
+        User userEntity = userCustomerService.loadUserByEmail(email);
 
         if (userEntity == null) {
             session.invalidate();
@@ -102,7 +100,7 @@ public class ContactUsUserController {
 
         // Lấy thông tin người dùng từ claims
         String email = claims.getSubject();
-        User userEntity = userService.loadUserByEmail(email);
+        User userEntity = userCustomerService.loadUserByEmail(email);
 
         if (userEntity == null) {
             session.invalidate();

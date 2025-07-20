@@ -5,7 +5,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.components.SendVerifi
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ResponseResult;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.RegisterRequestDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
-import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserCustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class RegisterController {
 
     @Autowired
-    private UserService userService;
+    private UserCustomerService userCustomerService;
 
     @Autowired
     private jakarta.servlet.http.HttpSession session;
@@ -34,7 +34,7 @@ public class RegisterController {
     @PostMapping("/register")
     public String register(@ModelAttribute RegisterRequestDTO registerRequestDTO, Model model) {
 
-        ResponseResult<User> result = userService.registerUserService(registerRequestDTO);
+        ResponseResult<User> result = userCustomerService.registerUserService(registerRequestDTO);
 
         if (result.isActive()) {
 
@@ -71,7 +71,7 @@ public class RegisterController {
 
         if (otp.equals(sessionOtp)) {
             RegisterRequestDTO registerRequestDTO = (RegisterRequestDTO) session.getAttribute("registerRequestDTO");
-            userService.insertUserService(registerRequestDTO, sessionOtp);
+            userCustomerService.insertUserService(registerRequestDTO, sessionOtp);
             session.removeAttribute("generateOTP");
             session.removeAttribute("registerRequestDTO");
             return "redirect:/login";

@@ -2,9 +2,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 
 import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilter;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
-import com.example.AgriculturalWarehouseManagement.Backend.services.user.CartUserService;
-import com.example.AgriculturalWarehouseManagement.Backend.services.user.OrderUsersService;
-import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserCustomerService;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,7 +17,7 @@ public class CancelCheckOutController {
     private JwtTokenFilter jwtTokenFilter;
 
     @Autowired
-    private UserService userService;
+    private UserCustomerService userCustomerService;
 
     @GetMapping("/cancelCheckOut")
     public String cancelCheckOut() {
@@ -40,7 +38,7 @@ public class CancelCheckOutController {
 
         // Lấy thông tin người dùng từ claims
         String email = claims.getSubject();
-        User userEntity = userService.loadUserByEmail(email);
+        User userEntity = userCustomerService.loadUserByEmail(email);
 
         if (userEntity == null) {
             session.invalidate();

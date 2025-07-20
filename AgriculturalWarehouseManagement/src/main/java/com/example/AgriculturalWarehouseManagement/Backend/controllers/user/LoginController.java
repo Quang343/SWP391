@@ -3,7 +3,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.LoginRequest;
 import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilter;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
-import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserCustomerService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
 
     @Autowired
-    private UserService userService;
+    private UserCustomerService userCustomerService;
 
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
@@ -41,7 +41,7 @@ public class LoginController {
                               HttpServletResponse response,
                               HttpServletRequest request) {
         System.out.println(rememberMe);
-        User userEntity = userService.loadUserByEmail(loginRequest.getEmail());
+        User userEntity = userCustomerService.loadUserByEmail(loginRequest.getEmail());
         if (userEntity == null) {
             model.addAttribute("errorLogin", "Email không tồn tại !!!");
             return "FrontEnd/Home/login";
