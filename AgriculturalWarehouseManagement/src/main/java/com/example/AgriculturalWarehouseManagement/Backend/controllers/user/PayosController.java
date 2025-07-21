@@ -142,7 +142,8 @@ public class PayosController {
             Object checkOutRequest = session.getAttribute("checkOutRequest");
             Object account = session.getAttribute("account");
             if (checkOutRequest == null || account == null) {
-                httpServletResponse.sendRedirect("/AgriculturalWarehouseManagement/cart");
+                httpServletResponse.sendRedirect("/AgriculturalWarehouseManagementApplication/login");
+                return;
             }
 
             UserResponse userResponse = (UserResponse) session.getAttribute("account") ;

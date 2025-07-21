@@ -121,25 +121,25 @@ import vn.payos.type.ItemData;
 import vn.payos.type.PaymentData;
 
 @Controller
-public class PayosWalletsController {
+public class PayosProfileController {
 
     @Autowired
     private jakarta.servlet.http.HttpSession session;
 
     private final PayOS payOS;
 
-    public PayosWalletsController(PayOS payOS) {
+    public PayosProfileController(PayOS payOS) {
         super();
         this.payOS = payOS;
     }
 
 
-    @RequestMapping(method = RequestMethod.POST, value = "/createPaymentWalletsLink", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @RequestMapping(method = RequestMethod.POST, value = "/createPaymentWalletsProfileLink", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void checkout(HttpServletRequest request, HttpServletResponse httpServletResponse) {
         try {
             final String baseUrl = getBaseUrl(request);
 
-            Object checkOutRequest = session.getAttribute("checkOutRequestDeposit");
+            Object checkOutRequest = session.getAttribute("checkOutRequestDepositProfile");
             Object account = session.getAttribute("account");
 
             if (checkOutRequest == null || account == null) {
@@ -154,8 +154,8 @@ public class PayosWalletsController {
             String currentTimeString = String.valueOf(new Date().getTime());
             long orderCode = Long.parseLong(currentTimeString.substring(currentTimeString.length() - 6));
 
-            String returnUrl = baseUrl + "/updateWalletsDeposit";
-            String cancelUrl = baseUrl + "/cancelCheckOut";
+            String returnUrl = baseUrl + "/updateWalletsDepositProfile";
+            String cancelUrl = baseUrl + "/cancelWalletProfile";
 
             PaymentData paymentData = PaymentData.builder()
                     .orderCode(orderCode)

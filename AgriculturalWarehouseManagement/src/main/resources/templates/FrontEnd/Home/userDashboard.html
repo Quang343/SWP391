@@ -153,6 +153,59 @@
             margin-bottom: 5px;
             border-radius: 4px;
         }
+
+        /* Đặt kiểu cho div chứa */
+        .payment-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10%;
+            align-items: center; /* Căn giữa các phần tử theo chiều dọc */
+            justify-content: center; /* Căn giữa các phần tử theo chiều ngang */
+        }
+
+        /* Cải thiện style cho label */
+        .payment-container label {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Cải thiện style cho input */
+        .input-field {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 200px;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: #28a745; /* Đổi màu viền khi input được focus */
+            outline: none;
+        }
+
+        /* Cải thiện style cho button */
+        .btn-nap {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #28a745; /* Màu xanh lá */
+            border: 1px solid #28a745;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn-nap:hover {
+            background-color: #218838; /* Màu xanh đậm hơn khi hover */
+            transform: translateY(-2px); /* Hiệu ứng di chuyển nhẹ khi hover */
+        }
+
+        .btn-nap:active {
+            transform: translateY(1px); /* Hiệu ứng khi nhấn button */
+        }
+
     </style>
 
 </head>
@@ -318,8 +371,32 @@
                                                 <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
                                             </svg>
                                         </span>
-                                    <h3 class="glow-btn" style="font-size: 20px;margin-top: 10px"
-                                        th:text="${'Ví tiền: ' + #numbers.formatInteger(walletsResponse.getBalance(), 0, 'POINT') + '₫'}"></h3>
+                                    <h5 class="glow-btn" style="margin-top: 10px"
+                                        th:text="${'Ví tiền: ' + #numbers.formatInteger(walletsResponse.getBalance(), 0, 'POINT') + '₫'}"></h5>
+                                    <div class="payment-container">
+                                        <form th:action="@{/depositWalletProfile}" method="post">
+                                            <label for="nap">Nạp tiền: </label>
+                                            <input id="nap" type="number" name="totalPrice" class="input-field" placeholder="Nhập số tiền" inputmode="numeric" oninput="validateAmount()" />
+                                            <button type="submit" class="btn-nap">Nạp</button>
+                                        </form>
+                                    </div>
+
+                                    <script>
+                                        function validateAmount() {
+                                            const inputField = document.getElementById('nap');
+                                            let amount = inputField.value.trim();  // Lấy giá trị nhập vào và loại bỏ khoảng trắng
+
+                                            console.log("Input value: " + amount); // Để kiểm tra giá trị nhập vào
+
+                                            // Kiểm tra xem giá trị có hợp lệ (là một số)
+                                            if (amount === "" || isNaN(amount) || parseFloat(amount) < 10000) {
+                                                inputField.setCustomValidity("Số tiền nạp tối thiểu là 10000đ.");
+                                            } else {
+                                                inputField.setCustomValidity("");  // Xóa thông báo lỗi nếu hợp lệ
+                                            }
+                                        }
+                                    </script>
+
 
                                 </div>
 
@@ -696,7 +773,12 @@
                                                     </tr>
                                                     <tr>
                                                         <td>Giới tính :</td>
-                                                        <td th:text="${session.account.getGender}">Your gender</td>
+                                                        <td th:if="${session.account.getGender == 'male'}"
+                                                            th:text="${'Nam'}">Your gender
+                                                        </td>
+                                                        <td th:if="${session.account.getGender == 'female'}"
+                                                            th:text="${'Nữ'}">Your gender
+                                                        </td>
                                                     </tr>
                                                     <tr>
                                                         <td>Ngày sinh :</td>
@@ -748,7 +830,7 @@
 
                                         <div class="col-xxl-5">
                                             <div class="profile-image">
-                                                <img src="../assets/images/inner-page/dashboard-profile.png"
+                                                <img th:src="@{FrontEnd/assets/images/inner-page/dashboard-profile.png}"
                                                      class="img-fluid blur-up lazyload" alt="">
                                             </div>
                                         </div>

@@ -11,6 +11,11 @@ public class BackEndController {
         return "BackEnd/Admin/index";
     }
 
+    @RequestMapping("/admin/orderTracking")
+    public String adminOrderTracking() {
+        return "BackEnd/Admin/OrderTracking";
+    }
+
     @RequestMapping("/admin/category")
     public String adminCategory() {
         return "BackEnd/Admin/Category";

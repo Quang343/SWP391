@@ -1,5 +1,6 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.CheckOutRequest;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.ProfileRequest;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.*;
 import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilter;
@@ -9,9 +10,13 @@ import com.example.AgriculturalWarehouseManagement.Backend.services.user.UserCus
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.WalletsUsersService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.WishlistServices;
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -50,6 +55,9 @@ public class ProfileController {
 
     @Autowired
     private jakarta.servlet.http.HttpSession session;
+
+    CheckOutRequest checkOutRequestGlobal = new CheckOutRequest();
+    int accountIdGlobal = 0;
 
     @GetMapping("profileUser")
     public String getProfileUser(Model model) {
@@ -238,6 +246,48 @@ public class ProfileController {
             ResponseResult<OrderUserResponse> orderUserResponseResponseResult = orderUsersService.cancelOrder((String) orderId, userEntity.getUserId());
             return "redirect:/profileUser";
         }
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/depositWalletProfile", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String deposit(@RequestParam(name = "totalPrice", defaultValue = "0", required = false) double totalPrice,
+                          HttpServletRequest request,
+                          HttpServletResponse response) throws ServletException, IOException {
+
+        CheckOutRequest checkOutRequest = new CheckOutRequest();
+        checkOutRequest.setTotalPrice(totalPrice);
+        session.setAttribute("checkOutRequestDepositProfile", checkOutRequest);
+        checkOutRequestGlobal = checkOutRequest;
+
+        Object accountIdObj = session.getAttribute("accountId");
+        accountIdGlobal = (int) accountIdObj;
+
+        request.getRequestDispatcher("/createPaymentWalletsProfileLink").forward(request, response);
+        return "forward:/home";
+    }
+
+    @GetMapping("/updateWalletsDepositProfile")
+    public String updateWalletDeposit() {
+        if (checkOutRequestGlobal.getTotalPrice() != 0.00 && accountIdGlobal != 0) {
+            System.out.println("hello"+checkOutRequestGlobal.getTotalPrice());
+            walletsUsersService.updateWalletsDeposit(accountIdGlobal, checkOutRequestGlobal);
+
+            accountIdGlobal = 0;
+            checkOutRequestGlobal.setTotalPrice(0.00);
+            return "redirect:/successWalletProfile";
+        } else {
+            return "redirect:/login";
+        }
+
+    }
+
+    @GetMapping("/successWalletProfile")
+    public String successWalletProfile() {
+        return "FrontEnd/Home/walletProfile";
+    }
+
+    @GetMapping("/cancelWalletProfile")
+    public String cancellWalletProfile() {
+        return "redirect:/profileUser";
     }
 
 
