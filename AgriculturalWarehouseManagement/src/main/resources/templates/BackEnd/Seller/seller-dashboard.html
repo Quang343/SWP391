@@ -503,7 +503,7 @@
                                             </th>
                                             <th scope="col">Mô tả</th>
                                             <th scope="col">Trạng thái</th>
-                                            <th scope="col">Hành động</th>
+                                            <th scope="col">Thao tác</th>
                                         </tr>
                                         </thead>
                                         <tbody id="productTable">
@@ -554,11 +554,11 @@
                                             <th scope="col">STT</th>
                                             <th scope="col">Tên sản phẩm</th>
                                             <th scope="col">Chi tiết</th>
-                                            <th>Người bán</th>
+                                            <th scope="col">Người bán</th>
                                             <th scope="col">Giá (VNĐ)</th>
                                             <th scope="col">Hạn sử dụng (tháng)</th>
                                             <th scope="col">Trạng thái</th>
-                                            <th scope="col">Hành động</th>
+                                            <th scope="col">Thao tác</th>
                                         </tr>
                                         </thead>
                                         <tbody id="productDetailTable">
@@ -575,117 +575,42 @@
 
                         <div class="tab-pane fade" id="pills-order" role="tabpanel">
                             <div class="dashboard-order">
-                                <div class="title">
-                                    <h2>Tất Cả Đơn Hàng</h2>
-                                    <span class="title-leaf title-leaf-gray">
-                                            <svg class="icon-width bg-gray">
-                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
-                                            </svg>
-                                        </span>
+                                <div class="title"
+                                     style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <h2>Tất Cả Đơn Hàng</h2>
+                                    </div>
+
+                                    <div style="width: 200px; text-align: center; margin-top: 7px; position: relative; z-index: 0">
+                                        <button class="btn btn-primary"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#addOrderModal"
+                                                style="width:100%; background-color: #198754; color: white; border: none; padding: 8px 16px; font-weight: 500; border-radius: 4px">
+                                            Tải Xuống Danh Sách
+                                        </button>
+
+                                    </div>
                                 </div>
+
 
                                 <div class="order-tab dashboard-bg-box">
                                     <div class="table-responsive">
                                         <table id="orderTable" class="table order-table">
                                             <thead>
                                             <tr>
-                                                <th scope="col">Order ID</th>
-                                                <th scope="col">Product Name</th>
-                                                <th scope="col">Status</th>
-                                                <th scope="col">Price</th>
+                                                <th scope="col">STT</th>
+                                                <th scope="col">Mã đơn hàng</th>
+                                                <th scope="col">Ngày đặt</th>
+                                                <th scope="col">SĐT</th>
+                                                <th scope="col">Địa chỉ</th>
+                                                <th scope="col">Tổng tiền (VNĐ)</th>
+                                                <th scope="col">Thành tiền (VNĐ)</th>
+                                                <th scope="col" class="status-badge">Trạng thái</th>
+                                                <th scope="col">Thao tác</th>
                                             </tr>
                                             </thead>
-                                            <tbody>
-                                            <tr>
-                                                <td class="product-image">#254834</td>
-                                                <td>
-                                                    <h6>Fantasy Crunchy Choco Chip Cookies</h6>
-                                                </td>
-                                                <td>
-                                                    <label class="success">Shipped</label>
-                                                </td>
-                                                <td>
-                                                    <h6>$25.69</h6>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td class="product-image">#355678</td>
-                                                <td>
-                                                    <h6>Peanut Butter Bite Premium Butter Cookies 600 g</h6>
-                                                </td>
-                                                <td>
-                                                    <label class="danger">Pending</label>
-                                                </td>
-                                                <td>
-                                                    <h6>$25.69</h6>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td class="product-image">#647536</td>
-                                                <td>
-                                                    <h6>Yumitos Chilli Sprinkled Potato Chips 100 g</h6>
-                                                </td>
-                                                <td>
-                                                    <label class="success">Shipped</label>
-                                                </td>
-                                                <td>
-                                                    <h6>$25.69</h6>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td class="product-image">#125689</td>
-                                                <td>
-                                                    <h6>healthy Long Life Toned Milk 1 L</h6>
-                                                </td>
-                                                <td>
-                                                    <label class="danger">Pending</label>
-                                                </td>
-                                                <td>
-                                                    <h6>$25.69</h6>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td class="product-image">#215487</td>
-                                                <td>
-                                                    <h6>Raw Mutton Leg, Packaging 5 Kg</h6>
-                                                </td>
-                                                <td>
-                                                    <label class="danger">Pending</label>
-                                                </td>
-                                                <td>
-                                                    <h6>$25.69</h6>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td class="product-image">#365474</td>
-                                                <td>
-                                                    <h6>Cold Brew Coffee Instant Coffee 50 g</h6>
-                                                </td>
-                                                <td>
-                                                    <label class="success">Shipped</label>
-                                                </td>
-                                                <td>
-                                                    <h6>$25.69</h6>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td class="product-image">#368415</td>
-                                                <td>
-                                                    <h6>SnackAmor Combo Pack of Jowar Stick and Jowar Chips</h6>
-                                                </td>
-                                                <td>
-                                                    <label class="danger">Pending</label>
-                                                </td>
-                                                <td>
-                                                    <h6>$25.69</h6>
-                                                </td>
-                                            </tr>
+                                            <tbody id="orderTableBody">
+                                            <!-- Dữ liệu đơn hàng sẽ được render bằng JavaScript -->
                                             </tbody>
                                         </table>
                                     </div>
@@ -1991,15 +1916,30 @@
                     if (data.avatarUrl) {
                         // ✅ Cập nhật src avatar và thêm timestamp để tránh cache
                         avatarImg.src = BASE + data.avatarUrl + "?t=" + new Date().getTime();
-                        alert("Cập nhật ảnh đại diện thành công!");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: 'Cập nhật ảnh đại diện thành công!',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
                     } else {
-                        alert("Lỗi khi hiển thị ảnh! Định dạng có thể không được hỗ trợ.");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi hiển thị ảnh',
+                            text: 'Định dạng ảnh có thể không được hỗ trợ.'
+                        });
                     }
                 })
                 .catch(err => {
                     console.error("Lỗi khi upload ảnh:", err);
-                    alert("Không thể upload ảnh.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi upload',
+                        text: 'Không thể upload ảnh.'
+                    });
                 });
+
         });
 
         // 📌 Load avatar ban đầu
@@ -2205,6 +2145,19 @@
 
 <!--CSS Product-->
 <style>
+    .product-table th,
+    .product-table td {
+        border-right: 1px solid #dee2e6;
+    }
+
+    .product-table th:last-child,
+    .product-table td:last-child {
+        border-right: none;
+    }
+
+    .product-table {
+        border-collapse: collapse;
+    }
 
     /* Nút Hủy - màu trung tính nổi bật nhẹ */
     .btn.btn-secondary {
@@ -2734,28 +2687,56 @@
                         const product = res.data.find(p => p.id == id);
 
                         if (!product || product.status === "INACTIVE") {
-                            alert("Sản phẩm này đã ngừng kinh doanh");
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Thông báo',
+                                text: 'Sản phẩm này đã ngừng kinh doanh',
+                            });
                             return;
                         }
-                        if (confirm("Bạn có chắc chắn muốn ngừng kinh doanh sản phẩm này không?")) {
-                            axios.put(`/AgriculturalWarehouseManagementApplication/api/seller/products/${id}`, {status: "INACTIVE"})
-                                .then(() => {
-                                    alert("Đã chuyển sản phẩm sang trạng thái INACTIVE.");
 
-                                    // ✅ Cập nhật ngay trong mảng allProducts
-                                    const index = allProducts.findIndex(p => p.id == id);
-                                    if (index !== -1) {
-                                        allProducts[index].status = "INACTIVE";
-                                    }
+                        Swal.fire({
+                            title: 'Xác nhận',
+                            text: "Bạn có chắc chắn muốn ngừng kinh doanh sản phẩm này không?",
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Đồng ý',
+                            cancelButtonText: 'Huỷ'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                axios.put(`/AgriculturalWarehouseManagementApplication/api/seller/products/${id}`, { status: "INACTIVE" })
+                                    .then(() => {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Thành công',
+                                            text: 'Đã chuyển sản phẩm sang trạng thái INACTIVE.',
+                                            timer: 2000,
+                                            showConfirmButton: false
+                                        });
 
-                                    // ✅ Render lại danh sách đúng theo trạng thái mới
-                                    if (currentSort.key) {
-                                        renderSortedProducts();
-                                    } else {
-                                        renderPageFromData(allProducts, currentPage);
-                                    }
-                                })
-                        }
+                                        // ✅ Cập nhật ngay trong mảng allProducts
+                                        const index = allProducts.findIndex(p => p.id == id);
+                                        if (index !== -1) {
+                                            allProducts[index].status = "INACTIVE";
+                                        }
+
+                                        // ✅ Render lại danh sách đúng theo trạng thái mới
+                                        if (currentSort.key) {
+                                            renderSortedProducts();
+                                        } else {
+                                            renderPageFromData(allProducts, currentPage);
+                                        }
+                                    })
+                                    .catch(err => {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Lỗi',
+                                            text: 'Không thể cập nhật sản phẩm. Vui lòng thử lại!'
+                                        });
+                                    });
+                            }
+                        });
+
                     });
             });
         });
@@ -2776,29 +2757,34 @@
             const categoryId = document.getElementById('categoryId').value;
             const status = document.getElementById('status').value;
 
-            // Kiểm tra trùng tên
             axios.get('/AgriculturalWarehouseManagementApplication/api/seller/products')
                 .then(res => {
                     const isDuplicate = res.data.some(p => p.name.toLowerCase() === name.toLowerCase());
                     if (isDuplicate) {
-                        alert("Tên sản phẩm đã tồn tại.");
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Trùng tên sản phẩm',
+                            text: 'Tên sản phẩm đã tồn tại. Vui lòng chọn tên khác.'
+                        });
                         btn.disabled = false;
-                        btn.innerText = "Dồng ý";
+                        btn.innerText = "Đồng ý";
                         return;
                     }
 
-                    // Tạo sản phẩm
-                    const data = {name, description, categoryId, status};
+                    const data = { name, description, categoryId, status };
                     axios.post('/AgriculturalWarehouseManagementApplication/api/seller/products', data)
                         .then(response => {
                             const productId = response.data.id;
                             if (!productId) {
-                                alert("Không lấy được productId sau khi tạo.");
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: 'Không lấy được productId sau khi tạo.'
+                                });
                                 return;
                             }
 
-                            // 👉 Bắt đầu upload ảnh
-                            const files = selectedFiles.slice(0, 5); // ✅ sửa dòng này để dùng đúng file đã chọn
+                            const files = selectedFiles.slice(0, 5);
                             const uploads = [];
 
                             for (const file of files) {
@@ -2811,17 +2797,26 @@
 
                             Promise.all(uploads)
                                 .then(() => {
-                                    alert("Sản phẩm & ảnh đã được thêm thành công.");
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Thành công',
+                                        text: 'Sản phẩm & ảnh đã được thêm thành công.'
+                                    });
                                     bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
                                     form.reset();
                                     axios.get('/AgriculturalWarehouseManagementApplication/api/seller/products')
                                         .then(res => {
                                             const totalItems = res.data.length;
                                             const lastPage = Math.ceil(totalItems / pageSize);
-                                            loadProducts(lastPage); // ✅ Đến trang cuối
+                                            loadProducts(lastPage);
                                         });
-                                    // 👉 Nếu muốn quản lý ảnh tiếp, có thể mở modal View luôn:
-                                    // openImageModal(productId);
+                                })
+                                .catch(() => {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Lỗi upload ảnh',
+                                        text: 'Một số ảnh có thể không được upload thành công.'
+                                    });
                                 })
                                 .finally(() => {
                                     btn.disabled = false;
@@ -2829,7 +2824,11 @@
                                 });
                         })
                         .catch(err => {
-                            alert("Thêm sản phẩm thất bại.");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: 'Thêm sản phẩm thất bại.'
+                            });
                             console.error(err);
                             btn.disabled = false;
                             btn.innerText = "Đồng ý";
@@ -2857,19 +2856,28 @@
                 .then(res => {
                     const isDuplicate = res.data.some(p => p.name.toLowerCase() === name.toLowerCase() && p.id != id);
                     if (isDuplicate) {
-                        alert("Tên sản phẩm đã tồn tại.");
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Tên sản phẩm đã tồn tại!",
+                            text: "Vui lòng chọn tên khác.",
+                        });
                         btn.disabled = false;
-                        btn.innerText = "Câp Nhật";
+                        btn.innerText = "Cập Nhật";
                         return;
                     }
-                    const data = {name, description, categoryId, status};
-                    axios.put(`/AgriculturalWarehouseManagementApplication/api/seller/products/${id}`, data)
+
+                    const data = { name, description, categoryId, status };
                     axios.put(`/AgriculturalWarehouseManagementApplication/api/seller/products/${id}`, data)
                         .then(() => {
-                            alert("Cập nhật thành công!");
+                            Swal.fire({
+                                icon: "success",
+                                title: "Cập nhật thành công!",
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+
                             bootstrap.Modal.getInstance(document.getElementById('editProductModal')).hide();
 
-                            // 👉 Cập nhật trong mảng allProducts
                             const index = allProducts.findIndex(p => p.id == id);
                             if (index !== -1) {
                                 allProducts[index] = {
@@ -2884,7 +2892,6 @@
                                 };
                             }
 
-                            // 👉 Render lại trang hiện tại (không gọi lại API)
                             if (currentSort.key) {
                                 renderSortedProducts();
                             } else {
@@ -2892,7 +2899,11 @@
                             }
                         })
                         .catch(err => {
-                            alert("Lỗi khi cập nhật sản phẩm: " + (err.response?.data?.message || "Không rõ lỗi"));
+                            Swal.fire({
+                                icon: "error",
+                                title: "Lỗi khi cập nhật sản phẩm",
+                                text: err.response?.data?.message || "Không rõ lỗi",
+                            });
                         })
                         .finally(() => {
                             btn.disabled = false;
@@ -2912,37 +2923,48 @@
                 const deleteAllBtn = document.getElementById("deleteAllBtn");
 
                 imageContainer.innerHTML = "";
+
                 deleteAllBtn.onclick = () => {
                     axios.get(`/AgriculturalWarehouseManagementApplication/api/seller/${productId}/images`)
                         .then(res => {
                             const images = res.data;
                             if (images.length === 0) {
-                                alert("Không có ảnh nào để xoá.");
+                                Swal.fire("Thông báo", "Không có ảnh nào để xoá.", "info");
                                 return;
                             }
 
-                            if (confirm("Bạn có chắc chắn muốn xoá tất cả ảnh của sản phẩm này không?")) {
-                                const deletePromises = images.map(img =>
-                                    axios.delete(`/AgriculturalWarehouseManagementApplication/api/seller/product/${productId}/images/${img.id}`)
-                                );
+                            Swal.fire({
+                                title: "Xác nhận xoá?",
+                                text: "Bạn có chắc chắn muốn xoá tất cả ảnh của sản phẩm này không?",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonText: "Xoá tất cả",
+                                cancelButtonText: "Huỷ"
+                            }).then(result => {
+                                if (result.isConfirmed) {
+                                    const deletePromises = images.map(img =>
+                                        axios.delete(`/AgriculturalWarehouseManagementApplication/api/seller/product/${productId}/images/${img.id}`)
+                                    );
 
-                                Promise.all(deletePromises)
-                                    .then(() => {
-                                        imageContainer.innerHTML = "";
-                                        renderAddSlots(imageContainer, fileInput);
-                                        alert("Đã xoá tất cả ảnh.");
-                                    })
-                                    .catch(err => alert("Xoá ảnh lỗi"));
-                            }
+                                    Promise.all(deletePromises)
+                                        .then(() => {
+                                            imageContainer.innerHTML = "";
+                                            renderAddSlots(imageContainer, fileInput);
+                                            Swal.fire("Thành công", "Đã xoá tất cả ảnh.", "success");
+                                        })
+                                        .catch(err => {
+                                            console.error(err);
+                                            Swal.fire("Lỗi", "Xoá ảnh lỗi", "error");
+                                        });
+                                }
+                            });
                         });
                 };
 
                 axios.get(`/AgriculturalWarehouseManagementApplication/api/seller/${productId}/images`)
                     .then(res => {
                         const images = res.data;
-                        let imageCount = images.length;
 
-                        // 👉 render từng ảnh hiện có
                         images.forEach(img => {
                             const box = createImageBox(img.imageUrl, img.id, productId);
                             imageContainer.appendChild(box);
@@ -2957,20 +2979,16 @@
                             const currentImages = imageContainer.querySelectorAll(".image-box:not(.add-btn)").length;
                             const availableSlots = 5 - currentImages;
 
-                            // 👉 Cảnh báo nếu người dùng chọn quá số slot trống
                             if (files.length > availableSlots) {
-                                alert(`Chỉ có thể tải tối đa ${availableSlots} ảnh nữa.`);
+                                Swal.fire("Giới hạn", `Chỉ có thể tải tối đa ${availableSlots} ảnh nữa.`, "warning");
                                 return;
                             }
 
-                            const filesToUpload = files.slice(0, availableSlots); // ✅ Giới hạn số ảnh upload
-
-                            let uploadCount = 0;
+                            const filesToUpload = files.slice(0, availableSlots);
 
                             filesToUpload.forEach(file => {
                                 const formData = new FormData();
                                 formData.append("file", file);
-                                console.log("👉 Đang upload ảnh tới:", `/AgriculturalWarehouseManagementApplication/api/seller/product/${productId}/upload-image`);
 
                                 axios.post(`/AgriculturalWarehouseManagementApplication/api/seller/product/${productId}/upload-image`, formData)
                                     .then(res => {
@@ -2985,15 +3003,15 @@
                                             imageContainer.appendChild(newBox);
                                         }
 
-                                        renderAddSlots(imageContainer, fileInput); // render lại slot "+"
+                                        renderAddSlots(imageContainer, fileInput);
                                     })
                                     .catch(err => {
-                                        alert("Tải ảnh thất bại");
                                         console.error(err);
+                                        Swal.fire("Lỗi", "Tải ảnh thất bại", "error");
                                     });
                             });
 
-                            fileInput.value = ""; // ✅ Reset input sau khi upload
+                            fileInput.value = "";
                         };
 
                         new bootstrap.Modal(document.getElementById('viewImageModal')).show();
@@ -3434,6 +3452,19 @@
 
 <!--CSS Product Detail-->
 <style>
+    .product-detail-table th,
+    .product-detail-table td {
+        border-right: 1px solid #dee2e6;
+    }
+
+    .product-detail-table th:last-child,
+    .product-detail-table td:last-child {
+        border-right: none;
+    }
+
+    .product-detail-table {
+        border-collapse: collapse;
+    }
     .product-detail-table {
         width: 100%;
         border-collapse: collapse;
@@ -3651,7 +3682,7 @@
             if (isAvailableMode) {
                 const selectedBtn = document.querySelector("#weightUnitSelectContainer .weight-unit-btn.active");
                 if (!selectedBtn) {
-                    alert("Vui lòng chọn Available Weight!");
+                    Swal.fire("Thông báo", "Vui lòng chọn Available Weight!", "warning");
                     btn.disabled = false;
                     btn.innerText = "Thêm Chi Tiết";
                     return;
@@ -3663,14 +3694,14 @@
                 const unitInput = document.getElementById("unit").value.trim();
 
                 if (!weightInput || isNaN(parseFloat(weightInput))) {
-                    alert("Vui lòng nhập khối lượng hợp lệ.");
+                    Swal.fire("Thông báo", "Vui lòng nhập khối lượng hợp lệ.", "warning");
                     btn.disabled = false;
                     btn.innerText = "Thêm Chi Tiết";
                     return;
                 }
 
                 if (!unitInput) {
-                    alert("Vui lòng chọn đơn vị.");
+                    Swal.fire("Thông báo", "Vui lòng chọn đơn vị.", "warning");
                     btn.disabled = false;
                     btn.innerText = "Thêm Chi Tiết";
                     return;
@@ -3689,12 +3720,12 @@
                 price: parseFloat(document.getElementById("price").value),
                 expiry: parseInt(document.getElementById("expiry").value),
                 status: document.getElementById("productDetailStatus").value,
-                userId: parseInt(userId) // 👈 Bổ sung userId
+                userId: parseInt(userId)
             };
 
             axios.post('/AgriculturalWarehouseManagementApplication/api/seller/product-details', dto)
                 .then(() => {
-                    alert("Thêm chi tiết mới thành công.");
+                    Swal.fire("Thành công", "Thêm chi tiết mới thành công.", "success");
                     bootstrap.Modal.getInstance(document.getElementById('addProductDetailModal')).hide();
 
                     form.reset();
@@ -3717,19 +3748,17 @@
                     // 👇 Tải lại toàn bộ để tính trang cuối
                     axios.get('/AgriculturalWarehouseManagementApplication/api/seller/product-details/all-dto')
                         .then(res => {
-                            // 👉 Reset filter ngoài bảng về "Tất cả sản phẩm"
                             document.getElementById("productFilter").value = "";
-
                             const totalItems = res.data.length;
                             const lastPage = Math.ceil(totalItems / pageSizeDetail);
-                            loadProductDetails(null, lastPage); // load lại toàn bộ
+                            loadProductDetails(null, lastPage);
                         });
                 })
                 .catch(err => {
                     if (err.response?.data?.message) {
-                        alert("Lỗi khi thêm Product Detail: " + err.response.data.message);
+                        Swal.fire("Lỗi", "Lỗi khi thêm Product Detail: " + err.response.data.message, "error");
                     } else {
-                        alert("Lỗi khi thêm Product Detail.");
+                        Swal.fire("Lỗi", "Lỗi khi thêm Product Detail.", "error");
                         console.error(err);
                     }
                 })
@@ -3889,10 +3918,21 @@
         const deleteBtn = e.target.closest(".btn-delete-product-detail");
         if (deleteBtn) {
             const id = deleteBtn.dataset.id;
-            const confirmDelete = confirm("Bạn có chắc muốn ngừng kinh doanh chi tiết sản phẩm này?");
-            if (confirmDelete) {
-                softDeleteProductDetail(id);
-            }
+
+            Swal.fire({
+                title: 'Bạn chắc chứ?',
+                text: "Chi tiết sản phẩm sẽ ngừng kinh doanh!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Xác nhận',
+                cancelButtonText: 'Huỷ'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    softDeleteProductDetail(id);
+                }
+            });
         }
     });
 
@@ -3950,7 +3990,14 @@
 
         axios.put(`/AgriculturalWarehouseManagementApplication/api/seller/product-details/${id}`, dto)
             .then(() => {
-                alert("Cập nhật thành công.");
+                Swal.fire({
+                    icon: "success",
+                    title: "Thành công",
+                    text: "Cập nhật chi tiết sản phẩm thành công.",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+
                 bootstrap.Modal.getInstance(document.getElementById("editProductDetailModal")).hide();
 
                 const currentFilterId = document.getElementById("productFilter").value;
@@ -3958,28 +4005,43 @@
             })
             .catch(err => {
                 console.error("❌ Lỗi khi cập nhật:", err);
-
-                // Nếu server có trả message lỗi cụ thể
+                let msg = "Có lỗi xảy ra khi cập nhật chi tiết.";
                 if (err.response?.data?.message) {
-                    alert("Lỗi khi cập nhật: " + err.response.data.message);
-                } else {
-                    alert("Có lỗi xảy ra khi cập nhật chi tiết.");
+                    msg = "Lỗi khi cập nhật: " + err.response.data.message;
                 }
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Lỗi",
+                    text: msg
+                });
             });
     });
 
     function softDeleteProductDetail(id) {
         axios.delete(`/AgriculturalWarehouseManagementApplication/api/seller/product-details/${id}`)
             .then(() => {
-                alert("Chi tiết sản phẩm đã được chuyển sang INACTIVE.");
+                Swal.fire({
+                    icon: "success",
+                    title: "Đã xoá mềm",
+                    text: "Chi tiết sản phẩm đã chuyển sang INACTIVE.",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+
                 const currentFilterId = document.getElementById("productFilter").value;
                 loadProductDetails(currentFilterId || null, currentPageDetail);
             })
             .catch(err => {
                 console.error("❌ Lỗi khi xóa mềm:", err);
-                alert("Không thể cập nhật trạng thái.");
+                Swal.fire({
+                    icon: "error",
+                    title: "Lỗi",
+                    text: "Không thể cập nhật trạng thái."
+                });
             });
     }
+
 
 </script>
 
@@ -4032,6 +4094,346 @@
 
 <!--Tab Product Detail End-->
 
+<!--5. Tab Order-->
+<!--CRUD Order-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tabLinks = document.querySelectorAll('.user-nav-pills .nav-link');
+        let isOrderTableInitialized = false;
+
+        const BASE_URL = "/AgriculturalWarehouseManagementApplication/api/seller/orders";
+
+        function loadOrderData() {
+            fetch(BASE_URL)
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById("orderTableBody");
+                    tbody.innerHTML = ""; // reset
+
+                    data.forEach((order, index) => {
+                        const row = document.createElement("tr");
+
+                        let statusColor = "#6c757d"; // default: gray
+                        switch (order.status) {
+                            case "PENDING":
+                                statusColor = "#ffc107"; // yellow
+                                break;
+                            case "CONFIRMED":
+                                statusColor = "#0dcaf0"; // blue
+                                break;
+                            case "CANCELLED":
+                                statusColor = "#dc3545"; // red
+                                break;
+                            case "STOCKOUT":
+                                statusColor = "#6c757d"; // gray
+                                break;
+                            case "DELIVERED":
+                                statusColor = "#198754"; // green
+                                break;
+                            case "COMPLETED":
+                                statusColor = "#0d6efd"; // darker blue
+                                break;
+                        }
+
+
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${order.orderCode}</td>
+                            <td>${new Date(order.orderDate).toLocaleString()}</td>
+                            <td>${order.phone}</td>
+                            <td>${order.address}</td>
+                            <td>${order.totalAmount.toLocaleString()}</td>
+                            <td>${order.finalAmount.toLocaleString()}</td>
+                            <td>
+                              <span class="order-status ${order.status}"
+                                    style="color: white; background-color: ${statusColor}; font-weight: 600; padding: 4px 10px; border-radius: 12px; display: inline-block; text-transform: capitalize;">
+                                ${order.status.replace(/_/g, ' ')}
+                              </span>
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                    <button class="btn btn-sm btn-primary confirm-btn ${order.status !== 'PENDING' ? 'disabled-btn' : ''}"
+                                            data-order-id="${order.orderId}"
+                                            title="Xác nhận"
+                                            ${order.status !== 'PENDING' ? 'disabled' : ''}>
+                                        <i class="bi bi-check-circle me-1"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-tracking-custom"
+                                            data-order-id="${order.orderId}">
+                                        Theo dõi đơn hàng
+                                    </button>
+                                </div>
+                            </td>
+
+                        `;
+                        tbody.appendChild(row);
+                    });
+
+                    // Khởi tạo DataTable sau khi có dữ liệu
+                    if (!isOrderTableInitialized) {
+                        $(document).ready(function () {
+                            $.fn.DataTable.ext.pager.numbers_length = 7; // 👈 Giới hạn 5 nút trang
+
+                            const table = $('#orderTable').DataTable({
+                                pageLength: 5,
+                                lengthMenu: [1, 3, 5, 7],
+                                paging: true,
+                                searching: true,
+                                info: true,
+                                ordering: true,
+                                responsive: true, // 👈 Tối ưu cho thiết bị nhỏ
+                                autoWidth: false, // 👈 Tránh giãn cột bất hợp lý
+                                mark: true,
+                                language: {
+                                    search: "🔍 Tìm kiếm:",
+                                    lengthMenu: "Hiển thị _MENU_ dòng mỗi trang",
+                                    info: "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
+                                    infoEmpty: "Không có dữ liệu để hiển thị",
+                                    zeroRecords: "Không tìm thấy kết quả phù hợp",
+                                    paginate: {
+                                        previous: "<< Trước",
+                                        next: "Sau >>"
+                                    },
+                                },
+                                columnDefs: [
+                                    { targets: -1, orderable: false }
+                                ]
+                            });
+
+                            table.on('order.dt search.dt draw.dt', function () {
+                                let pageInfo = table.page.info();
+                                table.column(0, { search: 'applied', order: 'applied', page: 'current' })
+                                    .nodes()
+                                    .each(function (cell, i) {
+                                        cell.innerHTML = i + 1 + pageInfo.start;
+                                    });
+                            }).draw();
+                        });
+                        isOrderTableInitialized = true;
+                    }
+                })
+                .catch(err => {
+                    console.error("Lỗi khi tải đơn hàng:", err);
+                });
+        }
+
+        // Xử lý load tab
+        document.querySelectorAll('.user-nav-pills .nav-link, .tab-pane').forEach(el => {
+            el.classList.remove("active", "show");
+        });
+
+        const savedTabId = localStorage.getItem("activeSidebarTab");
+        const savedTab = savedTabId ? document.getElementById(savedTabId) : null;
+
+        if (savedTab) {
+            new bootstrap.Tab(savedTab).show();
+        } else {
+            const defaultTab = document.querySelector('.user-nav-pills .nav-link');
+            if (defaultTab) new bootstrap.Tab(defaultTab).show();
+        }
+
+        tabLinks.forEach(tab => {
+            tab.addEventListener("shown.bs.tab", function (e) {
+                const tabId = e.target.getAttribute("id");
+                localStorage.setItem("activeSidebarTab", tabId);
+
+                if (tabId === "pills-order-tab" && !isOrderTableInitialized) {
+                    loadOrderData();
+                }
+            });
+        });
+    });
+    document.addEventListener("click", function (e) {
+        const button = e.target.closest(".confirm-btn");
+        if (!button) return;
+
+        const orderId = button.getAttribute("data-order-id");
+        if (!orderId) return;
+
+        Swal.fire({
+            title: "Xác nhận đơn hàng?",
+            text: "Bạn có chắc muốn xác nhận đơn hàng này không?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Xác nhận",
+            cancelButtonText: "Huỷ",
+        }).then((result) => {
+            if (!result.isConfirmed) return;
+
+            fetch(`/AgriculturalWarehouseManagementApplication/api/seller/orders/${orderId}/confirm`, {
+                method: "PUT"
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error("Xác nhận thất bại");
+                    return res.text();
+                })
+                .then(msg => {
+                    Swal.fire({
+                        title: "Thành công",
+                        text: msg,
+                        icon: "success",
+                        confirmButtonText: "OK"
+                    }).then(() => {
+                        location.reload(); // Reload lại sau khi nhấn OK
+                    });
+                })
+                .catch(err => {
+                    Swal.fire({
+                        title: "Lỗi",
+                        text: err.message,
+                        icon: "error"
+                    });
+                });
+        });
+    });
+    document.addEventListener("click", function (e) {
+        const trackingBtn = e.target.closest(".btn-tracking-custom");
+        if (!trackingBtn) return;
+
+        const orderId = trackingBtn.getAttribute("data-order-id");
+        if (!orderId) return;
+
+        window.location.href = `/AgriculturalWarehouseManagementApplication/seller/orderTracking?orderId=${orderId}`;
+    });
+
+</script>
+
+<!--CSS Order-->
+<style>
+    /* Áp dụng border dọc cho từng ô */
+    #orderTable th, #orderTable td {
+        border-right: 1px solid #dee2e6; /* màu xám nhạt giống Bootstrap */
+    }
+
+    /* Xoá border phải của cột cuối cùng để không bị viền thừa */
+    #orderTable th:last-child,
+    #orderTable td:last-child {
+        border-right: none;
+    }
+
+    /* Đảm bảo có border ngang nếu cần */
+    #orderTable {
+        border-collapse: collapse;
+    }
+    /* Tăng khoảng cách giữa các control và bảng */
+    .dataTables_length,
+    .dataTables_filter,
+    .dataTables_info,
+    .dataTables_paginate {
+        margin-top: 20px;
+        margin-bottom: 25px;
+    }
+
+    /* Nếu cần đẩy control ra xa bảng hơn nữa */
+    .dataTables_wrapper .row {
+        margin-bottom: 20px;
+    }
+    button.disabled-btn:disabled {
+        background-color: transparent !important;
+        border: 1px solid #ccc;
+        color: #aaa !important;
+        cursor: not-allowed;
+    }
+
+    .btn-tracking-custom {
+        background-color: #198754 !important; /* Bootstrap green */
+        color: #fff !important;
+        border: 1px solid #198754 !important;
+        font-weight: 500;
+    }
+
+    .btn-tracking-custom:hover,
+    .btn-tracking-custom:focus,
+    .btn-tracking-custom:active {
+        background-color: #157347 !important;
+        color: #fff !important;
+        border-color: #157347 !important;
+    }
+
+    #orderTable thead th {
+        text-align: center;
+        vertical-align: middle; /* nếu muốn căn giữa theo chiều dọc luôn */
+    }
+    /* Bảng tổng thể */
+    table.dataTable {
+        border-collapse: separate !important;
+        border-spacing: 0;
+        width: 100% !important;
+        background-color: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        font-family: "Segoe UI", Roboto, sans-serif;
+        font-size: 14px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Header */
+    table.dataTable thead {
+        background-color: #f8f9fa;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    table.dataTable thead th {
+        padding: 12px 16px;
+        color: #343a40;
+        vertical-align: middle;
+    }
+
+    /* Dòng dữ liệu */
+    table.dataTable tbody td {
+        padding: 10px 16px;
+        vertical-align: middle;
+        color: #212529;
+    }
+
+    table.dataTable tbody tr:hover {
+        background-color: #f1f3f5;
+        cursor: pointer;
+    }
+
+    /* Căn phải cho số */
+    td.text-end,
+    th.text-end {
+        text-align: right !important;
+    }
+
+    /* Căn giữa cho các icon, hành động */
+    td.text-center,
+    th.text-center {
+        text-align: center !important;
+    }
+
+    /* Pagination (nếu cần tinh chỉnh) */
+    .dataTables_paginate {
+        margin-top: 20px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 4px 10px;
+        margin: 0 2px;
+        background-color: white;
+        color: #495057;
+        font-weight: 500;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background-color: #007bff;
+        color: white !important;
+        border-color: #007bff;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: #e9ecef;
+        color: #212529 !important;
+    }
+</style>
+<!--Tab Order End-->
 
 <!-- Bg overlay Start -->
 <div class="bg-overlay"></div>
@@ -4069,71 +4471,18 @@
 <!-- script js -->
 <script th:src="@{/Frontend/assets/js/script.js}"></script>
 
-<!-- DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-
-<!-- DataTables JS -->
+<!-- DataTables + mark.js -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.13.6/features/mark.js/datatables.mark.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js"></script>
 
 <!-- SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- theme setting js -->
 <script th:src="@{/Frontend/assets/js/theme-setting.js}"></script>
-
-<!--Phân trang template Order Tab-->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const tabLinks = document.querySelectorAll('.user-nav-pills .nav-link');
-        let isOrderTableInitialized = false;
-
-        // Xóa active cũ
-        document.querySelectorAll('.user-nav-pills .nav-link, .tab-pane').forEach(el => {
-            el.classList.remove("active", "show");
-        });
-
-        // Kích hoạt tab lưu trong localStorage
-        const savedTabId = localStorage.getItem("activeSidebarTab");
-        const savedTab = savedTabId ? document.getElementById(savedTabId) : null;
-
-        if (savedTab) {
-            new bootstrap.Tab(savedTab).show();
-        } else {
-            const defaultTab = document.querySelector('.user-nav-pills .nav-link');
-            if (defaultTab) new bootstrap.Tab(defaultTab).show();
-        }
-
-        // Ghi lại khi chuyển tab
-        tabLinks.forEach(tab => {
-            tab.addEventListener("shown.bs.tab", function (e) {
-                const tabId = e.target.getAttribute("id");
-                localStorage.setItem("activeSidebarTab", tabId);
-
-                // Khi tab đơn hàng được mở → khởi tạo DataTable nếu chưa có
-                if (tabId === "pills-order-tab" && !isOrderTableInitialized) {
-                    $('#orderTable').DataTable({
-                        paging: true,
-                        searching: true,
-                        info: true,
-                        language: {
-                            search: "Tìm kiếm:",
-                            lengthMenu: "Hiển thị _MENU_ dòng",
-                            info: "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
-                            paginate: {
-                                previous: "Trước",
-                                next: "Sau"
-                            },
-                            zeroRecords: "Không tìm thấy đơn hàng nào"
-                        }
-                    });
-                    isOrderTableInitialized = true;
-                }
-            });
-        });
-    });
-</script>
-
 
 <!--Reload giữ nguyên tab-->
 <script>

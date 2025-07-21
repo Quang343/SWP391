@@ -71,5 +71,9 @@ public class BackEndController {
         return "BackEnd/Seller/seller-dashboard";
     }
 
+    @RequestMapping("/seller/orderTracking")
+    public String sellerOrderTracking() {
+        return "BackEnd/seller/order-tracking";
+    }
 }
 

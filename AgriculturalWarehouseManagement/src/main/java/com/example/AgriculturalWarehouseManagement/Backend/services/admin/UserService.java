@@ -41,7 +41,7 @@ public class UserService implements IUserService{
 
     private User mapDtoToUser(UserDTO dto, Role role) {
         return User.builder()
-                .username(dto.getUsername())
+                .userName(dto.getUsername())
                 .fullName(dto.getFullName())
                 .image(dto.getImage())
                 .password(dto.getPassword())

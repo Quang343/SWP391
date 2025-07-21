@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface User_SellerRepository extends JpaRepository<User, Long> {
 
     // 🔸 Nếu bạn cần tìm theo username (email đăng nhập), có thể thêm:
-    User findByUsername(String username);
+    User findByUserName(String username);
 }

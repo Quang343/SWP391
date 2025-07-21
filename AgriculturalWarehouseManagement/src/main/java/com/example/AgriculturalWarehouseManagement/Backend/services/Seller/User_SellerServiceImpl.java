@@ -26,13 +26,13 @@ public class User_SellerServiceImpl implements User_SellerService {
 
     @Override
     public User_SellerDTO getUserByUsername(String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUserName(username);
         return mapToDTO(user);
     }
 
     @Override
     public User_SellerDTO updateUserProfile(User_SellerDTO dto) {
-        User user = userRepository.findById(dto.getUserId())
+        User user = userRepository.findById((long)dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng với ID: " + dto.getUserId()));
 
         user.setFullName(dto.getFullName());
@@ -53,7 +53,7 @@ public class User_SellerServiceImpl implements User_SellerService {
         }
 
         user.setPhone(dto.getPhone());
-        user.setUsername(dto.getUsername()); // ✅ CẬP NHẬT USERNAME
+        user.setUserName(dto.getUsername()); // ✅ CẬP NHẬT USERNAME
         user.setPassword(dto.getPassword());
 
         userRepository.save(user);
@@ -69,7 +69,7 @@ public class User_SellerServiceImpl implements User_SellerService {
                 .createdAt(user.getCreatedAt() != null ? user.getCreatedAt().format(dateFormat) : "")
                 .email(user.getEmail())
                 .phone(user.getPhone())
-                .username(user.getUsername()) // map lại đúng username
+                .username(user.getUserName()) // map lại đúng username
                 .password(user.getPassword())
                 .image(user.getImage()) // 👈 Bổ sung dòng này
                 .build();

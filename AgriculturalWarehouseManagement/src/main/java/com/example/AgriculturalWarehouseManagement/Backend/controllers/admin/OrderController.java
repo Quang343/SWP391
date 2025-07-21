@@ -25,7 +25,7 @@ public class OrderController {
 
     @GetMapping("/admin/orders")
     public String getAllOrders(Model model) {
-        List<Order> orders = orderService.findByStatusIsNot(OrderStatus.REMOVED.name());
+        List<Order> orders = orderService.findByStatusIsNot(OrderStatus.CANCELLED.name());
         model.addAttribute("orders", orders);
         return "BackEnd/Admin/All_Orders";
     }

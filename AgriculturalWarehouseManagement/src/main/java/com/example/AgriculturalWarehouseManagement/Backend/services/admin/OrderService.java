@@ -98,7 +98,7 @@ public class OrderService implements IOrderService {
         Optional<Order> optional = orderRepository.findById(id);
         if (optional.isPresent()) {
             Order order = optional.get();
-            order.setStatus(OrderStatus.REMOVED.name());
+            order.setStatus(OrderStatus.CANCELLED.name());
             orderRepository.save(order);
             return true;
         }
