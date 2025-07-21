@@ -110,4 +110,9 @@ public class BlogService {
         return blogRepository.findAllByStatus(status, pageable);
     }
 
+    public Long getNumberBlogUser(int userId) {
+        Long numberOfBlogs = blogRepository.countBlogsByUserId(userId);
+        return numberOfBlogs;
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.bloger;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.bloger.BlogDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ProductDetailUserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Blog;
@@ -192,11 +193,12 @@ public class BlogController {
     }
 
     @RequestMapping("/my-blog")
-    public String myBlog() {
+    public String myBlog(Model model) {
         Object sessionAccount = session.getAttribute("account");
         if (sessionAccount == null) {
             return "redirect:/home";
         }
+
         return "FrontEnd/Home/my-blog";
     }
 

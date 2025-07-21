@@ -1,6 +1,7 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.bloger;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.bloger.BlogDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.AddressBookResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Blog;
 import com.example.AgriculturalWarehouseManagement.Backend.models.BlogCategory;
@@ -213,6 +214,13 @@ public class BlogRestController {
     public ResponseEntity<?> deleteBlog(@PathVariable Integer id) {
         blogService.deleteById(id);
         return ResponseEntity.ok("Xoá thành công");
+    }
+
+    @GetMapping("/total-blogs/{userID}")
+    public ResponseEntity<?> getAddressBook(@PathVariable int userID) {
+        String numberBlogUsers = "" + blogService.getNumberBlogUser(userID);
+
+        return ResponseEntity.ok(numberBlogUsers );
     }
 
 }

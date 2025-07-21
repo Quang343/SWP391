@@ -69,4 +69,10 @@ public interface BlogRepository extends JpaRepository<Blog, Integer> {
     Page<Blog> findAll(Pageable pageable);
 
 
+    @Query(value = """
+                SELECT COUNT(b.blogid) as numberBlog FROM blog b
+                WHERE b.userid = :userId
+            """, nativeQuery = true)
+    Long countBlogsByUserId(int userId);
+
 }
