@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- CSS Pikaday -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+
+<style>
+  /* Ensure table is scrollable horizontally if content overflows */
+  .table-responsive {
+    overflow-x: auto;
+    margin-bottom: 0;
+    position: relative;
+  }
+
+  #table_id {
+    width: 100%;
+    min-width: 1000px;
+  }
+
+  #table_id.table,
+  #table_id th,
+  #table_id td {
+    border-color: #e6f3f2 !important;
+  }
+
+  #pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 12px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 10;
+    max-width: 100%;
+  }
+
+  #pagination-controls .page-item {
+    margin: 0 2.5px;
+  }
+
+  #pagination-controls .page-link {
+    border-radius: 4px;
+    padding: 6px 12px;
+    color: #018F84;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid #018F84;
+    background-color: transparent;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  #pagination-controls .page-item:first-child .page-link,
+  #pagination-controls .page-item:last-child .page-link {
+    background-color: #018F84;
+    color: #fff;
+    border-color: #018F84;
+  }
+
+  #pagination-controls .page-item.active .page-link {
+    background-color: #018F84;
+    border-color: #018F84;
+    color: #fff;
+    box-shadow: none;
+  }
+
+  #pagination-controls .page-item.disabled .page-link {
+    color: #018F84;
+    border-color: #e6f3f2;
+    background-color: #e6f3f2;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  #pagination-controls .page-link:hover:not(.disabled .page-link):not(.active .page-link):not(:first-child .page-link):not(:last-child .page-link) {
+    background-color: #e6f3f2;
+    color: #018F84;
+  }
+
+  #pagination-controls .page-item:not(.disabled):first-child .page-link:hover,
+  #pagination-controls .page-item:not(.disabled):last-child .page-link:hover {
+    background-color: #016f6a;
+    color: #fff;
+  }
+
+  .footer {
+    z-index: 20 !important;
+  }
+
+  .sidebar-wrapper {
+    position: fixed;
+    z-index: 30 !important;
+  }
+
+  .modal,
+  .offcanvas {
+    z-index: 1050 !important;
+  }
+
+  .modal-backdrop {
+    z-index: 1040 !important;
+  }
+
+  .btn-theme {
+    background-color: #018F84;
+    color: #fff;
+    border-color: #018F84;
+  }
+
+  .btn-theme:hover {
+    background-color: #016f6a;
+    color: #fff;
+    border-color: #016f6a;
+  }
+
+  .search-bar input {
+    border: 1px solid #e6f3f2;
+  }
+
+  .search-bar input:focus {
+    border-color: #018F84;
+    box-shadow: 0 0 5px rgba(1, 143, 132, 0.3);
+  }
+
+  /* CSS tùy chỉnh cho Pikaday (y hệt như batch) */
+  .pika-select {
+    padding: 4px 8px;
+    font-size: 14px;
+    max-width: 90px;
+  }
+
+  .pika-single {
+    z-index: 9999 !important;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .pika-button.pika-selected,
+  .pika-button:hover.pika-selected {
+    background-color: #28a745 !important;
+    color: white !important;
+    border-radius: 6px;
+  }
+
+  .pika-button:hover {
+    background-color: #a3d9a5 !important;
+    color: black !important;
+    border-radius: 6px;
+  }
+
+  .pika-button.is-today {
+    border-bottom: 2px solid #28a745 !important;
+  }
+
+  .pika-button {
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+  }
+  th.sortable {
+    cursor: pointer;
+    position: relative;
+    padding-right: 20px;
+  }
+  th.sortable::after {
+    content: '';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 4px solid transparent;
+    border-top-color: #018F84;
+    opacity: 0.5;
+  }
+  th.sortable.asc::after {
+    border-top-color: transparent;
+    border-bottom-color: #018F84;
+    opacity: 1;
+  }
+  th.sortable.desc::after {
+    border-bottom-color: transparent;
+    border-top-color: #018F84;
+    opacity: 1;
+  }
+  th.sortable:hover::after {
+    opacity: 1;
+  }
+</style>
+
+<body>
+<!-- tap on top start-->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end-->
+
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  <div th:replace="~{BackEnd/fragments/WareHouse/header::header}"></div>
+  <!-- Page Header Ends-->
+
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
+    <!-- Page Sidebar Ends-->
+
+    <!-- StockIn section Start -->
+    <div class="page-body">
+      <!-- Table Start -->
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="card card-table">
+              <div class="card-body">
+                <div class="title-header option-title">
+                  <!-- Dòng 1: chỉ StockIn List -->
+                  <div class="first-line">
+                    <h5>Danh sách nhập kho</h5>
+                  </div>
+
+                  <!-- Dòng 2: Add new StockIn và Search bên phải -->
+                  <div class="second-line" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                    <a th:href="@{/warehouse/addstockin}" class="align-items-center btn btn-theme btn-animation d-flex">
+                      <i data-feather="plus"></i> Tạo phiếu nhập
+                    </a>
+                    <div class="search-bar">
+                      <input type="text" class="form-control" placeholder="Tìm kiếm..." id="searchInputStockIn">
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="table-responsive">
+                    <div class="table-responsive">
+                      <table class="table all-package order-table theme-table" id="table_id">
+                        <thead>
+                        <tr>
+                          <th class="sortable" data-sort="stockInId">Mã nhập kho</th>
+                          <th class="sortable" data-sort="supplierName">Nhà cung cấp</th>
+                          <th>Kho</th>
+                          <th class="sortable" data-sort="stockInDate">Ngày nhập</th>
+                          <th>Ghi chú</th>
+                          <th>Tuỳ chọn</th>
+                        </tr>
+                        </thead>
+                        <tbody id="stockInTableBody"></tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <ul id="pagination-controls" class="pagination"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Table End -->
+
+      <!-- Container-fluid Ends-->
+      <div th:replace="~{BackEnd/fragments/WareHouse/footer::footer}"></div>
+    </div>
+    <!-- StockIn section End -->
+  </div>
+  <!-- Page Body End-->
+</div>
+<!-- page-wrapper End-->
+
+<!-- Modal start -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="staticBackdropLabel">Đăng xuất</h5>
+        <p>Bạn có chắc chắn muốn đăng xuất?</p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+        <div class="button-box">
+          <button type="button" class="btn btn--no btn-animation" data-bs-dismiss="modal">Không</button>
+          <button type="button" th:onclick="|window.location='@{/backend/login}'|" class="btn btn--yes btn-primary btn-animation">Có</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal end -->
+
+<!-- Delete Modal Box Start -->
+<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle" aria-hidden="true" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-block text-center">
+        <h4 class="modal-title w-100" id="exampleModalLabel22">Bạn có chắc?</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="remove-box">
+          <p>Bạn có chắc muốn xóa phiếu nhập kho này?</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Không</button>
+        <button type="button" class="btn btn-animation btn-md fw-bold" id="confirmDeleteBtn">Có</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade theme-modal remove-coupon" id="exampleModalToggle2" aria-hidden="true" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-center" id="exampleModalLabel12">Hoàn tất!</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="remove-box text-center">
+          <div class="wrapper">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+          </div>
+          <h4 class="text-content">Phiếu nhập kho đã được xóa thành công.</h4>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary btn-animation" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Delete Modal Box End -->
+
+<!-- Offcanvas Box Start -->
+<div class="offcanvas offcanvas-end order-offcanvas" tabindex="-1" id="order-details"
+     aria-labelledby="offcanvasExampleLabel" aria-expanded="false">
+  <div class="offcanvas-header">
+    <h4 class="offcanvas-title" id="offcanvasExampleLabel">Phiếu nhập kho #<span id="offcanvasStockInId"></span></h4>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Đóng">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="order-date">
+      <h6 id="offcanvasStockInDate"></h6>
+    </div>
+
+    <form id="updateStockInForm" class="theme-form theme-form-2 mega-form">
+      <input type="hidden" id="offcanvasStockInIdInput" />
+      <div class="mb-3">
+        <label for="offcanvasSupplierId">Nhà cung cấp</label>
+        <select class="form-control" id="offcanvasSupplierId" name="supplierId">
+          <option value="">Chọn nhà cung cấp</option>
+          <!-- Options will be populated by JavaScript -->
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="offcanvasWarehouseId">Kho</label>
+        <select class="form-control" id="offcanvasWarehouseId" name="warehouseId">
+          <option value="">Chọn kho</option>
+          <!-- Options will be populated by JavaScript -->
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="offcanvasStockInDateInput">Ngày</label>
+        <input type="text" class="form-control" id="offcanvasStockInDateInput" placeholder="Chọn ngày (DD/MM/YYYY)" required />
+      </div>
+      <div class="mb-3">
+        <label for="offcanvasStockInTimeInput">Giờ</label>
+        <input type="text" class="form-control" id="offcanvasStockInTimeInput" placeholder="Chọn giờ (HH:MM)" required />
+      </div>
+      <div class="mb-3">
+        <label for="offcanvasNote">Ghi chú</label>
+        <input type="text" class="form-control" id="offcanvasNote" />
+      </div>
+      <div class="card-submit-button d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary btn-animation"><i class="ri-check-line"></i> Lưu thay đổi</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- Offcanvas Box End -->
+
+<!-- Latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+<!-- Bootstrap js -->
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<!-- feather icon js -->
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+<!-- scrollbar simplebar js -->
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+<!-- Sidebar js -->
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+<!-- customizer js -->
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+<!-- Plugins js -->
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+<!-- Data table js -->
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+<!-- sidebar effect -->
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+<!-- Theme js -->
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+<script th:src="@{/Backend/assets/js/checkbox-all-check.js}"></script>
+
+<!-- Pikaday và Moment JS -->
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pikaday@1.8.2/pikaday.min.js"></script>
+
+<!-- Custom JavaScript -->
+<script>
+  // Format date to Vietnamese format (HH:MM:SS DD/MM/YYYY)
+  function formatDateToVietnamese(dateString) {
+    if (!dateString || dateString === 'N/A') {
+      return 'N/A';
+    }
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        console.warn('[WARN] Invalid date:', dateString);
+        return 'N/A';
+      }
+      const vnTime = new Date(date.getTime());
+      const day = String(vnTime.getDate()).padStart(2, '0');
+      const month = String(vnTime.getMonth() + 1).padStart(2, '0');
+      const year = vnTime.getFullYear();
+      const hours = String(vnTime.getHours()).padStart(2, '0');
+      const minutes = String(vnTime.getMinutes()).padStart(2, '0');
+      const seconds = String(vnTime.getSeconds()).padStart(2, '0');
+      return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
+    } catch (error) {
+      console.error('[ERROR] Error parsing date:', dateString, error);
+      return 'N/A';
+    }
+  }
+
+  // Debounce function for search
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  // Validate time input (HH:mm format, 00:00 to 23:59)
+  function validateTime(time) {
+    const timeRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
+    return timeRegex.test(time);
+  }
+
+  $(document).ready(function() {
+    // Disable DataTables to prevent interference
+    if ($.fn.DataTable && $.fn.DataTable.isDataTable('#table_id')) {
+      $('#table_id').DataTable().clear().destroy();
+      console.log('[DEBUG] DataTables disabled for #table_id');
+    }
+
+    let currentPage = 0; // 0-based internally
+    let totalPages = 1;
+    const pageSize = 5;
+    let searchTerm = '';
+    let allStockIns = []; // Store all stockIns for client-side filtering
+    let allSuppliers = []; // Store all suppliers for mapping
+    let allWarehouses = []; // Store all warehouses for mapping
+    let sortColumn = 'stockInId'; // Default sort column
+    let sortDirection = 'asc'; // Default sort direction
+
+    // Debug pagination DOM
+    function debugPagination() {
+      const paginationItems = $('#pagination-controls .page-link');
+      console.log('[DEBUG] Pagination items:', paginationItems.length, 'HTML:', $('#pagination-controls').html() || 'Not found');
+    }
+
+    // Ensure table body and no-data row exist
+    function ensureElements() {
+      let tableBody = $('#stockInTableBody');
+      let noDataRow = $('#no-data-row');
+
+      if (!tableBody.length) {
+        const table = $('#table_id');
+        if (table.length) {
+          tableBody = $('<tbody id="stockInTableBody"></tbody>');
+          table.append(tableBody);
+          console.log('[DEBUG] Created new tbody with id stockInTableBody');
+        } else {
+          console.error('[ERROR] Table #table_id not found');
+          $.notify({ message: 'Không tìm thấy bảng #table_id. Vui lòng kiểm tra HTML.' }, { type: 'danger', delay: 5000 });
+          return null;
+        }
+      }
+
+      if (!noDataRow.length) {
+        noDataRow = $('<tr id="no-data-row"><td colspan="6" class="text-center" style="background-color: #e6f3f2; color: #555;">Không tìm thấy bản ghi nào</td></tr>');
+        tableBody.append(noDataRow);
+        console.log('[DEBUG] Created new no-data-row');
+      }
+
+      return { tableBody, noDataRow };
+    }
+
+    // Update URL with page number and search term
+    function updateURL(page) {
+      const params = new URLSearchParams();
+      if (page > 0) params.set('page', page + 1);
+      if (searchTerm) params.set('search', searchTerm);
+      history.pushState({}, '', `/AgriculturalWarehouseManagementApplication/warehouse/stockin?${params.toString()}`);
+    }
+
+    // Update sort indicators
+    function updateSortIndicators() {
+      $('th.sortable').each(function() {
+        $(this).removeClass('asc desc');
+        if ($(this).attr('data-sort') === sortColumn) {
+          $(this).addClass(sortDirection);
+        }
+      });
+    }
+
+    // Sort StockIns
+    function sortStockIns(stockIns) {
+      return [...stockIns].sort((a, b) => {
+        let valueA, valueB;
+        switch (sortColumn) {
+          case 'stockInId':
+            valueA = a.id || 'N/A';
+            valueB = b.id || 'N/A';
+            break;
+          case 'supplierName':
+            valueA = a.supplierName ? a.supplierName.toLowerCase() : 'N/A';
+            valueB = b.supplierName ? b.supplierName.toLowerCase() : 'N/A';
+            break;
+          case 'stockInDate':
+            valueA = a.stockInDate ? new Date(a.stockInDate).getTime() : 0;
+            valueB = b.stockInDate ? new Date(b.stockInDate).getTime() : 0;
+            break;
+          default:
+            return 0;
+        }
+        if (valueA < valueB) return sortDirection === 'asc' ? -1 : 1;
+        if (valueA > valueB) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    // Load Suppliers into memory
+    function loadSuppliers() {
+      return $.ajax({
+        url: '/AgriculturalWarehouseManagementApplication/api/suppliers',
+        method: 'GET',
+        dataType: 'json'
+      }).then(data => {
+        allSuppliers = data || [];
+        console.log('[DEBUG] Loaded suppliers:', allSuppliers.length);
+      }).catch((xhr, status, error) => {
+        console.error('[ERROR] Lỗi khi tải nhà cung cấp:', status, error);
+        allSuppliers = [];
+        $.notify({ message: 'Lỗi khi tải danh sách nhà cung cấp.' }, { type: 'danger', delay: 3000 });
+      });
+    }
+
+    // Load Warehouses into memory
+    function loadWarehouses() {
+      return $.ajax({
+        url: '/AgriculturalWarehouseManagementApplication/api/warehouses',
+        method: 'GET',
+        dataType: 'json'
+      }).then(data => {
+        allWarehouses = data || [];
+        console.log('[DEBUG] Loaded warehouses:', allWarehouses.length);
+      }).catch((xhr, status, error) => {
+        console.error('[ERROR] Lỗi khi tải kho:', status, error);
+        allWarehouses = [];
+        $.notify({ message: 'Lỗi khi tải danh sách kho.' }, { type: 'danger', delay: 3000 });
+      });
+    }
+
+    // Load Suppliers into dropdown
+    function loadSuppliersDropdown(selectElement, selectedId) {
+      selectElement.empty().append('<option value="">Chọn nhà cung cấp</option>');
+      $.each(allSuppliers, function(index, supplier) {
+        const supplierId = supplier.supplierID || supplier.id;
+        const supplierName = supplier.supplierName || supplier.name;
+        if (supplierId && supplierName) {
+          const selected = supplierId == selectedId ? 'selected' : '';
+          selectElement.append(`<option value="${supplierId}" ${selected}>${supplierName}</option>`);
+        }
+      });
+    }
+
+    // Load Warehouses into dropdown
+    function loadWarehousesDropdown(selectElement, selectedId) {
+      selectElement.empty().append('<option value="">Chọn kho</option>');
+      $.each(allWarehouses, function(index, warehouse) {
+        const warehouseId = warehouse.warehouseId || warehouse.id;
+        const warehouseName = warehouse.warehouseName || warehouse.name;
+        if (warehouseId && warehouseName) {
+          const selected = warehouseId == selectedId ? 'selected' : '';
+          selectElement.append(`<option value="${warehouseId}" ${selected}>${warehouseName}</option>`);
+        }
+      });
+    }
+
+    // Fetch StockIn data and populate table
+    function fetchStockIns(page = 0, searchQuery = '', resetPage = true) {
+      if (resetPage) {
+        currentPage = page;
+      }
+      updateURL(currentPage);
+      const { tableBody, noDataRow } = ensureElements();
+      if (!tableBody || !noDataRow) return;
+
+      console.log('[DEBUG] Đang tải danh sách nhập kho cho trang:', currentPage, 'tìm kiếm:', searchQuery, 'sortColumn:', sortColumn, 'sortDirection:', sortDirection);
+
+      // Show loading state
+      $('#table-container').addClass('loading');
+
+      // Fetch StockIns and pre-loaded suppliers/warehouses
+      let url = `/AgriculturalWarehouseManagementApplication/api/stockins/paginatedStockIn?page=0&size=1000`;
+      $.when(
+              $.ajax({ url: url, method: 'GET', dataType: 'json' }),
+              loadSuppliers(),
+              loadWarehouses()
+      ).then(function(stockInResponse) {
+        const data = stockInResponse[0];
+        console.log('[DEBUG] Phản hồi từ API stockins:', data);
+        if (!data || !data.content || typeof data.totalPages === 'undefined') {
+          console.error('[ERROR] Dữ liệu phản hồi không hợp lệ:', data);
+          tableBody.empty();
+          noDataRow.show();
+          $('#table-container').removeClass('loading');
+          renderPagination(0, 0);
+          debugPagination();
+          $.notify({ message: 'Dữ liệu nhập kho không hợp lệ.' }, { type: 'danger', delay: 3000 });
+          return;
+        }
+
+        allStockIns = data.content;
+        // Enhance each StockIn with supplierName and warehouseName
+        const fragment = document.createDocumentFragment(); // Batch DOM updates
+        allStockIns.forEach(stockIn => {
+          const supplierId = stockIn.supplierID && typeof stockIn.supplierID === 'object' ? (stockIn.supplierID.supplierID || stockIn.supplierID.id) : stockIn.supplierID;
+          const warehouseId = stockIn.warehouseID && typeof stockIn.warehouseID === 'object' ? (stockIn.warehouseID.warehouseId || stockIn.warehouseID.id) : stockIn.warehouseID;
+
+          const supplier = allSuppliers.find(s => (s.supplierID || s.id) == supplierId);
+          const warehouse = allWarehouses.find(w => (w.warehouseId || w.id) == warehouseId);
+
+          stockIn.supplierName = supplier ? (supplier.supplierName || supplier.name || 'N/A') : 'N/A';
+          stockIn.warehouseName = warehouse ? (warehouse.warehouseName || warehouse.name || 'N/A') : 'N/A';
+        });
+
+        // Filter StockIns based on search term
+        const filteredStockIns = allStockIns.filter(stockIn => {
+          const supplierName = stockIn.supplierName || 'N/A';
+          const stockInDate = stockIn.stockInDate ? formatDateToVietnamese(stockIn.stockInDate) : 'N/A';
+          const note = stockIn.note || 'N/A';
+          const searchLower = searchQuery.toLowerCase();
+          return (
+                  supplierName.toLowerCase().includes(searchLower) ||
+                  stockInDate.toLowerCase().includes(searchLower) ||
+                  note.toLowerCase().includes(searchLower)
+          );
+        });
+        console.log('[DEBUG] Filtered StockIns:', filteredStockIns);
+
+        // Sort filtered StockIns
+        const sortedStockIns = sortStockIns(filteredStockIns);
+        console.log('[DEBUG] Sorted StockIns:', sortedStockIns);
+
+        // Paginate sorted StockIns
+        const totalElements = sortedStockIns.length;
+        totalPages = Math.max(1, Math.ceil(totalElements / pageSize));
+
+        if (currentPage >= totalPages) {
+          currentPage = totalPages > 0 ? totalPages - 1 : 0;
+          updateURL(currentPage);
+        }
+
+        const startIndex = currentPage * pageSize;
+        const paginatedStockIns = sortedStockIns.slice(startIndex, startIndex + pageSize);
+        console.log('[DEBUG] Paginated StockIns:', paginatedStockIns);
+
+        // Destroy existing DataTable
+        if ($.fn.DataTable.isDataTable('#table_id')) {
+          console.log('[DEBUG] Destroying existing DataTable');
+          $('#table_id').DataTable().clear().destroy();
+          tableBody.empty(); // Clear table body after destroying DataTable
+        } else {
+          console.log('[DEBUG] No existing DataTable to destroy');
+          tableBody.empty(); // Clear table body even if no DataTable
+        }
+
+        // Render table using fragment
+        if (paginatedStockIns.length > 0) {
+          paginatedStockIns.forEach(stockIn => {
+            const row = document.createElement('tr');
+            row.setAttribute('data-bs-toggle', 'offcanvas');
+            row.setAttribute('data-bs-target', '#order-details');
+            row.setAttribute('data-stockin-id', stockIn.id);
+            row.innerHTML = `
+                            <td>${stockIn.id || 'N/A'}</td>
+                            <td>${stockIn.supplierName}</td>
+                            <td>${stockIn.warehouseName}</td>
+                            <td>${formatDateToVietnamese(stockIn.stockInDate)}</td>
+                            <td>${stockIn.note || 'N/A'}</td>
+                            <td>
+                                <ul>
+                                    <li><a href="/AgriculturalWarehouseManagementApplication/warehouse/stockindetail?stockInId=${stockIn.id}" class="view-detail"><i class="ri-eye-line"></i></a></li>
+                                    <li><a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#order-details" data-stockin-id="${stockIn.id}" class="edit-link"><i class="ri-pencil-line"></i></a></li>
+                                    <li><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" data-stockin-id="${stockIn.id}"><i class="ri-delete-bin-line"></i></a></li>
+                                </ul>
+                            </td>
+                        `;
+            fragment.appendChild(row);
+          });
+          tableBody[0].appendChild(fragment);
+          console.log('[DEBUG] Table rendered with', paginatedStockIns.length, 'rows');
+        } else {
+          noDataRow.show();
+          console.log('[DEBUG] No data to display, showing no-data-row');
+        }
+
+        // Initialize DataTable
+        if ($('#table_id').length) {
+          console.log('[DEBUG] Initializing new DataTable');
+          try {
+            $('#table_id').DataTable({
+              searching: false,
+              paging: false,
+              ordering: false,
+              info: false,
+              language: { emptyTable: "Không tìm thấy bản ghi nào" },
+              columns: [
+                { width: '15%' }, // Mã nhập kho
+                { width: '20%' }, // Nhà cung cấp
+                { width: '20%' }, // Kho
+                { width: '20%' }, // Ngày nhập
+                { width: '15%' }, // Ghi chú
+                { width: '10%' }  // Tuỳ chọn
+              ],
+              autoWidth: false
+            });
+            console.log('[DEBUG] DataTable initialized successfully');
+          } catch (error) {
+            console.error('[ERROR] Lỗi khi khởi tạo DataTable:', error);
+            $.notify({ message: 'Lỗi khi khởi tạo bảng. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 5000 });
+          }
+        } else {
+          console.error('[ERROR] Không tìm thấy #table_id khi khởi tạo DataTable');
+          $.notify({ message: 'Không tìm thấy bảng #table_id khi khởi tạo. Vui lòng kiểm tra HTML.' }, { type: 'danger', delay: 5000 });
+        }
+
+        // Render pagination
+        renderPagination(totalPages, currentPage);
+        debugPagination();
+
+        // Update sort indicators and show table
+        updateSortIndicators();
+        $('#table-container').removeClass('loading');
+      }).catch(function(xhr, status, error) {
+        console.error('[ERROR] Lỗi khi tải danh sách nhập kho:', status, error, 'Phản hồi:', xhr.responseText);
+        tableBody.empty();
+        noDataRow.show();
+        $('#table-container').removeClass('loading');
+        renderPagination(0, 0);
+        debugPagination();
+        $.notify({ message: 'Không thể tải danh sách nhập kho. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+      });
+    }
+
+    // Pagination rendering
+    function renderPagination(totalPagesInput, currentPageInput) {
+      const paginationControls = $('#pagination-controls');
+      paginationControls.empty();
+
+      totalPages = typeof totalPagesInput === 'number' && totalPagesInput > 0 ? totalPagesInput : 1;
+      currentPage = typeof currentPageInput === 'number' && currentPageInput >= 0 && currentPageInput < totalPages ? currentPageInput : 0;
+
+      console.log('[DEBUG] Đang hiển thị phân trang - tổng số trang:', totalPages, 'trang hiện tại:', currentPage);
+
+      const addBtn = (label, page, disabled = false, active = false) => {
+        const li = $('<li></li>').addClass('page-item');
+        if (disabled) li.addClass('disabled');
+        if (active) li.addClass('active');
+        li.html(`<a class="page-link" href="javascript:void(0)" data-page="${page}">${label}</a>`);
+        paginationControls.append(li);
+      };
+
+      const addEllipsis = () => {
+        paginationControls.append('<li class="page-item disabled"><a class="page-link">...</a></li>');
+      };
+
+      const maxPagesToShow = 5;
+      let startPage = Math.max(0, currentPage - Math.floor(maxPagesToShow / 2));
+      let endPage = Math.min(totalPages, startPage + maxPagesToShow);
+
+      if (endPage - startPage < maxPagesToShow) {
+        startPage = Math.max(0, endPage - maxPagesToShow);
+      }
+
+      addBtn('Trước', currentPage - 1, currentPage === 0);
+
+      if (startPage > 0) {
+        addBtn(1, 0, false, currentPage === 0);
+        if (startPage > 1) addEllipsis();
+      }
+
+      for (let i = startPage; i < endPage; i++) {
+        addBtn(i + 1, i, false, currentPage === i);
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) addEllipsis();
+        addBtn(totalPages, totalPages - 1, false, currentPage === totalPages - 1);
+      }
+
+      addBtn('Tiếp', currentPage + 1, currentPage === totalPages - 1);
+    }
+
+    // Handle pagination and sorting clicks
+    $(document).on('click', '.page-link', function(e) {
+      e.preventDefault();
+      const page = parseInt($(this).data('page'));
+      console.log('[DEBUG] Nhấp phân trang - trang:', page, 'tổng số trang:', totalPages);
+      if (!isNaN(page) && page >= 0 && page < totalPages) {
+        currentPage = page;
+        fetchStockIns(currentPage, $('#searchInputStockIn').val(), false);
+      }
+    });
+
+    $(document).on('click', 'th.sortable', function() {
+      const column = $(this).attr('data-sort');
+      if (column) {
+        if (column === sortColumn) {
+          sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+          sortColumn = column;
+          sortDirection = 'asc';
+        }
+        console.log('[DEBUG] Sorting by:', sortColumn, sortDirection);
+        fetchStockIns(currentPage, $('#searchInputStockIn').val(), false); // Preserve current page
+      }
+    });
+
+    // Load StockIn details into offcanvas
+    $(document).on('shown.bs.offcanvas', '#order-details', function(event) {
+      var stockInId = $(event.relatedTarget).data('stockin-id');
+      $('#offcanvasStockInId').text(stockInId);
+      $('#offcanvasStockInIdInput').val(stockInId);
+
+      $.ajax({
+        url: `/AgriculturalWarehouseManagementApplication/api/stockins/${stockInId}`,
+        method: 'GET',
+        dataType: 'json',
+        success: function(stockIn) {
+          const supplierId = stockIn.supplierID && typeof stockIn.supplierID === 'object' ? (stockIn.supplierID.supplierID || stockIn.supplierID.id) : stockIn.supplierID;
+          const warehouseId = stockIn.warehouseID && typeof stockIn.warehouseID === 'object' ? (stockIn.warehouseID.warehouseId || stockIn.warehouseID.id) : stockIn.warehouseID;
+
+          console.log('[DEBUG] Đang tải chi tiết phiếu nhập kho ID:', stockInId, 'supplierID:', supplierId, 'warehouseID:', warehouseId);
+
+          loadSuppliersDropdown($('#offcanvasSupplierId'), supplierId);
+          loadWarehousesDropdown($('#offcanvasWarehouseId'), warehouseId);
+
+          const formattedDate = formatDateToVietnamese(stockIn.stockInDate);
+          $('#offcanvasStockInDate').text(formattedDate || 'N/A');
+
+          if (stockIn.stockInDate) {
+            const date = new Date(stockIn.stockInDate);
+            const vnTime = new Date(date.getTime());
+            const year = vnTime.getFullYear();
+            const month = String(vnTime.getMonth() + 1).padStart(2, '0');
+            const day = String(vnTime.getDate()).padStart(2, '0');
+            const hours = String(vnTime.getHours()).padStart(2, '0');
+            const minutes = String(vnTime.getMinutes()).padStart(2, '0');
+
+            $('#offcanvasStockInDateInput').val(`${day}/${month}/${year}`);
+            $('#offcanvasStockInTimeInput').val(`${hours}:${minutes}`);
+
+            const offcanvasDateInput = document.getElementById('offcanvasStockInDateInput');
+            if (offcanvasDateInput) {
+              if (typeof Pikaday === 'undefined' || typeof moment === 'undefined') {
+                console.error("[ERROR] Lỗi: Pikaday hoặc Moment không tải được. Kiểm tra CDN.");
+                $.notify({ message: 'Lỗi: Không tải được thư viện lịch. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+              } else {
+                try {
+                  if (window.pickerInstance) {
+                    window.pickerInstance.destroy();
+                  }
+                  const vnTime = new Date(stockIn.stockInDate);
+                  const formattedDate = moment(vnTime).format('DD/MM/YYYY');
+                  offcanvasDateInput.value = formattedDate;
+
+                  const picker = new Pikaday({
+                    field: offcanvasDateInput,
+                    format: 'DD/MM/YYYY',
+                    defaultDate: vnTime,
+                    yearRange: 10,
+                    minDate: new Date(2015, 0, 1),
+                    maxDate: new Date(),
+                    firstDay: 1,
+                    i18n: {
+                      previousMonth: 'Tháng trước',
+                      nextMonth: 'Tháng sau',
+                      months: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+                      weekdays: ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'],
+                      weekdaysShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']
+                    },
+                    onSelect: function(date) {
+                      const formattedDate = moment(date).format('DD/MM/YYYY');
+                      offcanvasDateInput.value = formattedDate;
+                      console.log("[DEBUG] Ngày được chọn:", formattedDate);
+                    }
+                  });
+
+                  window.pickerInstance = picker;
+                  console.log("[DEBUG] Pikaday khởi tạo thành công cho #offcanvasStockInDateInput với defaultDate:", vnTime);
+                } catch (error) {
+                  console.error("[ERROR] Lỗi khởi tạo Pikaday:", error);
+                  $.notify({ message: 'Lỗi khởi tạo lịch. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+                }
+              }
+            } else {
+              console.error("[ERROR] Lỗi: Không tìm thấy input #offcanvasStockInDateInput");
+              $.notify({ message: 'Lỗi: Không tìm thấy trường ngày nhập kho.' }, { type: 'danger', delay: 3000 });
+            }
+          } else {
+            $('#offcanvasStockInDateInput').val('');
+            $('#offcanvasStockInTimeInput').val('00:00');
+          }
+
+          $('#offcanvasNote').val(stockIn.note || '');
+        },
+        error: function(xhr, status, error) {
+          console.error('[ERROR] Lỗi khi tải chi tiết phiếu nhập kho:', status, error);
+          $.notify({ message: 'Không thể tải chi tiết phiếu nhập kho.' }, { type: 'danger', delay: 3000 });
+        }
+      });
+    });
+
+    // Update StockIn with time validation
+    $('#updateStockInForm').on('submit', function(e) {
+      e.preventDefault();
+      const stockInId = $('#offcanvasStockInIdInput').val();
+      const date = $('#offcanvasStockInDateInput').val();
+      const time = $('#offcanvasStockInTimeInput').val();
+
+      if (!date || !time) {
+        $.notify({ message: 'Vui lòng nhập đầy đủ ngày và giờ.' }, { type: 'warning', delay: 3000 });
+        return;
+      }
+
+      const [day, month, year] = date.split('/').map(Number);
+      if (isNaN(day) || isNaN(month) || isNaN(year)) {
+        $.notify({ message: 'Định dạng ngày không hợp lệ.' }, { type: 'warning', delay: 3000 });
+        return;
+      }
+
+      if (!validateTime(time)) {
+        $.notify({ message: 'Giờ phải từ 00:00 đến 23:59 (định dạng HH:mm).' }, { type: 'warning', delay: 3000 });
+        return;
+      }
+
+      const [hours, minutes] = time.split(':').map(Number);
+      const vnDate = new Date(year, month - 1, day, hours, minutes, 0);
+      const utcDate = new Date(vnDate.getTime() + 7 * 60 * 60 * 1000);
+      const stockInDate = utcDate.toISOString();
+
+      const formData = {
+        id: stockInId,
+        supplierID: $('#offcanvasSupplierId').val(),
+        warehouseID: $('#offcanvasWarehouseId').val(),
+        stockInDate: stockInDate,
+        note: $('#offcanvasNote').val()
+      };
+
+      console.log('[DEBUG] Đang gửi cập nhật cho phiếu nhập kho:', formData);
+
+      $.ajax({
+        url: `/AgriculturalWarehouseManagementApplication/api/stockins/${stockInId}`,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(formData),
+        success: function(response) {
+          $.notify({ message: 'Cập nhật phiếu nhập kho thành công!' }, { type: 'success', delay: 3000 });
+          $('#order-details').offcanvas('hide');
+          $('.modal-backdrop').remove();
+          $('body').removeClass('modal-open').css('overflow', '');
+          fetchStockIns(currentPage, $('#searchInputStockIn').val(), false);
+        },
+        error: function(xhr, status, error) {
+          console.error('[ERROR] Lỗi khi cập nhật phiếu nhập kho:', status, error);
+          $.notify({ message: 'Lỗi khi cập nhật phiếu nhập kho: ' + (xhr.responseText || 'Lỗi không xác định') }, { type: 'danger', delay: 3000 });
+        }
+      });
+    });
+
+    // Store StockIn ID for deletion
+    $(document).on('click', '[data-bs-target="#exampleModalToggle"]', function() {
+      const stockInId = $(this).data('stockin-id');
+      $('#exampleModalToggle').data('stockin-id', stockInId);
+    });
+
+    // Delete StockIn
+    $('#confirmDeleteBtn').on('click', function() {
+      const stockInId = $('#exampleModalToggle').data('stockin-id');
+      if (!stockInId) {
+        console.error('[ERROR] Không tìm thấy ID phiếu nhập kho để xóa.');
+        $.notify({ message: 'Lỗi: Không có phiếu nhập kho nào được chọn để xóa.' }, { type: 'warning', delay: 3000 });
+        return;
+      }
+
+      $.ajax({
+        url: `/AgriculturalWarehouseManagementApplication/api/stockins/${stockInId}`,
+        method: 'DELETE',
+        headers: { 'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content') },
+        success: function() {
+          $.notify({ message: 'Xóa phiếu nhập kho thành công!' }, { type: 'success', delay: 3000 });
+          $('#exampleModalToggle').modal('hide');
+          $('.modal-backdrop').remove();
+          $('body').removeClass('modal-open').css('overflow', '');
+          $('#exampleModalToggle2').modal('show').on('hidden.bs.modal', function() {
+            $(this).off('hidden.bs.modal');
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open').css('overflow', '');
+            fetchStockIns(currentPage, $('#searchInputStockIn').val(), false);
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error('[ERROR] Lỗi khi xóa phiếu nhập kho:', status, error);
+          $.notify({ message: 'Không thể xóa phiếu nhập kho: ' + (xhr.responseText || 'Lỗi không xác định') }, { type: 'danger', delay: 3000 });
+          $('#exampleModalToggle').modal('hide');
+          $('.modal-backdrop').remove();
+          $('body').removeClass('modal-open').css('overflow', '');
+        }
+      });
+    });
+
+    // Search functionality with debounce
+    const searchInput = $('#searchInputStockIn');
+    if (searchInput.length) {
+      const debouncedSearch = debounce(function(searchValue) {
+        console.log('[DEBUG] Search input:', searchValue, 'Resetting to page 0');
+        fetchStockIns(0, searchValue, true);
+      }, 300);
+
+      searchInput.on('input', function() {
+        const searchValue = $(this).val().trim();
+        debouncedSearch(searchValue);
+      });
+    } else {
+      console.error('[ERROR] Ô tìm kiếm #searchInputStockIn không tìm thấy');
+      $.notify({ message: 'Ô tìm kiếm không tìm thấy. Vui lòng kiểm tra giao diện.' }, { type: 'danger', delay: 3000 });
+    }
+
+    // Initial fetch with URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialPage = parseInt(urlParams.get('page')) || 1;
+    const initialSearch = urlParams.get('search') || '';
+    currentPage = initialPage > 0 ? initialPage - 1 : 0;
+    searchTerm = initialSearch;
+    fetchStockIns(currentPage, searchTerm, true);
+
+    // Khởi tạo Pikaday khi offcanvas được mở
+    let pickerInstance = null;
+    $(document).on('shown.bs.offcanvas', '#order-details', function() {
+      const offcanvasDateInput = document.getElementById('offcanvasStockInDateInput');
+      if (!offcanvasDateInput) {
+        console.error("[ERROR] Lỗi: Không tìm thấy input #offcanvasStockInDateInput khi offcanvas mở");
+        $.notify({ message: 'Lỗi: Không tìm thấy trường ngày nhập kho.' }, { type: 'danger', delay: 3000 });
+        return;
+      }
+
+      if (typeof Pikaday === 'undefined' || typeof moment === 'undefined') {
+        console.error("[ERROR] Lỗi: Pikaday hoặc Moment không tải được. Kiểm tra CDN.");
+        $.notify({ message: 'Lỗi: Không tải được thư viện lịch. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+        return;
+      }
+
+      if (!pickerInstance) {
+        try {
+          pickerInstance = new Pikaday({
+            field: offcanvasDateInput,
+            format: 'DD/MM/YYYY',
+            yearRange: 10,
+            minDate: new Date(2015, 0, 1),
+            maxDate: new Date(),
+            firstDay: 1,
+            i18n: {
+              previousMonth: 'Tháng trước',
+              nextMonth: 'Tháng sau',
+              months: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+              weekdays: ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'],
+              weekdaysShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']
+            },
+            onSelect: function(date) {
+              const formattedDate = moment(date).format('DD/MM/YYYY');
+              offcanvasDateInput.value = formattedDate;
+              console.log("[DEBUG] Ngày được chọn:", formattedDate);
+            }
+          });
+          console.log("[DEBUG] Pikaday khởi tạo thành công cho #offcanvasStockInDateInput");
+        } catch (error) {
+          console.error("[ERROR] Lỗi khởi tạo Pikaday:", error);
+          $.notify({ message: 'Lỗi khởi tạo lịch. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+        }
+      }
+
+      offcanvasDateInput.addEventListener('click', function() {
+        if (pickerInstance && !pickerInstance.isVisible()) {
+          pickerInstance.show();
+          console.log("[DEBUG] Pikaday hiển thị khi nhấp vào input");
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

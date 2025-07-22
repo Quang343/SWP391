@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
+
+<body>
+<!-- tap on top start -->
+<div class="tap-top">
+    <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <!-- Header -->
+    <div th:replace="~{BackEnd/fragments/WareHouse/header::header}"></div>
+
+    <div class="page-body-wrapper">
+        <!-- Sidebar -->
+        <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
+
+        <!-- Content -->
+        <div class="page-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-sm-8 m-auto">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="card-header-2">
+                                            <h5>Thêm Lô Sản Phẩm</h5>
+                                        </div>
+
+                                        <form id="productBatchForm" class="theme-form theme-form-2 mega-form">
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="form-label-title col-sm-3 mb-0">Chi Tiết Sản Phẩm</label>
+                                                <div class="col-sm-9">
+                                                    <select id="productDetailId" name="productDetailID" class="js-example-basic-single w-100" required>
+                                                        <option value="" disabled selected>Chọn Chi Tiết Sản Phẩm</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="col-sm-3 col-form-label form-label-title">Ngày sản xuất</label>
+                                                <div class="col-sm-9">
+                                                    <input id="manufactureDate" name="manufactureDate" class="form-control" type="text" placeholder="Chọn ngày sản xuất (DD/MM/YYYY)" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-4 row align-items-center">
+                                                <label class="col-sm-3 col-form-label form-label-title">Số lượng</label>
+                                                <div class="col-sm-9">
+                                                    <input id="importedQuantity" name="importedQuantity" class="form-control" type="number" min="1" step="1" value="1" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="card-submit-button d-flex justify-content-end">
+                                                <button id="submitProductBatch" class="btn btn-animation" type="button">
+                                                    <i class="ri-check-line"></i> Thêm mới
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div th:replace="BackEnd/fragments/WareHouse/footer::footer"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Đăng xuất -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title">Đăng xuất</h5>
+                <p>Bạn có chắc chắn muốn đăng xuất?</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="button-box">
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">Không</button>
+                    <button type="button" th:onclick="|window.location='@{/backend/login}'|" class="btn btn--yes btn-primary">Có</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSS Pikaday -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+<!-- Tùy chỉnh CSS cho lịch -->
+<style>
+    /* Làm gọn dropdown chọn năm/tháng */
+    .pika-select {
+        padding: 4px 8px;
+        font-size: 14px;
+        max-width: 90px;
+    }
+
+    /* Lịch hiển thị nổi rõ */
+    .pika-single {
+        z-index: 9999 !important;
+        border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* Ngày đang được chọn (màu xanh đậm) */
+    .pika-button.pika-selected,
+    .pika-button:hover.pika-selected {
+        background-color: #28a745 !important; /* Xanh lá */
+        color: white !important;
+        border-radius: 6px;
+    }
+
+    /* Ngày hover (xanh nhạt) */
+    .pika-button:hover {
+        background-color: #a3d9a5 !important; /* Xanh lá nhạt */
+        color: black !important;
+        border-radius: 6px;
+    }
+
+    /* Hôm nay gạch chân */
+    .pika-button.is-today {
+        border-bottom: 2px solid #28a745 !important;
+    }
+
+    /* Bo góc cho ngày thường */
+    .pika-button {
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+    }
+</style>
+
+<!-- Scripts -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+
+<!-- Pikaday JS -->
+<script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+
+<!-- JavaScript xử lý form và Pikaday -->
+<script>
+    $(document).ready(function () {
+        // Kiểm tra input #manufactureDate
+        const manufactureDateInput = document.getElementById('manufactureDate');
+        if (!manufactureDateInput) {
+            console.error("Lỗi: Không tìm thấy input #manufactureDate");
+            $.notify({ message: 'Lỗi: Không tìm thấy trường ngày sản xuất.' }, { type: 'danger' });
+            return;
+        }
+
+        // Kiểm tra tải thư viện Pikaday và Moment
+        if (typeof Pikaday === 'undefined' || typeof moment === 'undefined') {
+            console.error("Lỗi: Pikaday hoặc Moment không tải được. Kiểm tra CDN hoặc đường dẫn.");
+            $.notify({ message: 'Lỗi: Không tải được thư viện lịch. Vui lòng kiểm tra console.' }, { type: 'danger' });
+            return;
+        }
+
+        // Hàm định dạng batchID: BAT + [Chữ đầu nhà cung cấp] + "-" + [ID + 1000 ở Base36] + "-" + [Ngày sản xuất MMdd]
+        function formatBatchID(batchID, manufactureDate, supplierName = 'Unknown') {
+            try {
+                // Lấy chữ cái đầu của supplierName, mặc định là 'U' nếu không có
+                const supplierInitial = supplierName && supplierName.length > 0 ? supplierName[0].toUpperCase() : 'U';
+
+                // Chuyển ID + 1000 sang Base36
+                const offsetID = parseInt(batchID) + 1000;
+                const base36ID = offsetID.toString(36).toUpperCase();
+
+                // Định dạng ngày sản xuất thành MMdd
+                let datePart = '0000';
+                if (manufactureDate && manufactureDate !== 'N/A') {
+                    const date = new Date(manufactureDate);
+                    if (!isNaN(date.getTime())) {
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        datePart = `${month}${day}`;
+                    }
+                }
+
+                return `BAT${supplierInitial}-${base36ID}-${datePart}`;
+            } catch (error) {
+                console.error('[ERROR] Lỗi định dạng batchID:', batchID, error);
+                return batchID || 'N/A';
+            }
+        }
+
+        // Khởi tạo Pikaday
+        let picker;
+        try {
+            picker = new Pikaday({
+                field: manufactureDateInput,
+                format: 'DD/MM/YYYY', // Định dạng: DD/MM/YYYY
+                yearRange: 10, // Hiển thị 10 năm gần nhất (2015-2025)
+                minDate: new Date(2015, 0, 1), // Cho phép nhập từ 2015
+                maxDate: new Date(), // Không cho chọn ngày tương lai
+                defaultDate: new Date(), // Mặc định hôm nay (21/07/2025)
+                setDefaultDate: true,
+                firstDay: 1, // Thứ 2 là ngày đầu tuần
+                i18n: {
+                    previousMonth: 'Tháng trước',
+                    nextMonth: 'Tháng sau',
+                    months: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+                    weekdays: ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'],
+                    weekdaysShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']
+                },
+                onSelect: function(date) {
+                    const formattedDate = moment(date).format('DD/MM/YYYY');
+                    console.log("Ngày được chọn:", formattedDate, "| Năm:", date.getFullYear());
+                    manufactureDateInput.value = formattedDate;
+                },
+                onOpen: function() {
+                    console.log("Mở lịch, năm hiện tại:", this.getMoment().year());
+                    console.log("Phạm vi năm trong dropdown:", new Date().getFullYear() - 10, "-", new Date().getFullYear());
+                }
+            });
+            console.log("Pikaday khởi tạo thành công cho #manufactureDate");
+        } catch (error) {
+            console.error("Lỗi khởi tạo Pikaday:", error);
+            $.notify({ message: 'Lỗi khởi tạo lịch. Vui lòng kiểm tra console.' }, { type: 'danger' });
+        }
+
+        // Load ProductDetail vào dropdown từ danh sách ProductDetails
+        $.ajax({
+            url: '/AgriculturalWarehouseManagementApplication/api/product-details',
+            method: 'GET',
+            dataType: 'json',
+            success: function (productDetails) {
+                const select = $('#productDetailId');
+                select.empty().append('<option value="" disabled selected>Chọn Chi Tiết Sản Phẩm</option>');
+
+                if (!productDetails || productDetails.length === 0) {
+                    select.append('<option value="" disabled>Không có dữ liệu Chi Tiết Sản Phẩm</option>').prop('disabled', true);
+                    $.notify({ message: 'Không có dữ liệu Chi Tiết Sản Phẩm' }, { type: 'warning' });
+                    return;
+                }
+
+                $.each(productDetails, function (i, productDetail) {
+                    const productDetailId = productDetail.productDetailID || productDetail.id;
+                    const detailName = productDetail.detailName || 'N/A';
+                    const productId = productDetail.productID || 'N/A';
+
+                    if (productDetailId !== 'N/A' && productId !== 'N/A') {
+                        $.ajax({
+                            url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/products/${productId}/name`,
+                            method: 'GET',
+                            async: false,
+                            success: function(productName) {
+                                const displayName = `${productName} (${detailName})`;
+                                select.append(`<option value="${productDetailId}">${displayName}</option>`);
+                                console.log(`ProductDetail ID: ${productDetailId}, Product ID: ${productId}, Tên hiển thị: ${displayName}`);
+                            },
+                            error: function(xhr, status, error) {
+                                const displayName = `N/A (${detailName})`;
+                                select.append(`<option value="${productDetailId}">${displayName}</option>`);
+                                console.error(`Lỗi khi lấy tên sản phẩm cho Product ID ${productId}:`, { status, error });
+                            }
+                        });
+                    } else {
+                        const displayName = `N/A (${detailName})`;
+                        select.append(`<option value="${productDetailId}">${displayName}</option>`);
+                        console.log(`ProductDetail ID: ${productDetailId}, Product ID không hợp lệ`);
+                    }
+                });
+            },
+            error: function (xhr) {
+                $.notify({ message: 'Lỗi khi tải danh sách Chi Tiết Sản Phẩm' }, { type: 'danger' });
+            }
+        });
+
+        // Submit form
+        $('#submitProductBatch').on('click', function () {
+            const productDetailId = $('#productDetailId').val();
+            const manufactureDate = $('#manufactureDate').val();
+            const importedQuantity = $('#importedQuantity').val();
+
+            // Client-side validation
+            if (!productDetailId || isNaN(parseInt(productDetailId))) {
+                $.notify({ message: 'Vui lòng chọn Chi Tiết Sản Phẩm hợp lệ.' }, { type: 'warning' });
+                return;
+            }
+            if (!manufactureDate) {
+                $.notify({ message: 'Vui lòng nhập ngày sản xuất.' }, { type: 'warning' });
+                return;
+            }
+            if (!importedQuantity || parseInt(importedQuantity) < 1) {
+                $.notify({ message: 'Số lượng nhập phải lớn hơn 0.' }, { type: 'warning' });
+                return;
+            }
+
+            // Kiểm tra định dạng ngày DD/MM/YYYY
+            const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+            if (!dateRegex.test(manufactureDate)) {
+                $.notify({ message: 'Định dạng ngày không hợp lệ. Vui lòng chọn ngày hợp lệ (DD/MM/YYYY).' }, { type: 'warning' });
+                return;
+            }
+
+            // Chuyển định dạng ngày về YYYY-MM-DD
+            const dateParts = manufactureDate.split('/');
+            const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+            console.log("Ngày gửi API:", formattedDate);
+
+            const formData = {
+                productDetailID: parseInt(productDetailId),
+                manufactureDate: formattedDate,
+                importedQuantity: parseInt(importedQuantity)
+            };
+
+            $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/api/product-batches',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    let supplierName = 'Unknown';
+                    // Lấy supplierName từ productDetailId
+                    $.ajax({
+                        url: `/AgriculturalWarehouseManagementApplication/api/product-details/${productDetailId}`,
+                        method: 'GET',
+                        async: false,
+                        success: function(productDetail) {
+                            supplierName = productDetail.supplierName || 'Unknown';
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(`Lỗi khi lấy Chi Tiết Sản Phẩm ${productDetailId}:`, { status, error });
+                        }
+                    });
+
+                    const batchID = response.batchID || response.id;
+                    const formattedBatchID = formatBatchID(batchID, formattedDate, supplierName);
+                    $.notify({ message: `Thêm Lô Sản Phẩm thành công! Mã Lô: ${formattedBatchID}` }, { type: 'success' });
+                    $('#productBatchForm')[0].reset();
+                    $('#productDetailId').val('');
+                    if (picker) {
+                        picker.setDate(new Date());
+                    }
+
+                    // Redirect sau 1.5s
+                    setTimeout(() => {
+                        window.location.href = '/AgriculturalWarehouseManagementApplication/warehouse/productbatch';
+                    }, 1500);
+                },
+                error: function (xhr) {
+                    $.notify({ message: 'Lỗi khi thêm Lô Sản Phẩm: ' + (xhr.responseText || 'Vui lòng kiểm tra console.') }, { type: 'danger' });
+                }
+            });
+        });
+
+        // Giữ importedQuantity luôn >= 1
+        $('#importedQuantity').on('input', function () {
+            if (parseInt($(this).val()) < 1) {
+                $(this).val(1);
+            }
+        });
+    });
+</script>
+</body>
+</html>

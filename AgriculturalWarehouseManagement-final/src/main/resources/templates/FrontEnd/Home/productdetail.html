@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fastkart">
+    <meta name="keywords" content="Fastkart">
+    <meta name="author" content="Fastkart">
+    <link rel="icon" th:href="@{FrontEnd/assets/images/favicon/1.png}" type="image/x-icon">
+    <title>On-demand last-mile delivery</title>
+
+    <!-- Google font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap">
+
+    <link id="rtl-link" rel="stylesheet" type="text/css" th:href="@{/Frontend/assets/css/vendors/bootstrap.css}">
+
+    <!-- wow css -->
+    <link rel="stylesheet" th:href="@{/Frontend/assets/css/animate.min.css}">
+
+    <!-- Iconly css -->
+    <link rel="stylesheet" type="text/css" th:href="@{/Frontend/assets/css/bulk-style.css}">
+
+    <!-- Template css -->
+    <link id="color-link" rel="stylesheet" th:href="@{/Frontend/assets/css/style.css}">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Thêm Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+    <style>
+        .btn-like-a {
+            background: none;
+            border-radius: 10px;
+            color: inherit;
+            text-decoration: inherit;
+            cursor: pointer;
+            padding: 10px;
+            font-size: inherit;
+            font-family: inherit;
+        }
+
+        .btn-like-a.active {
+            background-color: #0e947a; /* Màu nền khi active */
+            color: white; /* Màu chữ khi active */
+        }
+
+        .shake-10s { /* class mới */
+            animation: shake 0.5s ease-in-out;
+            animation-iteration-count: 20; /* 0.5 s × 20 = 10 s */
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- Loader Start -->
+<div class="fullpage-loader">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+<!-- Loader End -->
+
+<!-- Header Start -->
+<head th:replace="FrontEnd/fragments/header::header"></head>
+<!-- Header End -->
+
+<!-- mobile fix menu start -->
+
+<!-- mobile fix menu end -->
+
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-0">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-contain">
+                    <h2 th:text="${productName}">Product name</h2>
+                    <nav>
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item">
+                                <a href="home">
+                                    <i class="fa-solid fa-house"></i>
+                                </a>
+                            </li>
+
+                            <li class="breadcrumb-item active">Product Detail</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Product Left Sidebar Start -->
+<section class="product-section">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-xxl-9 col-xl-8 col-lg-7 wow fadeInUp">
+                <div class="row g-4">
+                    <div class="col-xl-6 wow fadeInUp">
+                        <div class="product-left-box">
+                            <div class="row g-2">
+                                <div class="col-12 position-relative">
+                                    <div class="product-label-group">
+                                        <div class="product-label-tag warning-label-tag">
+                                            <span>Featured</span>
+                                        </div>
+                                    </div>
+                                    <div class="product-main-1 no-arrow">
+                                        <div th:each="product : ${galleryUserResponses}">
+                                            <div class="slider-image">
+                                                <img th:src="@{${product.imageUrl}}"
+                                                     id="img-1"
+                                                     data-zoom-image="../assets/images/product/category/1.jpg"
+                                                     class="img-fluid image_zoom_cls-0 blur-up lazyload" alt="">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="bottom-slider-image left-slider no-arrow slick-top">
+                                        <div th:each="product : ${galleryUserResponses}">
+                                            <div class="sidebar-image">
+                                                <img th:src="@{${product.imageUrl}}"
+                                                     class="img-fluid blur-up lazyload" alt="">
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="right-box-contain">
+                            <h2 th:text="${productName}" class="name">Product name</h2>
+                            <div class="price-rating">
+                                <h3 th:if="${productDetailId != 0}"
+                                    th:text="${#numbers.formatInteger(priceProductDetail, 0, 'POINT') + '₫'}"
+                                    class="theme-color price">Price product detail</h3>
+
+                                <div class="product-rating custom-rate">
+                                    <ul class="rating">
+                                        <li th:each="i : ${#numbers.sequence(1, 5)}">
+                                            <i data-feather="star"
+                                               th:classappend="${i <= avgRating} ? 'fill' : ''">
+                                            </i>
+                                        </li>
+                                    </ul>
+                                    <span th:text="${ratingCount}" class="review">Rating count</span>
+                                </div>
+                            </div>
+
+                            <div class="product-package">
+                                <div class="product-title">
+                                    <h4>Weight</h4>
+                                </div>
+                                <ul class="select-package">
+                                    <li th:each="weight : ${weightProductDetailsResponses}">
+                                        <form th:action="@{/productDetail}" method="get">
+                                            <input type="number" name="productId" th:value="${weight.productId}" hidden>
+                                            <input type="number" name="productDetailId"
+                                                   th:value="${weight.productDetailId}" hidden>
+                                            <button th:text="${weight.productWeight}" class="btn-like-a"
+                                                    th:classappend="${weight.categoryWeightId == categoryWeightId ? 'active' : ''}">
+                                                Weight
+                                            </button>
+
+                                        </form>
+                                    </li>
+
+                                </ul>
+                            </div>
+
+                            <div th:if="${quantityError != null}" id="quantityErrorDiv" class="alert-danger shake-10s"
+                                 style="margin-top: 10px; display: inline-block; padding: 10px">
+                                <span th:text="${quantityError}"></span>
+                            </div>
+
+                            <div id="quantityErrorDivOne" class="alert-danger shake-10s"
+                                 style="margin-top: 10px; display: none; padding: 10px">
+                                <span id="quantityErrorMessage"></span>
+                            </div>
+
+                            <form id="productForm" th:action="@{/productDetail}" class="note-box product-package"
+                                  th:if="${productDetailId != 0}">
+                                <input type="number" name="productId" th:value="${session.productId}" hidden>
+                                <input type="number" name="productDetailId" th:value="${session.productDetailId}"
+                                       hidden>
+                                <div class="cart_qty qty-box product-qty">
+                                    <div class="input-group">
+                                        <button type="button" class="qty-right-plus" data-type="plus" data-field="">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                        <input class="form-control input-number qty-input" type="text" name="quantity"
+                                               value="0" id="quantityInput" required>
+                                        <button type="button" class="qty-left-minus" data-type="minus" data-field="">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <script>
+                                    // Lắng nghe sự kiện nhấn nút "+"
+                                    document.querySelector('.qty-right-plus').addEventListener('click', function () {
+                                        var qtyInput = document.querySelector('.qty-input');
+                                        var currentValue = parseInt(qtyInput.value) || 0;
+                                        qtyInput.value = currentValue + 1; // Tăng số lượng
+                                    });
+
+                                    // Lắng nghe sự kiện nhấn nút "-"
+                                    document.querySelector('.qty-left-minus').addEventListener('click', function () {
+                                        var qtyInput = document.querySelector('.qty-input');
+                                        var currentValue = parseInt(qtyInput.value) || 0;
+                                        if (currentValue > 0) {
+                                            qtyInput.value = currentValue - 1; // Giảm số lượng
+                                        }
+                                    });
+
+                                    // Check nhập sai dạng số
+                                    document.getElementById('productForm').addEventListener('submit', function (event) {
+                                        var quantityInput = document.getElementById('quantityInput');
+                                        var quantityValue = quantityInput.value;
+                                        var quantityErrorDivOne = document.getElementById('quantityErrorDivOne');
+                                        var errorMessageSpan = document.getElementById('quantityErrorMessage');
+
+                                        if (isNaN(quantityValue)) {
+                                            errorMessageSpan.textContent = "Vui lòng nhập một số hợp lệ cho số lượng."; // Thông báo lỗi
+                                            quantityErrorDivOne.style.display = 'inline-block'; // Hiển thị thông báo lỗi
+                                            event.preventDefault(); // Ngừng gửi biểu mẫu
+
+                                            setTimeout(function () {
+                                                quantityErrorDivOne.style.display = 'none'; // Ẩn thông báo lỗi sau 10 giây
+                                            }, 10000); // 10 giây
+                                        } else if(Number(quantityValue) == -1){
+                                            errorMessageSpan.textContent = "Số lượng bạn nhập không được nhỏ hơn 0"; // Thông báo lỗi
+                                            quantityErrorDivOne.style.display = 'inline-block'; // Hiển thị thông báo lỗi
+                                            event.preventDefault(); // Ngừng gửi biểu mẫu
+
+                                            setTimeout(function () {
+                                                quantityErrorDivOne.style.display = 'none'; // Ẩn thông báo lỗi sau 10 giây
+                                            }, 10000);
+                                        }
+                                        else {
+                                            quantityErrorDivOne.style.display = 'none'; // Ẩn thông báo lỗi nếu không có lỗi
+                                        }
+                                    });
+
+                                    // Kiểm tra xem có thông báo lỗi không, nếu có thì ẩn sau 10 giây
+                                    var errorMessageDiv = document.getElementById('quantityErrorDiv');
+
+                                    if (errorMessageDiv) {
+                                        setTimeout(function () {
+                                            errorMessageDiv.style.display = 'none';
+                                        }, 10000); // 10 giây
+                                    }
+
+
+                                </script>
+
+
+                                <button th:if="${session.accountId != null}" type="submit"
+                                        class="btn btn-md bg-dark cart-button text-white w-100">Thêm giỏ hàng
+                                </button>
+                            </form>
+
+                            <div class="buy-box">
+                                <li th:if="${session.account != null}" data-bs-toggle="tooltip"
+                                    data-bs-placement="top" title="Wishlist">
+                                    <a href="javascript:void(0)" class="btn p-0 wishlist notifi-wishlist"
+                                            th:data-productid="${productId}"
+                                            style="margin-left: 20px">
+                                        <i data-feather="heart"></i>
+                                        <span style="margin-left: 2px;font-size: 15px;">Yêu thích</span>
+                                    </a>
+                                </li>
+
+                                <li th:if="${!galleryUserResponses.isEmpty()}" data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                    <a href="javascript:void(0)"
+                                       data-bs-toggle="modal"
+                                       data-bs-target="#view"
+                                       th:data-product-id="${productId}">
+                                        <i data-feather="shuffle"></i>
+                                        <span style="margin-left: 2px">So sánh</span>
+                                    </a>
+                                </li>
+                            </div>
+
+                            <div class="pickup-box">
+                                <div class="product-title">
+                                    <h4>Thông tin sản phẩm</h4>
+                                </div>
+
+                                <div class="product-info">
+                                    <ul class="product-info-list product-info-list-2">
+                                        <li th:if="${productDetailUserResponse != null and productDetailUserResponse.status == 'Hết hàng'}">
+                                            Hết hàng
+                                        </li>
+                                        <li th:if="${productDetailUserResponse != null and productDetailUserResponse.expiryStatus == 'Hết hạn'}">
+                                            Hết hạn
+                                        </li>
+                                        <li>Số lượng còn lại :
+                                            <a th:if="${productDetailUserResponse != null and productDetailUserResponse.status != 'Hết hàng'}"
+                                                th:text="${productDetailUserResponse.remainQuantity}"
+                                                href="javascript:void(0)"></a>
+                                            <a th:if="${productDetailUserResponse != null and productDetailUserResponse.status == 'Hết hàng'}"
+                                                    href="javascript:void(0)">0</a></li>
+                                        <li>Số đã bán : <a th:if="${productDetailUserResponse != null }"
+                                                           th:text="${productDetailUserResponse.soldQuantity}"
+                                                           href="javascript:void(0)"></a>
+                                                        </li>
+                                        <li>Hạn sử dụng : <a th:if="${productDetailUserResponse != null }"
+                                                             th:text="'Trong khoảng ' + ${productDetailUserResponse.expiry} + ' tháng'"
+                                                             href="javascript:void(0)"></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="product-section-box">
+                            <ul class="nav nav-tabs custom-nav" id="myTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
+                                            data-bs-target="#description" type="button" role="tab">Description
+                                    </button>
+                                </li>
+
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="review-tab" data-bs-toggle="tab"
+                                            data-bs-target="#review" type="button" role="tab">Review
+                                    </button>
+                                </li>
+
+<!--                                <li class="nav-item" role="presentation">-->
+<!--                                    <button class="nav-link" id="review-tab-order" data-bs-toggle="tab"-->
+<!--                                            data-bs-target="#reviewOrdeConfirmed" type="button" role="tab">Review Order-->
+<!--                                        Confirmed-->
+<!--                                    </button>-->
+<!--                                </li>-->
+                            </ul>
+
+                            <div class="tab-content custom-tab" id="myTabContent">
+                                <div class="tab-pane fade show active" id="description" role="tabpanel">
+                                    <div class="product-description">
+                                        <div class="nav-desh">
+                                            <p th:text="${productDescription}">Description</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                                <div class="tab-pane fade" id="review" role="tabpanel">
+                                    <div class="review-box">
+                                        <div class="row">
+                                            <div class="col-xl-5">
+                                                <div class="product-rating-box">
+                                                    <div class="row">
+                                                        <div class="col-xl-12">
+                                                            <div class="product-main-rating">
+                                                                <h2>
+                                                                    <span th:text="${overallRatingProductResponse.overallRating}"></span>
+                                                                    <i data-feather="star"></i>
+                                                                </h2>
+
+                                                                <h5>5 Overall Rating</h5>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xl-12">
+                                                            <ul class="product-rating-list">
+                                                                <li>
+                                                                    <div class="rating-product">
+                                                                        <h5>5<i data-feather="star"></i></h5>
+                                                                        <div class="progress">
+                                                                            <div class="progress-bar"
+                                                                                 th:style="'width: ' + (${overallRatingProductResponse.ratingFive} / ${totalRatings} * 100) + '%'">
+                                                                            </div>
+                                                                        </div>
+                                                                        <h5 th:text="${overallRatingProductResponse.ratingFive}"
+                                                                            class="total"></h5>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="rating-product">
+                                                                        <h5>4<i data-feather="star"></i></h5>
+                                                                        <div class="progress">
+                                                                            <div class="progress-bar"
+                                                                                 th:style="'width: ' + (${overallRatingProductResponse.ratingFour} / ${totalRatings} * 100) + '%'">
+                                                                            </div>
+                                                                        </div>
+                                                                        <h5 th:text="${overallRatingProductResponse.ratingFour}"
+                                                                            class="total"></h5>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="rating-product">
+                                                                        <h5>3<i data-feather="star"></i></h5>
+                                                                        <div class="progress">
+                                                                            <div class="progress-bar"
+                                                                                 th:style="'width: ' + (${overallRatingProductResponse.ratingThree} / ${totalRatings} * 100) + '%'">
+                                                                            </div>
+                                                                        </div>
+                                                                        <h5 th:text="${overallRatingProductResponse.ratingThree}"
+                                                                            class="total"></h5>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="rating-product">
+                                                                        <h5>2<i data-feather="star"></i></h5>
+                                                                        <div class="progress">
+                                                                            <div class="progress-bar"
+                                                                                 th:style="'width: ' + (${overallRatingProductResponse.ratingTwo} / ${totalRatings} * 100) + '%'">
+                                                                            </div>
+                                                                        </div>
+                                                                        <h5 th:text="${overallRatingProductResponse.ratingTwo}"
+                                                                            class="total"></h5>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="rating-product">
+                                                                        <h5>1<i data-feather="star"></i></h5>
+                                                                        <div class="progress">
+                                                                            <div class="progress-bar"
+                                                                                 th:style="'width: ' + (${overallRatingProductResponse.ratingOne} / ${totalRatings} * 100) + '%'">
+                                                                            </div>
+                                                                        </div>
+                                                                        <h5 th:text="${overallRatingProductResponse.ratingOne}"
+                                                                            class="total"></h5>
+                                                                    </div>
+                                                                </li>
+
+                                                            </ul>
+
+                                                            <div class="review-title-2">
+                                                                <h4 class="fw-bold">REVIEW SẢN PHẨM</h4>
+                                                                <p>Hãy cho khác hàng khác biết bạn nghĩ gì</p>
+                                                                <button class="btn" type="button"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#writereview">Viết đánh giá
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xl-7">
+                                                <div class="review-people">
+                                                    <ul class="review-list">
+                                                        <li th:each="commentProduct : ${viewCommentProductUserResponses}">
+                                                            <div class="people-box">
+                                                                <div>
+                                                                    <div class="people-image people-text">
+                                                                        <img alt="user" class="img-fluid"
+                                                                             th:src="${commentProduct.imageUrl}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="people-comment">
+                                                                    <div class="people-name">
+                                                                        <a th:text="${commentProduct.userName}"
+                                                                           href="javascript:void(0)" class="name">User
+                                                                            name</a>
+                                                                        <div class="date-time">
+                                                                            <h6 th:text="${commentProduct.createdAt}"
+                                                                                class="text-content">Date</h6>
+                                                                            <div class="product-rating">
+                                                                                <ul class="rating">
+                                                                                    <li th:each="i : ${#numbers.sequence(1, 5)}">
+                                                                                        <i data-feather="star"
+                                                                                           th:classappend="${i <= commentProduct.rating} ? 'fill' : ''">
+                                                                                        </i>
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="reply">
+                                                                        <p th:text="${commentProduct.commentText}">
+                                                                            Context</p>
+                                                                    </div>
+
+                                                                    <div class="comment-actions">
+
+                                                                        <button class="btn-dislike"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target="#editDislikes"
+                                                                                th:data-commentproductid="${commentProduct.commentProductId}"
+                                                                                style="background-color: #0e9d82;  border: none;">
+                                                                            <i class="fa fa-thumbs-down"
+                                                                               style="font-size: 16px; padding: 1px"></i>
+                                                                        </button>
+                                                                        <span th:id="'dislike-count-' + ${commentProduct.commentProductId}"
+                                                                              th:text="${commentProduct.dislikes} ">Dislike</span>
+
+                                                                        <button class="btn-like"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target="#editLikes"
+                                                                                th:data-commentproductid="${commentProduct.commentProductId}"
+                                                                                style="background-color: #0e9d82;  border: none;">
+                                                                            <i class="fa fa-thumbs-up"
+                                                                               style="font-size: 16px; padding: 1px;"></i>
+                                                                        </button>
+                                                                        <span th:id="'like-count-' + ${commentProduct.commentProductId}"
+                                                                              th:text="${commentProduct.likes} ">Dislike</span>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xxl-3 col-xl-4 col-lg-5 d-none d-lg-block wow fadeInUp">
+                <div class="right-sidebar-box">
+                    <div class="vendor-box">
+
+                        <div class="vendor-list">
+                            <ul>
+                                <li>
+                                    <div class="address-contact">
+                                        <i data-feather="map-pin"></i>
+                                        <h5>Address: <span class="text-content">Đại học FPT</span></h5>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="address-contact">
+                                        <i data-feather="headphones"></i>
+                                        <h5>Contact Seller: <span class="text-content">(+1)-123-456-789</span></h5>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Trending Product -->
+                    <div class="pt-25">
+                        <div class="category-menu">
+                            <h3>Xu hướng sản phẩm</h3>
+
+                            <ul class="product-list product-right-sidebar border-0 p-0">
+                                <li th:each="productDetail : ${trendingProducts}">
+                                    <div class="offer-product">
+                                        <a th:href="@{/productDetail(productId=${productDetail.productId})}"
+                                           class="offer-image">
+                                            <img th:src="@{${productDetail.imageUrl}}"
+                                                 class="img-fluid blur-up lazyload" alt="">
+                                        </a>
+
+                                        <div class="offer-detail">
+                                            <div>
+                                                <a th:href="@{/productDetail(productId=${productDetail.productId})}">
+                                                    <h6 th:text="${productDetail.productName}" class="name">Product
+                                                        Name</h6>
+                                                </a>
+                                                <span th:text="${productDetail.productWeight}">Product weight</span>
+                                                <h6 th:text="${#numbers.formatInteger(productDetail.price, 0, 'POINT') + '₫'}"
+                                                    class="price theme-color">Price</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Product Left Sidebar End -->
+
+<!-- Related Product Section Start -->
+<section class="product-list-section section-b-space">
+    <div class="container-fluid-lg">
+        <div class="title">
+            <h2>Sản phẩm liên quan</h2>
+            <span class="title-leaf">
+                    <svg class="icon-width">
+                        <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                    </svg>
+                </span>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="slider-6_1 product-wrapper">
+                    <div th:each="product : ${relatedProducts}">
+                        <div class="product-box-3 wow fadeInUp">
+                            <div class="product-header">
+                                <div class="product-image">
+                                    <a th:href="@{/productDetail(productId=${product.productId})}">
+                                        <img th:src="@{${product.imageUrlGallery}}"
+                                             class="img-fluid blur-up lazyload" alt="">
+                                    </a>
+
+                                    <ul class="product-option"
+                                        style=" display: flex;justify-content: center;align-items: center;">
+                                        <li data-bs-toggle="tooltip"
+                                            data-bs-placement="top" title="View">
+                                            <a th:href="@{/productDetail(productId=${product.productId})}">
+                                                <i data-feather="eye"></i>
+                                            </a>
+                                        </li>
+
+                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                            <a href="javascript:void(0)"
+                                               data-bs-toggle="modal"
+                                               data-bs-target="#view"
+                                               th:data-product-id="${product.productId}">
+                                                <i class="iconly-Swap icli"></i>
+                                            </a>
+                                        </li>
+
+                                        <li th:if="${session.account != null}" data-bs-toggle="tooltip"
+                                            data-bs-placement="top" title="Wishlist">
+                                            <button class="btn p-0 wishlist notifi-wishlist"
+                                                    th:data-productid="${product.productId}"
+                                                    type="button"
+                                                    style="margin-left: 20px">
+                                                <i class="iconly-Heart icli"></i>
+                                            </button>
+                                            <script>
+                                                $(function () {
+                                                    $(document).on('click', '.notifi-wishlist', async function () {
+                                                        const btn = $(this);
+                                                        const userId = "[[${session.accountId}]]";
+                                                        const id = btn.data('productid');
+                                                        if (!id || btn.prop('disabled')) return;
+
+                                                        btn.prop('disabled', true);
+                                                        console.log("hello" + id);
+                                                        try {
+                                                            await axios.post(`http://localhost:8080/AgriculturalWarehouseManagementApplication/wishlistProduct/${userId}/${id}`);
+                                                        } catch (e) {
+                                                            console.error(e);
+                                                            toast('❌ Error');
+                                                        } finally {
+                                                            btn.prop('disabled', false);
+                                                        }
+                                                    });
+
+                                                    function toast(m) {
+                                                        alert(m);
+                                                    }               // thay bằng toast đẹp nếu muốn
+                                                });
+                                            </script>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="product-footer">
+                                <div class="product-detail">
+                                    <span th:each="category : ${categoryUsersResponses}"
+                                          th:if="${category.categoryId == product.categoryId}"
+                                          th:text="${category.categoryName}" class="span-name"
+                                    >Category</span>
+
+                                    <a th:href="@{/productDetail(productId=${product.productId})}">
+                                        <h5 th:text="${product.productName}" class="name">Product name</h5>
+                                    </a>
+                                    <div class="product-rating mt-2">
+                                        <ul class="rating">
+                                            <li th:each="i : ${#numbers.sequence(1, 5)}">
+                                                <i data-feather="star"
+                                                   th:classappend="${i <= product.ratingProductDetail} ? 'fill' : ''">
+                                                </i>
+                                            </li>
+                                        </ul>
+                                        <span th:text="${ '(' + product.ratingCount + ')'}">Rating count</span>
+                                    </div>
+
+                                    <h6 th:text="${product.productWeight}" class="unit">Weight and unit</h6>
+                                    <h5 th:text="${#numbers.formatInteger(product.productPrice, 0, 'POINT') + '₫'}"
+                                        class="price">
+                                        Product price smallest in ProductDetail
+                                    </h5>
+                                    <div th:if="${session.account != null}" class="price-qty">
+                                        <button class="btn btn-cart btn-success notifi-addtocart"
+                                                style="border: 2px solid green; margin-top: 20px"
+                                                th:data-productcartid="${product.productId}"
+                                        >
+                                            Thêm giỏ hàng
+                                        </button>
+
+                                        <script>
+
+                                            $(function () {
+                                                $(document).on('click', '.notifi-addtocart', async function () {
+                                                    const btn = $(this);
+                                                    const userId = "[[${session.accountId}]]";
+                                                    const productId = btn.data('productcartid');  // Lấy productId từ data attribute
+                                                    console.log(userId)
+                                                    console.log(productId)
+
+                                                    if (!userId || !productId || btn.prop('disabled')) return;  // Kiểm tra nếu không có userId hoặc productId
+
+                                                    btn.prop('disabled', true);  // Vô hiệu hóa nút để tránh click nhiều lần
+
+                                                    try {
+
+                                                        const response = await axios.post(`http://localhost:8080/AgriculturalWarehouseManagementApplication/addToCart/${productId}/${userId}`);
+
+                                                        if (response.data.status === "SUCCESS") {
+                                                            const message = response.data.message;
+                                                            await loadCart();
+                                                            // Tạo thông báo thành công
+                                                            $.notify({
+                                                                icon: "fa fa-check",
+                                                                title: "Success!",  // Tùy chỉnh title, ví dụ "Thành công" hoặc "Thêm vào giỏ hàng"
+                                                                message: message,  // Lấy thông báo từ API
+                                                            }, {
+                                                                element: "body",
+                                                                position: null,
+                                                                type: "info",  // Tùy chỉnh loại thông báo, ví dụ: success, error, info
+                                                                allow_dismiss: true,
+                                                                newest_on_top: false,
+                                                                showProgressbar: true,
+                                                                placement: {
+                                                                    from: "top",
+                                                                    align: "right",
+                                                                },
+                                                                offset: 20,
+                                                                spacing: 10,
+                                                                z_index: 1031,
+                                                                delay: 2000,
+                                                                animate: {
+                                                                    enter: "animated fadeInDown",
+                                                                    exit: "animated fadeOutUp",
+                                                                },
+                                                                icon_type: "class",
+                                                                template: '<div data-notify="container" class="col-xxl-3 col-lg-5 col-md-6 col-sm-7 col-12 alert alert-{0}" role="alert">' +
+                                                                    '<button type="button" aria-hidden="true" class="btn-close" data-notify="dismiss"></button>' +
+                                                                    '<span data-notify="icon"></span> ' +
+                                                                    '<span data-notify="title">{1}</span> ' +
+                                                                    '<span data-notify="message">{2}</span>' +
+                                                                    '<div class="progress" data-notify="progressbar">' +
+                                                                    '<div class="progress-bar progress-bar-info progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                                    "</div>" +
+                                                                    '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                                    "</div>",
+                                                            });
+                                                        } else {
+                                                            const message = response.data.message;
+
+                                                            // Tạo thông báo lỗi
+                                                            $.notify({
+                                                                icon: "fa fa-exclamation-circle",
+                                                                title: "Error!",  // Tùy chỉnh title cho lỗi
+                                                                message: message,  // Lấy thông báo lỗi từ API
+                                                            }, {
+                                                                element: "body",
+                                                                position: null,
+                                                                type: "danger",  // Loại thông báo lỗi
+                                                                allow_dismiss: true,
+                                                                newest_on_top: false,
+                                                                showProgressbar: true,
+                                                                placement: {
+                                                                    from: "top",
+                                                                    align: "right",
+                                                                },
+                                                                offset: 20,
+                                                                spacing: 10,
+                                                                z_index: 1031,
+                                                                delay: 2000,
+                                                                animate: {
+                                                                    enter: "animated fadeInDown",
+                                                                    exit: "animated fadeOutUp",
+                                                                },
+                                                                icon_type: "class",
+                                                                template: '<div data-notify="container" class="col-xxl-3 col-lg-5 col-md-6 col-sm-7 col-12 alert alert-{0}" role="alert">' +
+                                                                    '<button type="button" aria-hidden="true" class="btn-close" data-notify="dismiss"></button>' +
+                                                                    '<span data-notify="icon"></span> ' +
+                                                                    '<span data-notify="title">{1}</span> ' +
+                                                                    '<span data-notify="message">{2}</span>' +
+                                                                    '<div class="progress" data-notify="progressbar">' +
+                                                                    '<div class="progress-bar progress-bar-info progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                                    "</div>" +
+                                                                    '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                                    "</div>",
+                                                            });
+                                                        }
+
+                                                    } catch (e) {
+                                                        console.error(e);
+                                                        toast('❌ Error');
+                                                    } finally {
+                                                        btn.prop('disabled', false);  // Bật lại nút khi kết thúc
+                                                    }
+                                                });
+
+                                                function toast(m) {
+                                                    alert(m);  // Thay bằng thông báo đẹp nếu cần
+                                                }
+                                            });
+
+
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Related Product Section End -->
+
+
+<!-- Items section Start -->
+<div th:if="${session.account != null}" class="button-item">
+    <button class="item-btn btn text-white">
+        <i class="iconly-Bag-2 icli"></i>
+    </button>
+</div>
+<div th:if="${session.account != null}" class="item-section">
+    <button class="close-button">
+        <i class="fas fa-times"></i>
+    </button>
+    <h6>
+        <i class="iconly-Bag-2 icli"></i>
+        <span id="sizeCart" th:text="${sizeCart} + 'Items'">Items</span>
+        <span id="sizeCartBelow" style="position: absolute; margin-top: 80px; margin-left: 90px"></span>
+    </h6>
+
+    <ul class="items-image">
+
+        <li id="image" th:each="cart : ${cartUserResponses}">
+            <img th:src="${cart.imageUrl}" alt="">
+        </li>
+        <h6>
+            <span th:if="${sizeCart > 3}">...</span>
+        </h6>
+
+        <script>
+            async function loadCart() {
+                const userId = "[[${session.accountId}]]";
+                console.log("home" + userId)
+                try {
+                    // Gọi API lấy giỏ hàng bằng axios
+                    const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/listCart/${userId}`);
+
+                    const cartUserResponses = response.data.active;
+                    let sizeListCart = 0;
+
+                    if (cartUserResponses) {
+                        sizeListCart = response.data.data.length; // Lấy số lượng sản phẩm
+                    }
+
+                    console.log("home " + sizeListCart);
+
+                    const sizeCartElement = document.getElementById('sizeCart');
+                    const sizeCartHeadElement = document.getElementById('sizeCartHead');
+                    const cartSizeBelowElement = document.getElementById('sizeCartBelow');
+
+
+                    if (sizeListCart > 3) {
+                        if (sizeCartElement) {
+                            sizeCartElement.innerText = `${sizeListCart} Items`;
+
+                        }
+
+                        if (cartSizeBelowElement) {
+                            cartSizeBelowElement.innerText = '...';
+                        }
+
+                        if (sizeCartHeadElement) {
+                            sizeCartHeadElement.innerText = `${sizeListCart}`
+                        }
+
+                    } else {
+                        if (sizeCartElement) {
+                            sizeCartElement.innerText = `${sizeListCart} Items`;
+                        }
+
+                        if (sizeCartHeadElement) {
+                            sizeCartHeadElement.innerText = `${sizeListCart}`
+                        }
+                    }
+
+                    const cartUserResponsesI = response.data.data; // Mảng chứa dữ liệu giỏ hàng
+                    console.log(cartUserResponsesI); // Kiểm tra dữ liệu API trả về
+
+                    const ulElement = document.querySelector('.items-image');
+
+                    const firstThreeItems = cartUserResponsesI.slice(0, 3); // Lấy 3 phần tử đầu tiên
+
+                    ulElement.innerHTML = '';
+
+                    firstThreeItems.forEach((cart, index) => {
+                        const liElement = document.createElement('li');
+                        liElement.setAttribute('data-index', index);  // Gán data-index mới
+                        liElement.innerHTML = `<img src="${cart.imageUrl}" alt="Product Image ${index}">`;
+                        ulElement.appendChild(liElement);
+                    });
+
+                    await updateTotalCart(userId);
+                } catch (error) {
+                    console.error('Có lỗi xảy ra khi gọi API giỏ hàng:', error);
+                }
+            }
+
+            async function updateTotalCart(userId) {
+                try {
+                    let response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/totalCart/${userId}`);
+                    if (response.data.status === "SUCCESS") {
+                        document.getElementById(`total-cart`).innerText = `${response.data.data.totalCart.toLocaleString()}₫`;
+                    } else {
+                        console.error("Không thể lấy tổng giỏ hàng");
+                    }
+                } catch (error) {
+                    console.error("Lỗi kết nối khi lấy tổng giỏ hàng:", error);
+                }
+            }
+        </script>
+
+    </ul>
+    <button id="total-cart" onclick="location.href = 'cart';" class="btn item-button btn-sm fw-bold"
+            th:text="${#numbers.formatInteger(totalCart, 0, 'POINT') + '₫'}"></button>
+</div>
+<!-- Items section End -->
+
+<!-- Footer Section Start -->
+<footer th:replace="FrontEnd/fragments/footer::footer"></footer>
+<!-- Footer Section End -->
+
+<!-- Quick View Modal Box Start -->
+<div class="modal fade theme-modal view-modal" id="view" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header p-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+                <div class="row g-sm-4 g-2">
+
+                    <div>
+                        <div class="right-sidebar-modal" style="width: 100%; max-width: 400px;">
+
+                            <div class="select-size">
+                                <form th:action="@{/compareProductDetail}" method="post">
+                                    <input name="productId" id="modalProductIdInput" type="hidden" value="">
+                                    <input name="productDetailId" id="modalProductDetailIdInput" type="hidden" value="">
+
+                                    <h4>Chọn cân nặng :</h4>
+                                    <select id="modalWeightSelect" class="form-select select-form-size">
+                                        <option selected>Chọn Size</option>
+                                    </select>
+
+                                    <button type="submit" class="btn btn-outline-success mt-2">So sánh</button>
+                                </form>
+                            </div>
+
+                            <script>
+                                const viewModal = document.getElementById('view');
+
+                                viewModal.addEventListener('show.bs.modal', async function (event) {
+                                    const button = event.relatedTarget;
+                                    const productId = button.getAttribute('data-product-id');
+                                    const productIdInput = viewModal.querySelector('#modalProductIdInput');
+                                    const productDetailIdInput = viewModal.querySelector('#modalProductDetailIdInput');
+                                    const weightSelect = viewModal.querySelector('#modalWeightSelect');
+                                    console.log("hello" + productId);
+
+                                    if (productIdInput) productIdInput.value = productId;
+
+                                    try {
+                                        const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/productDetailAPI/${productId}`);
+                                        const productDetails = response.data;
+
+                                        weightSelect.innerHTML = '';
+
+                                        productDetails.forEach(detail => {
+                                            const option = document.createElement('option');
+                                            option.value = detail.productDetailId;
+                                            option.textContent = `${detail.productWeight} - ${detail.price.toLocaleString('vi-VN')}₫`;
+                                            option.dataset.productDetailID = detail.productDetailId;
+                                            weightSelect.appendChild(option);
+                                        });
+
+                                        // Gắn sự kiện change (chỉ gắn 1 lần duy nhất)
+                                        weightSelect.onchange = function () {
+                                            const selectedOption = weightSelect.options[weightSelect.selectedIndex];
+                                            if (selectedOption) {
+                                                productDetailIdInput.value = selectedOption.dataset.productDetailID;
+                                            }
+                                        };
+
+                                        // Gọi thủ công sự kiện change để tự động gán giá trị đầu tiên
+                                        if (weightSelect.options.length > 0) {
+                                            weightSelect.selectedIndex = 0;
+                                            weightSelect.dispatchEvent(new Event('change'));
+                                        }
+                                    } catch (error) {
+                                        console.error("Lỗi khi lấy dữ liệu product detail:", error);
+                                    }
+                                });
+
+                            </script>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Quick View Modal Box End -->
+
+<!-- Location Modal Start -->
+<div class="modal location-modal fade theme-modal" id="locationModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel1">Choose your Delivery Location</h5>
+                <p class="mt-1 text-content">Enter your address and we will specify the offer for your area.</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="location-list">
+                    <div class="search-input">
+                        <input type="search" class="form-control" placeholder="Search Your Area">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+
+                    <div class="disabled-box">
+                        <h6>Select a Location</h6>
+                    </div>
+
+                    <ul class="location-select custom-height">
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Alabama</h6>
+                                <span>Min: $130</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Arizona</h6>
+                                <span>Min: $150</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>California</h6>
+                                <span>Min: $110</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Colorado</h6>
+                                <span>Min: $140</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Florida</h6>
+                                <span>Min: $160</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Georgia</h6>
+                                <span>Min: $120</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Kansas</h6>
+                                <span>Min: $170</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Minnesota</h6>
+                                <span>Min: $120</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>New York</h6>
+                                <span>Min: $110</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Washington</h6>
+                                <span>Min: $130</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Location Modal End -->
+
+<!-- Deal Box Modal Start -->
+<div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title w-100" id="deal_today">Deal Today</h5>
+                    <p class="mt-1 text-content">Recommended deals for you.</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="deal-offer-box">
+                    <ul class="deal-offer-list">
+                        <li class="list-1">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/10.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-2">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/11.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-3">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/12.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-1">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/13.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Deal Box Modal End -->
+
+
+<!-- Tap to top and theme setting button start -->
+<div class="theme-option theme-option-2">
+    <div class="setting-box">
+        <button class="btn setting-button">
+            <i class="fa-solid fa-gear"></i>
+        </button>
+
+        <div class="theme-setting-2">
+            <div class="theme-box">
+                <ul>
+                    <li>
+                        <div class="setting-name">
+                            <h4>Color</h4>
+                        </div>
+                        <div class="theme-setting-button color-picker">
+                            <form class="form-control">
+                                <label for="colorPick" class="form-label mb-0">Theme Color</label>
+                                <input type="color" class="form-control form-control-color" id="colorPick"
+                                       value="#0da487" title="Choose your color">
+                            </form>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>Dark</h4>
+                        </div>
+                        <div class="theme-setting-button">
+                            <button class="btn btn-2 outline" id="darkButton">Dark</button>
+                            <button class="btn btn-2 unline" id="lightButton">Light</button>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>RTL</h4>
+                        </div>
+                        <div class="theme-setting-button rtl">
+                            <button class="btn btn-2 rtl-unline">LTR</button>
+                            <button class="btn btn-2 rtl-outline">RTL</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-to-top">
+        <a id="back-to-top" href="#">
+            <i class="fas fa-chevron-up"></i>
+        </a>
+    </div>
+</div>
+<!-- Tap to top and theme setting button end -->
+
+<!-- Review Modal Start -->
+<div class="modal fade theme-modal question-modal" id="writereview" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Viết đánh giá</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form th:action="@{/commentProduct}" method="post" class="product-review-form">
+                <div class="modal-body pt-0">
+                    <div class="product-wrapper">
+                        <input type="number" name="productId" th:value="${productId}" hidden>
+                        <input th:if="${session.accountId != null}" type="number" name="accountId"
+                               th:value="${session.accountId}"
+                               hidden>
+                        <div class="product-image">
+                            <img class="img-fluid" alt="Solid Collared Tshirts"
+                                 th:src="@{${imageUrl}}">
+                        </div>
+                        <div class="product-content">
+                            <h5 th:text="${productName}" class="name">Product name</h5>
+                        </div>
+                    </div>
+                    <div class="review-box">
+                        <div class="product-review-rating">
+                            <label for="rating">Rating</label>
+                            <div class="product-rating">
+                                <select class="form-control" id="rating" name="rating">
+                                    <option value="5">⭐⭐⭐⭐⭐</option>
+                                    <option value="4">⭐⭐⭐⭐</option>
+                                    <option value="3">⭐⭐⭐</option>
+                                    <option value="2">⭐⭐</option>
+                                    <option value="1">⭐</option>
+                                </select>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="review-box">
+                        <label for="content" class="form-label">Viết ở đây</label>
+                        <textarea type="text" name="content" id="content" rows="3" class="form-control"
+                                  placeholder="Viết ở đây" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-md btn-theme-outline fw-bold"
+                            data-bs-dismiss="modal">Close
+                    </button>
+                    <button th:if="${session.account != null}" type="submit"
+                            class="btn btn-md fw-bold text-light theme-bg-color">Save changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Review Modal End -->
+
+
+<!-- Modal Xác nhận Dislike -->
+<div class="modal fade" id="editDislikes" tabindex="-1" aria-labelledby="editDislikesLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editDislikesLabel">Dislike Comment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn đánh dấu là dislike cho bình luận này?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="confirmDislike">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.querySelectorAll('.btn-like').forEach(button => {
+        button.addEventListener('click', function () {
+            const commentProductId = this.getAttribute('data-commentproductid');
+
+            window.commentProductIdToDislike = commentProductId;
+        });
+    });
+
+    document.getElementById('confirmDislike').addEventListener('click', async function () {
+        const commentProductId = window.commentProductIdToDislike;
+
+        if (commentProductId) {
+            try {
+                const response = await axios.put(`http://localhost:8080/AgriculturalWarehouseManagementApplication/dislike/${commentProductId}`);
+
+                console.log(response.data);
+
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editDislikes'));
+                modal.hide();
+
+                document.getElementById(`dislike-count-${commentProductId}`).innerText = `${response.data.dislikes}`;
+
+            } catch (error) {
+                console.error('Có lỗi xảy ra:', error);
+                alert('Đã xảy ra lỗi khi thực hiện thao tác!');
+            }
+        }
+    });
+
+
+</script>
+
+<!-- Modal Xác nhận like -->
+<div class="modal fade" id="editLikes" tabindex="-1" aria-labelledby="editLikesLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editLikesLabel">Dislike Comment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn đánh dấu là like cho bình luận này?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="confirmLike">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.querySelectorAll('.btn-dislike').forEach(button => {
+        button.addEventListener('click', function () {
+            const commentProductId = this.getAttribute('data-commentproductid');
+
+            window.commentProductIdToDislike = commentProductId;
+        });
+    });
+
+    document.getElementById('confirmLike').addEventListener('click', async function () {
+        const commentProductId = window.commentProductIdToDislike;
+
+        if (commentProductId) {
+            try {
+                const response = await axios.put(`http://localhost:8080/AgriculturalWarehouseManagementApplication/like/${commentProductId}`);
+
+                console.log(response.data);
+
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editLikes'));
+                modal.hide();
+
+                document.getElementById(`like-count-${commentProductId}`).innerText = `${response.data.likes}`;
+
+            } catch (error) {
+                console.error('Có lỗi xảy ra:', error);
+                alert('Đã xảy ra lỗi khi thực hiện thao tác!');
+            }
+        }
+    });
+
+
+</script>
+
+<!-- Bg overlay Start -->
+<div class="bg-overlay"></div>
+<!-- Bg overlay End -->
+
+<!-- latest jquery-->
+<script th:src="@{FrontEnd/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- jquery ui-->
+<script th:src="@{FrontEnd/assets/js/jquery-ui.min.js}"></script>
+
+<!-- Bootstrap js-->
+<script th:src="@{FrontEnd/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/bootstrap/bootstrap-notify.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/bootstrap/popper.min.js}"></script>
+
+<!-- feather icon js-->
+<script th:src="@{FrontEnd/assets/js/feather/feather.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/feather/feather-icon.js}"></script>
+
+<!-- Lazyload Js -->
+<script th:src="@{FrontEnd/assets/js/lazysizes.min.js}"></script>
+
+<!-- Slick js-->
+<script th:src="@{FrontEnd/assets/js/slick/slick.js}"></script>
+<script th:src="@{FrontEnd/assets/js/slick/slick-animation.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/custom-slick-animated.js}"></script>
+<script th:src="@{FrontEnd/assets/js/slick/custom_slick.js}"></script>
+
+<!-- Price Range Js -->
+<script th:src="@{FrontEnd/assets/js/ion.rangeSlider.min.js}"></script>
+
+<!-- sidebar open js -->
+<script th:src="@{FrontEnd/assets/js/filter-sidebar.js}"></script>
+
+<!-- Quantity js -->
+<script th:src="@{FrontEnd/assets/js/quantity-2.js}"></script>
+
+<!-- Zoom Js -->
+<script th:src="@{FrontEnd/assets/js/jquery.elevatezoom.js}"></script>
+<script th:src="@{FrontEnd/assets/js/zoom-filter.js}"></script>
+
+<!-- Timer Js -->
+<script th:src="@{FrontEnd/assets/js/timer1.js}"></script>
+
+<!-- Sticky-bar js -->
+<script th:src="@{FrontEnd/assets/js/sticky-cart-bottom.js}"></script>
+
+<!-- WOW js -->
+<script th:src="@{FrontEnd/assets/js/wow.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/custom-wow.js}"></script>
+
+<!-- script js -->
+<script th:src="@{FrontEnd/assets/js/script.js}"></script>
+
+<!-- theme setting js -->
+<script th:src="@{FrontEnd/assets/js/theme-setting.js}"></script>
+
+</body>
+
+</html>

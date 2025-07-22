@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fastkart">
+    <meta name="keywords" content="Fastkart">
+    <meta name="author" content="Fastkart">
+    <link rel="icon" th:href="@{/FrontEnd/assets/images/favicon/1.png}" type="image/x-icon">
+    <title>On-demand last-mile delivery</title>
+
+    <!-- Google font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap">
+
+    <!-- bootstrap css -->
+    <link id="rtl-link" rel="stylesheet" type="text/css" th:href="@{/FrontEnd/assets/css/vendors/bootstrap.css}">
+
+    <!-- Iconly css -->
+    <link rel="stylesheet" type="text/css" th:href="@{/FrontEnd/assets/css/bulk-style.css}">
+
+    <!-- Template css -->
+    <link id="color-link" rel="stylesheet" type="text/css" th:href="@{FrontEnd/assets/css/style.css}">
+    <style>
+        .glow-btn {
+            position: relative;
+            isolation: isolate;
+            border-radius: 10px;
+            z-index: 1;
+            padding: 10px 12px;
+            color: black;
+            background-color: #f8f9fe;
+            border: none;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Lớp nền mờ bên dưới */
+        .glow-btn::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-color: #f8f9fe; /* giống nền gốc */
+            border-radius: inherit;
+            z-index: -2;
+        }
+
+        /* Viền phát sáng mở rộng rõ ràng */
+        .glow-btn::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            background: linear-gradient(
+                    45deg,
+                    #FF0000, #FF7300, #FFFB00, #48FF00,
+                    #00FFD5, #002BFF, #FF00C8, #FF0000
+            );
+            background-size: 600%;
+            filter: blur(8px); /* tăng độ lan */
+            border-radius: inherit;
+            z-index: -3;
+            opacity: 1;
+            animation: glowing 20s linear infinite, pulseGlow 4s ease-in-out infinite;
+        }
+
+        /* Gradient di chuyển liên tục */
+        @keyframes glowing {
+            0% {
+                background-position: 0 0;
+            }
+            50% {
+                background-position: 400% 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
+
+        /* Nhịp sáng giãn–thu */
+        @keyframes pulseGlow {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .shake-10s { /* class mới */
+            animation: shake 0.5s ease-in-out;
+            animation-iteration-count: 20; /* 0.5 s × 20 = 10 s */
+        }
+
+    </style>
+</head>
+
+<body>
+<!-- Loader Start -->
+<div class="fullpage-loader">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+<!-- Loader End -->
+
+<!-- Header Start -->
+<head th:replace="FrontEnd/fragments/header::header"></head>
+<!-- Header End -->
+
+<!-- mobile fix menu start -->
+<!-- mobile fix menu end -->
+
+<!-- Breadcrumb Section Start -->
+
+<!-- Breadcrumb Section End -->
+
+<!-- Checkout section Start -->
+<section class="checkout-section-2 section-b-space">
+    <div class="container-fluid-lg">
+        <div class="row g-sm-4 g-3">
+            <div class="col-lg-8">
+                <div class="left-sidebar-checkout">
+                    <div class="checkout-detail-box">
+                        <ul>
+                            <li>
+                                <div class="checkout-icon">
+                                    <lord-icon target=".nav-item" src="https://cdn.lordicon.com/ggihhudh.json"
+                                               trigger="loop-on-hover"
+                                               colors="primary:#121331,secondary:#646e78,tertiary:#0baf9a"
+                                               class="lord-icon">
+                                    </lord-icon>
+                                </div>
+                                <div id="quantityErrorDiv" th:if="${errorMessageCheckOut != null}"
+                                     th:text="${errorMessageCheckOut}"
+                                     class="alert-danger shake-10s"
+                                     style="display: inline-block;margin-left: 65%; padding: 10px">
+
+                                </div>
+                                <script>
+                                    var errorMessageDiv = document.getElementById('quantityErrorDiv');
+
+                                    if (errorMessageDiv) {
+                                        setTimeout(function () {
+                                            errorMessageDiv.style.display = 'none';
+                                        }, 10000); // 10 giây
+                                    }
+                                </script>
+
+                                <div id="errorWallet" th:if="${errorMessageWallets != null}"
+                                     th:text="${errorMessageWallets}"
+                                     class="alert-danger shake-10s"
+                                     style="display: inline-block;margin-left: 65%; padding: 10px">
+                                </div>
+                                <div id="nap" th:if="${errorMessageWallets != null}"
+                                     style="display: inline-block;margin-left: 65%; padding: 10px">
+                                    <form th:action="@{/depositWallet}" method="post">
+
+                                        <input type="number" name="subTotal" th:if="${subTotal != null}"
+                                               th:value="${subTotal}" hidden>
+                                        <input type="number" name="voucherId" th:if="${voucherId != null}"
+                                               th:value="${voucherId}" hidden>
+                                        <input type="number" name="percentDiscount"
+                                               th:if="${percentDiscount != null}"
+                                               th:value="${percentDiscount}" hidden>
+                                        <input type="number" name="totalPrice" th:if="${totalPrice != null}"
+                                               th:value="${totalPrice}" hidden>
+                                        <button class="btn deal-button glow-btn"
+                                                style="background-color: #e6f5f3; color: #0da487">
+                                            <i data-feather="zap"></i>
+                                            <span>Nạp Ví Tiền</span>
+                                        </button>
+                                    </form>
+                                </div>
+                                <script>
+                                    var errorWallet = document.getElementById('errorWallet');
+                                    var nap = document.getElementById('nap');
+                                    if (errorWallet) {
+                                        setTimeout(function () {
+                                            errorWallet.style.display = 'none';
+                                            nap.style.display = 'none';
+                                        }, 10000); // 10 giây
+                                    }
+                                </script>
+
+                                <div class="checkout-box">
+
+                                    <div class="checkout-title">
+                                        <h4>Địa chỉ gia hàng</h4>
+                                        <form th:action="@{/profileUser}" method="get">
+                                            <button class="btn theme-bg-color text-white btn-sm fw-bold mt-lg-0 mt-3">
+                                                Đến hồ sơ để thêm địa chỉ
+                                            </button>
+                                        </form>
+                                    </div>
+
+
+                                    <div class="checkout-detail">
+                                        <div class="row g-4">
+                                            <div th:each="address : ${addressBookResponses}"
+                                                 class="col-xxl-6 col-lg-12 col-md-6">
+                                                <div class="delivery-address-box table-responsive address-table">
+                                                    <div>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio"
+                                                                   name="addressId" th:value="${address.addressBookId}"
+                                                                   th:onclick="|updateAddressId(${address.addressBookId})|"
+                                                                   th:checked="${session.saveAddress != null and address.addressBookId.toString() == session.saveAddress.toString()}"
+                                                            >
+                                                        </div>
+
+                                                        <div class="label">
+                                                            <label id="userSetToAddress" contenteditable="false"
+                                                                   th:text="${address.setToAddress}">home</label>
+                                                        </div>
+
+                                                        <ul class="delivery-address-detail">
+                                                            <li>
+                                                                <h4 th:text="${address.fullName}" class="fw-500">Full
+                                                                    name</h4>
+                                                            </li>
+
+                                                            <li>
+                                                                <p class="text-content">
+                                                                    <span th:text="${'Địa chỉ:' + address.address}"
+                                                                          class="text-title">Address</span>
+                                                                </p>
+                                                            </li>
+
+                                                            <li>
+                                                                <p class="text-content">
+                                                                    <span th:text="${'Số điện thoại:' + address.phone}"
+                                                                          class="text-title">Phone</span>
+                                                                </p>
+                                                            </li>
+
+                                                            <li>
+                                                                <p class="text-content">
+                                                                    <span th:text="${'Ghi chú:' + address.note}"
+                                                                          class="text-title">Note</span>
+                                                                </p>
+                                                            </li>
+
+                                                            <li>
+                                                                <p class="text-content">
+                                                                    <span th:text="${'Email:' + address.email}"
+                                                                          class="text-title"></span>
+                                                                </p>
+                                                            </li>
+
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="checkout-icon">
+                                    <lord-icon target=".nav-item" src="https://cdn.lordicon.com/qmcsqnle.json"
+                                               trigger="loop-on-hover" colors="primary:#0baf9a,secondary:#0baf9a"
+                                               class="lord-icon">
+                                    </lord-icon>
+                                </div>
+                                <div class="checkout-box">
+                                    <div class="checkout-title">
+                                        <h4>Phương thức thánh toán</h4>
+                                    </div>
+
+                                    <div class="checkout-detail">
+                                        <div class="accordion accordion-flush custom-accordion"
+                                             id="accordionFlushExample">
+
+                                            <div class="accordion-item">
+                                                <div class="accordion-header" id="flush-headingThree">
+                                                    <div data-bs-toggle="collapse"
+                                                         data-bs-target="#flush-collapseThree">
+                                                        <div class="custom-form-check form-check mb-0">
+                                                            <label class="form-check-label" for="wallet">
+                                                                <input class="form-check-input mt-0" type="radio"
+                                                                       name="flexRadioDefault" id="wallet" checked>Quét
+                                                                QR OCB</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <button type="submit" form="qrForm"
+                                                        class="btn theme-bg-color text-white btn-md w-100 mt-4 fw-bold">
+                                                    Thanh toán bằng QR
+                                                </button>
+                                            </div>
+
+                                            <div>
+
+                                                <form th:action="@{/validateCheckOutByWallet}" method="POST"
+                                                      class="right-side-summery-box">
+                                                    <input type="number" name="addressId" id="addressIdFormTwo"
+                                                           th:value="${session.saveAddress != null ? session.saveAddress : 0}" hidden/>
+                                                    <input type="number" name="subTotal" th:if="${subTotal != null}"
+                                                           th:value="${subTotal}" hidden>
+                                                    <input type="number" name="voucherId" th:if="${voucherId != null}"
+                                                           th:value="${voucherId}" hidden>
+                                                    <input type="number" name="percentDiscount"
+                                                           th:if="${percentDiscount != null}"
+                                                           th:value="${percentDiscount}" hidden>
+                                                    <input type="number" name="totalPrice" th:if="${totalPrice != null}"
+                                                           th:value="${totalPrice}" hidden>
+
+                                                    <button type="submit"
+                                                            class="btn theme-bg-color text-white btn-md w-100 mt-4 fw-bold">
+                                                        Thanh toán bằng ví
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="header-nav-right">
+                    <button class="btn deal-button glow-btn" data-bs-toggle="modal" data-bs-target="#deal-box"
+                            style="background-color: #e6f5f3; color: #0da487">
+                        <i data-feather="zap"></i>
+                        <span>Voucher</span>
+                    </button>
+                </div>
+
+                <form id="qrForm" th:action="@{/validateCheckOut}" method="POST" class="right-side-summery-box">
+                    <div class="summery-box-2">
+                        <div class="summery-header">
+                            <h3>Đơn đặt hàng mùa hè</h3>
+                        </div>
+
+                        <ul class="summery-contain">
+                            <li th:each="checkOut : ${checkOutProductsResponses}">
+                                <img th:src="${checkOut.imageUrl}"
+                                     class="img-fluid blur-up lazyloaded checkout-image" alt="">
+                                <h4>
+                                    <span th:text="${checkOut.productName} + ' X ' + ${checkOut.totalQuantityProductDetail}"></span>
+                                </h4>
+                                <h4 th:text="${#numbers.formatInteger(checkOut.totalPriceProductDetail, 0, 'POINT') + '₫'}"
+                                    class="price"></h4>
+                            </li>
+
+
+                        </ul>
+
+                        <ul class="summery-total">
+                            <input type="number" name="addressId" id="addressId" th:value="${session.saveAddress != null ? session.saveAddress : 0}" hidden/>
+                            <li th:if="${percentDiscount != null}">
+                                <h4>Tổng trước voucher</h4>
+                                <h4 th:text="${#numbers.formatInteger(subTotal, 0, 'POINT') + '₫'}"
+                                    class="price"></h4>
+                                <input type="number" name="subTotal" th:value="${subTotal}" hidden>
+                            </li>
+
+                            <li th:if="${percentDiscount != null}">
+                                <h4>Voucher</h4>
+                                <h4 th:text="'-' +${#numbers.formatInteger(percentDiscount, 0, 'POINT') + '₫'}"
+                                    class="price"></h4>
+                                <input type="number" name="voucherId" th:value="${voucherId}" hidden>
+                                <input type="number" name="percentDiscount" th:value="${percentDiscount}" hidden>
+                            </li>
+
+                            <li class="list-total">
+                                <h4>Tổng (VND)</h4>
+                                <h4 th:text="${#numbers.formatInteger(totalPrice, 0, 'POINT') + '₫'}"
+                                    class="price"></h4>
+                                <input type="number" name="totalPrice" th:value="${totalPrice}" hidden>
+                            </li>
+                        </ul>
+                    </div>
+                    <script>
+                        function updateAddressId(addressId) {
+                            // Cập nhật giá trị addressId vào trường input ẩn
+                            document.getElementById("addressId").value = addressId;
+                            document.getElementById("addressIdFormTwo").value = addressId;
+                            console.log("hello" + addressId)
+                        }
+                    </script>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Checkout section End -->
+
+<!-- Footer Section Start -->
+<footer th:replace="FrontEnd/fragments/footer::footer"></footer>
+<!-- Footer Section End -->
+
+<!-- Location Modal Start -->
+<!-- Location Modal End -->
+
+
+<!-- Deal Box Modal Start -->
+<div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title w-100" id="deal_today">Voucher</h5>
+                    <p class="mt-1 text-content">Ưu đãi đề xuất cho bạn</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="deal-offer-box">
+                    <ul class="deal-offer-list">
+                        <li th:each="voucher : ${checkVoucherUserResponse}" class="list-1">
+                            <form th:action="@{/addVoucherUser}" method="post">
+                                <button type="submit" class="deal-offer-contain"
+                                        style="border: 1px solid white; margin-bottom: 10px">
+                                    <input type="number" name="voucherId" th:value="${voucher.voucherUserId}" hidden>
+
+                                    <a class="deal-image">
+                                        <img th:src="@{/FrontEnd/assets/images/vegetable/product/27.png}"
+                                             class="blur-up lazyload"
+                                             alt="">
+                                    </a>
+
+                                    <a class="deal-contain">
+                                        <h5 th:if="${voucher.discountType == 'PERCENT'}"
+                                            th:text="${'Giảm giá ' + #numbers.formatInteger(voucher.discountValue, 0) + '%'}"></h5>
+                                        <h5 th:if="${voucher.discountType == 'AMOUNT'}"
+                                            th:text="${'Giảm giá '+ #numbers.formatInteger(voucher.discountValue, 0, 'POINT') + '₫' }"></h5>
+                                        <h6>
+                                            Có hiệu lưu từ :
+                                            <span th:text="${' ' + voucher.startDate}"></span>
+                                        </h6>
+                                        <h6 th:text="${'Còn ' + voucher.remainDays + ' Ngày'}"></h6>
+                                        <h6>
+                                            Tổng giá tiền để có voucher ít nhất :
+                                            <span th:text="${' ' + #numbers.formatInteger(voucher.minOrderAmount, 0, 'POINT') + '₫'}"></span>
+                                        </h6>
+                                        <h6 th:if="${voucher.discountType == 'PERCENT'}">Giảm giá tối đa : <span>200.000đ</span>
+                                        </h6>
+                                    </a>
+                                </button>
+                            </form>
+                        </li>
+
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Deal Box Modal End -->
+
+<!-- Tap to top and theme setting button start -->
+<div class="theme-option">
+    <div class="setting-box">
+        <button class="btn setting-button">
+            <i class="fa-solid fa-gear"></i>
+        </button>
+
+        <div class="theme-setting-2">
+            <div class="theme-box">
+                <ul>
+                    <li>
+                        <div class="setting-name">
+                            <h4>Color</h4>
+                        </div>
+                        <div class="theme-setting-button color-picker">
+                            <form class="form-control">
+                                <label for="colorPick" class="form-label mb-0">Theme Color</label>
+                                <input type="color" class="form-control form-control-color" id="colorPick"
+                                       value="#0da487" title="Choose your color">
+                            </form>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>Dark</h4>
+                        </div>
+                        <div class="theme-setting-button">
+                            <button class="btn btn-2 outline" id="darkButton">Dark</button>
+                            <button class="btn btn-2 unline" id="lightButton">Light</button>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>RTL</h4>
+                        </div>
+                        <div class="theme-setting-button rtl">
+                            <button class="btn btn-2 rtl-unline">LTR</button>
+                            <button class="btn btn-2 rtl-outline">RTL</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-to-top">
+        <a id="back-to-top" href="#">
+            <i class="fas fa-chevron-up"></i>
+        </a>
+    </div>
+</div>
+<!-- Tap to top and theme setting button end -->
+
+<!-- Bg overlay Start -->
+<div class="bg-overlay"></div>
+<!-- Bg overlay End -->
+
+<!-- latest jquery-->
+<script th:src="@{/FrontEnd/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- jquery ui-->
+<script th:src="@{/FrontEnd/assets/js/jquery-ui.min.js}"></script>
+
+<!-- Lord-icon Js -->
+<script th:src="@{/FrontEnd/assets/js/lusqsztk.js}"></script>
+
+<!-- Bootstrap js-->
+<script th:src="@{/FrontEnd/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/bootstrap/popper.min.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/bootstrap/bootstrap-notify.min.js}"></script>
+
+<!-- feather icon js-->
+<script th:src="@{/FrontEnd/assets/js/feather/feather.min.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/feather/feather-icon.js}"></script>
+
+<!-- Lazyload Js -->
+<script th:src="@{/FrontEnd/assets/js/lazysizes.min.js}"></script>
+
+<!-- Delivery Option js -->
+<script th:src="@{/FrontEnd/assets/js/delivery-option.js}"></script>
+
+<!-- Slick js-->
+<script th:src="@{/FrontEnd/assets/js/slick/slick.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/slick/custom_slick.js}"></script>
+
+<!-- Quantity js -->
+<script th:src="@{FrontEnd/assets/js/quantity.js}"></script>
+
+<!-- script js -->
+<script th:src="@{FrontEnd/assets/js/script.js}"></script>
+
+<!-- theme setting js -->
+<script th:src="@{FrontEnd/assets/js/theme-setting.js}"></script>
+</body>
+
+</html>

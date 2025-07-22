@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="FrontEnd/fragments/head::head"></head>
+
+<body>
+
+<!-- Loader Start -->
+<div class="fullpage-loader">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+<!-- Loader End -->
+
+<!-- Header Start -->
+<header th:replace="FrontEnd/fragments/header::header"></header>
+<!-- Header End -->
+
+<!-- mobile fix menu start -->
+<!-- mobile fix menu end -->
+
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-0">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-contain">
+                    <h2>Blog Grid</h2>
+                    <nav>
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item">
+                                <a href="index.html">
+                                    <i class="fa-solid fa-house"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active">Blog Grid</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Blog Section Start -->
+<section class="blog-section section-b-space">
+    <div class="container-fluid-lg">
+        <div class="row g-4">
+            <div class="col-xxl-9 col-xl-8 col-lg-7 order-lg-2">
+                <div class="row g-4 ratio_65">
+
+                    <!--           Bai viết cua Blog - gird-->
+                    <div class="col-xxl-4 col-sm-6" th:each="blog : ${blogs}">
+                        <div class="blog-box wow fadeInUp">
+                            <div class="blog-image">
+                                <a href="blog-detail">
+                                    <img th:src="@{'/blog/'  + ${blog.blogDetail.thumbnail}}"
+                                         class="bg-img blur-up lazyload" alt="">
+                                </a>
+                            </div>
+
+                            <div class="blog-contain">
+                                <div class="blog-label">
+                                    <span class="time"><i data-feather="clock"></i> <span
+                                            th:text="${#dates.format(blog.createdAt, 'dd MMM, yyyy')}"> 25 Feg, 2022</span></span>
+                                    <span class="super"><i data-feather="user"></i> <span th:text="${blog.author}">Mark J.
+                                                Speight</span></span>
+                                </div>
+                                <a href="blog-detail">
+                                    <h3 th:text="${blog.title}">one pot creamy mediterranean chicken pasta cream.</h3>
+                                </a>
+                                <button th:onclick="|location.href='@{/blog-detail(id=${blog.blogID})}'|"
+
+                                        class="blog-button">Read More
+                                    <i class="fa-solid fa-right-long"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <nav class="custom-pagination">
+                    <ul class="pagination justify-content-center">
+                        <!-- Nút về Đầu, chỉ hiện nếu không ở trang 1 -->
+                        <li class="page-item" th:if="${currentPage > 1}">
+                            <a class="page-link" th:href="@{/blog-grid(page=1, size=${size})}" title="Trang đầu">
+                                <i class="fa-solid fa-angle-double-left"></i>
+                            </a>
+                        </li>
+                        <!-- Nút về trước -->
+                        <li class="page-item" th:if="${currentPage > 1}">
+                            <a class="page-link" th:href="@{/blog-grid(page=${currentPage - 1}, size=${size})}" title="Trang trước">
+                                <i class="fa-solid fa-angle-left"></i>
+                            </a>
+                        </li>
+                        <!-- Số trang (tối đa 5 số) -->
+                        <li th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                            class="page-item"
+                            th:classappend="${currentPage == i} ? 'active'">
+                            <a class="page-link"
+                               th:href="@{/blog-grid(page=${i}, size=${size})}"
+                               th:text="${i}"></a>
+                        </li>
+                        <!-- Nút trang sau -->
+                        <li class="page-item" th:if="${currentPage < totalPages}">
+                            <a class="page-link" th:href="@{/blog-grid(page=${currentPage + 1}, size=${size})}" title="Trang sau">
+                                <i class="fa-solid fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <!-- Nút về Cuối -->
+                        <li class="page-item" th:if="${currentPage < totalPages}">
+                            <a class="page-link" th:href="@{/blog-grid(page=${totalPages}, size=${size})}" title="Trang cuối">
+                                <i class="fa-solid fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+
+            </div>
+
+            <div class="col-xxl-3 col-xl-4 col-lg-5 order-lg-1">
+                <div th:replace="FrontEnd/fragments/sidebarblog :: sidebarblog"></div>
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Blog Section End -->
+
+<!-- Footer Section Start -->
+<footer class="section-t-space">
+    <div th:replace="FrontEnd/fragments/footer :: footer"></div>
+</footer>
+<!-- Footer Section End -->
+
+<!-- Location Modal Start -->
+<div class="modal location-modal fade theme-modal" id="locationModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Choose your Delivery Location</h5>
+                <p class="mt-1 text-content">Enter your address and we will specify the offer for your area.</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="location-list">
+                    <div class="search-input">
+                        <input type="search" class="form-control" placeholder="Search Your Area">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+
+                    <div class="disabled-box">
+                        <h6>Select a Location</h6>
+                    </div>
+
+                    <ul class="location-select custom-height">
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Alabama</h6>
+                                <span>Min: $130</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Arizona</h6>
+                                <span>Min: $150</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>California</h6>
+                                <span>Min: $110</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Colorado</h6>
+                                <span>Min: $140</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Florida</h6>
+                                <span>Min: $160</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Georgia</h6>
+                                <span>Min: $120</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Kansas</h6>
+                                <span>Min: $170</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Minnesota</h6>
+                                <span>Min: $120</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>New York</h6>
+                                <span>Min: $110</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Washington</h6>
+                                <span>Min: $130</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Location Modal End -->
+
+<!-- Deal Box Modal Start -->
+<div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title w-100" id="deal_today">Deal Today</h5>
+                    <p class="mt-1 text-content">Recommended deals for you.</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="deal-offer-box">
+                    <ul class="deal-offer-list">
+                        <li class="list-1">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/10.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-2">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/11.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-3">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/12.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-1">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/13.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Deal Box Modal End -->
+
+<!-- Tap to top and theme setting button start -->
+<div class="theme-option">
+    <div class="setting-box">
+        <button class="btn setting-button">
+            <i class="fa-solid fa-gear"></i>
+        </button>
+
+        <div class="theme-setting-2">
+            <div class="theme-box">
+                <ul>
+                    <li>
+                        <div class="setting-name">
+                            <h4>Color</h4>
+                        </div>
+                        <div class="theme-setting-button color-picker">
+                            <form class="form-control">
+                                <label for="colorPick" class="form-label mb-0">Theme Color</label>
+                                <input type="color" class="form-control form-control-color" id="colorPick"
+                                       value="#0da487" title="Choose your color">
+                            </form>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>Dark</h4>
+                        </div>
+                        <div class="theme-setting-button">
+                            <button class="btn btn-2 outline" id="darkButton">Dark</button>
+                            <button class="btn btn-2 unline" id="lightButton">Light</button>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>RTL</h4>
+                        </div>
+                        <div class="theme-setting-button rtl">
+                            <button class="btn btn-2 rtl-unline">LTR</button>
+                            <button class="btn btn-2 rtl-outline">RTL</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-to-top">
+        <a id="back-to-top" href="#">
+            <i class="fas fa-chevron-up"></i>
+        </a>
+    </div>
+</div>
+<!-- Tap to top and theme setting button end -->
+
+<!-- Bg overlay Start -->
+<div class="bg-overlay"></div>
+<!-- Bg overlay End -->
+
+<!-- latest jquery-->
+<script th:src="@{/Frontend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- jquery ui-->
+<script th:src="@{/Frontend/assets/js/jquery-ui.min.js}"></script>
+
+<!-- Bootstrap js-->
+<script th:src="@{/Frontend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/bootstrap/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/bootstrap/popper.min.js}"></script>
+
+<!-- feather icon js-->
+<script th:src="@{/Frontend/assets/js/feather/feather.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/feather/feather-icon.js}"></script>
+
+<!-- Lazyload Js -->
+<script th:src="@{/Frontend/assets/js/lazysizes.min.js}"></script>
+
+<!-- Slick js-->
+<script th:src="@{/Frontend/assets/js/slick/slick.js}"></script>
+<script th:src="@{/Frontend/assets/js/slick/slick-animation.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/slick/custom_slick.js}"></script>
+
+<!-- WOW js -->
+<script th:src="@{/Frontend/assets/js/wow.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/custom-wow.js}"></script>
+
+<!-- script js -->
+<script th:src="@{/Frontend/assets/js/script.js}"></script>
+
+<!-- theme setting js -->
+<script th:src="@{/Frontend/assets/js/theme-setting.js}"></script>
+</body>
+
+</html>

@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="FrontEnd/fragments/head::head"></head>
+
+<body>
+
+<!-- Loader Start -->
+<div class="fullpage-loader">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+<!-- Loader End -->
+
+<!-- Header Start -->
+<head th:replace="FrontEnd/fragments/header::header"></head>
+<!-- Header End -->
+
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-0">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-contain">
+                    <h2>Shop Top Filter</h2>
+                    <nav>
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item">
+                                <a href="home">
+                                    <i class="fa-solid fa-house"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active">Shop Top Filter</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Poster Section Start -->
+
+<!-- Poster Section End -->
+
+
+<!-- Shop Section Start -->
+<section class="section-b-space shop-section">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+
+                <form th:action="@{/deleteFilterProduct}" method="post">
+                    <button type="submit"
+                            style="background: #0da487; color: aliceblue; margin-left: 19px; border: none; padding: 8px">
+                        Delete Filter
+                    </button>
+                </form>
+
+                <form id="filterForm" th:action="@{/filterProduct}" method="get">
+                    <input type="hidden" id="keywordHidden" name="keyword"
+                           th:if="${session.keyword != null}"
+                           th:value="${session.keyword}"/>
+                    <div class="show-button">
+                        <div class="top-filter-menu-2">
+                            <div class="sidebar-filter-menu" data-bs-toggle="collapse"
+                                 data-bs-target="#collapseExample">
+                                <a href="javascript:void(0)"><i class="fa-solid fa-filter"></i> Filter Menu</a>
+                            </div>
+
+                            <div class="ms-auto d-flex align-items-center">
+                                <div class="category-dropdown me-md-3">
+                                    <h5 class="text-content">Sort By :</h5>
+                                    <div class="dropdown">
+                                        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            <span th:text="${selectedSort ?: 'Default'}">Default</span>
+                                            <!--                                           “Elvis operator”  (A = null hoặc chuỗi rỗng) ⇒ kết quả là B.-->
+                                            <i class="fa-solid fa-angle-down"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="popularity">Popularity</a>
+                                            </li>
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="priceLowHigh">Low
+                                                - High Price</a></li>
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="priceHighLow">High
+                                                - Low Price</a></li>
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="rating">Average
+                                                Rating</a></li>
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="aToZ">A - Z
+                                                Order</a></li>
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="zToA">Z - A
+                                                Order</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", () => {
+                                            // 1. Khởi tạo slider
+                                            const $range = $(".js-range-slider").ionRangeSlider({
+                                                type: "double",
+                                                min: 0,
+                                                max: 1_000_000,
+                                                from: window.APP?.minPrice ?? 0, // ở session
+                                                to: window.APP?.maxPrice ?? 1_000_000,  // ở session
+                                                step: 50_000,
+                                                prefix: "$ ",
+                                                prettify_enabled: true,
+                                                prettify_separator: ".",
+                                                values_separator: " - ",
+                                                force_edges: true,
+                                                onStart: syncHidden,
+                                                onFinish: syncHidden          // chỉ khi người dùng buông chuột mới cập nhật
+                                            }).data("ionRangeSlider");
+
+                                            function syncHidden(data) {
+                                                $("#minPrice").val(data.from);
+                                                $("#maxPrice").val(data.to);
+                                            }
+
+
+                                            // 2. Handler cho filter-checkbox
+                                            $('.filter-checkbox').on('change', function () {
+
+                                                // luôn lấy giá trị thực tế từ slider
+                                                const {from, to} = $range.result;
+                                                $("#minPrice").val(from);
+                                                $("#maxPrice").val(to);
+
+                                                document.getElementById('filterForm').submit();
+
+                                            });
+
+                                            // 3. Handler cho sort-option
+                                            $('.sort-option').on('click', function (e) {
+                                                e.preventDefault();
+
+                                                const {from, to} = $range.result;      // giá trị hiện tại của slider
+                                                const url = new URL(window.location.href); // giá trị hiện tại của đường link
+
+                                                url.searchParams.set('minPrice', from);
+                                                url.searchParams.set('maxPrice', to);
+                                                url.searchParams.set('sortBy', this.dataset.sort);
+
+                                                // Nếu đang ở /shopDetail chuyển path
+                                                if (url.pathname.includes('shopDetail')) {
+                                                    url.pathname = url.pathname.replace('shopDetail', 'filterProduct');
+                                                }
+
+                                                window.location.href = url.toString();
+                                            });
+                                        });
+
+                                    </script>
+
+                                </div>
+
+
+                                <div class="grid-option grid-option-2">
+                                    <ul>
+                                        <li class="three-grid">
+                                            <a href="javascript:void(0)">
+                                                <img th:src="@{FrontEnd/assets/svg/grid-3.svg}" class="blur-up lazyload"
+                                                     alt="">
+                                            </a>
+                                        </li>
+                                        <li class="five-grid d-xxl-inline-block d-none active">
+                                            <a href="javascript:void(0)">
+                                                <img th:src="@{FrontEnd/assets/svg/grid-5.svg}"
+                                                     class="blur-up lazyload d-lg-inline-block d-none" alt="">
+                                            </a>
+                                        </li>
+                                        <li class="list-btn">
+                                            <a href="javascript:void(0)">
+                                                <img th:src="@{FrontEnd/assets/svg/list.svg}" class="blur-up lazyload"
+                                                     alt="">
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="top-filter-category" id="collapseExample">
+
+                        <div class="row g-sm-4 g-3">
+                            <div class="col-xl-3 col-md-6">
+                                <div class="category-title">
+                                    <h3>Category</h3>
+                                </div>
+
+                                <ul class="category-list custom-padding custom-height">
+                                    <li th:each="category : ${categoryShopDetailsResponse}">
+                                        <div class="form-check ps-0 m-0 category-list-box">
+                                            <input type="checkbox"
+                                                   name="category"
+                                                   class="checkbox_animated filter-checkbox"
+                                                   th:value="${category.categoryId}"
+                                                   th:id="${'category_' + category.categoryId}"
+                                                   onchange="this.form.submit()"
+                                                   th:checked="${selectedCategories != null
+                                                    and #lists.contains(selectedCategories, category.categoryId)}"/>
+
+                                            <label class="form-check-label"
+                                                   th:for="${'category_' + category.categoryId}">
+                                                <span th:text="${category.categoryName}"></span>
+                                                <span th:text="'(' + ${category.totalProducts} + ')'"></span>
+                                            </label>
+                                        </div>
+                                    </li>
+                                </ul>
+
+                            </div>
+
+                            <div class="col-xl-3 col-md-6">
+                                <div class="category-title">
+                                    <h3>Rating</h3>
+                                </div>
+
+                                <ul class="category-list" th:each="r : ${#numbers.sequence(5,1,-1)}">
+                                    <li>
+                                        <div class="form-check ps-0 m-0 category-list-box">
+                                            <input type="checkbox"
+                                                   class="checkbox_animated filter-checkbox"
+                                                   name="rating"
+                                                   th:id="${'rating' + r}"
+                                                   th:value="${r}"
+                                                   onchange="this.form.submit()"
+                                                   th:checked="${selectedRating != null
+                                            && #lists.contains(selectedRating, r)}"/>
+                                            <label th:for="${'rating' + r}" class="form-check-label">
+                                                <ul class="rating">
+                                                    <li th:each="i : ${#numbers.sequence(1,5)}">
+                                                        <i data-feather="star"
+                                                           th:classappend="${i <= r} ? 'fill' : ''"></i>
+                                                    </li>
+                                                </ul>
+                                            </label>
+                                        </div>
+                                    </li>
+                                </ul>
+
+                            </div>
+
+                            <div class="col-xl-3 col-md-6">
+                                <div class="category-title">
+                                    <h3>Price</h3>
+                                </div>
+                                <div class="range-slider">
+                                    <input type="text" class="js-range-slider" value="">
+
+                                    <input type="hidden" name="minPrice" id="minPrice" th:value="${session.minPrice}"/>
+                                    <input type="hidden" name="maxPrice" id="maxPrice" th:value="${session.maxPrice}"/>
+                                </div>
+                            </div>
+
+                            <script th:inline="javascript">
+                                window.APP = {
+                                    minPrice: "[[${session.minPrice}]]",
+                                    maxPrice: "[[${session.maxPrice}]]"
+                                };
+                            </script>
+
+
+                        </div>
+                    </div>
+                </form>
+
+                <div class="row g-sm-4 g-3 row-cols-xxl-5 row-cols-xl-3 row-cols-lg-2 row-cols-md-3 row-cols-2 product-list-section">
+                    <div th:each="product : ${shopDetailProducts}">
+                        <div class="product-box-3 h-100 wow fadeInUp">
+                            <div class="product-header">
+                                <div class="product-image">
+                                    <a th:href="@{/productDetail(productId=${product.productId})}">
+                                        <img th:src="@{${product.imageUrlGallery}}"
+                                             class="img-fluid blur-up lazyload" alt="">
+                                    </a>
+
+                                    <ul class="product-option"
+                                        style=" display: flex;justify-content: center;align-items: center;">
+                                        <li  data-bs-toggle="tooltip"
+                                             data-bs-placement="top" title="View">
+                                            <a th:href="@{/productDetail(productId=${product.productId})}">
+                                                <i data-feather="eye"></i>
+                                            </a>
+                                        </li>
+
+                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                            <a href="javascript:void(0)"
+                                               data-bs-toggle="modal"
+                                               data-bs-target="#view"
+                                               th:data-product-id="${product.productId}">
+                                                <i class="iconly-Swap icli"></i>
+                                            </a>
+                                        </li>
+
+                                        <li th:if="${session.account != null}"  data-bs-toggle="tooltip"
+                                            data-bs-placement="top" title="Wishlist">
+                                            <button class="btn p-0 wishlist notifi-wishlist"
+                                                    th:data-productid="${product.productId}"
+                                                    type="button"
+                                                    style="margin-left: 20px">
+                                                <i class="iconly-Heart icli"></i>
+                                            </button>
+                                            <script>
+                                                $(function () {
+                                                    $(document).on('click', '.notifi-wishlist', async function () {
+                                                        const btn = $(this);
+                                                        const userId = "[[${session.accountId}]]";
+                                                        const id = btn.data('productid');
+                                                        if (!id || btn.prop('disabled')) return;
+
+                                                        btn.prop('disabled', true);
+                                                        console.log("hello" + id);
+                                                        try {
+                                                            await axios.post(`http://localhost:8080/AgriculturalWarehouseManagementApplication/wishlistProduct/${userId}/${id}`);
+                                                        } catch (e) {
+                                                            console.error(e);
+                                                            toast('❌ Error');
+                                                        } finally {
+                                                            btn.prop('disabled', false);
+                                                        }
+                                                    });
+
+                                                    function toast(m) {
+                                                        alert(m);
+                                                    }               // thay bằng toast đẹp nếu muốn
+                                                });
+                                            </script>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="product-footer">
+                                <div class="product-detail">
+                                   <span th:each="category : ${categoryUsersResponses}"
+                                         th:if="${category.categoryId == product.categoryId}"
+                                         th:text="${category.categoryName}" class="span-name"
+                                   >Category</span>
+
+                                    <a th:href="@{/productDetail(productId=${product.productId})}">
+                                        <h5 th:text="${product.productName}" class="name">Product name</h5>
+                                    </a>
+                                    <p th:text="${product.productDescription}"
+                                       class="text-content mt-1 mb-2 product-content">Product Description</p>
+                                    <div class="product-rating mt-2">
+                                        <ul class="rating">
+                                            <li th:each="i : ${#numbers.sequence(1, 5)}">
+                                                <i data-feather="star"
+                                                   th:classappend="${i <= product.ratingProductDetail} ? 'fill' : ''">
+                                                </i>
+                                            </li>
+                                        </ul>
+                                        <span th:text="${ '(' + product.ratingCount + ')'}">Rating count</span>
+                                    </div>
+                                    <h6 th:text="${product.productWeight}" class="unit">Weight and unit</h6>
+                                    <h5 th:text="${#numbers.formatInteger(product.productPrice, 0, 'POINT') + '₫'}" class="price">
+                                        Product price smallest in ProductDetail
+                                    </h5>
+                                    <div th:if="${session.account != null}" class="price-qty">
+                                        <button class="btn btn-cart btn-success notifi-addtocart"
+                                                style="border: 2px solid green; margin-top: 20px"
+                                                th:data-productcartid="${product.productId}"
+                                        >
+                                            Thêm giỏ hàng
+                                        </button>
+
+                                        <script>
+
+                                            $(function () {
+                                                $(document).on('click', '.notifi-addtocart', async function () {
+                                                    const btn = $(this);
+                                                    const userId = "[[${session.accountId}]]";
+                                                    const productId = btn.data('productcartid');  // Lấy productId từ data attribute
+                                                    console.log(userId)
+                                                    console.log(productId)
+
+                                                    if (!userId || !productId || btn.prop('disabled')) return;  // Kiểm tra nếu không có userId hoặc productId
+
+                                                    btn.prop('disabled', true);  // Vô hiệu hóa nút để tránh click nhiều lần
+
+                                                    try {
+
+                                                        const response = await axios.post(`http://localhost:8080/AgriculturalWarehouseManagementApplication/addToCart/${productId}/${userId}`);
+
+                                                        if (response.data.status === "SUCCESS") {
+                                                            const message = response.data.message;
+                                                            await loadCart();
+                                                            // Tạo thông báo thành công
+                                                            $.notify({
+                                                                icon: "fa fa-check",
+                                                                title: "Success!",  // Tùy chỉnh title, ví dụ "Thành công" hoặc "Thêm vào giỏ hàng"
+                                                                message: message,  // Lấy thông báo từ API
+                                                            }, {
+                                                                element: "body",
+                                                                position: null,
+                                                                type: "info",  // Tùy chỉnh loại thông báo, ví dụ: success, error, info
+                                                                allow_dismiss: true,
+                                                                newest_on_top: false,
+                                                                showProgressbar: true,
+                                                                placement: {
+                                                                    from: "top",
+                                                                    align: "right",
+                                                                },
+                                                                offset: 20,
+                                                                spacing: 10,
+                                                                z_index: 1031,
+                                                                delay: 2000,
+                                                                animate: {
+                                                                    enter: "animated fadeInDown",
+                                                                    exit: "animated fadeOutUp",
+                                                                },
+                                                                icon_type: "class",
+                                                                template: '<div data-notify="container" class="col-xxl-3 col-lg-5 col-md-6 col-sm-7 col-12 alert alert-{0}" role="alert">' +
+                                                                    '<button type="button" aria-hidden="true" class="btn-close" data-notify="dismiss"></button>' +
+                                                                    '<span data-notify="icon"></span> ' +
+                                                                    '<span data-notify="title">{1}</span> ' +
+                                                                    '<span data-notify="message">{2}</span>' +
+                                                                    '<div class="progress" data-notify="progressbar">' +
+                                                                    '<div class="progress-bar progress-bar-info progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                                    "</div>" +
+                                                                    '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                                    "</div>",
+                                                            });
+                                                        } else {
+                                                            const message = response.data.message;
+
+                                                            // Tạo thông báo lỗi
+                                                            $.notify({
+                                                                icon: "fa fa-exclamation-circle",
+                                                                title: "Error!",  // Tùy chỉnh title cho lỗi
+                                                                message: message,  // Lấy thông báo lỗi từ API
+                                                            }, {
+                                                                element: "body",
+                                                                position: null,
+                                                                type: "danger",  // Loại thông báo lỗi
+                                                                allow_dismiss: true,
+                                                                newest_on_top: false,
+                                                                showProgressbar: true,
+                                                                placement: {
+                                                                    from: "top",
+                                                                    align: "right",
+                                                                },
+                                                                offset: 20,
+                                                                spacing: 10,
+                                                                z_index: 1031,
+                                                                delay: 2000,
+                                                                animate: {
+                                                                    enter: "animated fadeInDown",
+                                                                    exit: "animated fadeOutUp",
+                                                                },
+                                                                icon_type: "class",
+                                                                template: '<div data-notify="container" class="col-xxl-3 col-lg-5 col-md-6 col-sm-7 col-12 alert alert-{0}" role="alert">' +
+                                                                    '<button type="button" aria-hidden="true" class="btn-close" data-notify="dismiss"></button>' +
+                                                                    '<span data-notify="icon"></span> ' +
+                                                                    '<span data-notify="title">{1}</span> ' +
+                                                                    '<span data-notify="message">{2}</span>' +
+                                                                    '<div class="progress" data-notify="progressbar">' +
+                                                                    '<div class="progress-bar progress-bar-info progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                                                                    "</div>" +
+                                                                    '<a href="{3}" target="{4}" data-notify="url"></a>' +
+                                                                    "</div>",
+                                                            });
+                                                        }
+
+                                                    } catch (e) {
+                                                        console.error(e);
+                                                        toast('❌ Error');
+                                                    } finally {
+                                                        btn.prop('disabled', false);  // Bật lại nút khi kết thúc
+                                                    }
+                                                });
+
+                                                function toast(m) {
+                                                    alert(m);  // Thay bằng thông báo đẹp nếu cần
+                                                }
+                                            });
+
+
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="custom-pagination" th:if="${checkPageCategorys != null and checkPageCategorys.size() > 0}">
+                    <ul class="pagination justify-content-center">
+                        <!-- Mũi tên về đầu -->
+                        <li th:class="'page-item' + (${currentPage == 1} ? ' disabled' : '')">
+                            <a class="page-link"
+                               th:href="@{/shopDetail(categoryId=${checkPageCategorys[0]}, page=1)}"
+                               tabindex="-1">
+                                <i class="fa-solid fa-angles-left"></i>
+                            </a>
+                        </li>
+
+                        <!-- Các trang lân cận -->
+                        <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+                            th:if="${i == 1 or i == totalPages or (i >= currentPage - 1 and i <= currentPage + 1)}"
+                            th:class="'page-item' + (${i == currentPage} ? ' active' : '')">
+                            <a class="page-link"
+                               th:href="@{/shopDetail(categoryId=${checkPageCategorys[0]}, page=${i})}"
+                               th:text="${i}">
+                            </a>
+                        </li>
+
+                        <!-- Mũi tên về cuối -->
+                        <li th:class="'page-item' + (${currentPage == totalPages} ? ' disabled' : '')">
+                            <a class="page-link"
+                               th:href="@{/shopDetail(categoryId=${checkPageCategorys[0]}, page=${totalPages})}">
+                                <i class="fa-solid fa-angles-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+
+                <nav class="custom-pagination" th:if="${checkShopDetailProducts != null}">
+                    <ul class="pagination justify-content-center">
+
+                        <!-- Mũi tên về đầu -->
+                        <li th:class="'page-item' + (${currentPage == 1} ? ' disabled' : '')">
+                            <a class="page-link" th:href="@{/shopDetail(page=1)}">
+                                <i class="fa-solid fa-angles-left"></i>
+                            </a>
+                        </li>
+
+                        <!-- Trang 1 -->
+                        <li th:class="'page-item' + (${currentPage == 1} ? ' active' : '')">
+                            <a class="page-link" th:href="@{/shopDetail(page=1)}">1</a>
+                        </li>
+
+                        <!-- Dấu ... trước nếu currentPage > 3 -->
+                        <li class="page-item disabled" th:if="${currentPage > 3}">
+                            <span class="page-link">…</span>
+                        </li>
+
+                        <!-- Các trang lân cận: currentPage-1, currentPage, currentPage+1 -->
+                        <li th:each="i : ${#numbers.sequence(currentPage - 1, currentPage + 1)}"
+                            th:if="${i > 1 and i < totalPages}"
+                            th:class="'page-item' + (${i == currentPage} ? ' active' : '')">
+                            <a class="page-link" th:href="@{/shopDetail(page=${i})}" th:text="${i}">i</a>
+                        </li>
+
+                        <!-- Dấu ... sau nếu currentPage < totalPages - 2 -->
+                        <li class="page-item disabled" th:if="${currentPage < totalPages - 2}">
+                            <span class="page-link">…</span>
+                        </li>
+
+                        <!-- Trang cuối -->
+                        <li th:if="${totalPages > 1}"
+                            th:class="'page-item' + (${currentPage == totalPages} ? ' active' : '')">
+                            <a class="page-link" th:href="@{/shopDetail(page=${totalPages})}" th:text="${totalPages}">last</a>
+                        </li>
+
+                        <!-- Mũi tên về cuối -->
+                        <li th:class="'page-item' + (${currentPage == totalPages} ? ' disabled' : '')">
+                            <a class="page-link" th:href="@{/shopDetail(page=${totalPages})}">
+                                <i class="fa-solid fa-angles-right"></i>
+                            </a>
+                        </li>
+
+                    </ul>
+                </nav>
+
+
+                <nav class="custom-pagination" th:if="${checkFilterShopDetailProducts != null}">
+                    <ul class="pagination justify-content-center">
+
+                        <!-- Mũi tên về đầu -->
+                        <li th:class="'page-item' + (${currentPage == 1} ? ' disabled' : '')">
+                            <a class="page-link" th:href="@{${baseUrl}(page=1)}">
+                                <i class="fa-solid fa-angles-left"></i>
+                            </a>
+                        </li>
+
+                        <!-- Trang 1 -->
+                        <li th:class="'page-item' + (${currentPage == 1} ? ' active' : '')">
+                            <a class="page-link" th:href="@{${baseUrl}(page=1)}">1</a>
+                        </li>
+
+                        <!-- … phía trước nếu currentPage > 3 -->
+                        <li class="page-item disabled" th:if="${currentPage > 3}">
+                            <span class="page-link">…</span>
+                        </li>
+
+                        <!-- Trang lân cận currentPage -->
+                        <li th:each="i : ${#numbers.sequence(currentPage - 1, currentPage + 1)}"
+                            th:if="${i > 1 and i < totalPages}"
+                            th:class="'page-item' + (${i == currentPage} ? ' active' : '')">
+                            <a class="page-link" th:href="@{${baseUrl}(page=${i})}" th:text="${i}">i</a>
+                        </li>
+
+                        <!-- … phía sau nếu currentPage < totalPages - 2 -->
+                        <li class="page-item disabled" th:if="${currentPage < totalPages - 2}">
+                            <span class="page-link">…</span>
+                        </li>
+
+                        <!-- Trang cuối (nếu >1) -->
+                        <li th:if="${totalPages > 1}"
+                            th:class="'page-item' + (${currentPage == totalPages} ? ' active' : '')">
+                            <a class="page-link" th:href="@{${baseUrl}(page=${totalPages})}"
+                               th:text="${totalPages}">last</a>
+                        </li>
+
+                        <!-- Mũi tên về cuối -->
+                        <li th:class="'page-item' + (${currentPage == totalPages} ? ' disabled' : '')">
+                            <a class="page-link" th:href="@{${baseUrl}(page=${totalPages})}">
+                                <i class="fa-solid fa-angles-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Shop Section End -->
+
+
+<!-- Quick View Modal Box Start -->
+<div class="modal fade theme-modal view-modal" id="view" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header p-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+                <div class="row g-sm-4 g-2">
+
+                    <div>
+                        <div class="right-sidebar-modal" style="width: 100%; max-width: 400px;">
+
+                            <div class="select-size">
+                                <form th:action="@{/compareProductDetail}" method="post">
+                                    <input name="productId" id="modalProductIdInput" type="hidden" value="">
+                                    <input name="productDetailId" id="modalProductDetailIdInput" type="hidden" value="">
+
+                                    <h4>Chọn cân nặng :</h4>
+                                    <select id="modalWeightSelect" class="form-select select-form-size">
+                                        <option selected>Chọn Size</option>
+                                    </select>
+
+                                    <button type="submit" class="btn btn-outline-success mt-2">So sánh</button>
+                                </form>
+                            </div>
+
+                            <script>
+                                const viewModal = document.getElementById('view');
+
+                                viewModal.addEventListener('show.bs.modal', async function (event) {
+                                    const button = event.relatedTarget;
+                                    const productId = button.getAttribute('data-product-id');
+                                    const productIdInput = viewModal.querySelector('#modalProductIdInput');
+                                    const productDetailIdInput = viewModal.querySelector('#modalProductDetailIdInput');
+                                    const weightSelect = viewModal.querySelector('#modalWeightSelect');
+                                    console.log("hello" + productId);
+
+                                    if (productIdInput) productIdInput.value = productId;
+
+                                    try {
+                                        const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/productDetailAPI/${productId}`);
+                                        const productDetails = response.data;
+
+                                        weightSelect.innerHTML = '';
+
+                                        productDetails.forEach(detail => {
+                                            const option = document.createElement('option');
+                                            option.value = detail.productDetailId;
+                                            option.textContent = `${detail.productWeight} - ${detail.price.toLocaleString('vi-VN')}₫`;
+                                            option.dataset.productDetailID = detail.productDetailId;
+                                            weightSelect.appendChild(option);
+                                        });
+
+                                        // Gắn sự kiện change (chỉ gắn 1 lần duy nhất)
+                                        weightSelect.onchange = function () {
+                                            const selectedOption = weightSelect.options[weightSelect.selectedIndex];
+                                            if (selectedOption) {
+                                                productDetailIdInput.value = selectedOption.dataset.productDetailID;
+                                            }
+                                        };
+
+                                        // Gọi thủ công sự kiện change để tự động gán giá trị đầu tiên
+                                        if (weightSelect.options.length > 0) {
+                                            weightSelect.selectedIndex = 0;
+                                            weightSelect.dispatchEvent(new Event('change'));
+                                        }
+                                    } catch (error) {
+                                        console.error("Lỗi khi lấy dữ liệu product detail:", error);
+                                    }
+                                });
+
+                            </script>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Quick View Modal Box End -->
+
+
+<!-- Footer Section Start -->
+<footer th:replace="FrontEnd/fragments/footer::footer"></footer>
+<!-- Footer Section End -->
+
+<!-- Deal Box Modal Start -->
+<div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title w-100" id="deal_today">Deal Today</h5>
+                    <p class="mt-1 text-content">Recommended deals for you.</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="deal-offer-box">
+                    <ul class="deal-offer-list">
+                        <li class="list-1">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/10.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-2">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/11.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-3">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/12.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-1">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/13.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Deal Box Modal End -->
+
+<!-- Add to cart Modal Start -->
+
+<!-- Add to cart Modal End -->
+
+<!-- Items section Start -->
+<div th:if="${session.account != null}" class="button-item">
+    <button class="item-btn btn text-white">
+        <i class="iconly-Bag-2 icli"></i>
+    </button>
+</div>
+<div th:if="${session.account != null}" class="item-section">
+    <button class="close-button">
+        <i class="fas fa-times"></i>
+    </button>
+    <h6>
+        <i class="iconly-Bag-2 icli"></i>
+        <span id="sizeCart" th:text="${sizeCart} + 'Items'">Items</span>
+        <span id="sizeCartBelow" style="position: absolute; margin-top: 80px; margin-left: 90px"></span>
+    </h6>
+
+    <ul class="items-image">
+
+        <li id="image" th:each="cart : ${cartUserResponses}">
+            <img th:src="${cart.imageUrl}" alt="">
+        </li>
+        <h6>
+            <span th:if="${sizeCart > 3}">...</span>
+        </h6>
+
+        <script>
+            async function loadCart() {
+                const userId = "[[${session.accountId}]]";
+                console.log("home" + userId)
+                try {
+                    // Gọi API lấy giỏ hàng bằng axios
+                    const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/listCart/${userId}`);
+
+                    const cartUserResponses = response.data.active;
+                    let sizeListCart = 0;
+
+                    if (cartUserResponses) {
+                        sizeListCart = response.data.data.length; // Lấy số lượng sản phẩm
+                    }
+
+                    console.log("home " + sizeListCart);
+
+                    const sizeCartElement = document.getElementById('sizeCart');
+                    const sizeCartHeadElement = document.getElementById('sizeCartHead');
+                    const cartSizeBelowElement = document.getElementById('sizeCartBelow');
+
+
+                    if (sizeListCart > 3) {
+                        if (sizeCartElement) {
+                            sizeCartElement.innerText = `${sizeListCart} Items`;
+
+                        }
+
+                        if (cartSizeBelowElement) {
+                            cartSizeBelowElement.innerText = '...';
+                        }
+
+                        if (sizeCartHeadElement) {
+                            sizeCartHeadElement.innerText = `${sizeListCart}`
+                        }
+
+                    } else {
+                        if (sizeCartElement) {
+                            sizeCartElement.innerText = `${sizeListCart} Items`;
+                        }
+
+                        if (sizeCartHeadElement) {
+                            sizeCartHeadElement.innerText = `${sizeListCart}`
+                        }
+                    }
+
+                    const cartUserResponsesI = response.data.data; // Mảng chứa dữ liệu giỏ hàng
+                    console.log(cartUserResponsesI); // Kiểm tra dữ liệu API trả về
+
+                    const ulElement = document.querySelector('.items-image');
+
+                    const firstThreeItems = cartUserResponsesI.slice(0, 3); // Lấy 3 phần tử đầu tiên
+
+                    ulElement.innerHTML = '';
+
+                    firstThreeItems.forEach((cart, index) => {
+                        const liElement = document.createElement('li');
+                        liElement.setAttribute('data-index', index);  // Gán data-index mới
+                        liElement.innerHTML = `<img src="${cart.imageUrl}" alt="Product Image ${index}">`;
+                        ulElement.appendChild(liElement);
+                    });
+
+                    await updateTotalCart(userId);
+                } catch (error) {
+                    console.error('Có lỗi xảy ra khi gọi API giỏ hàng:', error);
+                }
+            }
+
+            async function updateTotalCart(userId) {
+                try {
+                    let response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/totalCart/${userId}`);
+                    if (response.data.status === "SUCCESS") {
+                        document.getElementById(`total-cart`).innerText = `${response.data.data.totalCart.toLocaleString()}₫`;
+                    } else {
+                        console.error("Không thể lấy tổng giỏ hàng");
+                    }
+                } catch (error) {
+                    console.error("Lỗi kết nối khi lấy tổng giỏ hàng:", error);
+                }
+            }
+        </script>
+
+    </ul>
+    <button id="total-cart" onclick="location.href = 'cart';" class="btn item-button btn-sm fw-bold"
+            th:text="${#numbers.formatInteger(totalCart, 0, 'POINT') + '₫'}"></button>
+</div>
+<!-- Items section End -->
+
+<!-- Tap to top and theme setting button start -->
+<div class="theme-option">
+    <div class="setting-box">
+        <button class="btn setting-button">
+            <i class="fa-solid fa-gear"></i>
+        </button>
+
+        <div class="theme-setting-2">
+            <div class="theme-box">
+                <ul>
+                    <li>
+                        <div class="setting-name">
+                            <h4>Color</h4>
+                        </div>
+                        <div class="theme-setting-button color-picker">
+                            <form class="form-control">
+                                <label for="colorPick" class="form-label mb-0">Theme Color</label>
+                                <input type="color" class="form-control form-control-color" id="colorPick"
+                                       value="#0da487" title="Choose your color">
+                            </form>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>Dark</h4>
+                        </div>
+                        <div class="theme-setting-button">
+                            <button class="btn btn-2 outline" id="darkButton">Dark</button>
+                            <button class="btn btn-2 unline" id="lightButton">Light</button>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>RTL</h4>
+                        </div>
+                        <div class="theme-setting-button rtl">
+                            <button class="btn btn-2 rtl-unline">LTR</button>
+                            <button class="btn btn-2 rtl-outline">RTL</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-to-top">
+        <a id="back-to-top" href="#">
+            <i class="fas fa-chevron-up"></i>
+        </a>
+    </div>
+</div>
+<!-- Tap to top and theme setting button end -->
+
+<!-- Bg overlay Start -->
+<div class="bg-overlay"></div>
+<!-- Bg overlay End -->
+
+<!-- latest jquery-->
+<script th:src="@{/Frontend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- jquery ui-->
+<script th:src="@{/Frontend/assets/js/jquery-ui.min.js}"></script>
+
+<!-- Bootstrap js-->
+<script th:src="@{/Frontend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/bootstrap/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/bootstrap/popper.min.js}"></script>
+
+<!-- feather icon js-->
+<script th:src="@{/Frontend/assets/js/feather/feather.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/feather/feather-icon.js}"></script>
+
+<!-- Lazyload Js -->
+<script th:src="@{/Frontend/assets/js/lazysizes.min.js}"></script>
+
+<!-- Slick js-->
+<script th:src="@{/Frontend/assets/js/slick/slick.js}"></script>
+<script th:src="@{/Frontend/assets/js/slick/slick-animation.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/slick/custom_slick.js}"></script>
+
+<!-- Price Range Js -->
+<script th:src="@{/Frontend/assets/js/ion.rangeSlider.min.js}"></script>
+
+<!-- sidebar open js -->
+<script th:src="@{/Frontend/assets/js/filter-sidebar.js}"></script>
+
+<!-- Quantity js -->
+<script th:src="@{/Frontend/assets/js/quantity-2.js}"></script>
+
+<!-- WOW js -->
+<script th:src="@{/Frontend/assets/js/wow.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/custom-wow.js}"></script>
+
+<!-- script js -->
+<script th:src="@{/Frontend/assets/js/script.js}"></script>
+
+<!-- theme setting js -->
+<script th:src="@{/Frontend/assets/js/theme-setting.js}"></script>
+</body>
+
+</html>
