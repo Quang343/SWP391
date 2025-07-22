@@ -5,7 +5,20 @@
 
 <style>
     .title-css{
-        
+        font-weight: bold;
+        border-bottom: 1px solid #ccc;
+        height: 25px;
+    }
+
+    .order-tracking{
+        padding: 10px 15px;
+        background: #0cb191;
+        color: white;
+        border-radius: 5px;
+    }
+
+    .order-tracking:hover{
+        background: #039177;
     }
 </style>
 <body>
@@ -29,12 +42,11 @@
                             <div class="card-body">
                                 <div class="title-header d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h5>Chi tiết đơn hàng</h5>
-                                        <span th:text="${order.orderCode}"></span>
+                                        <h5 th:text="'Chi tiết đơn hàng #' + ${order.orderCode}"></h5>
                                     </div>
-                                    <div>
-                                        <span th:text="${orderDetailUserResponses.size()} + ' items'"></span>
-                                    </div>
+<!--                                    <div>-->
+<!--                                        <span th:text="${orderDetailUserResponses.size()} + ' items'"></span>-->
+<!--                                    </div>-->
                                 </div>
 
                                 <div class="row g-4">
@@ -64,12 +76,12 @@
                                                     <td>$55.00</td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="3"><strong>Total Price</strong></td>
-                                                    <td><strong th:text="${order.totalAmount}"></strong></td>
+                                                    <td colspan="3">Total Price</td>
+                                                    <td th:text="${order.totalAmount}"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="3"><strong>Final Amount</strong></td>
-                                                    <td><strong th:text="${order.finalAmount}"></strong></td>
+                                                    <td colspan="3">Final Amount</td>
+                                                    <td th:text="${order.finalAmount}"></td>
                                                 </tr>
                                                 </tfoot>
                                             </table>
@@ -91,10 +103,7 @@
                                             <h5 class="title-css">Phương Thức Thanh Toán</h5>
                                             <p>Pay on Delivery (Cash/Card). Cash on delivery (COD) available. Card/Net banking acceptance subject to device availability.</p>
 
-                                            <hr/>
-                                            <h5>Expected Date Of Delivery:</h5>
-                                            <p><strong>October 22, 2018</strong></p>
-                                            <a href="order-tracking.html">Track Order</a>
+                                            <a class="order-tracking" href="order-tracking.html">Tracking Order</a>
                                         </div>
                                     </div>
                                 </div>
