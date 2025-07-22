@@ -50,6 +50,12 @@ public class CartUserController {
         String email = claims.getSubject();
         User userEntity = userCustomerService.loadUserByEmail(email);
 
+        Object account = session.getAttribute("account");
+        if (account == null) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+
         if (userEntity == null) {
             session.invalidate();
             return "redirect:/login";

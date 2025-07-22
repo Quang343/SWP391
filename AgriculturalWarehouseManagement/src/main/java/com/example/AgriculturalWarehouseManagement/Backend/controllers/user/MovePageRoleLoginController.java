@@ -62,7 +62,7 @@ public class MovePageRoleLoginController {
                 return "redirect:/home";
             } else if (userEntity.getRole().getRoleName().equals("blogger")) {
                 return "redirect:/login";
-            } else if (userEntity.getRole().getRoleName().equals("SELLER")) {
+            } else if (userEntity.getRole().getRoleName().equalsIgnoreCase("SELLER")) {
                 UserResponse userResponse = userCustomerService.getUser(userEntity);
                 session.setAttribute("accountSeller", userResponse);
                 session.setAttribute("accountIdSeller", userResponse.getUserID());

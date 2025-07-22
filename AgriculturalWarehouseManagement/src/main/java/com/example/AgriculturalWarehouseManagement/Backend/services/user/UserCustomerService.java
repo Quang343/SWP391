@@ -94,7 +94,7 @@ public class UserCustomerService {
 
         // Set user
         User user = new User();
-        Role role = roleRepository.findByRoleName("user");
+        Role role = roleRepository.findByRoleName("USER");
 
         user.setRole(role);
         user.setUserName(registerRequestDTO.getUsername());
@@ -174,7 +174,7 @@ public class UserCustomerService {
     public ResponseResult<User> inserUserGGService(GoogleAccountRequest googleAccountRequest) {
 
         User user = new User();
-        Role role = roleRepository.findByRoleName("user");
+        Role role = roleRepository.findByRoleName("USER");
 
         user.setRole(role);
         user.setUserName(googleAccountRequest.getFamily_name());
@@ -185,8 +185,13 @@ public class UserCustomerService {
         user.setGoogleID(googleAccountRequest.getId());
         user.setStatusGG("Active");
         user.setPassword("");
-
         userRepository.save(user);
+
+        Wallets wallets = new Wallets();
+        wallets.setUser(user);
+        wallets.setBalance(BigDecimal.ZERO);
+        walletsRepository.save(wallets);
+
         return new ResponseResult<>("SUCCESS", "Tài khoản người dùng google đăng  nhập thành công !!!", true);
     }
 

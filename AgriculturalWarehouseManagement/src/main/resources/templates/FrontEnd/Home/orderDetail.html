@@ -173,6 +173,13 @@
                             <h3 class="theme-color">Order Chi tiết</h3>
                             <h6 th:text="${'Order code: ' + rightNavOrderDetailUserResponses.orderCode}">Order code</h6>
                         </div>
+
+                        <div class="order-contain">
+                            <form th:action="@{/order/orderTracking}" method="get">
+                                <input name="orderId" type="number" th:value="${orderDetailUserResponses.get(0).orderId}" hidden/>
+                                <button class="btn-outline-success glow-btn" style="padding: 20px; border: none;font-size: 16px; margin-top: 22px">Theo dõi đơn hàng</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -190,7 +197,7 @@
                     <div class="table-responsive">
                         <table class="table mb-0">
                             <tbody>
-                                 <tr th:each="orderDetail : ${orderDetailUserResponses}">
+                            <tr th:each="orderDetail : ${orderDetailUserResponses}">
                                 <td class="product-detail">
                                     <div class="product border-0">
                                         <a th:href="@{/productDetail(productId=${orderDetail.productId})}"
@@ -356,7 +363,8 @@
                 <div class="title d-xxl-none d-block">
                 </div>
                 <form th:action="@{/orderDetailsUser}" method="post" class="right-sidebar-box">
-                    <input type="number" name="orderReviewId" th:value="${orderReviewUserResponse.orderReviewUserId}" hidden>
+                    <input type="number" name="orderReviewId" th:value="${orderReviewUserResponse.orderReviewUserId}"
+                           hidden>
                     <input type="number" name="orderCode" th:value="${orderReviewUserResponse.orderCode}" hidden>
 
                     <div class="row">
@@ -439,7 +447,8 @@
                                 </div>
                             </div>
                             <div class="mb-md-4 mb-3 custom-form">
-                                <button class="btn btn-animation btn-md fw-bold ms-auto" th:if="${activeOrderReview}">
+                                <button class="btn btn-animation btn-md fw-bold ms-auto"
+                                        th:if="${activeOrderReview and orderDetailUserResponses.get(0).getOrderStatus() == 'COMPLETED'}">
                                     Gửi
                                 </button>
                             </div>
@@ -457,10 +466,11 @@
 
                             <div class="profile-contain">
                                 <div class="profile-image">
-                                    <form th:action="@{/editOrderReview/image}" method="post" enctype="multipart/form-data">
+                                    <form th:action="@{/editOrderReview/image}" method="post"
+                                          enctype="multipart/form-data">
                                         <div class="position-relative">
                                             <img th:if="${orderReviewUserResponse.image == ''}"
-                                                 th:src="@{/FrontEnd/assets/images/orderreview.png}"
+                                                 th:src="@{FrontEnd/assets/images/orderReview.png}"
                                                  style="width: 800%; object-fit: cover; display: block;"
                                                  class="blur-up lazyload update_img"
                                                  alt="">
@@ -471,8 +481,10 @@
                                                  class="blur-up lazyload update_img" alt="more image"
                                             >
 
-                                            <input type="number" name="orderReviewId" th:value="${orderReviewUserResponse.orderReviewUserId}" hidden>
-                                            <input type="number" name="orderCode" th:value="${orderReviewUserResponse.orderCode}" hidden>
+                                            <input type="number" name="orderReviewId"
+                                                   th:value="${orderReviewUserResponse.orderReviewUserId}" hidden>
+                                            <input type="number" name="orderCode"
+                                                   th:value="${orderReviewUserResponse.orderCode}" hidden>
 
                                             <div class="cover-icon" style="margin-left: 290px;
                                                                 margin-top: -100px;
@@ -488,7 +500,8 @@
                                             <button style="margin-left: 290px; position: absolute; margin-top: -39px;"
                                                     type="submit"
                                                     class="btn btn-sm glow-btn"
-                                                    th:if="${activeOrderReviewImage}">Lưu
+                                                    th:if="${activeOrderReviewImage and orderDetailUserResponses.get(0).getOrderStatus() == 'COMPLETED'}">
+                                                Lưu
                                             </button>
                                         </div>
                                     </form>
@@ -498,6 +511,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </section>

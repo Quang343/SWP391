@@ -275,9 +275,10 @@
                                   enctype="multipart/form-data"
                                   class="profile-image">
                                 <div class="position-relative">
-                                    <img th:src="${session.account.getImageUrl}"
+                                    <img th:if="${session.account.imageUrl != null}" th:src="${session.account.imageUrl}"
                                          class="blur-up lazyload update_img" alt="more image"
                                          accept=".jpg,.jpeg,.png,.gif,.webp,image/*">
+
                                     <!--                                    th:if="${session.account.getImageUrl != null && session.account.getImageUrl !=''}"-->
                                     <div class="cover-icon">
                                         <i class="fa-solid fa-pen">
@@ -322,7 +323,7 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="pills-dashboard-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-dashboard" type="button"><i data-feather="home"></i>
-                                DashBoard
+                                Trang tổng quản
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
@@ -335,13 +336,13 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-address-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-address" type="button" role="tab"><i
-                                    data-feather="map-pin"></i>Address
+                                    data-feather="map-pin"></i>Địa chị Order
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-profile" type="button" role="tab"><i data-feather="user"></i>
-                                Profile
+                                Hồ sơ
                             </button>
                         </li>
 
@@ -376,7 +377,7 @@
                                     <div class="payment-container">
                                         <form th:action="@{/depositWalletProfile}" method="post">
                                             <label for="nap">Nạp tiền: </label>
-                                            <input id="nap" type="number" name="totalPrice" class="input-field" placeholder="Nhập số tiền" inputmode="numeric" oninput="validateAmount()" />
+                                            <input id="nap" type="number" name="totalPrice" class="input-field" placeholder="Nhập số tiền" inputmode="numeric" oninput="validateAmount()" required/>
                                             <button type="submit" class="btn-nap">Nạp</button>
                                         </form>
                                     </div>

@@ -69,6 +69,10 @@ public class BackEndController {
     @RequestMapping("/warehouse/addadjustment")
     public String addadjustment() {return "BackEnd/WareHouse/addadjustment";}
 
+//    @RequestMapping("/seller/orderTracking")
+//    public String sellerOrderTracking() {
+//        return "BackEnd/seller/order-tracking";
+//    }
 
 
 }

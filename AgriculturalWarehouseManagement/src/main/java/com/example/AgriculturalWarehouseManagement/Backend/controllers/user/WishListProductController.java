@@ -53,6 +53,13 @@ public class WishListProductController {
             return "redirect:/login";
         }
 
+        Object account = session.getAttribute("account");
+        if (account == null) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+
+
         // Lấy thông tin người dùng từ claims
         String email = claims.getSubject();
         User userEntity = userCustomerService.loadUserByEmail(email);

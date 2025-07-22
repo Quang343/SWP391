@@ -32,7 +32,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
             JOIN FirstGallery g on p.ProductID = g.ProductID
             JOIN user u ON o.userid = u.userid
             WHERE o.ordercode = :orderCode\s
-            AND o.status IN ("PENDING", "CONFIRMED", "DELIVERED","CANCELLED");
+            AND o.status IN ("PENDING", "CONFIRMED", "DELIVERED","CANCELLED","STOCKOUT","COMPLETED");
             """,nativeQuery = true)
     List<Map<String, Object>> rawGetOrderDetails(String orderCode);
 }

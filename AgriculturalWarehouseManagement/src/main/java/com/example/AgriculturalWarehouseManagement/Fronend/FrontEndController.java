@@ -22,15 +22,12 @@ public class FrontEndController {
         return "FrontEnd/Home/login";
     }
 
-    @RequestMapping("/seller")
-    public String seller() {
-        return "FrontEnd/Seller/Seller_Dashboard";
-    }
+//    @RequestMapping("/seller")
+//    public String seller() {
+//        return "FrontEnd/Seller/Seller_Dashboard";
+//    }
 
-    @RequestMapping("/cart")
-    public String cart() {
-        return "FrontEnd/Home/cart";
-    }
+
 
 
     @RequestMapping("/seller-become")
