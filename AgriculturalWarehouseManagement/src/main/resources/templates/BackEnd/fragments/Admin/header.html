@@ -132,17 +132,18 @@
                     </ul>
                 </li>
                 -->
-                <li class="profile-nav onhover-dropdown pe-0 me-0" sec:authorize="isAuthenticated()">
+                <li class="profile-nav onhover-dropdown pe-0 me-0" th:if="${session.account != null}">
                     <div class="media profile-media align-items-center">
+<!--                        th:src="@{'/admin/' + ${session.account.imageUrl}}"-->
                         <img class="user-profile rounded-circle me-2"
-                             th:src="@{'/admin/' + ${user.image}}"
+                             src="https://jbagy.me/wp-content/uploads/2025/03/Hinh-anh-avatar-nam-cute-2.jpg"
                              alt="User Avatar"
                              style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #e0e0e0;">
 
                         <div class="media-body">
-                            <span class="fw-semibold" th:text="${session.email}">Username</span>
+                            <span class="fw-semibold" th:text="${session.account.email}">Username</span>
                             <p class="mb-0 font-roboto text-muted text-capitalize">
-                                <span th:text="${#authentication.authorities[0].authority.replace('ROLE_', '').toLowerCase()}">Role</span>
+<!--                                <span th:text="${#authentication.authorities[0].authority.replace('ROLE_', '').toLowerCase()}">Role</span>-->
                                 <i class="middle ri-arrow-down-s-line"></i>
                             </p>
                         </div>
@@ -175,9 +176,17 @@
                             </a>
                         </li>
                          -->
+<!--                        <li>-->
+<!--                            <form method="post" th:action="@{/logout}">-->
+<!--                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>-->
+<!--                                <i data-feather="log-out"></i>-->
+<!--                                <button class="log-out-btn" style="border: none; background: transparent;color: #2c323f;">Log out</button>-->
+<!--                            </form>-->
+<!--                        </li>-->
+
                         <li>
-                            <form method="post" th:action="@{/logout}">
-                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                            <form method="get" action="/AgriculturalWarehouseManagementApplication/logoutUser">
+<!--                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>-->
                                 <i data-feather="log-out"></i>
                                 <button class="log-out-btn" style="border: none; background: transparent;color: #2c323f;">Log out</button>
                             </form>

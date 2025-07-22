@@ -10,8 +10,8 @@
     <meta name="keywords"
           content="admin template, Cuba admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+<!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
+<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
     <link rel="icon" href="assets/images/favicon.png" type="image/x-icon">
     <link rel="shortcut icon" href="assets/images/favicon.png" type="image/x-icon">
     <title>Fastkart - sign up</title>
@@ -359,8 +359,8 @@
         }
 
         function sendOtpAgain() {
-            const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+            // const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+            // const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
             resendBtn.disabled = true;
             resendBtn.classList.add('disabled');
@@ -369,9 +369,9 @@
 
             fetch(`/AgriculturalWarehouseManagementApplication/forgotPasswordAdmin/resendOtp`, {
                 method: "POST",
-                headers: {
-                    [csrfHeader]: csrfToken,
-                }
+                // headers: {
+                //     [csrfHeader]: csrfToken,
+                // }
             }).then(async res => {
                 resendBtn.disabled = true;
                 submitBtn.disabled = false;

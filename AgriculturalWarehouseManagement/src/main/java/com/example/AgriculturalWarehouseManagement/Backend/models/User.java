@@ -43,7 +43,8 @@ public class User {
     @Column(length = 100)
     private String email;
 
-    @Column(length = 20, nullable = false)
+//    @Column(length = 20, nullable = false)
+    @Column(length = 20)
     private String phone;
 
     @Column(length = 255)
@@ -52,7 +53,8 @@ public class User {
     @Column(length = 10)
     private String gender;
 
-    @Column(length = 20, nullable = false)
+//    @Column(length = 20, nullable = false)
+    @Column(length = 20)
     private String status; // e.g., Ban, Active, Inactive
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")

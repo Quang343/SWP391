@@ -2,7 +2,7 @@ package com.example.AgriculturalWarehouseManagement.Backend;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.session.Session;
+//import org.springframework.session.Session;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -12,11 +12,11 @@ public class BackEndController {
     @RequestMapping("/admin")
     public String admin() {return "BackEnd/Admin/index";}
 
-    @RequestMapping("/")
-    public String home(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        return "FrontEnd/Home/home";
-    }
+//    @RequestMapping("/")
+//    public String home(HttpServletRequest request) {
+//        HttpSession session = request.getSession(false);
+//        return "FrontEnd/Home/home";
+//    }
 
     @RequestMapping("/signup")
     public String signup() {

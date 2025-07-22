@@ -1,10 +1,12 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.admin;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.UserDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.user.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,10 +34,21 @@ public class AdminLoginController {
         return "FrontEnd/Deny";
     }
 
+//    @GetMapping("/admin/profile")
+//    public String getAdminProfilePage(Model model, Authentication authentication){
+//        String email = authentication.getName();
+//        User user = userService.findByEmail(email);
+//
+//        model.addAttribute("user", user);
+//        model.addAttribute("userDTO", new UserDTO());
+//        return "BackEnd/Admin/Profile";
+//    }
+
     @GetMapping("/admin/profile")
-    public String getAdminProfilePage(Model model, Authentication authentication){
-        String email = authentication.getName();
-        User user = userService.findByEmail(email);
+    public String getAdminProfilePage(Model model, HttpSession session){
+
+        UserResponse userResponse = (UserResponse)session.getAttribute("account");
+        User user = userService.findById(userResponse.getUserID() * 1L);
 
         model.addAttribute("user", user);
         model.addAttribute("userDTO", new UserDTO());

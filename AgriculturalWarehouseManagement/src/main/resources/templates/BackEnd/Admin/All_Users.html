@@ -407,8 +407,8 @@
 <script>
     let selectedUserId = null;
 
-    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+    // const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    // const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
     const deleteModal = document.getElementById('ModalToggle1');
     deleteModal.addEventListener('show.bs.modal', function (event) {
@@ -424,10 +424,10 @@
 
         fetch(`/AgriculturalWarehouseManagementApplication/admin/delete_user/${selectedUserId}`, {
             method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken
-            }
+            // headers: {
+            //     'Content-Type': 'application/json',
+            //     [csrfHeader]: csrfToken
+            // }
         })
             .then(response => response.json())
             .then(data => {

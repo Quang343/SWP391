@@ -1,5 +1,6 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.admin;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.UpdateProfileRequest;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.UserDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Role;
@@ -8,6 +9,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.services.admin.RoleSe
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.user.UserService;
 import com.example.AgriculturalWarehouseManagement.Backend.utils.PaginationUtils;
 import com.example.AgriculturalWarehouseManagement.Backend.utils.StoreFile;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -209,15 +211,59 @@ public class UserController {
             return ResponseEntity.badRequest().body(Map.of("message", "Delete user failed!"));
     }
 
+//    @PutMapping("/admin/profile/update")
+//    public ResponseEntity<?> updateProfile(
+//            @ModelAttribute UpdateProfileRequest request,
+//            @RequestParam(value = "image", required = false) MultipartFile image,
+//            Authentication authentication
+//    ) {
+//        try {
+//            String email = authentication.getName();
+//            User user = userService.findByEmail(email);
+//            if (user == null) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+//            }
+//
+//            // Cập nhật thông tin từ form
+//            user.setFullName(request.getFullName());
+//            user.setPhone(request.getPhone());
+//            user.setAddress(request.getAddress());
+//            user.setGender(request.getGender());
+//            user.setDob(request.getDob());
+//
+//            String newFileName = null;
+//            if (image != null && !image.isEmpty()) {
+//                String oldFileName = user.getImage();
+//                if(oldFileName != null && !oldFileName.isBlank()){
+//                    deleteFile(oldFileName);
+//                }
+//                try {
+//                    newFileName = storeFile.storeFile(image);
+//                    user.setImage(newFileName);
+//                }catch (Exception e){
+//                    return ResponseEntity.badRequest().body("Image upload failed");
+//                }
+//            }
+//
+//            userService.save(user);
+//
+//            return ResponseEntity.ok().body(Map.of("message", "Cập nhật thành công"));
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating profile");
+//        }
+//    }
+
     @PutMapping("/admin/profile/update")
     public ResponseEntity<?> updateProfile(
+            HttpSession session,
             @ModelAttribute UpdateProfileRequest request,
-            @RequestParam(value = "image", required = false) MultipartFile image,
-            Authentication authentication
+            @RequestParam(value = "image", required = false) MultipartFile image
     ) {
         try {
-            String email = authentication.getName();
-            User user = userService.findByEmail(email);
+            UserResponse userResponse = (UserResponse)session.getAttribute("account");
+            User user = userService.findById(userResponse.getUserID() * 1L);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
             }
@@ -253,15 +299,48 @@ public class UserController {
         }
     }
 
+//    @PutMapping("/admin/profile/change-password")
+//    public ResponseEntity<?> changePassword(@RequestParam String currentPassword,
+//                                            @RequestParam String newPassword,
+//                                            @RequestParam String confirmPassword,
+//                                            Principal principal){
+//        Map<String,Object> response = new HashMap<>();
+//        String email = principal.getName();
+//        User user = userService.findByEmail(email);
+//        if(currentPassword == null || !passwordEncoder.matches(currentPassword, user.getPassword())){
+//            response.put("success", false);
+//            response.put("message", "Mật khẩu hiện tại không đúng!");
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+//        }
+//        if(newPassword == null || !newPassword.equals(confirmPassword)){
+//            response.put("success", false);
+//            response.put("message", "Mật khẩu xác nhận không khớp!");
+//            return ResponseEntity.badRequest().body(response);
+//        }
+//        if(!passwordEncoder.matches(newPassword, user.getPassword())){
+//            user.setPassword(passwordEncoder.encode(newPassword));
+//            userService.save(user);
+//        }
+//        response.put("success", true);
+//        response.put("message", "Đổi mật khẩu thành công");
+//        return ResponseEntity.ok().body(response);
+//    }
+
     @PutMapping("/admin/profile/change-password")
     public ResponseEntity<?> changePassword(@RequestParam String currentPassword,
                                             @RequestParam String newPassword,
                                             @RequestParam String confirmPassword,
-                                            Principal principal){
+                                            HttpSession session){
         Map<String,Object> response = new HashMap<>();
-        String email = principal.getName();
-        User user = userService.findByEmail(email);
-        if(currentPassword == null || !passwordEncoder.matches(currentPassword, user.getPassword())){
+        UserResponse userResponse = (UserResponse)session.getAttribute("account");
+        User user = userService.findByEmail(userResponse.getEmail());
+        if (user == null) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+        if(!passwordEncoder.matches(currentPassword, user.getPassword())){
             response.put("success", false);
             response.put("message", "Mật khẩu hiện tại không đúng!");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);

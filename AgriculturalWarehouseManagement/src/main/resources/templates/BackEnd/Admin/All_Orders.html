@@ -600,8 +600,8 @@
     function submitUpdateStatus(event) {
         event.preventDefault();
 
-        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        // const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        // const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
         const status = document.getElementById("selectedStatus").value;
         const orderId = document.getElementById("editOrderId").value;
@@ -615,7 +615,7 @@
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                [csrfHeader]: csrfToken
+                // [csrfHeader]: csrfToken
             },
             body: JSON.stringify({status})
         }).then(response => {
@@ -654,8 +654,8 @@
 <script>
     let selectedOrderId = null;
 
-    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+    // const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    // const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
     function confirmDelete(el) {
         selectedOrderId = el.getAttribute('data-order-id');
@@ -664,11 +664,11 @@
     function submitDeleteOrder() {
 
         fetch(`/AgriculturalWarehouseManagementApplication/admin/delete_order/${selectedOrderId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken
-            }
+            method: 'POST',
+            // headers: {
+                // 'Content-Type': 'application/json',
+                // [csrfHeader]: csrfToken
+            // }
         })
             .then(res => {
                 if (res.ok) {

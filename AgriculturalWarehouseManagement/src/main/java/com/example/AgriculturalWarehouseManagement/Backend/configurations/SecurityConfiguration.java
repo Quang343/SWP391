@@ -22,14 +22,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
+//import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
 
 import java.util.List;
 
 //
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
+//@EnableWebSecurity
+//@EnableMethodSecurity
 public class SecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -70,74 +70,75 @@ public class SecurityConfiguration {
         return new CustomFailureHandler();
     }
 
-    @Bean
-    public SpringSessionRememberMeServices rememberMeServices() {
-        SpringSessionRememberMeServices rememberMeServices =
-                new SpringSessionRememberMeServices();
-        // optionally customize
-        rememberMeServices.setAlwaysRemember(true);
-        return rememberMeServices;
-    }
+//    @Bean
+//    public SpringSessionRememberMeServices rememberMeServices() {
+//        SpringSessionRememberMeServices rememberMeServices =
+//                new SpringSessionRememberMeServices();
+//        // optionally customize
+//        rememberMeServices.setAlwaysRemember(true);
+//        return rememberMeServices;
+//    }
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http, UserService userService) throws Exception {
         http
 //                .authorizeHttpRequests(request -> request.anyRequest().permitAll());
 //                .csrf(AbstractHttpConfigurer::disable)
-//                .csrf(csrf -> csrf.disable())
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/seller-dashboard")
-                        .ignoringRequestMatchers("/warehouse/**")
-                        .ignoringRequestMatchers("/api/**")
-                )
-                .authorizeHttpRequests(requests -> requests
-                        .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE).permitAll()
-                        .requestMatchers(
-                                "/",
-                                "/otp",
-                                "/home",
-                                "/login",
-                                "/loginAdmin",
-                                "/register",
-                                "/forgotPasswordAdmin/**",
-                                "/BackEnd/assets/**",
-                                "/Backend/assets/**",
-                                "/FrontEnd/assets/**",
-                                "/Frontend/assets/**",
-                                "/css/**",
-                                "/js/**",
-                                "/images/**",
-                                "/api/product-batches", // Thêm endpoint này
-                                "/api/stockindetails"
-
-
-                        ).permitAll()
+                .csrf(csrf -> csrf.disable())
+//                .csrf(csrf -> csrf
+//                        .ignoringRequestMatchers("/seller-dashboard")
+//                        .ignoringRequestMatchers("/warehouse/**")
+//                        .ignoringRequestMatchers("/api/**")
+//                )
+                .authorizeHttpRequests(request -> request.anyRequest().permitAll());
+//                .authorizeHttpRequests(requests -> requests
+//                        .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE).permitAll()
+//                        .requestMatchers(
+//                                "/",
+//                                "/otp",
+//                                "/home",
+//                                "/login",
+//                                "/loginAdmin",
+//                                "/register",
+//                                "/forgotPasswordAdmin/**",
+//                                "/BackEnd/assets/**",
+//                                "/Backend/assets/**",
+//                                "/FrontEnd/assets/**",
+//                                "/Frontend/assets/**",
+//                                "/css/**",
+//                                "/js/**",
+//                                "/images/**",
+//                                "/api/product-batches", // Thêm endpoint này
+//                                "/api/stockindetails"
+//
+//
+//                        ).permitAll()
 //                        .requestMatchers("/forgotPassword/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/seller/**").hasAnyRole("ADMIN", "SELLER")
-                        .requestMatchers("/seller-dashboard").hasAnyRole("ADMIN", "SELLER")
-                        .requestMatchers("/warehouse/**").hasAnyRole("ADMIN", "WAREHOUSE")
-                        .anyRequest().authenticated())
-                .sessionManagement(sessionManagement -> sessionManagement
-                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS) // Luôn tạo session mới
-                        .invalidSessionUrl("/logout?expired") // Nếu session không hợp lệ thì chuyển hướng
-                        .maximumSessions(1) // Chỉ cho phép 1 session đồng thời cho mỗi người dùng
-                        .maxSessionsPreventsLogin(false) // Không ngăn người dùng mới đăng nhập (sẽ làm session cũ bị đá ra)
-                )
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/seller/**").hasAnyRole("ADMIN", "SELLER")
+//                        .requestMatchers("/seller-dashboard").hasAnyRole("ADMIN", "SELLER")
+//                        .requestMatchers("/warehouse/**").hasAnyRole("ADMIN", "WAREHOUSE")
+//                        .anyRequest().authenticated())
+//                .sessionManagement(sessionManagement -> sessionManagement
+//                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS) // Luôn tạo session mới
+//                        .invalidSessionUrl("/logout?expired") // Nếu session không hợp lệ thì chuyển hướng
+//                        .maximumSessions(1) // Chỉ cho phép 1 session đồng thời cho mỗi người dùng
+//                        .maxSessionsPreventsLogin(false) // Không ngăn người dùng mới đăng nhập (sẽ làm session cũ bị đá ra)
+//                )
                 // Đoạn này là để xóa cookie và hủy session khi logout
-                .logout(logout -> logout
-                        .deleteCookies("JSESSIONID")
-                        .invalidateHttpSession(true)
-                )
-                .rememberMe(r -> r.rememberMeServices(rememberMeServices()))
-                .formLogin(formLogin ->
-                        formLogin.loginPage("/loginAdmin")
-                        .loginProcessingUrl("/login")
-                        .failureHandler(new CustomFailureHandler())
-                        .successHandler(new CustomSuccessHandler(userService))
-                        .permitAll())
-                .exceptionHandling(ex ->
-                        ex.accessDeniedPage("/access-denied"));
+//                .logout(logout -> logout
+//                        .deleteCookies("JSESSIONID")
+//                        .invalidateHttpSession(true)
+//                )
+//                .rememberMe(r -> r.rememberMeServices(rememberMeServices()))
+//                .formLogin(formLogin ->
+//                        formLogin.loginPage("/loginAdmin")
+//                        .loginProcessingUrl("/login")
+//                        .failureHandler(new CustomFailureHandler())
+//                        .successHandler(new CustomSuccessHandler(userService))
+//                        .permitAll())
+//                .exceptionHandling(ex ->
+//                        ex.accessDeniedPage("/access-denied"));
 //                .exceptionHandling(ex -> ex
 //                        .authenticationEntryPoint((request, response, authException) -> {
 //                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

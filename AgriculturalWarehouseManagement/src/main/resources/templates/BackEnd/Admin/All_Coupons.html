@@ -10,8 +10,8 @@
     <meta name="keywords"
           content="admin template, Fastkart admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+<!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
+<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
     <link rel="icon" th:href="@{/Backend/assets/images/favicon.png}" type="image/x-icon">
     <link rel="shortcut icon" th:href="@{/Backend/assets/images/favicon.png}" type="image/x-icon">
     <title>Fastkart - Coupon List</title>
@@ -406,24 +406,24 @@
 
 <script>
     let selectedVoucherId = null;
-
     const deleteModal = document.getElementById('exampleModalToggle');
     deleteModal.addEventListener('show.bs.modal', function (event) {
         const triggerElement = event.relatedTarget;
         selectedVoucherId = triggerElement.getAttribute('data-id');
     });
 
+
     function confirmDelete() {
         if (!selectedVoucherId) return;
 
-        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        // const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        // const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
         fetch(`/AgriculturalWarehouseManagementApplication/admin/voucher/delete/${selectedVoucherId}`, {
             method: 'DELETE',
-            headers: {
-                [csrfHeader]: csrfToken
-            }
+            // headers: {
+            //     [csrfHeader]: csrfToken
+            // }
         })
             .then(response => response.json())
             .then(data => {
@@ -458,14 +458,14 @@
     document.getElementById('confirmUnlockBtn').addEventListener('click', () => {
         if (!currentUnlockId) return;
 
-        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        // const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        // const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
         fetch(`/AgriculturalWarehouseManagementApplication/admin/voucher/unlock/${currentUnlockId}`, {
             method: 'PATCH',
-            headers: {
-                [csrfHeader]: csrfToken
-            }
+            // headers: {
+            //     [csrfHeader]: csrfToken
+            // }
         })
             .then(response => response.json())
             .then(data => {

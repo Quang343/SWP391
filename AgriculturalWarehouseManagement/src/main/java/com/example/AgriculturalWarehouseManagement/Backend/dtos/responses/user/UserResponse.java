@@ -1,9 +1,9 @@
 package com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user;
 
 import com.example.AgriculturalWarehouseManagement.Backend.models.Role;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.xml.crypto.Data;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;

@@ -47,9 +47,11 @@ public class MovePageRoleLoginController {
             session.invalidate();
             return "redirect:/login";
         } else {
-            if (userEntity.getRole().getRoleName().equals("admin")) {
-                return "redirect:/login";
-            } else if (userEntity.getRole().getRoleName().equals("user")) {
+            if (userEntity.getRole().getRoleName().equalsIgnoreCase("admin")) {
+                UserResponse userResponse = userCustomerService.getUser(userEntity);
+                session.setAttribute("account", userResponse);
+                return "redirect:/admin";
+            } else if (userEntity.getRole().getRoleName().equals("USER")) {
 
                 UserResponse userResponse = userCustomerService.getUser(userEntity);
                 session.setAttribute("account", userResponse);

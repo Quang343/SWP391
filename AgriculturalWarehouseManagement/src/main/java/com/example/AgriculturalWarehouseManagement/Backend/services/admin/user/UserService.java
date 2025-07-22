@@ -49,9 +49,9 @@ public class UserService implements IUserService {
     @Override
     public User createUser(UserDTO userDTO) throws Exception {
         String phone = userDTO.getPhone();
-        if (userRepository.existsByPhone(phone)) {
-            throw new Exception("Phone number already exists");
-        }
+//        if (userRepository.existsByPhone(phone)) {
+//            throw new Exception("Phone number already exists");
+//        }
         Role role = roleRepository.findById(userDTO.getRoleId())
                 .orElseThrow(() -> new RuntimeException("Role Not Found"));
         User user = mapDtoToUser(userDTO, role);
@@ -79,9 +79,9 @@ public class UserService implements IUserService {
         User user = findById(id);
         Role role = roleRepository.findById(userDTO.getRoleId())
                 .orElseThrow(() -> new RuntimeException("Role Not Found"));
-        if (!user.getPhone().equals(userDTO.getPhone()) && userRepository.existsByPhone(userDTO.getPhone())) {
-            throw new Exception("Phone number already exists");
-        }
+//        if (!user.getPhone().equals(userDTO.getPhone()) && userRepository.existsByPhone(userDTO.getPhone())) {
+//            throw new Exception("Phone number already exists");
+//        }
 //        modelMapper.typeMap(UserDTO.class, User.class)
 //                .addMappings(mapper -> mapper.skip(User::setUserId))
 //                .addMappings(mapper -> mapper.skip(User::setOtp));
