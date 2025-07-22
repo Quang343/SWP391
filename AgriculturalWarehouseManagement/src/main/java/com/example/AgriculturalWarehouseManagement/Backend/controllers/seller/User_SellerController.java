@@ -5,6 +5,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller
 import com.example.AgriculturalWarehouseManagement.Backend.services.seller.User_SellerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +17,8 @@ import java.util.Map;
 public class User_SellerController {
 
     private final User_SellerService userService;
+
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     // 🔹 Lấy thông tin user theo username
     @GetMapping("/{username}")
@@ -42,6 +45,7 @@ public class User_SellerController {
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
         try {
+
             userService.changePassword(request.getUserId(), request.getCurrentPassword(), request.getNewPassword());
             return ResponseEntity.ok().body(Map.of("message", "Đổi mật khẩu thành công"));
         } catch (IllegalArgumentException e) {

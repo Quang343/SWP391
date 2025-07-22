@@ -51,7 +51,7 @@ public class MovePageRoleLoginController {
                 UserResponse userResponse = userCustomerService.getUser(userEntity);
                 session.setAttribute("account", userResponse);
                 return "redirect:/admin";
-            } else if (userEntity.getRole().getRoleName().equals("USER")) {
+            } else if (userEntity.getRole().getRoleName().equalsIgnoreCase("USER")) {
 
                 UserResponse userResponse = userCustomerService.getUser(userEntity);
                 session.setAttribute("account", userResponse);
@@ -64,7 +64,10 @@ public class MovePageRoleLoginController {
                 return "redirect:/login";
             } else if (userEntity.getRole().getRoleName().equals("SELLER")) {
                 UserResponse userResponse = userCustomerService.getUser(userEntity);
-                session.setAttribute("account", userResponse);
+                session.setAttribute("accountSeller", userResponse);
+                session.setAttribute("accountIdSeller", userResponse.getUserID());
+                System.out.println("hello"+session.getAttribute("accountIdSeller").toString());
+
                 return "redirect:/seller-dashboard";
             } else if (userEntity.getRole().getRoleName().equals("warehourestaff")) {
                 return "redirect:/login";

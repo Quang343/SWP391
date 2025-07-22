@@ -6,10 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class FrontEndController {
-    @RequestMapping("/home")
-    public String home() {
-        return "FrontEnd/Home/home";
-    }
 
     @RequestMapping("/shop")
     public String shop() {

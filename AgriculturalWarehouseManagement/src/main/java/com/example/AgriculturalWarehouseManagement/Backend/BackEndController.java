@@ -12,11 +12,7 @@ public class BackEndController {
     @RequestMapping("/admin")
     public String admin() {return "BackEnd/Admin/index";}
 
-//    @RequestMapping("/")
-//    public String home(HttpServletRequest request) {
-//        HttpSession session = request.getSession(false);
-//        return "FrontEnd/Home/home";
-//    }
+
 
     @RequestMapping("/signup")
     public String signup() {
@@ -73,10 +69,7 @@ public class BackEndController {
     @RequestMapping("/warehouse/addadjustment")
     public String addadjustment() {return "BackEnd/WareHouse/addadjustment";}
 
-    @RequestMapping("/seller-dashboard")
-    public String sellerDashboard() {
-        return "BackEnd/Seller/seller-dashboard";
-    }
+
 
 }
 

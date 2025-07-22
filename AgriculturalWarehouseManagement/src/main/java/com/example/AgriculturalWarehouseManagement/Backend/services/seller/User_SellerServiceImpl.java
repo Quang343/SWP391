@@ -5,6 +5,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller.User_SellerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +24,7 @@ import java.util.Optional;
 public class User_SellerServiceImpl implements User_SellerService {
     private final User_SellerRepository userRepository;
     private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Override
     public User_SellerDTO getUserByUsername(String username) {
         User user = userRepository.findByUserName(username);
@@ -86,16 +87,16 @@ public class User_SellerServiceImpl implements User_SellerService {
     public void changePassword(Long userId, String currentPassword, String newPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng với ID: " + userId));
-
-        if (!user.getPassword().equals(currentPassword)) {
+//        passwordEncoder.matches(loginRequest.getPassword(), passwordDatabase)
+        if (!passwordEncoder.matches(currentPassword,user.getPassword())) {
             throw new IllegalArgumentException("Mật khẩu hiện tại không đúng.");
         }
 
         if (user.getPassword().equals(newPassword)) {
             throw new IllegalArgumentException("Mật khẩu mới không được trùng mật khẩu hiện tại.");
         }
-
-        user.setPassword(newPassword);
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encodedPassword);
         userRepository.save(user);
     }
 
