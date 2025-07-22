@@ -148,7 +148,7 @@
                                                     <select class="js-example-basic-single w-100" name="categoryId"
                                                             th:field="*{categoryId}">
                                                         <option th:each="category : ${categories}"
-                                                                th:value="${category.getId()}"
+                                                                th:value="${category.getCategoryId()}"
                                                                 th:text="${category.getName()}">
                                                         </option>
                                                     </select>

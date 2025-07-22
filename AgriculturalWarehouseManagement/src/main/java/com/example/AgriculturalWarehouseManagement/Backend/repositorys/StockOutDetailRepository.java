@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface StockOutDetailRepository extends JpaRepository<StockOutDetail, Integer> {
     List<StockOutDetail> findByStockOutID_Id(Integer stockOutID);
+
+    List<StockOutDetail> findByStockOutID_IdIn(List<Integer> stockOutIds);
 }

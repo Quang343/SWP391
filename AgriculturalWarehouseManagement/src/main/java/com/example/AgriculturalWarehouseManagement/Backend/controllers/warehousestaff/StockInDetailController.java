@@ -57,14 +57,26 @@ public class StockInDetailController {
     }
 
     @GetMapping("/quantity/{batchId}")
-    public ResponseEntity<List<StockInDetailDTO>> getStockInDetailsByBatchId(@PathVariable("batchId") Integer batchId) {
+    public ResponseEntity<Integer> getQuantityByBatchId(@PathVariable("batchId") Integer batchId) {
         try {
-            List<StockInDetailDTO> stockInDetails = stockInDetailService.findByBatchId(batchId);
-            return ResponseEntity.ok(stockInDetails);
+            StockInDetailDTO stockInDetail = stockInDetailService.findByBatchId(batchId);
+            return ResponseEntity.ok(stockInDetail.getQuantity());
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/importprice/{batchId}")
+    public ResponseEntity<Integer> getImportPriceByBatchId(@PathVariable("batchId") Integer batchId) {
+        try {
+            Integer importPrice = stockInDetailService.getImportPriceByBatchId(batchId);
+            return ResponseEntity.ok(importPrice);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

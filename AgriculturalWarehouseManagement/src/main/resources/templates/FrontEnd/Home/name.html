@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+    import React, {useState} from 'react';
+    import ReactDOM from 'react-dom';
+
+    const UserProfile = () => {
+        const [data, setData] = useState("");
+        return (
+            <div>
+                <h1>Welcome to the User Dashboard</h1>
+                <p>This is your profile page.</p>
+            </div>
+        );
+    };
+
+    ReactDOM.render(<UserProfile />, document.getElementById('root'));
+</script>
+</body>
+</html>

@@ -71,7 +71,7 @@ public class CategoryService implements ICategoryService{
     public void deleteCategory(Long id) {
         try {
             Category category = findById(id);
-            category.setStatus("DELETED");
+            category.setStatus("INACTIVE");
             categoryRepository.save(category);
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -66,7 +66,7 @@ public class RoleController {
     public String showEditForm(@PathVariable("id") Long id, Model model) throws Exception {
         Role role = roleService.findById(id);
         RoleDTO roleDTO = new RoleDTO();
-        roleDTO.setName(role.getName());
+        roleDTO.setName(role.getRoleName());
         roleDTO.setDescription(role.getDescription());
         roleDTO.setStatus(role.getStatus());
         model.addAttribute("roleDTO", roleDTO);
@@ -114,7 +114,7 @@ public class RoleController {
     @GetMapping("/admin/assign_role")
     public String assignRole(Model model){
         Role adminRole = roleService.findByName("ADMIN");
-        List<Role>  roles = roleService.findByStatusAndNameIsNot("ACTIVE", adminRole.getName());
+        List<Role>  roles = roleService.findByStatusAndNameIsNot("ACTIVE", adminRole.getRoleName());
         List<User> users = userService.findByRoleIsNot(adminRole);
         model.addAttribute("users", users);
         model.addAttribute("roles", roles);

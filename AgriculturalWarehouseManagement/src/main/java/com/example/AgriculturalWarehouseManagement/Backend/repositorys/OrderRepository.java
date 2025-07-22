@@ -29,4 +29,15 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // Hoặc: đếm theo từng trạng thái nếu cần
     @Query("SELECT o.status, COUNT(o) FROM Order o GROUP BY o.status")
     List<Object[]> countOrdersGroupedByStatus();
+
+    @Query(value = """
+                    SELECT\s
+                        o.orderid , o.status, o.orderdate, o.ordercode, u.Email, o.final_amount ,SUM(od.quantity) AS total_quantity
+                    FROM `order` o
+                    JOIN orderdetail od ON o.orderid = od.orderid
+                    JOIN user u ON o.userid = u.UserID
+                    WHERE o.userid = :userId
+                    GROUP BY  o.orderid, o.status, o.orderdate, o.ordercode, u.Email, o.final_amount;
+            """, nativeQuery = true)
+    List<Object[]> rawGetOrders(long userId);
 }

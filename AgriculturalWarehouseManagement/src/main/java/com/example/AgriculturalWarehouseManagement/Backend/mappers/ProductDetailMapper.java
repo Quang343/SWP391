@@ -23,7 +23,7 @@ public class ProductDetailMapper {
         entity.setProductDetailId(dto.getProductDetailID());
 
         // Resolve Product
-        Product product = productRepository.findById(dto.getProductID().longValue())
+        Product product = productRepository.findById(dto.getProductID())
                 .orElseThrow(() -> new RuntimeException("Product with ID " + dto.getProductID() + " not found"));
         entity.setProductID(product);
 
@@ -58,7 +58,7 @@ public class ProductDetailMapper {
 
     public void updateProductDetailFromDTO(ProductDetailDTO dto, ProductDetail entity) {
         if (dto.getProductID() != null) {
-            Product product = productRepository.findById(dto.getProductID().longValue())
+            Product product = productRepository.findById(dto.getProductID())
                     .orElseThrow(() -> new RuntimeException("Product with ID " + dto.getProductID() + " not found"));
             entity.setProductID(product);
         }

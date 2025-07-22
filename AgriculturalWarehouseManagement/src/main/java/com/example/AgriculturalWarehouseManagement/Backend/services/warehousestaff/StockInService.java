@@ -12,6 +12,9 @@ import com.example.AgriculturalWarehouseManagement.Backend.repositorys.StockInRe
 import org.hibernate.engine.jdbc.batch.spi.Batch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -46,6 +49,17 @@ public class StockInService {
         StockIn stockIn = StockInMapper.toEntity(stockInDTO);
         stockIn = stockInRepository.save(stockIn);
         return StockInMapper.toDTO(stockIn);
+    }
+
+    public Page<StockIn> getPaginatedStockIn(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<StockIn> stockInPage = stockInRepository.findPaginatedStockIn(pageable);
+        // Debug output
+        System.out.println("Debug - Page: " + page + ", Size: " + size +
+                ", Total Pages: " + stockInPage.getTotalPages() +
+                ", Total Elements: " + stockInPage.getTotalElements());
+
+        return stockInPage;
     }
 
     public List<StockInDTO> getAllStockIns() {

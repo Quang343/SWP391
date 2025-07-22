@@ -111,7 +111,7 @@ public class CategoryController {
         categoryDTO.setStatus(category.getStatus());
         categoryDTO.setImageUrl(category.getImageUrl());
         model.addAttribute("categoryDTO", categoryDTO);
-        model.addAttribute("id", category.getId());
+        model.addAttribute("id", category.getCategoryId());
         return "BackEnd/Admin/Edit_Category";
     }
 

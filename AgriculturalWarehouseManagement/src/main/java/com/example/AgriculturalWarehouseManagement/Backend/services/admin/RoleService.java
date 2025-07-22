@@ -20,7 +20,7 @@ public class RoleService implements IRoleService{
 
     @Override
     public List<Role> findByStatusAndNameIsNot(String status, String name) {
-        return roleRepository.findByStatusAndNameIsNot(status, name);
+        return roleRepository.findByStatusAndRoleNameIsNot(status, name);
     }
 
     @Override
@@ -31,13 +31,13 @@ public class RoleService implements IRoleService{
 
     @Override
     public boolean existsByNameIgnoreCase(String name) {
-        return roleRepository.existsByNameIgnoreCase(name);
+        return roleRepository.existsByRoleNameIgnoreCase(name);
     }
 
     @Override
     public Role createRole(RoleDTO roleDTO) {
         Role role = Role.builder()
-                .name(roleDTO.getName())
+                .roleName(roleDTO.getName())
                 .status(roleDTO.getStatus())
                 .description(roleDTO.getDescription())
                 .build();
@@ -48,7 +48,7 @@ public class RoleService implements IRoleService{
     public Role updateRole(Long id, RoleDTO roleDTO) {
         try {
             Role role = findById(id);
-            role.setName(roleDTO.getName());
+            role.setRoleName(roleDTO.getName());
             role.setDescription(roleDTO.getDescription());
 //            role.setStatus(roleDTO.getStatus());
             return roleRepository.save(role);
@@ -81,7 +81,7 @@ public class RoleService implements IRoleService{
 
     @Override
     public Role findByName(String name) {
-        return roleRepository.findByName(name);
+        return roleRepository.findByRoleName(name);
     }
 
 

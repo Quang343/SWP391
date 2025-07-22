@@ -293,7 +293,7 @@ public class UserController {
             userService.save(user);
             return ResponseEntity.ok(Map.of(
                     "success", true,
-                    "roleName", user.getRole().getName()
+                    "roleName", user.getRole().getRoleName()
             ));
         } catch (Exception e) {
             return ResponseEntity.status(400).body(Map.of(

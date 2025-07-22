@@ -13,7 +13,7 @@ public class CategoryWeightMapper {
 
         return CategoryWeightDTO.builder()
                 .categoryWeightId(entity.getCategoryWeightId())
-                .categoryId(Math.toIntExact(entity.getCategory().getId()))
+                .categoryId(Math.toIntExact(entity.getCategory().getCategoryId()))
                 .weight(entity.getWeight())
                 .unit(entity.getUnit())
                 .build();

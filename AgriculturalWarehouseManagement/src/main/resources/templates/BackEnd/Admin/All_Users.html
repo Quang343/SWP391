@@ -141,14 +141,14 @@
                                         <tr th:each="user, iterStat : ${users}"
                                             th:id="'user-row-' + ${user.getUserId()}">
                                             <td class="col-stt text-center" th:text="${iterStat.count}"></td>
-                                            <td th:text="${user.getUsername()}"></td>
+                                            <td th:text="${user.getUserName()}"></td>
                                             <td>
                                                 <div class="user-img w-100">
                                                     <img th:src="@{'/admin/' + ${user.getImage()}}"
                                                          class="img-fluid rounded-circle avatar">
                                                 </div>
                                             </td>
-                                            <td th:text="${user.getRole().getName()}"></td>
+                                            <td th:text="${user.getRole().getRoleName()}"></td>
                                             <td th:text="${user.getStatus() == 'Active' ? 'Đang hoạt động' : 'Ngừng hoạt động'}"
                                                 th:class="${user.getStatus() == 'Active'} ? 'text-success' : 'text-danger'"
                                                 th:id="'user-status-' + ${user.getUserId()}"
@@ -159,12 +159,12 @@
                                                     <li>
                                                         <a href="javascript:void(0)" class="view-user"
                                                            th:attr="data-id=${user.getUserId()},
-                                                            data-username=${user.getUsername()},
+                                                            data-username=${user.getUserName()},
                                                             data-fullName=${user.getFullName()},
                                                             data-email=${user.getEmail()},
                                                             data-phone=${user.getPhone()},
                                                             data-address=${user.getAddress()},
-                                                            data-role=${user.getRole().getName()},
+                                                            data-role=${user.getRole().getRoleName()},
                                                             data-status=${user.getStatus()},
                                                             data-dob=${user.getDob()}"
                                                            data-bs-toggle="modal"

@@ -144,9 +144,9 @@
                                                 <select class="form-select" name="categoryId" onchange="submitFilterForm()">
                                                     <option value="">Tất cả danh mục</option>
                                                     <option th:each="category : ${categories}"
-                                                            th:value="${category.id}"
+                                                            th:value="${category.categoryId}"
                                                             th:text="${category.name}"
-                                                            th:selected="${category.id == categoryId}"></option>
+                                                            th:selected="${category.categoryId == categoryId}"></option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3">

@@ -158,7 +158,7 @@
                                                             th:field="*{categoryId}">
 <!--                                                        <option value="" disabled selected>Category Menu</option>-->
                                                         <option th:each="category : ${categories}"
-                                                                th:value="${category.getId()}"
+                                                                th:value="${category.getCategoryId()}"
                                                                 th:text="${category.getName()}">
                                                         </option>
                                                     </select>

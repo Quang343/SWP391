@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface CategoryWeight_SellerRepository extends JpaRepository<CategoryWeight, Integer> {
 
-    List<CategoryWeight> findByCategory_Id(Long categoryId);
+    List<CategoryWeight> findByCategory_CategoryId(int categoryId);
 
     // ✅ Thêm đúng method này:
     Optional<CategoryWeight> findByCategoryAndWeightAndUnit(Category category, Double weight, String unit);

@@ -1,10 +1,17 @@
 package com.example.AgriculturalWarehouseManagement.Backend.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.*;
 
 @Entity
 @Table(name = "blogdetail")
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Getter
+@Setter
 public class BlogDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +21,7 @@ public class BlogDetail {
     // Khóa ngoại tham chiếu tới Blog
     @OneToOne
     @JoinColumn(name = "blogid", referencedColumnName = "blogid")
+    @JsonBackReference
     private Blog blog;
 
     @Column(name = "thumbnail")
@@ -23,35 +31,5 @@ public class BlogDetail {
     @Column(name = "detailcontent")
     private String detailContent;
 
-    public Integer getBlogDetailID() {
-        return blogDetailID;
-    }
 
-    public void setBlogDetailID(Integer blogDetailID) {
-        this.blogDetailID = blogDetailID;
-    }
-
-    public Blog getBlog() {
-        return blog;
-    }
-
-    public void setBlog(Blog blog) {
-        this.blog = blog;
-    }
-
-    public String getThumbnail() {
-        return thumbnail;
-    }
-
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
-    }
-
-    public String getDetailContent() {
-        return detailContent;
-    }
-
-    public void setDetailContent(String detailContent) {
-        this.detailContent = detailContent;
-    }
 }

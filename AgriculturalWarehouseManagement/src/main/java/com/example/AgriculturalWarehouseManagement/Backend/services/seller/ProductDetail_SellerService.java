@@ -27,7 +27,7 @@ public class ProductDetail_SellerService implements IProductDetail_SellerService
 
     @Override
     public ProductDetail createProductDetail(ProductDetail_SellerDTO dto) {
-        Product product = productRepository.findById(dto.getProductId())
+        Product product = productRepository.findById(dto.getProductId().intValue())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
 
         Category category = product.getCategory();

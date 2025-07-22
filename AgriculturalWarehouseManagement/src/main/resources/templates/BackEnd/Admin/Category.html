@@ -158,7 +158,7 @@
 <!--                                                            </a>-->
 <!--                                                        </li>-->
                                                         <li>
-                                                            <a th:href="@{'/admin/edit_category/' + ${category.getId()}}">
+                                                            <a th:href="@{'/admin/edit_category/' + ${category.getCategoryId()}}">
                                                                 <i class="ri-pencil-line"></i>
                                                             </a>
                                                         </li>
@@ -166,7 +166,7 @@
                                                         <li>
                                                             <a href="javascript:void(0)" data-bs-toggle="modal"
                                                                 data-bs-target="#deleteModalStart"
-                                                                th:attr="data-id=${category.getId()}">
+                                                                th:attr="data-id=${category.getCategoryId()}">
                                                                 <i class="ri-delete-bin-line"></i>
                                                             </a>
                                                         </li>

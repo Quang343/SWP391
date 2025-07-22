@@ -256,25 +256,25 @@
                                             <tbody>
                                             <tr th:each="role, init : ${roles}">
                                                 <td th:text="${init.count}"></td>
-                                                <td th:text="${role.getName()}"></td>
+                                                <td th:text="${role.getRoleName()}"></td>
                                                 <td th:text="${role.getStatus()}"></td>
                                                 <td>
                                                     <ul>
                                                         <li>
-                                                            <a th:href="@{'/admin/edit_role/' + ${role.getId()}}">
+                                                            <a th:href="@{'/admin/edit_role/' + ${role.getRoleID()}}">
                                                                 <i class="ri-pencil-line"></i>
                                                             </a>
                                                         </li>
 
                                                         <li>
                                                             <a th:if="${role.getStatus().equalsIgnoreCase('Active')}" href="javascript:void(0)"
-                                                               th:attr="data-id=${role.getId()}"
+                                                               th:attr="data-id=${role.getRoleID()}"
                                                                data-bs-toggle="modal"
                                                                data-bs-target="#ModalToggle">
                                                                 <i class="ri-toggle-fill"></i>
                                                             </a>
                                                             <a th:if="${role.getStatus().equalsIgnoreCase('Inactive')}" href="javascript:void(0)"
-                                                               th:attr="data-id=${role.getId()}"
+                                                               th:attr="data-id=${role.getRoleID()}"
                                                                data-bs-toggle="modal"
                                                                data-bs-target="#RestoreModal">
                                                                 <i class="ri-toggle-line"></i>

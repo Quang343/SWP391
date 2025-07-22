@@ -19,6 +19,7 @@ public class ProductDetailService {
 
     @Autowired
     private ProductDetailMapper mapper;
+
     @Autowired
     private ProductDetailRepository productDetailRepository;
 

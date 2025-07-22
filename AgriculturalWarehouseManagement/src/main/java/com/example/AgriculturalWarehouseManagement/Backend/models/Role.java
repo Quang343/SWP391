@@ -18,10 +18,10 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "roleid")
-    private Long id;
+    private int roleID;
 
-    @Column(name = "rolename", unique = true, nullable = false, length = 100)
-    private String name;
+    @Column(name = "rolename", nullable = false, length = 100)
+    private String roleName;
 
     @Column(length = 500)
     private String description;

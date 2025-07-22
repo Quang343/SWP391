@@ -61,7 +61,7 @@ public class UserService implements IUserService {
 
     private User mapDtoToUser(UserDTO dto, Role role) {
         return User.builder()
-                .username(dto.getUsername())
+                .userName(dto.getUsername())
                 .fullName(dto.getFullName())
                 .password(dto.getPassword())
                 .email(dto.getEmail())
@@ -86,7 +86,7 @@ public class UserService implements IUserService {
 //                .addMappings(mapper -> mapper.skip(User::setUserId))
 //                .addMappings(mapper -> mapper.skip(User::setOtp));
 //        modelMapper.map(userDTO, user);
-        user.setUsername(userDTO.getUsername());
+        user.setUserName(userDTO.getUsername());
         user.setFullName(userDTO.getFullName());
         user.setEmail(userDTO.getEmail());
         user.setPhone(userDTO.getPhone());

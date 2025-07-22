@@ -97,14 +97,14 @@ public class ProductDetail_SellerController {
     }
 
     @GetMapping("/products/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable Long id) {
+    public ResponseEntity<?> getProductById(@PathVariable int id) {
         Product product = productService.findById(id);
         return ResponseEntity.ok(product);
     }
 
     @GetMapping("/category-weights/{categoryId}")
-    public ResponseEntity<?> getCategoryWeights(@PathVariable Long categoryId) {
-        List<CategoryWeight> list = categoryWeightRepository.findByCategory_Id(categoryId);
+    public ResponseEntity<?> getCategoryWeights(@PathVariable int categoryId) {
+        List<CategoryWeight> list = categoryWeightRepository.findByCategory_CategoryId(categoryId);
         return ResponseEntity.ok(list);
     }
 

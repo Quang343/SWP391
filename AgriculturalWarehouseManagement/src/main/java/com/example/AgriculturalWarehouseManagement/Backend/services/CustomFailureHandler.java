@@ -28,6 +28,6 @@ public class CustomFailureHandler implements AuthenticationFailureHandler {
         }
 
         request.getSession().setAttribute("error", errorMessage);
-        response.sendRedirect("/AgriculturalWarehouseManagementApplication/login?error");
+        response.sendRedirect("/AgriculturalWarehouseManagementApplication/loginAdmin?error");
     }
 }

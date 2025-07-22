@@ -43,6 +43,9 @@ public class BackEndController {
     @RequestMapping("/warehouse/addstockout")
     public String addstockout() {return "BackEnd/WareHouse/addstockout";}
 
+    @RequestMapping("/warehouse/returnstockout")
+    public String returnstockout() {return "BackEnd/WareHouse/return_stockout";}
+
     @RequestMapping("/warehouse/stockindetail")
     public String stockindetail() {return "BackEnd/WareHouse/stockin_detail";}
 

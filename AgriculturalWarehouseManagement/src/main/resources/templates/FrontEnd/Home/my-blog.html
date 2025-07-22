@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="FrontEnd/fragments/head::head">
+
+    <style>
+
+        /* Căn giữa ảnh trong container */
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            object-fit: contain; /* Hoặc 'cover' nếu bạn muốn ảnh phủ toàn bộ container */
+            max-width: 100%; /* Đảm bảo ảnh đáp ứng và không vượt quá chiều rộng của container */
+            height: auto; /* Giữ tỷ lệ ảnh khi thay đổi kích thước */
+        }
+
+        /* Căn giữa tất cả các phần tử trong profile box */
+        .profile-box {
+            display: flex;
+            justify-content: center; /* Căn giữa theo chiều ngang */
+            align-items: center; /* Căn giữa theo chiều dọc */
+            padding: 0;
+            margin: 0;
+            height: 100%; /* Đảm bảo chiều cao của box là 100% */
+        }
+
+        /* Mẫu cho background của ảnh */
+        .cover-image {
+            width: 100%; /* Đảm bảo ảnh cover chiếm toàn bộ chiều rộng */
+            height: 200px; /* Tùy chỉnh chiều cao của ảnh cover */
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Kiểm tra và sửa layout cho các phần tử trong profile */
+        .profile-contain {
+            text-align: center; /* Căn giữa văn bản */
+        }
+
+        /* Nếu bạn muốn thêm padding hoặc margin cho các phần tử trong profile */
+        .profile-name {
+            margin-top: 10px;
+        }
+
+        .cover-icon input[type="file"] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Màu nền của các trang đã chọn */
+        ul.custom-pagination li.page-item.active > a.page-link,
+        ul.custom-pagination li.page-item.active > span.page-link {
+            background-color: #19a877 !important; /* Màu xanh bạn muốn */
+            color: #fff !important;
+            border: none !important;
+        }
+
+        /* Màu cho các nút phân trang chưa chọn */
+        ul.custom-pagination .page-link {
+            color: #198754 !important; /* Màu chữ xanh đậm */
+            border-radius: 6px !important;
+            min-width: 38px;
+            text-align: center;
+            box-shadow: none !important;
+        }
+
+        /* Màu khi hover lên nút phân trang */
+        ul.custom-pagination .page-link:hover {
+            background-color: #e5f6ee !important; /* Màu nền sáng khi hover */
+            color: #198754 !important;
+        }
+
+        /* Thêm sự ưu tiên cho phân trang khi chọn */
+        .pagination .page-item.active .page-link {
+            background-color: #19a877 !important; /* Màu xanh Fastkart */
+            border-color: #19a877 !important;
+            color: #fff !important;
+            font-weight: 600;
+            border-radius: 10px;
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<!-- Loader Start -->
+<div class="fullpage-loader">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+<!-- Loader End -->
+
+<!-- Header Start -->
+<header th:replace="FrontEnd/fragments/header::header"></header>
+<!-- Header End -->
+
+<!-- mobile fix menu start -->
+<div class="mobile-menu d-md-none d-block mobile-cart">
+    <ul>
+        <li>
+            <a href="index.html">
+                <i class="iconly-Home icli"></i>
+                <span>Home</span>
+            </a>
+        </li>
+
+        <li class="mobile-category">
+            <a href="javascript:void(0)">
+                <i class="iconly-Category icli js-link"></i>
+                <span>Category</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="search.html" class="search-box">
+                <i class="iconly-Search icli"></i>
+                <span>Search</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="wishlist.html" class="notifi-wishlist">
+                <i class="iconly-Heart icli"></i>
+                <span>My Wish</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="cart.html">
+                <i class="iconly-Bag-2 icli fly-cate"></i>
+                <span>Cart</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- mobile fix menu end -->
+
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-0">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-contain">
+                    <h2>User Dashboard</h2>
+                    <nav>
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item">
+                                <a href="index.html">
+                                    <i class="fa-solid fa-house"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active">User Dashboard</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- User Dashboard Section Start -->
+<section class="user-dashboard-section section-b-space">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-xxl-3 col-lg-4">
+                <div class="dashboard-left-sidebar">
+                    <div class="close-button d-flex d-lg-none">
+                        <button class="close-sidebar">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="profile-box">
+                        <div class="cover-image">
+                            <img th:src="@{FrontEnd/assets/images/inner-page/cover-img.jpg}"
+                                 class="img-fluid blur-up lazyload"
+                                 alt="">
+                        </div>
+
+                        <div class="profile-contain">
+                            <div class="profile-image">
+                                <div class="position-relative" style="display: flex;justify-content: center; padding-left: 9px">
+                                    <img th:src="${session.account.getImageUrl}"
+                                         class="blur-up lazyload update_img" alt="more image"
+                                         accept=".jpg,.jpeg,.png,.gif,.webp,image/*" style="position: absolute;margin-top: -65px">
+
+
+                                </div>
+                            </div>
+
+                            <div class="profile-name">
+                                <h3 th:text="${session.account.getUserName}">Your username</h3>
+                                <h6 class="text-content" th:text="${session.account.getEmail}">Your email</h6>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <ul class="nav nav-pills user-nav-pills" id="pills-tab" role="tablist">
+
+
+                        <li class="nav-item" role="presentation">
+                            <a href="#pills-tabContent" class="nav-link active" id="pills-dashboard-tab"
+                               data-bs-toggle="pill" data-bs-target="#pills-dashboard" role="tab"><i
+                                    data-feather="home"></i>
+                                DashBoard</a>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link " id="pills-product-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-product" type="button" role="tab"><i
+                                    data-feather="shopping-bag"></i>My Blog
+                            </button>
+                        </li>
+
+
+
+
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-xxl-9 col-lg-8">
+                <button class="btn left-dashboard-show btn-animation btn-md fw-bold d-block mb-4 d-lg-none">Show
+                    Menu
+                </button>
+                <div class="dashboard-right-sidebar">
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-dashboard" role="tabpanel">
+                            <div class="dashboard-home">
+                                <div class="title">
+                                    <h2>Trang tổng quan của tôi</h2>
+                                    <span class="title-leaf">
+                                            <svg class="icon-width bg-gray">
+                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                                            </svg>
+                                        </span>
+                                </div>
+
+                                <div class="dashboard-user-name">
+                                    <h6 class="text-content">Xin chào,<b class="text-title"
+                                                                         th:text="${session.account.getUserName}">Your
+                                        username</b></h6>
+                                    <p class="text-content">Từ tài khoản Dashboard, bạn có thể xem hoạt động gần đây và
+                                        cập nhật thông tin tài khoản..</p>
+                                </div>
+
+                                <div class="total-box">
+                                    <div class="row g-sm-4 g-3">
+                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
+                                            <div class="total-contain">
+                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}"
+                                                     class="img-1 blur-up lazyload" alt="">
+                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}"
+                                                     class="blur-up lazyload"
+                                                     alt="">
+                                                <div class="total-detail">
+                                                    <h5>Tổng số Blog</h5>
+                                                    <h3 id="totalBlogsCount">0</h3>
+                                                    <!-- Số lượng blog sẽ được cập nhật ở đây -->
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
+                                            <div class="total-contain">
+                                                <img th:src="@{FrontEnd/assets/images/svg/wishlist.svg}"
+                                                     class="img-1 blur-up lazyload" alt="">
+                                                <img th:src="@{FrontEnd/assets/images/svg/wishlist.svg}"
+                                                     class="blur-up lazyload" alt="">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-4">
+                                    <div class="col-xxl-6">
+                                        <div class="dashboard-content-title">
+                                            <h4>Thông tin
+                                            </h4>
+                                        </div>
+                                        <div class="dashboard-detail">
+                                            <h6 class="text-content" th:text="${session.account.getFullName}">Your
+                                                fullname</h6>
+                                            <h6 class="text-content" th:text="${session.account.getEmail}">Your
+                                                email</h6>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade " id="pills-product" role="tabpanel">
+                            <div class="product-tab">
+                                <div class="title">
+                                    <h2>All Blog</h2>
+                                    <span class="title-leaf">
+                <svg class="icon-width bg-gray">
+                    <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                </svg>
+            </span>
+                                    <div style="width: 200px; text-align: center; margin-top: 7px; position: relative; z-index: 0">
+                                        <button class="btn btn-success"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#addProductModal"
+                                                style="width:100%; background-color: #198754; color: white; border: none; padding: 8px 16px; font-weight: 500; border-radius: 4px">
+                                            + Add Blog
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive dashboard-bg-box" style="overflow-x:auto; width:100%;">
+                                    <table class="table blog-table" style="min-width: 1000px;">
+                                        <!--Bảng Blog-->
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Number</th>
+                                            <th scope="col">Images</th>
+                                            <th scope="col">Content</th>
+                                            <th scope="col">Title</th>
+                                            <th scope="col">Author</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Created At</th>
+                                            <th scope="col">Edit / Delete</th>
+
+                                        </tr>
+                                        </thead>
+                                        <!--                                        <tbody>-->
+                                        <!--                                        <tr th:each="blog, iterStat : ${blogs}">-->
+                                        <!--                                            &lt;!&ndash; Number (STT) &ndash;&gt;-->
+                                        <!--                                            <td th:text="${iterStat.index + 1}"></td>-->
+
+                                        <!--                                            &lt;!&ndash; Images &ndash;&gt;-->
+                                        <!--                                            <td>-->
+                                        <!--                                                <img th:src="@{'/Frontend/assets/images/blog/' + ${blog.blogDetail.thumbnail}}"-->
+                                        <!--                                                     style="max-width: 120px; max-height: 70px; object-fit: cover; border-radius: 6px;"-->
+                                        <!--                                                     class="img-fluid" alt="">-->
+                                        <!--                                            </td>-->
+
+                                        <!--                                            &lt;!&ndash; Content (Show ngắn gọn, ví dụ 40 ký tự đầu) &ndash;&gt;-->
+                                        <!--                                            <td>-->
+                                        <!--                                                <h6 th:text="${#strings.length(blog.content) > 40 ? #strings.substring(blog.content, 0, 40) + '...' : blog.content}"></h6>-->
+                                        <!--                                            </td>-->
+
+                                        <!--                                            &lt;!&ndash; Title &ndash;&gt;-->
+                                        <!--                                            <td>-->
+                                        <!--                                                <h6 th:text="${blog.title}"></h6>-->
+                                        <!--                                            </td>-->
+
+                                        <!--                                            &lt;!&ndash; Status &ndash;&gt;-->
+                                        <!--                                            <td>-->
+                                        <!--                                                <h6 th:text="${blog.status}"></h6>-->
+                                        <!--                                            </td>-->
+
+                                        <!--                                            &lt;!&ndash; Created At &ndash;&gt;-->
+                                        <!--                                            <td>-->
+                                        <!--                                                <h6 th:text="${#dates.format(blog.createdAt, 'dd/MM/yyyy')}"></h6>-->
+                                        <!--                                            </td>-->
+
+                                        <!--                                            &lt;!&ndash; Edit/Delete (chỉ là icon, bạn cần gắn link js hoặc url cho action này) &ndash;&gt;-->
+                                        <!--                                            <td class="edit-delete">-->
+                                        <!--                                                <a th:href="@{'/blog/edit?id=' + ${blog.blogID}}"><i data-feather="edit"-->
+                                        <!--                                                                                                     class="edit"></i></a>-->
+                                        <!--                                                <a th:href="@{'/blog/delete?id=' + ${blog.blogID}}"-->
+                                        <!--                                                   onclick="return confirm('Bạn chắc chắn muốn xóa?')">-->
+                                        <!--                                                    <i data-feather="trash-2" class="delete"></i>-->
+                                        <!--                                                </a>-->
+                                        <!--                                            </td>-->
+                                        <!--                                        </tr>-->
+                                        <!--                                        </tbody>-->
+
+                                        <tbody id="blogTableBody">
+                                        <!-- Blog rows sẽ được JS thêm vào đây -->
+                                        </tbody>
+                                    </table>
+                                    <!-- Pagination -->
+                                    <nav>
+                                        <ul class="pagination justify-content-center custom-pagination" id="pagination">
+                                            <!-- JS sẽ render ra các nút ở đây -->
+                                        </ul>
+
+                                    </nav>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-profile" role="tabpanel">
+                            <div class="dashboard-profile">
+                                <div class="title">
+                                    <h2>My Profile</h2>
+                                    <span class="title-leaf">
+                                            <svg class="icon-width bg-gray">
+                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                                            </svg>
+                                        </span>
+                                </div>
+
+                                <div class="profile-tab dashboard-bg-box">
+                                    <div class="dashboard-title dashboard-flex">
+                                        <h3>Profile Name</h3>
+                                        <button class="btn btn-sm theme-bg-color text-white" data-bs-toggle="modal"
+                                                data-bs-target="#edit-profile">Edit Profile
+                                        </button>
+                                    </div>
+
+                                    <ul>
+                                        <li>
+                                            <h5>Company Name :</h5>
+                                            <h5>Grocery Store</h5>
+                                        </li>
+                                        <li>
+                                            <h5>Email Address :</h5>
+                                            <h5>joshuadbass@rhyta.com</h5>
+                                        </li>
+                                        <li>
+                                            <h5>Country / Region :</h5>
+                                            <h5>107 Veltri Drive</h5>
+                                        </li>
+
+                                        <li>
+                                            <h5>Year Established :</h5>
+                                            <h5>2022</h5>
+                                        </li>
+
+                                        <li>
+                                            <h5>Total Employees :</h5>
+                                            <h5>154 - 360 People</h5>
+                                        </li>
+                                        <li>
+                                            <h5>Category :</h5>
+                                            <h5>Grocery</h5>
+                                        </li>
+
+                                        <li>
+                                            <h5>Street Address :</h5>
+                                            <h5>234 High St</h5>
+                                        </li>
+
+                                        <li>
+                                            <h5>City / State :</h5>
+                                            <h5>107 Veltri Drive</h5>
+                                        </li>
+
+                                        <li>
+                                            <h5>Zip :</h5>
+                                            <h5>B23 6SN</h5>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- User Dashboard Section End -->
+
+<!-- Footer Section Start -->
+<footer class="section-t-space">
+    <div th:replace="FrontEnd/fragments/footer :: footer"></div>
+</footer>
+<!-- Footer Section End -->
+
+<!-- Bg overlay Start -->
+<div class="bg-overlay"></div>
+<!-- Bg overlay End -->
+
+
+<!-- Modal Add Blog -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addBlogLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBlogLabel">Thêm Blog mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addBlogForm">
+                    <div class="mb-3">
+                        <label for="input-title" class="form-label">Tiêu đề</label>
+                        <input type="text" class="form-control" id="input-title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="input-content" class="form-label">Nội dung</label>
+                        <textarea class="form-control" id="input-content" rows="3" required></textarea>
+                    </div>
+
+                    <!--                    // tac gia se duoc lay session-->
+                    <div class="mb-3">
+                        <label for="input-author" class="form-label">Tác giả</label>
+                        <input type="text" class="form-control" id="input-author" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="input-category" class="form-label">Danh mục</label>
+                        <select class="form-control" id="input-category" required></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="input-status" class="form-label">Trạng thái</label>
+                        <select class="form-control" id="input-status" required></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="input-thumbnail" class="form-label">Ảnh Thumbnail</label>
+                        <input type="file" class="form-control" id="input-thumbnail" accept="image/*"
+                               onchange="previewImage(event)">
+                        <img id="thumbnailPreview" style="max-width: 100%; margin-top: 10px; display: none;"
+                             alt="Preview Image"/>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-success" onclick="addBlogJS()">Thêm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--model edit-->
+
+<div class="modal fade" id="editBlogModal" tabindex="-1" aria-labelledby="editBlogLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editBlogLabel">Chỉnh sửa Blog</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editBlogForm">
+                    <!-- Giống như form add, chỉ đổi id các input thành edit-... -->
+                    <div class="mb-3">
+                        <label for="edit-title" class="form-label">Tiêu đề</label>
+                        <input type="text" class="form-control" id="edit-title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-content" class="form-label">Nội dung</label>
+                        <textarea class="form-control" id="edit-content" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-category" class="form-label">Danh mục</label>
+                        <select class="form-control" id="edit-category" required></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-status" class="form-label">Trạng thái</label>
+                        <select class="form-control" id="edit-status" required></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-author" class="form-label">Tác giả</label>
+                        <input type="text" class="form-control" id="edit-author" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-thumbnail" class="form-label">Ảnh Thumbnail</label>
+                        <input type="file" class="form-control" onchange="previewEditThumbnail(event)"
+                               id="edit-thumbnail" accept="image/*">
+                        <img id="edit-preview-thumbnail" style="max-width: 100px; margin-top: 5px;"/>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-success" onclick="saveEditBlog()">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- latest jquery-->
+<script th:src="@{/Frontend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- jquery ui-->
+<script th:src="@{/Frontend/assets/js/jquery-ui.min.js}"></script>
+
+<!-- Bootstrap js-->
+<script th:src="@{/Frontend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/bootstrap/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/bootstrap/popper.min.js}"></script>
+
+<!-- feather icon js-->
+<script th:src="@{/Frontend/assets/js/feather/feather.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/feather/feather-icon.js}"></script>
+
+<!-- Lazyload Js -->
+<script th:src="@{/Frontend/assets/js/lazysizes.min.js}"></script>
+
+<!-- Slick js-->
+<script th:src="@{/Frontend/assets/js/slick/slick.js}"></script>
+<script th:src="@{/Frontend/assets/js/slick/slick-animation.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/slick/custom_slick.js}"></script>
+
+<!-- WOW js -->
+<script th:src="@{/Frontend/assets/js/wow.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/custom-wow.js}"></script>
+
+<!-- script js -->
+<script th:src="@{/Frontend/assets/js/script.js}"></script>
+
+<!-- theme setting js -->
+<script th:src="@{/Frontend/assets/js/theme-setting.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    const pageSize = 3;
+    const CONTEXT_PATH = "/AgriculturalWarehouseManagementApplication";
+
+    function loadBlogPage(page = 1) {
+        axios.get(`${CONTEXT_PATH}/api/my-blog/page?page=${page}&size=${pageSize}`)
+            .then(res => {
+                console.log("API data:", res.data); // THÊM LOG NÀY!
+                // Bảo vệ code, nếu không có blogs thì trả về mảng rỗng
+                const data = res.data || {};
+                renderBlogs(data.blogs, data.currentPage, pageSize);
+                renderPagination(data.currentPage, data.totalPages);
+            })
+            .catch(err => {
+                console.error('Lỗi lấy dữ liệu:', err);
+            });
+    }
+
+    function renderBlogs(blogs, currentPage, pageSize) {
+        const tbody = document.getElementById("blogTableBody");
+        tbody.innerHTML = "";
+        blogs.forEach((blog, idx) => {
+            const tr = document.createElement("tr");
+            // Nếu dùng DTO thì blog.thumbnail là đủ, nếu vẫn là entity thì blog.blogDetail.thumbnail
+            const thumbnail = blog.thumbnail || (blog.blogDetail && blog.blogDetail.thumbnail) || "no-image.png";
+            //   const imageSrc = `${CONTEXT_PATH}/Frontend/assets/images/blog/${thumbnail}`; // <-- Sửa ở đây
+            const imageSrc = `${CONTEXT_PATH}/blog/${thumbnail}`; // Đường dẫn giống Thymeleaf đã dùng
+            const color = getStatusColor(blog.status);
+            tr.innerHTML = `
+            <td>${(currentPage - 1) * pageSize + idx + 1}</td>
+            <td><img src="${imageSrc}" style="max-width:100px; max-height:60px;" alt=""></td>
+            <td>${blog.content && blog.content.length > 40 ? blog.content.substring(0, 40) + '...' : blog.content || ''}</td>
+            <td>${blog.title || ""}</td>
+             <td> <b><i>${blog.author || ""}</i></b></td>
+            <td><span style="font-weight:bold;color:${color}">${blog.status}</span></td>
+            <td>${formatDate(blog.createdAt)}</td>
+          <td>
+                  <a href="javascript:void(0)" onclick="openEditBlogModal(${blog.blogID})"><i data-feather="edit"></i></a>
+                   <a href="javascript:void(0)" onclick="deleteBlog(${blog.blogID})"><i data-feather="trash-2"></i></a>
+            </td>
+        `;
+            tbody.appendChild(tr);
+        });
+        if (window.feather) feather.replace();
+    }
+
+
+    function renderPagination(currentPage, totalPages) {
+        let html = '';
+
+        // Hiện PREVIOUS nếu không phải trang 1
+        if (currentPage > 1) {
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage - 1});return false;">PREVIOUS</a></li>`;
+        }
+
+        // Luôn hiện trang 1
+        html += `<li class="page-item${currentPage === 1 ? " active" : ""}"><a class="page-link" href="#" onclick="gotoPage(1);return false;">1</a></li>`;
+
+        // Nếu currentPage > 3, hiện ...
+        if (currentPage > 3) {
+            html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+
+        // Hiện các trang trước/sau currentPage (nếu có)
+        for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+            html += `<li class="page-item${i === currentPage ? " active" : ""}"><a class="page-link" href="#" onclick="gotoPage(${i});return false;">${i}</a></li>`;
+        }
+
+        // Nếu currentPage < totalPages - 2, hiện ...
+        if (currentPage < totalPages - 2) {
+            html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+
+        // Luôn hiện trang cuối nếu > 1
+        if (totalPages > 1) {
+            html += `<li class="page-item${currentPage === totalPages ? " active" : ""}"><a class="page-link" href="#" onclick="gotoPage(${totalPages});return false;">${totalPages}</a></li>`;
+        }
+
+        // Hiện NEXT nếu không phải trang cuối
+        if (currentPage < totalPages) {
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage + 1});return false;">NEXT</a></li>`;
+        }
+
+        document.getElementById("pagination").innerHTML = html;
+    }
+
+
+    function gotoPage(page) {
+        loadBlogPage(page);
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('vi-VN');
+    }
+
+    function getStatusColor(status) {
+        switch (status) {
+            case 'ACTIVE':
+                return '#198754';
+            case 'INACTIVE':
+                return '#6c757d';
+            case 'DRAFT':
+                return '#f39c12';
+            case 'PENDING':
+                return '#0dcaf0';
+            case 'PUBLISHED':
+                return '#20c997';
+            case 'DELETED':
+                return '#dc3545';
+            default:
+                return '#212529';
+        }
+    }
+
+    // Gọi lại khi tab My Blog được click hoặc trang load vào tab đó!
+    document.addEventListener('DOMContentLoaded', function () {
+        if (document.querySelector("#pills-product").classList.contains("show")) {
+            loadBlogPage(1);
+        }
+        document.getElementById("pills-product-tab").addEventListener('click', function () {
+            loadBlogPage(1);
+        });
+    }); // Hết hàm view blog user
+
+
+    // ======================= LOAD CATEGORY & STATUS =======================
+    function loadBlogCategories() {
+        axios.get(`${CONTEXT_PATH}/api/my-blog/category`)
+            .then(res => {
+                console.log("Danh mục nhận được:", res.data); // Debug
+                const select = document.getElementById('input-category');
+                select.innerHTML = '';
+                res.data.forEach(cat => {
+                    select.innerHTML += `<option value="${cat.blogCategoryId}">${cat.categoryName}</option>`;
+                });
+            })
+            .catch(err => {
+                console.error("Lỗi load danh mục:", err);
+            });
+    }
+
+    function loadBlogStatusList() {
+        axios.get(`${CONTEXT_PATH}/api/my-blog/status-list`)
+            .then(res => {
+                const select = document.getElementById('input-status');
+                select.innerHTML = '';
+                res.data.forEach(st => {
+                    select.innerHTML += `<option value="${st.name}">${st.name}</option>`;
+                });
+            })
+            .catch(err => {
+                console.error("Lỗi load status:", err);
+            });
+    }
+
+    // Khi modal mở → load danh mục & trạng thái
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("addProductModal");
+        if (modal) {
+            modal.addEventListener("show.bs.modal", function () {
+                loadBlogCategories();
+                loadBlogStatusList();
+            });
+        }
+    });
+
+    // ======================= THÊM BLOG =======================
+    function addBlogJS() {
+        const title = document.getElementById('input-title').value;
+        const content = document.getElementById('input-content').value;
+        const author = document.getElementById('input-author').value; // Lấy giá trị tác giả
+        const blogCategoryID = document.getElementById('input-category').value;
+        const status = document.getElementById('input-status').value;
+        const thumbnailFile = document.getElementById('input-thumbnail').files[0];
+        const userID = "[[${session.accountId}]]"; // fix cứng hoặc lấy từ session nếu có
+        //  const author = "Tên tác giả"; // sau này lấy từ user login
+        // userID và author tạm hardcode, sau lấy từ session hoặc principal
+        const authorName = author || "Người dùng ẩn danh"; // Nếu người dùng không nhập thì dùng tên mặc định
+
+        if (!thumbnailFile) {
+            alert("Vui lòng chọn ảnh thumbnail!");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", thumbnailFile);
+
+        // Bước 1: Upload ảnh thumbnail
+        axios.post(`${CONTEXT_PATH}/api/my-blog/upload-thumbnail`, formData, {
+            headers: {'Content-Type': 'multipart/form-data'}
+        })
+            .then(res => {
+                const thumbnailName = res.data;
+
+                // Bước 2: Gửi dữ liệu blog
+                const blog = {
+                    title,
+                    content,
+                    blogCategoryID: parseInt(blogCategoryID),
+                    userID,
+                    author,
+                    status,
+                    blogDetail: {
+                        thumbnail: thumbnailName,
+                        detailContent: "Nội dung chi tiết mô tả thêm blog." // bắt buộc nếu dùng @NotBlank
+                    }
+                };
+
+                return axios.post(`${CONTEXT_PATH}/api/my-blog/add_blog`, blog);
+
+
+            })
+            .then(res => {
+                loadTotalBlogs();
+                alert("🎉 Thêm blog thành công!");
+                loadBlogPage(1);
+                $('#addProductModal').modal('hide');
+                document.getElementById('addBlogForm').reset();
+            })
+            .catch(err => {
+                console.error("Chi tiết lỗi từ server:", err);
+                if (err.response && err.response.data) {
+                    alert("Lỗi khi thêm blog: " + JSON.stringify(err.response.data));
+                } else {
+                    alert("Lỗi không xác định khi thêm blog!");
+                }
+            });
+    }
+
+    // Hàm để preview ảnh khi người dùng chọn file
+    function previewImage(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('thumbnailPreview');
+
+        // Kiểm tra nếu có file được chọn
+        if (file) {
+            const reader = new FileReader();  // Tạo đối tượng FileReader để đọc file
+
+            // Khi file được đọc xong
+            reader.onload = function () {
+                preview.src = reader.result;  // Đặt đường dẫn ảnh đã đọc vào src của img
+                preview.style.display = 'block';  // Hiển thị thẻ img
+            };
+
+            reader.readAsDataURL(file);  // Đọc file dưới dạng base64
+        }
+    }
+
+
+    // Edit model
+    let currentEditBlogId = null;
+
+    function openEditBlogModal(blogID) {
+        currentEditBlogId = blogID;
+        // Lấy dữ liệu blog
+        axios.get(`${CONTEXT_PATH}/api/my-blog/detail/${blogID}`)
+            .then(res => {
+                const blog = res.data;
+                document.getElementById('edit-title').value = blog.title || '';
+                document.getElementById('edit-content').value = blog.content || '';
+                document.getElementById('edit-author').value = blog.author || '';
+
+                // Hiển thị thumbnail hiện tại
+                const thumb = (blog.blogDetail && blog.blogDetail.thumbnail) || blog.thumbnail || 'no-image.png';
+                document.getElementById('edit-preview-thumbnail').src = `${CONTEXT_PATH}/blog/${thumb}`;
+
+                // Load category & status (phải set selected sau khi render option)
+                loadEditBlogCategories(blog.blogCategoryID || blog.blogCategoryId);
+                loadEditBlogStatusList(blog.status);
+
+                $('#editBlogModal').modal('show');
+            })
+            .catch(err => {
+                alert("Lỗi load blog: " + JSON.stringify(err));
+            });
+    }
+
+    // Load category và set selected
+    function loadEditBlogCategories(selectedValue) {
+        axios.get(`${CONTEXT_PATH}/api/my-blog/category`)
+            .then(res => {
+                const select = document.getElementById('edit-category');
+                select.innerHTML = '';
+                res.data.forEach(cat => {
+                    select.innerHTML += `<option value="${cat.blogCategoryId}">${cat.categoryName}</option>`;
+                });
+                if (selectedValue) select.value = selectedValue;
+            });
+    }
+
+    // Load status và set selected
+    function loadEditBlogStatusList(selectedValue) {
+        axios.get(`${CONTEXT_PATH}/api/my-blog/status-list`)
+            .then(res => {
+                const select = document.getElementById('edit-status');
+                select.innerHTML = '';
+                res.data.forEach(st => {
+                    select.innerHTML += `<option value="${st.name}">${st.name}</option>`;
+                });
+                if (selectedValue) select.value = selectedValue;
+            });
+    }
+
+    function saveEditBlog() {
+        const title = document.getElementById('edit-title').value;
+        const content = document.getElementById('edit-content').value;
+        const author = document.getElementById('edit-author').value;
+        const blogCategoryID = document.getElementById('edit-category').value;
+        const status = document.getElementById('edit-status').value;
+        const thumbnailFile = document.getElementById('edit-thumbnail').files[0];
+
+        // Nếu chọn ảnh mới → upload trước, còn không thì giữ nguyên
+        function doUpdate(thumbnailName) {
+            const blog = {
+                title,
+                content,
+                author,
+                blogCategoryID: parseInt(blogCategoryID),
+                status,
+                blogDetail: {
+                    thumbnail: thumbnailName // Dùng ảnh mới nếu upload, không thì giữ ảnh cũ
+                }
+            };
+
+            axios.put(`${CONTEXT_PATH}/api/my-blog/edit_blog/${currentEditBlogId}`, blog)
+                .then(res => {
+                    alert("Cập nhật thành công!");
+                    $('#editBlogModal').modal('hide');
+                    loadBlogPage(1); // hoặc load lại page hiện tại
+                })
+                .catch(err => {
+                    alert("Lỗi cập nhật: " + JSON.stringify(err));
+                });
+        }
+
+        // Nếu có file thì upload
+        if (thumbnailFile) {
+            const formData = new FormData();
+            formData.append("file", thumbnailFile);
+            axios.post(`${CONTEXT_PATH}/api/my-blog/upload-thumbnail`, formData, {
+                headers: {'Content-Type': 'multipart/form-data'}
+            }).then(res => {
+                doUpdate(res.data); // dùng tên file mới
+            }).catch(err => {
+                alert("Lỗi upload ảnh: " + JSON.stringify(err));
+            });
+        } else {
+            // Không chọn file mới → lấy tên ảnh cũ từ preview src
+            const imgSrc = document.getElementById('edit-preview-thumbnail').src;
+            // Lấy tên file từ đường dẫn
+            let thumbnailName = imgSrc.split('/blog/')[1] || '';
+            doUpdate(thumbnailName);
+        }
+    }
+
+    function previewEditThumbnail(event) {
+        const input = event.target;
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('edit-preview-thumbnail').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function deleteBlog(blogID) {
+        if (!confirm("Bạn có chắc chắn muốn xoá blog này không?")) return;
+
+        axios.delete(`${CONTEXT_PATH}/api/my-blog/delete_blog/${blogID}`)
+            .then(res => {
+                alert("🗑️ Blog đã được xoá!");
+                loadBlogPage(1); // hoặc reload lại trang hiện tại
+            })
+            .catch(err => {
+                alert("Lỗi xoá blog: " + (err.response?.data || "Không rõ nguyên nhân"));
+            });
+    }
+
+    // dem
+    function loadTotalBlogs() {
+        const userID = "[[${session.accountId}]]";
+        axios.get(`${CONTEXT_PATH}/api/my-blog/total-blogs/${userID}`)
+            .then(res => {
+                const totalBlogs = res.data;
+                console.log("hello"+totalBlogs)
+                document.querySelector("#totalBlogsCount").textContent = totalBlogs;
+            })
+            .catch(err => {
+                console.error("Lỗi khi lấy tổng số blog:", err);
+            });
+    }
+
+    // Gọi hàm loadTotalBlogs khi trang tải
+    document.addEventListener('DOMContentLoaded', function () {
+        loadTotalBlogs();
+    });
+
+</script>
+
+</body>
+
+</html>

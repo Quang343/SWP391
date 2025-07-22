@@ -7,10 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
-    Role findByName(String name);
+    Role findByRoleName(String roleName);
 
-    List<Role> findByStatusAndNameIsNot(String status, String name);
+    List<Role> findByStatusAndRoleNameIsNot(String status, String roleName);
 
-    boolean existsByNameIgnoreCase(String name);
-    Role findById(long id);
+    boolean existsByRoleNameIgnoreCase(String name);
+    Role findByRoleID(long id);
 }

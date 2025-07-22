@@ -13,13 +13,13 @@ import java.util.List;
 
 public interface IProductService {
     Product createProduct(ProductDTO productDTO);
-    Product updateProduct(Long id, ProductDTO productDTO);
-    boolean deleteProduct(Long id);
+    Product updateProduct(int id, ProductDTO productDTO);
+    boolean deleteProduct(int id);
     List<Product> findAll();
-    Product findById(Long id);
+    Product findById(int id);
     boolean existsByName(String name);
 
-    Gallery createProductImage(Long productId, ProductImageDTO productImageDTO) throws Exception;
+    Gallery createProductImage(int productId, ProductImageDTO productImageDTO) throws Exception;
 
     Page<Product> findAll(Pageable pageable);
 }

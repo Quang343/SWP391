@@ -7,6 +7,9 @@ import com.example.AgriculturalWarehouseManagement.Backend.repositorys.Adjustmen
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductBatchRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.WarehouseRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,6 +32,20 @@ public class AdjustmentService {
         return adjustmentMapper.toDTO(adjustment);
     }
 
+    public Page<AdjustmentDTO> getPaginatedAdjustments(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Adjustment> adjustmentPage = adjustmentRepository.findPaginatedAdjustments(pageable);
+
+        // Map Adjustment to AdjustmentDTO using AdjustmentMapper
+        Page<AdjustmentDTO> adjustmentDTOPage = adjustmentPage.map(adjustmentMapper::toDTO);
+
+        // Debug output
+        System.out.println("Debug - Page: " + page + ", Size: " + size +
+                ", Total Pages: " + adjustmentDTOPage.getTotalPages() +
+                ", Total Elements: " + adjustmentDTOPage.getTotalElements());
+
+        return adjustmentDTOPage;
+    }
 
 
     public AdjustmentDTO createAdjustment(AdjustmentDTO adjustmentDTO) {

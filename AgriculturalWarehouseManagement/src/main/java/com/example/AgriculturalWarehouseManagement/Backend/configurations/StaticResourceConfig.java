@@ -21,6 +21,7 @@ public class StaticResourceConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Cho phép truy cập ảnh thông qua URL: /Backend/assets/images/abc.jpg
+        // Cho phép truy cập ảnh thông qua URL: /Frontend/assets/images/abc.jpg
         registry
                 .addResourceHandler("/seller/**")
                 .addResourceLocations("file:" + uploadDir + "/Seller/");
@@ -33,5 +34,8 @@ public class StaticResourceConfig implements WebMvcConfigurer {
 
         registry.addResourceHandler("/blog/**")
                 .addResourceLocations("file:" + uploadDir + "/Blog");
+
+        registry.addResourceHandler("/FrontEnd/assets/images/inner-page/user/**")  // URL ảo
+                .addResourceLocations("file:" + uploadDir + "/User");
     }
 }

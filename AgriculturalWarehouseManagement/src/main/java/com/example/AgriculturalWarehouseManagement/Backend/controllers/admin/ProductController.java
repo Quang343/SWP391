@@ -52,7 +52,7 @@ public class ProductController {
     @GetMapping("/admin/products")
     public String getAllProducts(Model model,
                                  @RequestParam("page") Optional<String> page,
-                                 @RequestParam(required = false) Long categoryId,
+                                 @RequestParam(required = false) Integer categoryId,
                                  @RequestParam(required = false) String status
     ){
         int pageNumber = 1;
@@ -82,6 +82,15 @@ public class ProductController {
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("pageNumbers", generatePageNumbers(totalPages, pageNumber));
         return "BackEnd/Admin/All_Products";
+    }
+
+    @GetMapping("/api/products/{productId}/name")
+    public ResponseEntity<String> getProductName(@PathVariable Integer productId) {
+        String productName = productService.getProductNameById(productId);
+        if (productName == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(productName);
     }
 
     private List<String> generatePageNumbers(int totalPages, int currentPage){
@@ -164,7 +173,7 @@ public class ProductController {
     }
 
     @GetMapping("/admin/edit_product/{id}")
-    public String showEditForm(@PathVariable("id") Long id, Model model) {
+    public String showEditForm(@PathVariable("id") int id, Model model) {
         Product product = productService.findById(id);
         config();
         ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
@@ -249,7 +258,7 @@ public class ProductController {
 
 
     @DeleteMapping("/admin/delete_product/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable("id") Long id) {
+    public ResponseEntity<?> deleteProduct(@PathVariable("id") int id) {
         boolean isDeleted = productService.deleteProduct(id);
         if (isDeleted)
             return ResponseEntity.ok().body(Map.of("message", "Xoá thành công"));
@@ -260,7 +269,7 @@ public class ProductController {
 
     @PutMapping(value = "/admin/update_product/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateProductWithImages(
-            @PathVariable Long id,
+            @PathVariable int id,
             @Valid @ModelAttribute ProductDTO productDTO,
             BindingResult bindingResult,
             @RequestParam(value = "images", required = false) List<MultipartFile> images
@@ -312,7 +321,7 @@ public class ProductController {
         }
     }
 
-    private ResponseEntity<?> handleImageUpload(Long productId, List<MultipartFile> images) throws Exception {
+    private ResponseEntity<?> handleImageUpload(int productId, List<MultipartFile> images) throws Exception {
         try {
 //            if (images.size() > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
 //                return ResponseEntity.badRequest().body("Tối đa chỉ được upload 5 ảnh");

@@ -1,5 +1,7 @@
 package com.example.AgriculturalWarehouseManagement.Backend.configurations;
 
+import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
+import com.example.AgriculturalWarehouseManagement.Backend.models.ProductDetail;
 import com.example.AgriculturalWarehouseManagement.Backend.services.CustomFailureHandler;
 import com.example.AgriculturalWarehouseManagement.Backend.services.CustomSuccessHandler;
 import com.example.AgriculturalWarehouseManagement.Backend.services.CustomUserDetailsService;
@@ -22,10 +24,12 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
 
+import java.util.List;
+
 //
 @Configuration
-//@EnableWebSecurity
-//@EnableMethodSecurity
+@EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -78,25 +82,34 @@ public class SecurityConfiguration {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http, UserService userService) throws Exception {
         http
+//                .authorizeHttpRequests(request -> request.anyRequest().permitAll());
 //                .csrf(AbstractHttpConfigurer::disable)
 //                .csrf(csrf -> csrf.disable())
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/seller/**")
                         .ignoringRequestMatchers("/seller-dashboard")
                         .ignoringRequestMatchers("/warehouse/**")
+                        .ignoringRequestMatchers("/api/**")
                 )
                 .authorizeHttpRequests(requests -> requests
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE).permitAll()
                         .requestMatchers(
                                 "/",
+                                "/otp",
+                                "/home",
                                 "/login",
+                                "/loginAdmin",
                                 "/register",
-                                "/forgotPassword/**",
+                                "/forgotPasswordAdmin/**",
                                 "/BackEnd/assets/**",
                                 "/Backend/assets/**",
+                                "/FrontEnd/assets/**",
+                                "/Frontend/assets/**",
                                 "/css/**",
                                 "/js/**",
-                                "/images/**"
+                                "/images/**",
+                                "/api/product-batches", // Thêm endpoint này
+                                "/api/stockindetails"
+
 
                         ).permitAll()
 //                        .requestMatchers("/forgotPassword/**").permitAll()
@@ -118,7 +131,8 @@ public class SecurityConfiguration {
                 )
                 .rememberMe(r -> r.rememberMeServices(rememberMeServices()))
                 .formLogin(formLogin ->
-                        formLogin.loginPage("/login")
+                        formLogin.loginPage("/loginAdmin")
+                        .loginProcessingUrl("/login")
                         .failureHandler(new CustomFailureHandler())
                         .successHandler(new CustomSuccessHandler(userService))
                         .permitAll())

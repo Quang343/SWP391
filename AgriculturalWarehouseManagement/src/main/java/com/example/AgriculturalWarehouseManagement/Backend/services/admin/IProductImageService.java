@@ -11,4 +11,5 @@ public interface IProductImageService {
     List<Gallery> findAllByProduct(Product product);
     List<Gallery> findAll();
     void deleteAllByProduct(Product product);
+    Gallery findFirstByProduct(Product product);
 }

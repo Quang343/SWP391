@@ -4,7 +4,9 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.wareho
 import com.example.AgriculturalWarehouseManagement.Backend.models.StockIn;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Suppliers;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Warehouse;
+import org.springframework.stereotype.Component;
 
+@Component
 public class StockInMapper
 {
     public static StockInDTO toDTO(StockIn stockin) {

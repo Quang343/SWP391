@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="BackEnd/fragments/WareHouse/head::head"></head>
+<head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
 
 <body>
 <!-- tap on top start -->
@@ -13,13 +13,13 @@
 <!-- page-wrapper Start -->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
     <!-- Page Header Start-->
-    <div th:replace="BackEnd/fragments/WareHouse/header::header"></div>
+    <div th:replace="~{BackEnd/fragments/WareHouse/header::header}"></div>
     <!-- Page Header Ends-->
 
     <!-- Page Body Start-->
     <div class="page-body-wrapper">
         <!-- Page Sidebar Start-->
-        <div th:replace="BackEnd/fragments/WareHouse/sidebar::sidebar"></div>
+        <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
         <!-- Page Sidebar Ends-->
 
         <!-- tracking section start -->
@@ -48,15 +48,11 @@
                                                 <table class="table cart-table table-borderless">
                                                     <thead>
                                                     <tr>
-                                                        <th colspan="2">Items</th>
-                                                        <th class="text-end" colspan="2">
-                                                            <a href="javascript:void(0)"
-                                                               class="theme-color">Edit
-                                                                Items</a>
-                                                        </th>
+                                                        <th colspan="2">Sản phẩm</th>
+                                                        <th>Số lượng</th>
+                                                        <th>Mã Lô</th>
                                                     </tr>
                                                     </thead>
-
                                                     <tbody id="stockOutDetailTable">
                                                     <!-- Dữ liệu sẽ được tải động bằng JavaScript -->
                                                     </tbody>
@@ -67,27 +63,19 @@
                                         <div class="col-xl-4">
                                             <div class="order-success">
                                                 <div class="row g-4">
-                                                    <h4>Summary</h4>
+                                                    <h4>Thông tin tổng quan</h4>
                                                     <ul class="order-details">
                                                         <li>StockOut ID: <span id="stockOutIdSummary"></span></li>
-                                                        <li>StockOut Date: <span id="stockOutDateSummary"></span></li>
+                                                        <li>Ngày Xuất kho: <span id="stockOutDateSummary"></span></li>
                                                         <li>Warehouse ID: <span id="warehouseIdSummary"></span></li>
                                                         <li>Order ID: <span id="orderIdSummary"></span></li>
-                                                        <li>Item Count: <span id="itemCountSummary"></span></li>
+                                                        <li>Số lượng mục: <span id="itemCountSummary"></span></li>
                                                     </ul>
 
-                                                    <h4>Warehouse Information</h4>
+                                                    <h4>Thông tin kho hàng</h4>
                                                     <ul class="order-details">
-                                                        <li id="warehouseName">Warehouse Name</li>
-                                                        <li>568, Suite Ave.</li>
-                                                        <li>Australia, 235153 Contact No. 48465465465</li>
+                                                        <li id="warehouseName">N/A</li>
                                                     </ul>
-
-                                                    <div class="delivery-sec">
-                                                        <h3>Expected Date of Delivery: <span id="expectedDeliveryDate"></span>
-                                                        </h3>
-                                                        <a href="order-tracking.html">Track Order</a>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -101,16 +89,7 @@
             </div>
             <!-- tracking table end -->
 
-            <div class="container-fluid">
-                <!-- footer start-->
-                <footer class="footer">
-                    <div class="row">
-                        <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+            <div th:replace="BackEnd/fragments/WareHouse/footer::footer"></div>
         </div>
         <!-- tracking section End -->
     </div>
@@ -122,12 +101,12 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
-                <p>Are you sure you want to log out?</p>
+                <h5 class="modal-title" id="staticBackdropLabel">Đăng xuất</h5>
+                <p>Bạn có chắc chắn muốn đăng xuất?</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="button-box">
-                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-                    <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">Không</button>
+                    <button type="button" th:onclick="|window.location='@{/backend/login}'|" class="btn btn--yes btn-primary">Có</button>
                 </div>
             </div>
         </div>
@@ -155,15 +134,62 @@
 <!-- Custom JavaScript -->
 <script>
     $(document).ready(function() {
+        console.log('[DEBUG] Initializing page at ' + new Date().toISOString());
+
+        // Format date to DD/MM/YYYY, HH:mm:ss
+        function formatDate(isoDate) {
+            if (!isoDate) return 'N/A';
+            const date = new Date(isoDate);
+            return date.toLocaleString('vi-VN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+        }
+
+        // Format batchID: BAT + [First letter of supplier] + "-" + [ID + 1000 in Base36] + "-" + [Manufacture date as MMdd]
+        function formatBatchID(batchID, manufactureDate) {
+            try {
+
+
+                // Convert ID + 1000 to Base36
+                const offsetID = parseInt(batchID) + 1000;
+                const base36ID = offsetID.toString(36).toUpperCase();
+
+                // Format manufacture date to MMdd
+                let datePart = '0000';
+                if (manufactureDate && manufactureDate !== 'N/A') {
+                    const date = new Date(manufactureDate);
+                    if (!isNaN(date.getTime())) {
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        datePart = `${month}${day}`;
+                    }
+                }
+
+                return `BAT-${base36ID}-${datePart}`;
+            } catch (error) {
+                console.error('[ERROR] Error formatting batchID:', batchID, error);
+                return batchID || 'N/A';
+            }
+        }
+
         // Check stockOutId from URL
         const urlParams = new URLSearchParams(window.location.search);
         const stockOutId = urlParams.get('stockOutId');
         if (!stockOutId) {
-            alert('Please select a StockOut ID from the StockOut list first.');
-            window.location.href = '/AgriculturalWarehouseManagementApplication/warehouse/stockout';
+            console.error('[ERROR] No stockOutId provided in URL');
+            $.notify({ message: 'Vui lòng chọn StockOut ID từ danh sách StockOut trước.' }, { type: 'warning', delay: 3000 });
+            setTimeout(() => {
+                window.location.href = '/AgriculturalWarehouseManagementApplication/warehouse/stockout';
+            }, 1000);
             return;
         }
-        console.log('StockOut ID from URL:', stockOutId);
+        console.log('[DEBUG] StockOut ID from URL:', stockOutId);
 
         // Display StockOut ID
         $('#stockOutId').text(stockOutId);
@@ -171,64 +197,158 @@
 
         // Load StockOut and StockOutDetail data
         $.when(
-            $.ajax({ url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockouts/${stockOutId}`, method: 'GET', dataType: 'json' }),
-            $.ajax({ url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockoutdetails/stockout/${stockOutId}`, method: 'GET', dataType: 'json' }),
-            $.ajax({ url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/warehouses/${stockOutId}`, method: 'GET', dataType: 'json' }).fail(function() { return { warehouseName: 'N/A' }; })
+            $.ajax({ url: `/AgriculturalWarehouseManagementApplication/api/stockouts/${stockOutId}`, method: 'GET', dataType: 'json' }),
+            $.ajax({ url: `/AgriculturalWarehouseManagementApplication/api/stockoutdetails/stockout/${stockOutId}`, method: 'GET', dataType: 'json' }),
+            $.ajax({ url: `/AgriculturalWarehouseManagementApplication/api/warehouses`, method: 'GET', dataType: 'json' }).fail(function() { return { warehouseName: 'N/A' }; })
         ).done(function(stockOutResponse, stockOutDetailsResponse, warehouseResponse) {
             const stockOut = stockOutResponse[0];
             const stockOutDetails = stockOutDetailsResponse[0];
-            const warehouse = warehouseResponse[0];
-            console.log('StockOut data:', stockOut);
-            console.log('StockOutDetail data:', stockOutDetails);
+            const warehouses = warehouseResponse[0];
+            console.log('[DEBUG] StockOut data:', JSON.stringify(stockOut, null, 2));
+            console.log('[DEBUG] StockOutDetail data:', JSON.stringify(stockOutDetails, null, 2));
+            console.log('[DEBUG] Warehouses data:', JSON.stringify(warehouses, null, 2));
+
+            // Apply red background to thead if status is RETURNED
+            if (stockOut.status === 'RETURNED') {
+                $('table.cart-table thead').addClass('returned');
+            }
+
+            // Find warehouse name
+            const warehouse = warehouses.find(w => w.id === stockOut.warehouseID || w.warehouseId === stockOut.warehouseID) || { warehouseName: 'N/A' };
 
             // Populate StockOut summary
-            const stockOutDate = stockOut.stockOutDate ? new Date(stockOut.stockOutDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
+            const stockOutDate = formatDate(stockOut.stockOutDate);
             $('#stockOutDate').text(stockOutDate);
             $('#stockOutDateSummary').text(stockOutDate);
             $('#warehouseIdSummary').text(stockOut.warehouseID || 'N/A');
             $('#orderIdSummary').text(stockOut.orderID || 'N/A');
-            $('#itemCount').text(`${stockOutDetails.length} items`);
+            $('#itemCount').text(`${stockOutDetails.length} mục`);
             $('#itemCountSummary').text(stockOutDetails.length);
             $('#warehouseName').text(warehouse.warehouseName || 'N/A');
-            $('#expectedDeliveryDate').text(new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
 
             // Populate StockOutDetail table
             const tbody = $('#stockOutDetailTable');
             tbody.empty();
-            $.each(stockOutDetails, function(index, detail) {
-                const row = `
-                    <tr class="table-order">
-                        <td>
-                            <a href="javascript:void(0)">
-                                <img src="assets/images/profile/${index + 1}.jpg" class="img-fluid blur-up lazyload" alt="">
-                            </a>
-                        </td>
-                        <td>
-                            <p>Order Detail ID</p>
-                            <h5>${detail.orderDetailID || 'N/A'}</h5>
-                        </td>
-                        <td>
-                            <p>Batch ID</p>
-                            <h5>${detail.batchID || 'N/A'}</h5>
-                        </td>
-                        <td>
-                            <p>Quantity</p>
-                            <h5>${detail.quantity || 'N/A'}</h5>
-                        </td>
-                    </tr>
-                `;
-                tbody.append(row);
-            });
+            if (stockOutDetails.length > 0) {
+                stockOutDetails.forEach((detail, index) => {
+                    let displayName = 'N/A';
+                    let imageUrl = '/seller/default.jpg';
+                    let formattedBatchID = detail.batchID || 'N/A';
+                    let supplierName = 'Unknown';
+                    let manufactureDate = 'N/A';
+
+                    // Fetch product name, image, and batch details
+                    if (detail.batchID) {
+                        $.ajax({
+                            url: `/AgriculturalWarehouseManagementApplication/api/product-batches/${detail.batchID}`,
+                            method: 'GET',
+                            async: false,
+                            dataType: 'json',
+                            success: function(batch) {
+                                const productDetailId = batch.productDetailID || batch.productDetail || 'N/A';
+                                manufactureDate = batch.manufactureDate || 'N/A';
+                                if (productDetailId !== 'N/A') {
+                                    $.ajax({
+                                        url: `/AgriculturalWarehouseManagementApplication/api/product-details/${productDetailId}`,
+                                        method: 'GET',
+                                        async: false,
+                                        success: function(productDetail) {
+                                            const productId = productDetail.productID || 'N/A';
+                                            const detailName = productDetail.detailName || 'N/A';
+                                            supplierName = productDetail.supplierName || 'Unknown';
+                                            if (productId !== 'N/A') {
+                                                // Get product name
+                                                $.ajax({
+                                                    url: `/AgriculturalWarehouseManagementApplication/api/products/${productId}/name`,
+                                                    method: 'GET',
+                                                    async: false,
+                                                    success: function(productName) {
+                                                        displayName = `${productName} (${detailName})`;
+                                                        console.log(`[DEBUG] Product ID: ${productId}, Name: ${displayName}`);
+                                                    },
+                                                    error: function(xhr, status, error) {
+                                                        displayName = `N/A (${detailName})`;
+                                                        console.error(`[ERROR] Failed to get product name for ID ${productId}:`, { status, error });
+                                                    }
+                                                });
+                                                // Get product image
+                                                $.ajax({
+                                                    url: `/AgriculturalWarehouseManagementApplication/api/products/first/${productId}`,
+                                                    method: 'GET',
+                                                    async: false,
+                                                    dataType: 'text',
+                                                    success: function(response) {
+                                                        imageUrl = response && response.trim() !== '' ? `/seller/${response}` : '/seller/default.jpg';
+                                                        console.log(`[DEBUG] Product ID: ${productId}, Image: ${imageUrl}`);
+                                                    },
+                                                    error: function(xhr, status, error) {
+                                                        imageUrl = '/seller/default.jpg';
+                                                        console.error(`[ERROR] Failed to get image for product ID ${productId}:`, { status, error });
+                                                    }
+                                                });
+                                            } else {
+                                                displayName = `N/A (${detailName})`;
+                                                console.log(`[DEBUG] Invalid product ID for ProductDetail ${productDetailId}`);
+                                            }
+                                        },
+                                        error: function(xhr, status, error) {
+                                            displayName = 'N/A';
+                                            console.error(`[ERROR] Failed to get ProductDetail ${productDetailId}:`, { status, error });
+                                        }
+                                    });
+                                }
+                                formattedBatchID = formatBatchID(detail.batchID, manufactureDate, supplierName);
+                            },
+                            error: function(xhr, status, error) {
+                                console.error(`[ERROR] Failed to get ProductBatch ${detail.batchID}:`, { status, error });
+                            }
+                        });
+                    }
+
+                    const row = `
+                        <tr class="table-order">
+                            <td>
+                                <a href="javascript:void(0)">
+                                    <img src="${imageUrl}" class="img-fluid blur-up lazyload" alt="">
+                                </a>
+                            </td>
+                            <td>
+                                <p>Tên sản phẩm</p>
+                                <h5>${displayName}</h5>
+                            </td>
+                            <td>
+                                <p>Số lượng</p>
+                                <h5>${detail.quantity || 'N/A'}</h5>
+                            </td>
+                            <td>
+                                <p>Mã Lô</p>
+                                <h5>${formattedBatchID}</h5>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.append(row);
+                });
+            } else {
+                tbody.append('<tr><td colspan="4">Không có chi tiết xuất kho.</td></tr>');
+            }
         }).fail(function(jqXHR, textStatus, errorThrown) {
-            console.error('Error loading StockOut or StockOutDetail:', {
+            console.error('[ERROR] Failed to load StockOut or StockOutDetail:', {
                 status: textStatus,
                 error: errorThrown,
                 response: jqXHR.responseText
             });
-            $('#stockOutDetailTable').html('<tr><td colspan="4">Failed to load details. Check console.</td></tr>');
+            $('#stockOutDetailTable').html('<tr><td colspan="4">Lỗi tải dữ liệu. Vui lòng kiểm tra console.</td></tr>');
+            $.notify({ message: 'Không thể tải dữ liệu StockOut. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
         });
     });
 </script>
+
+<style>
+    /* Optional: Style for returned status */
+    .returned {
+        background-color: #f8d7da !important;
+    }
+</style>
 
 </body>
 </html>

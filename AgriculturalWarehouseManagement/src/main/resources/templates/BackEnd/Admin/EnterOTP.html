@@ -367,7 +367,7 @@
             submitBtn.disabled = true;
             spinner.style.display = "block";
 
-            fetch(`/AgriculturalWarehouseManagementApplication/forgotPassword/resendOtp`, {
+            fetch(`/AgriculturalWarehouseManagementApplication/forgotPasswordAdmin/resendOtp`, {
                 method: "POST",
                 headers: {
                     [csrfHeader]: csrfToken,
@@ -433,7 +433,7 @@
             const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
             const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
-            fetch(`/AgriculturalWarehouseManagementApplication/forgotPassword/verifyOtp?otp=${otp}&email=${encodeURIComponent(email)}`, {
+            fetch(`/AgriculturalWarehouseManagementApplication/forgotPasswordAdmin/verifyOtp?otp=${otp}&email=${encodeURIComponent(email)}`, {
                 method: "POST",
                 headers: {
                     [csrfHeader]: csrfToken,
@@ -449,7 +449,7 @@
                         });
                         clearInterval(timer);
                         setTimeout(() => {
-                            window.location.href = '/AgriculturalWarehouseManagementApplication/forgotPassword/resetPasswordForm';
+                            window.location.href = '/AgriculturalWarehouseManagementApplication/forgotPasswordAdmin/resetPasswordForm';
                         }, 2000);
                     } else {
                         const contentType = res.headers.get("content-type");

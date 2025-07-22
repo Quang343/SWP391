@@ -41,7 +41,7 @@ public class CategoryExcelExporter {
 
         for (Category category : categoryList) {
             Row row = sheet.createRow(rowCount++);
-            row.createCell(0).setCellValue(category.getId());
+            row.createCell(0).setCellValue(category.getCategoryId());
             row.createCell(1).setCellValue(category.getName());
             row.createCell(2).setCellValue(category.getDescription());
             row.createCell(3).setCellValue(category.getStatus());

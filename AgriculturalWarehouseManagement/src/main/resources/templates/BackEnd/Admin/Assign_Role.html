@@ -157,7 +157,7 @@
                                         <tr th:each="user, init: ${users}">
                                             <td th:text="${init.count}"></td>
                                             <td th:text="${user.email}"></td>
-                                            <td th:text="${user.role.name}"></td>
+                                            <td th:text="${user.role.roleName}"></td>
 <!--                                            <td>[[${user.userId}]]</td>-->
                                             <td>
                                                 <div class="custom-dropdown-wrapper">
@@ -167,8 +167,8 @@
                                                     <ul class="custom-dropdown-menu">
                                                         <li th:each="role : ${roles}">
                                                             <a href="#"
-                                                                th:attr="data-user-id=${user.userId}, data-role=${role.name}"
-                                                                th:text="${role.name}">
+                                                                th:attr="data-user-id=${user.userId}, data-role=${role.getRoleName()}"
+                                                                th:text="${role.getRoleName()}">
                                                             </a>
                                                         </li>
                                                     </ul>

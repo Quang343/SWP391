@@ -1,8 +1,150 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
-
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+    /* Ensure table is scrollable horizontally if content overflows */
+    .table-responsive {
+        overflow-x: auto;
+        margin-bottom: 0;
+        position: relative;
+    }
+    #table_id {
+        width: 100%;
+        min-width: 1000px;
+    }
+    #table_id.table,
+    #table_id th,
+    #table_id td {
+        border-color: #e6f3f2 !important;
+    }
+    #table_id th,
+    #table_id td {
+        text-align: left;
+        vertical-align: middle;
+        padding: 8px 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    #table_id th:nth-child(1), #table_id td:nth-child(1) { text-align: center; width: 15%; }
+    #table_id th:nth-child(2), #table_id td:nth-child(2) { width: 20%; }
+    #table_id th:nth-child(3), #table_id td:nth-child(3) { text-align: center; width: 15%; }
+    #table_id th:nth-child(4), #table_id td:nth-child(4) { text-align: center; width: 20%; }
+    #table_id th:nth-child(5), #table_id td:nth-child(5) { width: 20%; white-space: normal; word-break: break-word; }
+    #table_id th:nth-child(6), #table_id td:nth-child(6) { width: 10%; }
+    #table_id th:nth-child(7), #table_id td:nth-child(7) { text-align: center; width: 15%; }
+    th.sortable {
+        cursor: pointer;
+        position: relative;
+        padding-right: 20px;
+    }
+    th.sortable::after {
+        content: '';
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 4px solid transparent;
+        border-top-color: #018F84;
+        opacity: 0.5;
+    }
+    th.sortable.asc::after {
+        border-top-color: transparent;
+        border-bottom-color: #018F84;
+        opacity: 1;
+    }
+    th.sortable.desc::after {
+        border-bottom-color: transparent;
+        border-top-color: #018F84;
+        opacity: 1;
+    }
+    th.sortable:hover::after {
+        opacity: 1;
+    }
+    #pagination-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 12px;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 10;
+        max-width: 100%;
+    }
+    #pagination-controls .page-item {
+        margin: 0 2.5px;
+    }
+    #pagination-controls .page-link {
+        border-radius: 4px;
+        padding: 6px 12px;
+        color: #018F84;
+        font-size: 14px;
+        cursor: pointer;
+        border: 1px solid #018F84;
+        background-color: transparent;
+        text-align: center;
+        box-sizing: border-box;
+    }
+    #pagination-controls .page-item:first-child .page-link,
+    #pagination-controls .page-item:last-child .page-link {
+        background-color: #018F84;
+        color: #fff;
+        border-color: #018F84;
+    }
+    #pagination-controls .page-item.active .page-link {
+        background-color: #018F84;
+        border-color: #018F84;
+        color: #fff;
+        box-shadow: none;
+    }
+    #pagination-controls .page-item.disabled .page-link {
+        color: #018F84;
+        border-color: #e6f3f2;
+        background-color: #e6f3f2;
+        pointer-events: none;
+        cursor: default;
+    }
+    #pagination-controls .page-link:hover:not(.disabled .page-link):not(.active .page-link):not(:first-child .page-link):not(:last-child .page-link) {
+        background-color: #e6f3f2;
+        color: #018F84;
+    }
+    #pagination-controls .page-item:not(.disabled):first-child .page-link:hover,
+    #pagination-controls .page-item:not(.disabled):last-child .page-link:hover {
+        background-color: #016f6a;
+        color: #fff;
+    }
+    .footer {
+        z-index: 20 !important;
+    }
+    .sidebar-wrapper {
+        position: fixed;
+        z-index: 30 !important;
+    }
+    .modal, .offcanvas {
+        z-index: 1050 !important;
+    }
+    .modal-backdrop {
+        z-index: 1040 !important;
+    }
+    .btn-theme {
+        background-color: #018F84;
+        color: #fff;
+        border-color: #018F84;
+    }
+    .btn-theme:hover {
+        background-color: #016f6a;
+        color: #fff;
+        border-color: #016f6a;
+    }
+    .search-bar input {
+        border: 1px solid #e6f3f2;
+    }
+    .search-bar input:focus {
+        border-color: #018F84;
+        box-shadow: 0 0 5px rgba(1, 143, 132, 0.3);
+    }
+</style>
 <body>
 <!-- tap on top start-->
 <div class="tap-top">
@@ -19,7 +161,7 @@
     <!-- Page Body Start-->
     <div class="page-body-wrapper">
         <!-- Page Sidebar Start-->
-        <div th:replace="BackEnd/fragments/WareHouse/sidebar::sidebar"></div>
+        <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
         <!-- Page Sidebar Ends-->
 
         <!-- Container-fluid starts-->
@@ -29,69 +171,62 @@
                     <div class="col-sm-12">
                         <div class="card card-table">
                             <div class="card-body">
-                                <div class="title-header option-title d-sm-flex d-block">
-                                    <h5>Adjustment List</h5>
-                                    <div class="right-options">
-                                        <ul>
-                                            <li>
-                                                <a class="btn btn-solid" th:href="@{/warehouse/addadjustment}">Add Adjustment</a>
-                                            </li>
-                                        </ul>
+                                <div class="title-header option-title">
+                                    <div class="first-line">
+                                        <h5>Danh Sách Điều Chỉnh</h5>
+                                    </div>
+                                    <div class="second-line" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                                        <a th:href="@{/warehouse/addadjustment}" class="align-items-center btn btn-theme d-flex">
+                                            <i data-feather="plus"></i> Thêm Điều Chỉnh
+                                        </a>
+                                        <div class="search-bar">
+                                            <input type="text" class="form-control" placeholder="Tìm kiếm..." id="searchInput">
+                                        </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <div class="table-responsive">
-                                        <table class="table all-package theme-table table-product" id="table_id">
-                                            <thead>
-                                            <tr>
-                                                <th>Adjustment ID</th>
-                                                <th>Batch ID</th>
-                                                <th>Quantity</th>
-                                                <th>Adjust Date</th>
-                                                <th>Reason</th>
-                                                <th>Type</th>
-                                                <th>Action</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody id="adjustmentTableBody">
-                                            <!-- Dữ liệu sẽ được thêm động bởi JavaScript -->
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                <div class="table-responsive">
+                                    <table class="table all-package theme-table table-product" id="table_id">
+                                        <thead>
+                                        <tr>
+                                            <th class="sortable" data-sort="id">Mã Điều Chỉnh</th>
+                                            <th class="sortable" data-sort="batchId">Mã Lô Hàng</th>
+                                            <th class="sortable" data-sort="quantity">Số Lượng</th>
+                                            <th class="sortable" data-sort="adjustDate">Ngày Điều Chỉnh</th>
+                                            <th>Lý Do</th>
+                                            <th>Loại</th>
+                                            <th>Hành Động</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="adjustmentTableBody">
+                                        <tr id="no-data-row" style="display: none;">
+                                            <td colspan="7" class="text-center">Không tìm thấy bản ghi nào</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
+                                <ul id="pagination-controls" class="pagination"></ul>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Container-fluid Ends-->
-
-            <div class="container-fluid">
-                <!-- footer start-->
-                <footer class="footer">
-                    <div class="row">
-                        <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+            <div th:replace="~{BackEnd/fragments/WareHouse/footer::footer}"></div>
         </div>
     </div>
 </div>
 <!-- page-wrapper End-->
 
-<!-- Modal Start -->
+<!-- Modal Đăng Xuất -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
-                <p>Are you sure you want to log out?</p>
+                <h5 class="modal-title" id="staticBackdropLabel">Đăng Xuất</h5>
+                <p>Bạn có chắc chắn muốn đăng xuất?</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="button-box">
-                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
-                    <button type="button" th:onclick="|window.location='@{backend/login}'|" class="btn btn--yes btn-primary">Yes</button>
+                    <button type="button" class="btn btn--no" data-bs-dismiss="modal">Không</button>
+                    <button type="button" th:onclick="|window.location='@{/backend/login}'|" class="btn btn--yes btn-primary">Có</button>
                 </div>
             </div>
         </div>
@@ -99,43 +234,43 @@
 </div>
 <!-- Modal End -->
 
-<!-- Edit Adjustment Modal -->
+<!-- Modal Sửa Điều Chỉnh -->
 <div class="modal fade" id="editAdjustmentModal" tabindex="-1" aria-labelledby="editAdjustmentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editAdjustmentModalLabel">Edit Adjustment</h5>
+                <h5 class="modal-title" id="editAdjustmentModalLabel">Sửa Điều Chỉnh</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="editAdjustmentForm">
                     <input type="hidden" id="editAdjustmentId">
                     <div class="mb-3">
-                        <label for="editBatchId" class="form-label">Batch (Optional)</label>
+                        <label for="editBatchId" class="form-label">Lô Sản Phẩm (Tùy Chọn)</label>
                         <select class="form-select" id="editBatchId">
-                            <option value="">None</option>
+                            <option value="">Không chọn</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="editQuantity" class="form-label">Adjustment Quantity</label>
-                        <input type="number" class="form-control" id="editQuantity" required>
+                        <label for="editQuantity" class="form-label">Số Lượng Điều Chỉnh</label>
+                        <input type="number" class="form-control" id="editQuantity" required min="0">
                     </div>
                     <div class="mb-3">
-                        <label for="editReason" class="form-label">Reason</label>
+                        <label for="editReason" class="form-label">Lý Do</label>
                         <textarea class="form-control" id="editReason" rows="3"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="editAdjustmentType" class="form-label">Adjustment Type</label>
+                        <label for="editAdjustmentType" class="form-label">Loại Điều Chỉnh</label>
                         <select class="form-select" id="editAdjustmentType" required>
-                            <option value="Add">Add</option>
-                            <option value="Remove">Remove</option>
+                            <option value="Add">Nhập Thêm</option>
+                            <option value="Remove">Hao Hụt</option>
                         </select>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="saveEditAdjustment">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="saveEditAdjustment">Lưu Thay Đổi</button>
             </div>
         </div>
     </div>
@@ -146,19 +281,19 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header d-block text-center">
-                <h5 class="modal-title w-100" id="exampleModalLabel22">Are You Sure?</h5>
+                <h5 class="modal-title w-100" id="exampleModalLabel22">Bạn Có Chắc Chắn?</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="remove-box">
-                    <p>Bạn có chắc chắn muốn xóa Adjustment này?</p>
+                    <p>Bạn có chắc chắn muốn xóa Điều Chỉnh này?</p>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">No</button>
-                <button type="button" class="btn btn-animation btn-md fw-bold confirm-delete">Yes</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Không</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold confirm-delete">Có</button>
             </div>
         </div>
     </div>
@@ -168,7 +303,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-center" id="exampleModalLabel12">Done!</h5>
+                <h5 class="modal-title text-center" id="exampleModalLabel12">Hoàn Thành!</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fas fa-times"></i>
                 </button>
@@ -181,11 +316,11 @@
                             <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
                         </svg>
                     </div>
-                    <h4 class="text-content">It's Removed.</h4>
+                    <h4 class="text-content">Đã Xóa.</h4>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
@@ -194,253 +329,484 @@
 
 <!-- latest js -->
 <script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
-
 <!-- Bootstrap js -->
 <script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
-
 <!-- feather icon js -->
 <script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
 <script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
-
 <!-- scrollbar simplebar js -->
 <script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
 <script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
-
 <!-- Sidebar js -->
 <script th:src="@{/Backend/assets/js/config.js}"></script>
-
 <!-- customizer js -->
 <script th:src="@{/Backend/assets/js/customizer.js}"></script>
-
 <!-- Plugins js -->
 <script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
 <script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
 <script th:src="@{/Backend/assets/js/notify/index.js}"></script>
-
-<!-- Data table js -->
-<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
-<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
-
 <!-- sidebar effect -->
 <script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
-
 <!-- Theme js -->
 <script th:src="@{/Backend/assets/js/script.js}"></script>
 
-<!-- Custom JS for API call -->
+<!-- Custom JS -->
 <script>
+    // Format date to Vietnamese format: HH:mm:ss DD/MM/YYYY
+    function formatDateToVietnamese(dateString) {
+        if (!dateString || dateString === 'N/A') return 'N/A';
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) {
+                console.warn('[CẢNH BÁO] Ngày không hợp lệ:', dateString);
+                return 'N/A';
+            }
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
+        } catch (error) {
+            console.error('[LỖI] Lỗi phân tích ngày:', dateString, error);
+            return 'N/A';
+        }
+    }
+
+    // Format batchID: BAT-[ID+1000 in Base36]-[MMdd]
+    function formatBatchID(batchID, manufactureDate) {
+        try {
+            const offsetID = parseInt(batchID) + 1000;
+            const base36ID = offsetID.toString(36).toUpperCase();
+            let datePart = '0000';
+            if (manufactureDate && manufactureDate !== 'N/A') {
+                const date = new Date(manufactureDate);
+                if (!isNaN(date.getTime())) {
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    datePart = `${month}${day}`;
+                }
+            }
+            return `BAT-${base36ID}-${datePart}`;
+        } catch (error) {
+            console.error('[LỖI] Lỗi định dạng batchID:', batchID, error);
+            return batchID || 'N/A';
+        }
+    }
+
+    // Debounce function for search
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
     $(document).ready(function() {
-        // Populate Batch dropdown
-        function populateBatchDropdown(selectElement, selectedId) {
-            $.ajax({
+        let currentPage = 0;
+        let totalPages = 1;
+        const pageSize = 5;
+        let searchTerm = '';
+        let allAdjustments = [];
+        let batchData = {};
+        let batchDataCached = false;
+        let sortColumn = 'id';
+        let sortDirection = 'asc';
+
+        // Ensure table elements
+        function ensureElements() {
+            let tableBody = $('#adjustmentTableBody');
+            let noDataRow = $('#no-data-row');
+            const table = $('#table_id');
+            if (!table.length) {
+                console.error('[LỖI] Bảng #table_id không tìm thấy');
+                $.notify({ message: 'Không tìm thấy bảng. Vui lòng kiểm tra giao diện.' }, { type: 'danger', delay: 3000 });
+                return null;
+            }
+            if (!tableBody.length) {
+                tableBody = $('<tbody id="adjustmentTableBody"></tbody>');
+                table.append(tableBody);
+                console.log('[DEBUG] Created new tbody with id adjustmentTableBody');
+            }
+            if (!noDataRow.length) {
+                noDataRow = $('<tr id="no-data-row"><td colspan="7" class="text-center">Không tìm thấy bản ghi nào</td></tr>');
+                tableBody.append(noDataRow);
+                console.log('[DEBUG] Created new no-data-row');
+            }
+            return { tableBody, noDataRow };
+        }
+
+        // Update URL
+        function updateURL(page) {
+            const params = new URLSearchParams();
+            if (page > 0) params.set('page', page + 1);
+            if (searchTerm) params.set('search', searchTerm);
+            history.pushState({}, '', `/AgriculturalWarehouseManagementApplication/warehouse/adjustments?${params.toString()}`);
+        }
+
+        // Update sort indicators
+        function updateSortIndicators() {
+            $('th.sortable').removeClass('asc desc');
+            $(`th.sortable[data-sort="${sortColumn}"]`).addClass(sortDirection);
+        }
+
+        // Sort adjustments
+        function sortAdjustments(adjustments) {
+            return [...adjustments].sort((a, b) => {
+                let valueA, valueB;
+                switch (sortColumn) {
+                    case 'id':
+                        valueA = parseInt(a.id) || 0;
+                        valueB = parseInt(b.id) || 0;
+                        break;
+                    case 'batchId':
+                        valueA = batchData[a.batchId] ? formatBatchID(a.batchId, batchData[a.batchId].manufactureDate).toLowerCase() : 'N/A';
+                        valueB = batchData[b.batchId] ? formatBatchID(b.batchId, batchData[b.batchId].manufactureDate).toLowerCase() : 'N/A';
+                        break;
+                    case 'quantity':
+                        valueA = parseInt(a.quantity) || 0;
+                        valueB = parseInt(b.quantity) || 0;
+                        break;
+                    case 'adjustDate':
+                        valueA = a.adjustDate ? new Date(a.adjustDate).getTime() : 0;
+                        valueB = b.adjustDate ? new Date(b.adjustDate).getTime() : 0;
+                        break;
+                    default:
+                        return 0;
+                }
+                return valueA < valueB ? (sortDirection === 'asc' ? -1 : 1) : valueA > valueB ? (sortDirection === 'asc' ? 1 : -1) : 0;
+            });
+        }
+
+        // Fetch product batches
+        function fetchAllProductBatches() {
+            if (batchDataCached) {
+                console.log('[DEBUG] Using cached batch data:', Object.keys(batchData).length);
+                return $.Deferred().resolve().promise();
+            }
+            return $.ajax({
                 url: '/AgriculturalWarehouseManagementApplication/api/product-batches',
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    selectElement.empty();
-                    selectElement.append('<option value="">None</option>');
-                    if (!data || data.length === 0) {
-                        return;
-                    }
+                    batchData = {};
                     $.each(data, function(index, batch) {
-                        var id = batch.batchID || batch.id;
-                        if (id) {
-                            var selected = id == selectedId ? 'selected' : '';
-                            selectElement.append(`<option value="${id}" ${selected}>Batch ID: ${id}</option>`);
-                        }
+                        const id = batch.batchID || batch.id;
+                        batchData[id] = {
+                            batchId: id,
+                            manufactureDate: batch.manufactureDate || 'N/A'
+                        };
                     });
+                    batchDataCached = true;
+                    console.log('[DEBUG] Batch data loaded:', Object.keys(batchData).length);
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error fetching Batches: ', status, error);
-                    alert('Unable to load Batch list. Check console.');
+                    console.error('[LỖI] Lỗi khi tải danh sách lô:', status, error, 'Response:', xhr.responseText);
+                    $.notify({ message: 'Không thể tải danh sách lô. Dữ liệu lô hàng có thể hiển thị không đầy đủ.' }, { type: 'warning', delay: 3000 });
+                    batchData = {};
+                    batchDataCached = true;
                 }
             });
         }
 
-        // Load Adjustments
-        function loadAdjustments() {
-            $.ajax({
-                url: '/AgriculturalWarehouseManagementApplication/api/adjustments',
-                method: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    var tbody = $('#adjustmentTableBody');
-                    tbody.empty();
-                    if (!data || data.length === 0) {
-                        tbody.append('<tr><td colspan="7">No data</td></tr>');
-                        return;
+        // Populate batch dropdown
+        function populateBatchDropdown(selectElement, selectedId) {
+            selectElement.empty().append('<option value="">Không chọn</option>');
+            $.each(batchData, function(id, batch) {
+                if (id && batch.batchId) {
+                    const formattedBatchID = formatBatchID(id, batch.manufactureDate);
+                    const selected = id == selectedId ? 'selected' : '';
+                    selectElement.append(`<option value="${id}" ${selected}>${formattedBatchID}</option>`);
+                }
+            });
+        }
+
+        // Fetch and render adjustments
+        function fetchAdjustments(page = 0, searchQuery = '') {
+            currentPage = page;
+            searchTerm = searchQuery;
+            updateURL(page);
+            const { tableBody, noDataRow } = ensureElements();
+            if (!tableBody || !noDataRow) return;
+
+            console.log('[DEBUG] Fetching adjustments: page=', page, 'search=', searchQuery, 'sort=', sortColumn, sortDirection);
+
+            $.when(fetchAllProductBatches()).done(function() {
+                $.ajax({
+                    url: `/AgriculturalWarehouseManagementApplication/api/adjustments/paginatedAdjustment?page=${page}&size=${pageSize}`,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log('[DEBUG] API response:', data);
+                        if (!data || !data.content || typeof data.totalPages === 'undefined' || typeof data.number === 'undefined') {
+                            console.error('[LỖI] Dữ liệu điều chỉnh không hợp lệ:', data);
+                            tableBody.empty();
+                            noDataRow.show();
+                            renderPagination(0, 0);
+                            $.notify({ message: 'Dữ liệu điều chỉnh không hợp lệ.' }, { type: 'danger', delay: 3000 });
+                            return;
+                        }
+
+                        allAdjustments = data.content;
+                        totalPages = data.totalPages;
+
+                        // Filter adjustments
+                        const filteredAdjustments = allAdjustments.filter(adjustment => {
+                            const searchLower = searchQuery.toLowerCase();
+                            const batchId = batchData[adjustment.batchId] ? formatBatchID(adjustment.batchId, batchData[adjustment.batchId].manufactureDate) : 'N/A';
+                            return (
+                                (adjustment.id?.toString() || '').toLowerCase().includes(searchLower) ||
+                                batchId.toLowerCase().includes(searchLower) ||
+                                (adjustment.quantity?.toString() || '').toLowerCase().includes(searchLower) ||
+                                formatDateToVietnamese(adjustment.adjustDate).toLowerCase().includes(searchLower) ||
+                                (adjustment.reason || '').toLowerCase().includes(searchLower)
+                            );
+                        });
+
+                        // Sort adjustments
+                        const sortedAdjustments = sortAdjustments(filteredAdjustments);
+
+                        // Render table
+                        tableBody.empty();
+                        if (sortedAdjustments.length > 0) {
+                            noDataRow.hide();
+                            $.each(sortedAdjustments, function(index, adjustment) {
+                                const batchId = batchData[adjustment.batchId] ? formatBatchID(adjustment.batchId, batchData[adjustment.batchId].manufactureDate) : adjustment.batchId || 'N/A';
+                                const row = $('<tr></tr>').attr('data-id', adjustment.id || '');
+                                row.append(`<td style="text-align: center;">${adjustment.id || 'N/A'}</td>`);
+                                row.append(`<td>${batchId}</td>`);
+                                row.append(`<td style="text-align: center;">${adjustment.quantity || 'N/A'}</td>`);
+                                row.append(`<td style="text-align: center;">${formatDateToVietnamese(adjustment.adjustDate)}</td>`);
+                                row.append(`<td>${adjustment.reason || 'N/A'}</td>`);
+                                row.append(`<td>${adjustment.adjustmentType === 'Add' ? 'Nhập Thêm' : adjustment.adjustmentType === 'Remove' ? 'Hao Hụt' : 'N/A'}</td>`);
+                                row.append(`
+                                    <td style="text-align: center;">
+                                        <ul class="action-list d-flex justify-content-center">
+                                            <li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="${adjustment.id || ''}" data-batch-id="${adjustment.batchId || ''}" data-quantity="${adjustment.quantity || ''}" data-reason="${adjustment.reason || ''}" data-adjustment-type="${adjustment.adjustmentType || ''}"><i class="ri-pencil-line"></i></a></li>
+                                            <li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="${adjustment.id || ''}" data-bs-toggle="modal" data-bs-target="#exampleModalToggle"><i class="ri-delete-bin-line"></i></a></li>
+                                        </ul>
+                                    </td>
+                                `);
+                                tableBody.append(row);
+                            });
+                            bindActionEvents();
+                        } else {
+                            noDataRow.show();
+                        }
+
+                        renderPagination(totalPages, page);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('[LỖI] Lỗi khi tải điều chỉnh:', status, error, 'Response:', xhr.responseText);
+                        tableBody.empty();
+                        noDataRow.show();
+                        renderPagination(0, 0);
+                        $.notify({ message: 'Không thể tải danh sách điều chỉnh. Vui lòng kiểm tra kết nối hoặc thử lại.' }, { type: 'danger', delay: 3000 });
                     }
-
-                    $.ajax({
-                        url: '/AgriculturalWarehouseManagementApplication/api/product-batches',
-                        method: 'GET',
-                        dataType: 'json',
-                        success: function(batches) {
-                            var batchMap = {};
-                            $.each(batches, function(index, batch) {
-                                batchMap[batch.batchId || batch.id] = batch.batchId || 'No ID';
-                            });
-
-                            $.each(data, function(index, adjustment) {
-                                var batchId = adjustment.batch || adjustment.batchId;
-                                var mappedBatchId = batchMap[batchId] || batchId || 'N/A';
-
-                                var row = '<tr>' +
-                                    '<td>' + (adjustment.id || 'N/A') + '</td>' +
-                                    '<td>' + mappedBatchId + '</td>' +
-                                    '<td>' + (adjustment.quantity || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.adjustDate || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.reason || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.adjustmentType || 'N/A') + '</td>' +
-                                    '<td>' +
-                                    '<ul class="action-list">' +
-                                    '<li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="' + (adjustment.id || '') + '" data-batch-id="' + (batchId || '') + '" data-quantity="' + (adjustment.quantity || '') + '" data-reason="' + (adjustment.reason || '') + '" data-adjustment-type="' + (adjustment.adjustmentType || '') + '"><i class="ri-pencil-line"></i></a></li>' +
-                                    '<li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="' + (adjustment.id || '') + '"><i class="ri-delete-bin-line"></i></a></li>' +
-                                    '</ul>' +
-                                    '</td>' +
-                                    '</tr>';
-                                tbody.append(row);
-                            });
-
-                            $('.edit-adjustment').on('click', function() {
-                                var adjustmentId = $(this).data('adjustment-id');
-                                var batchId = $(this).data('batch-id');
-                                var quantity = $(this).data('quantity');
-                                var reason = $(this).data('reason');
-                                var adjustmentType = $(this).data('adjustment-type');
-
-                                if (!adjustmentId) {
-                                    alert('Adjustment ID không hợp lệ.');
-                                    return;
-                                }
-
-                                $('#editAdjustmentId').val(adjustmentId);
-                                $('#editQuantity').val(quantity);
-                                $('#editReason').val(reason);
-                                $('#editAdjustmentType').val(adjustmentType);
-                                populateBatchDropdown($('#editBatchId'), batchId);
-
-                                $('#editAdjustmentModal').modal('show');
-                            });
-
-                            $('.delete-adjustment').on('click', function(e) {
-                                e.preventDefault();
-                                var adjustmentId = $(this).data('adjustment-id');
-                                if (!adjustmentId) {
-                                    alert('Adjustment ID không hợp lệ.');
-                                    return;
-                                }
-                                $('.confirm-delete').data('adjustment-id', adjustmentId);
-                                $('#exampleModalToggle').modal('show');
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error fetching Batches: ', status, error);
-                            alert('Unable to load Batch list. Check console.');
-                            $.each(data, function(index, adjustment) {
-                                var batchId = adjustment.batch || adjustment.batchId;
-                                var row = '<tr>' +
-                                    '<td>' + (adjustment.id || 'N/A') + '</td>' +
-                                    '<td>' + (batchId || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.quantity || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.adjustDate || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.reason || 'N/A') + '</td>' +
-                                    '<td>' + (adjustment.adjustmentType || 'N/A') + '</td>' +
-                                    '<td>' +
-                                    '<ul class="action-list">' +
-                                    '<li><a href="javascript:void(0)" class="edit-adjustment" data-adjustment-id="' + (adjustment.id || '') + '" data-batch-id="' + (batchId || '') + '" data-quantity="' + (adjustment.quantity || '') + '" data-reason="' + (adjustment.reason || '') + '" data-adjustment-type="' + (adjustment.adjustmentType || '') + '"><i class="ri-pencil-line"></i></a></li>' +
-                                    '<li><a href="javascript:void(0)" class="delete-adjustment" data-adjustment-id="' + (adjustment.id || '') + '"><i class="ri-delete-bin-line"></i></a></li>' +
-                                    '</ul>' +
-                                    '</td>' +
-                                    '</tr>';
-                                tbody.append(row);
-                            });
-                        }
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error('Lỗi khi gọi API /api/adjustments: ', status, error);
-                    alert('Lỗi khi tải dữ liệu: ' + error + '. Kiểm tra console.');
-                }
+                });
             });
         }
 
-        // Save Edited Adjustment
-        $(document).on('click', '#saveEditAdjustment', function() {
-            var adjustmentId = $('#editAdjustmentId').val();
-            var batchId = $('#editBatchId').val() || null;
-            var quantity = $('#editQuantity').val();
-            var reason = $('#editReason').val();
-            var adjustmentType = $('#editAdjustmentType').val();
+        // Render pagination
+        function renderPagination(totalPagesInput, currentPageInput) {
+            const paginationControls = $('#pagination-controls');
+            paginationControls.empty();
 
-            if (!quantity || isNaN(parseInt(quantity))) {
-                alert('Vui lòng nhập số lượng hợp lệ.');
+            totalPages = typeof totalPagesInput === 'number' && totalPagesInput > 0 ? totalPagesInput : 1;
+            currentPage = typeof currentPageInput === 'number' && currentPageInput >= 0 && currentPageInput < totalPages ? currentPageInput : 0;
+
+            console.log('[DEBUG] Rendering pagination: totalPages=', totalPages, 'currentPage=', currentPage);
+
+            const addBtn = (label, page, disabled = false, active = false) => {
+                const li = $('<li></li>').addClass('page-item');
+                if (disabled) li.addClass('disabled');
+                if (active) li.addClass('active');
+                li.html(`<a class="page-link" href="javascript:void(0)" data-page="${page}">${label}</a>`);
+                paginationControls.append(li);
+            };
+
+            addBtn('Trước', currentPage - 1, currentPage === 0);
+            addBtn(1, 0, false, currentPage === 0);
+
+            const startPage = Math.max(2, currentPage);
+            const endPage = Math.min(totalPages - 1, currentPage + 2);
+
+            if (totalPages > 3 && currentPage > 1) {
+                paginationControls.append('<li class="page-item disabled"><a class="page-link">...</a></li>');
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                addBtn(i, i - 1, false, currentPage === i - 1);
+            }
+
+            if (totalPages > 4 && currentPage < totalPages - 2) {
+                paginationControls.append('<li class="page-item disabled"><a class="page-link">...</a></li>');
+            }
+
+            if (totalPages > 1) {
+                addBtn(totalPages, totalPages - 1, false, currentPage === totalPages - 1);
+            }
+
+            addBtn('Tiếp', currentPage + 1, currentPage === totalPages - 1);
+        }
+
+        // Bind action events
+        function bindActionEvents() {
+            $('.edit-adjustment').off('click.edit').on('click.edit', function() {
+                const adjustmentId = $(this).data('adjustment-id');
+                const batchId = $(this).data('batch-id');
+                const quantity = $(this).data('quantity');
+                const reason = $(this).data('reason');
+                const adjustmentType = $(this).data('adjustment-type');
+
+                if (!adjustmentId) {
+                    $.notify({ message: 'ID Điều Chỉnh không hợp lệ.' }, { type: 'warning', delay: 3000 });
+                    return;
+                }
+
+                $('#editAdjustmentId').val(adjustmentId);
+                $('#editQuantity').val(quantity);
+                $('#editReason').val(reason);
+                $('#editAdjustmentType').val(adjustmentType);
+                populateBatchDropdown($('#editBatchId'), batchId);
+                $('#editAdjustmentModal').modal('show');
+            });
+
+            $('.delete-adjustment').off('click.delete').on('click.delete', function(e) {
+                e.preventDefault();
+                const adjustmentId = $(this).data('adjustment-id');
+                if (!adjustmentId) {
+                    $.notify({ message: 'ID Điều Chỉnh không hợp lệ.' }, { type: 'warning', delay: 3000 });
+                    return;
+                }
+                $('.confirm-delete').data('adjustment-id', adjustmentId);
+                $('#exampleModalToggle').modal('show');
+            });
+        }
+
+        // Save edited adjustment
+        $('#saveEditAdjustment').on('click', function() {
+            const adjustmentId = $('#editAdjustmentId').val();
+            const batchId = $('#editBatchId').val() || null;
+            const quantity = $('#editQuantity').val();
+            const reason = $('#editReason').val();
+            const adjustmentType = $('#editAdjustmentType').val();
+
+            if (!quantity || isNaN(parseInt(quantity)) || parseInt(quantity) < 0) {
+                $.notify({ message: 'Vui lòng nhập số lượng hợp lệ (không âm).' }, { type: 'warning', delay: 3000 });
                 return;
             }
             if (!adjustmentType) {
-                alert('Vui lòng chọn loại Adjustment.');
+                $.notify({ message: 'Vui lòng chọn loại điều chỉnh.' }, { type: 'warning', delay: 3000 });
                 return;
             }
 
-            var formData = {
+            const formData = {
                 batchId: batchId ? parseInt(batchId) : null,
                 quantity: parseInt(quantity),
                 reason: reason || null,
-                adjustmentType: adjustmentType
+                adjustmentType
             };
 
             $.ajax({
-                url: '/AgriculturalWarehouseManagementApplication/api/adjustments/' + adjustmentId,
+                url: `/AgriculturalWarehouseManagementApplication/api/adjustments/${adjustmentId}`,
                 method: 'PUT',
                 contentType: 'application/json',
                 data: JSON.stringify(formData),
-                dataType: 'json',
-                success: function(response) {
-                    alert('Cập nhật Adjustment thành công!');
+                success: function() {
+                    $.notify({ message: 'Cập nhật điều chỉnh thành công!' }, { type: 'success', delay: 3000 });
                     $('#editAdjustmentModal').modal('hide');
-                    loadAdjustments();
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open').css('overflow', '');
+                    fetchAdjustments(currentPage, searchTerm);
                 },
                 error: function(xhr, status, error) {
-                    console.error('Lỗi khi sửa Adjustment: ', status, error);
-                    alert('Lỗi khi sửa Adjustment: ' + (xhr.responseText || 'Kiểm tra console.'));
+                    console.error('[LỖI] Lỗi khi cập nhật điều chỉnh:', status, error, 'Response:', xhr.responseText);
+                    $.notify({ message: `Lỗi khi cập nhật điều chỉnh: ${xhr.responseText || 'Vui lòng kiểm tra console.'}` }, { type: 'danger', delay: 3000 });
                 }
             });
         });
 
-        // Confirm Delete Adjustment
+        // Confirm delete adjustment
         $(document).on('click', '.confirm-delete', function(e) {
             e.preventDefault();
-            var adjustmentId = $(this).data('adjustment-id');
+            const adjustmentId = $(this).data('adjustment-id');
             if (!adjustmentId) {
-                alert('Adjustment ID không hợp lệ.');
+                $.notify({ message: 'ID Điều Chỉnh không hợp lệ.' }, { type: 'warning', delay: 3000 });
                 return;
             }
 
             $.ajax({
-                url: '/AgriculturalWarehouseManagementApplication/api/adjustments/' + adjustmentId,
+                url: `/AgriculturalWarehouseManagementApplication/api/adjustments/${adjustmentId}`,
                 method: 'DELETE',
                 headers: { 'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content') },
                 success: function() {
                     $('#exampleModalToggle').modal('hide');
-                    if ($('#exampleModalToggle2').length > 0) {
-                        $('#exampleModalToggle2').modal('show');
-                    } else {
-                        alert('Xóa Adjustment thành công!');
-                    }
-                    loadAdjustments();
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open').css('overflow', '');
+                    const doneModal = $('#exampleModalToggle2');
+                    doneModal.modal('show').on('hidden.bs.modal', function() {
+                        $(this).off('hidden.bs.modal');
+                        $('.modal-backdrop').remove();
+                        $('body').removeClass('modal-open').css('overflow', '');
+                        $.notify({ message: 'Xóa điều chỉnh thành công!' }, { type: 'success', delay: 3000 });
+                        fetchAdjustments(currentPage, searchTerm);
+                    });
                 },
                 error: function(xhr, status, error) {
-                    console.error('Lỗi khi xóa Adjustment: ', status, error);
-                    alert('Lỗi khi xóa Adjustment: ' + (xhr.responseText || 'Kiểm tra console.'));
+                    console.error('[LỖI] Lỗi khi xóa điều chỉnh:', status, error, 'Response:', xhr.responseText);
+                    $.notify({ message: `Lỗi khi xóa điều chỉnh: ${xhr.responseText || 'Vui lòng kiểm tra console.'}` }, { type: 'danger', delay: 3000 });
                     $('#exampleModalToggle').modal('hide');
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open').css('overflow', '');
                 }
             });
         });
 
-        // Load Adjustments initially
-        loadAdjustments();
+        // Search with debounce
+        const debouncedSearch = debounce(function(searchValue) {
+            console.log('[DEBUG] Search triggered:', searchValue);
+            fetchAdjustments(0, searchValue);
+        }, 300);
+        $('#searchInput').on('input', function() {
+            debouncedSearch($(this).val().trim());
+        });
+
+        // Pagination
+        $(document).on('click', '#pagination-controls .page-link', function(e) {
+            e.preventDefault();
+            const page = parseInt($(this).data('page'));
+            console.log('[DEBUG] Pagination clicked: page=', page, 'totalPages=', totalPages);
+            if (!isNaN(page) && page >= 0 && page < totalPages) {
+                fetchAdjustments(page, searchTerm);
+            }
+        });
+
+        // Sorting
+        $('th.sortable').on('click', function() {
+            const column = $(this).data('sort');
+            if (column) {
+                sortColumn = column;
+                sortDirection = sortColumn === sortColumn ? (sortDirection === 'asc' ? 'desc' : 'asc') : 'asc';
+                console.log('[DEBUG] Sorting:', sortColumn, sortDirection);
+                fetchAdjustments(currentPage, searchTerm);
+            }
+        });
+
+        // Initial fetch
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialPage = parseInt(urlParams.get('page')) || 1;
+        const initialSearch = urlParams.get('search') || '';
+        currentPage = initialPage > 0 ? initialPage - 1 : 0;
+        searchTerm = initialSearch;
+        fetchAdjustments(currentPage, searchTerm);
     });
 </script>
-
 </body>
 </html>

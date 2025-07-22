@@ -192,8 +192,8 @@
                                                                 <select class="form-select" th:field="*{roleId}"
                                                                         required>
                                                                     <option th:each="role : ${roles}"
-                                                                            th:value="${role.getId()}"
-                                                                            th:text="${role.getName()}">
+                                                                            th:value="${role.getRoleID()}"
+                                                                            th:text="${role.getRoleName()}">
                                                                     </option>
                                                                 </select>
                                                             </div>

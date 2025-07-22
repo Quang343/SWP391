@@ -29,6 +29,13 @@ public class OrderService implements IOrderService {
     private final Random random = new Random();
 
     @Override
+    public List<Order> findByStatus(String status) {
+        return orderRepository.findByStatus(status);
+    }
+
+
+
+    @Override
     public Order createOrder(OrderDTO orderDTO) {
         User user = userRepository.findById(orderDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));

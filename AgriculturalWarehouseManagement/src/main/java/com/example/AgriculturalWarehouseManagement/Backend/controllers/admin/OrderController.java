@@ -56,14 +56,21 @@ public class OrderController {
         return "BackEnd/Admin/All_Orders";
     }
 
-//    @GetMapping("/warehouse/addstockout")
-//    public String showAddStockOutForm(Model model) {
-//        List<Order> pendingOrders = orderService.findByStatus(OrderStatus.PENDING.name());
-//        model.addAttribute("orders", pendingOrders);
-//        return "BackEnd/Warehouse/addstockout";
-//    }
 
-    @DeleteMapping("/admin/delete_order/{id}")
+
+    @GetMapping("/warehouse/api/addstockout")
+    public ResponseEntity<List<Order>> getPendingOrdersForStockOut() {
+        List<Order> pendingOrders = orderService.findByStatus(OrderStatus.CONFIRMED.name());
+        return ResponseEntity.ok(pendingOrders);
+    }
+
+    @GetMapping("/warehouse/api/returnstockout")
+    public ResponseEntity<List<Order>> getReturnOrdersForStockOut() {
+        List<Order> pendingOrders = orderService.findByStatus(OrderStatus.CANCELLED.name());
+        return ResponseEntity.ok(pendingOrders);
+    }
+
+    @PostMapping("/admin/delete_order/{id}")
     public ResponseEntity<?> deleteOrder(@PathVariable("id") Long id){
         boolean isDeleted = orderService.deleteById(id);
         if(isDeleted){

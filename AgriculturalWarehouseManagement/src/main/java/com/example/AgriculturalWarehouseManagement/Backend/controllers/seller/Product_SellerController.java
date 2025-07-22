@@ -59,7 +59,7 @@ public class Product_SellerController {
             }
 
             Product_SellerDTO responseDTO = Product_SellerDTO.builder()
-                    .id(product.getId())
+                    .id((long) product.getId())
                     .name(product.getName())
                     .description(product.getDescription())
                     .status(product.getStatus().name())
@@ -94,7 +94,7 @@ public class Product_SellerController {
     }
 
     @PutMapping("/api/seller/products/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody ProductDTO dto) {
+    public ResponseEntity<?> updateProduct(@PathVariable int id, @RequestBody ProductDTO dto) {
         Product product = productService.findById(id);
         if (product == null) {
             return ResponseEntity.status(404).body("Không tìm thấy sản phẩm");
@@ -141,7 +141,7 @@ public class Product_SellerController {
     }
 
     @PostMapping(value = "/api/seller/product/{productId}/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadImage(@PathVariable Long productId,
+    public ResponseEntity<?> uploadImage(@PathVariable int productId,
                                          @RequestParam("file") MultipartFile file) {
         System.out.println(">>>>> uploadImage được gọi với productId = " + productId);
 

@@ -43,7 +43,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Product updateProduct(Long id, ProductDTO productDTO) {
+    public Product updateProduct(int id, ProductDTO productDTO) {
         Category category = categoryRepository.findById(productDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         Product product = findById(id);
@@ -56,7 +56,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public boolean deleteProduct(Long id) {
+    public boolean deleteProduct(int id) {
         Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isPresent()) {
             Product product = optionalProduct.get();
@@ -73,7 +73,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Product findById(Long id) {
+    public Product findById(int id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
     }
@@ -84,7 +84,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Gallery createProductImage(Long productId, ProductImageDTO productImageDTO) throws Exception {
+    public Gallery createProductImage(int productId, ProductImageDTO productImageDTO) throws Exception {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new Exception
                         ("Product not found with id: " + productId));
@@ -100,6 +100,13 @@ public class ProductService implements IProductService {
         return productImageRepository.save(gallery);
     }
 
+
+    public String getProductNameById(Integer productId) {
+        return productRepository.findById(productId)
+                .map(product -> product.getName())
+                .orElse(null);
+    }
+
     @Override
     public Page<Product> findAll(Pageable pageable) {
         return productRepository.findAll(pageable);
@@ -110,11 +117,11 @@ public class ProductService implements IProductService {
         productRepository.save(product);
     }
 
-    public Page<Product> filterProducts(Pageable pageable, Long categoryId, String status) {
+    public Page<Product> filterProducts(Pageable pageable, Integer categoryId, String status) {
         if (categoryId != null && status != null && !status.isEmpty()) {
-            return productRepository.findByCategoryIdAndStatus(categoryId, ProductStatus.valueOf(status), pageable);
+            return productRepository.findByCategory_CategoryIdAndStatus(categoryId, ProductStatus.valueOf(status), pageable);
         } else if (categoryId != null) {
-            return productRepository.findByCategoryId(categoryId, pageable);
+            return productRepository.findByCategory_CategoryId(categoryId, pageable);
         } else if (status != null && !status.isEmpty()) {
             return productRepository.findByStatus(ProductStatus.valueOf(status), pageable);
         } else {

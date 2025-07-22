@@ -28,16 +28,16 @@ public class SupplierController {
     @Autowired
     private SupplierService supplierService;
 
-    // Get All Suppliers
-    @GetMapping
-    public List<Suppliers> getAllSuppliers() {
-        return supplierService.getAllSuppliers(); // Trả về danh sách tất cả các Suppliers
-    }
-
     private static final Logger LOGGER = Logger.getLogger(SupplierController.class.getName());
 
     private static final String UPLOAD_DIR = "D:/Uploads/Warehouse/";
 
+    // Get All Suppliers
+    @GetMapping
+    @ResponseBody
+    public List<Suppliers> getAllSuppliers() {
+        return supplierService.getAllSuppliers(); // Trả về danh sách tất cả các Suppliers
+    }
 
     // Lấy tất cả nhà cung cấp với phân trang (API mới)
     @GetMapping("/paginated")
@@ -51,7 +51,7 @@ public class SupplierController {
     }
 
     // Hiển thị trang danh sách nhà cung cấp với phân trang (Thymeleaf)
-    @GetMapping("/admin/suppliers")
+    @GetMapping("/warehouse/suppliers")
     public String listSuppliers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
@@ -98,24 +98,32 @@ public class SupplierController {
             @RequestPart("contactInfo") String contactInfo,
             @RequestPart(value = "logo", required = false) MultipartFile logo) {
 
+        LOGGER.info("Received create request for supplier, name: '{}', contactInfo: '{}'");
+
         // Validate input
         if (supplierName == null || supplierName.trim().isEmpty() || contactInfo == null || contactInfo.trim().isEmpty()) {
             LOGGER.warning("Invalid input: supplierName or contactInfo is empty");
             return ResponseEntity.badRequest().body(Map.of("error", "Tên nhà cung cấp và thông tin liên hệ là bắt buộc."));
         }
 
-        // Kiểm tra trùng tên
-        if (supplierService.isSupplierNameExists(supplierName.trim(), null)) {
+        String normalizedName = supplierName.trim().replaceAll("\\s+", " ");
+        LOGGER.info("Normalized supplier name: '{}'");
+        if (!normalizedName.matches("^[a-zA-Z\\s\\u00C0-\\u00FF\\u0110\\u0111\\u1EA0-\\u1EFF]+$")) {
+            LOGGER.warning("Invalid supplierName format: '{}'");
+            return ResponseEntity.badRequest().body(Map.of("error", "Tên nhà cung cấp chỉ chứa chữ cái (tiếng Việt) và khoảng trắng"));
+        }
+
+        if (supplierService.isSupplierNameExists(normalizedName, null)) {
             LOGGER.warning("Supplier name '{}' already exists");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Tên nhà cung cấp đã tồn tại."));
         }
-        String normalizedName = supplierName.trim().replaceAll("\\s+", " ");
-        if (!normalizedName.matches("^[a-zA-Z\\s\u00C0-\u00FF\u1EA0-\u1EFF]+$")) {
-            LOGGER.warning("Invalid supplierName format: " + normalizedName);
-            return ResponseEntity.badRequest().body(Map.of("error", "Tên nhà cung cấp chỉ chứa chữ cái (tiếng Việt),  khoảng trắng"));
+
+        String contactValidationError = validateContactInfo(contactInfo.trim());
+        if (contactValidationError != null) {
+            LOGGER.warning("Invalid contactInfo format: '{}'");
+            return ResponseEntity.badRequest().body(Map.of("error", contactValidationError));
         }
 
-        // Kiểm tra trùng contactInfo (case-insensitive cho email)
         String normalizedContact = contactInfo.trim();
         if (normalizedContact.contains("@")) {
             normalizedContact = normalizedContact.toLowerCase();
@@ -127,22 +135,21 @@ public class SupplierController {
         }
 
         SupplierDTO supplierDTO = new SupplierDTO();
-        supplierDTO.setSupplierName(supplierName);
-        supplierDTO.setContactInfo(contactInfo);
+        supplierDTO.setSupplierName(normalizedName);
+        supplierDTO.setContactInfo(normalizedContact);
 
         if (logo != null && !logo.isEmpty()) {
             try {
-                // Validate file type
                 if (!logo.getContentType().startsWith("image/")) {
-                    LOGGER.warning("Invalid file type: " + logo.getContentType());
+                    LOGGER.warning("Invalid file type: '{}'");
                     return ResponseEntity.badRequest().body(Map.of("error", "Chỉ chấp nhận file hình ảnh."));
                 }
 
                 String fileName = saveLogoFile(logo);
                 supplierDTO.setLogo(fileName);
-                LOGGER.info("Logo file set for createSupplier: " + fileName);
+                LOGGER.info("Logo file set for createSupplier: '{}'");
             } catch (Exception e) {
-                LOGGER.severe("Failed to save logo file for createSupplier: " + e.getMessage());
+                LOGGER.severe("Failed to save logo file for createSupplier: '{}'");
                 return ResponseEntity.badRequest().body(Map.of("error", "Không thể lưu logo: " + e.getMessage()));
             }
         } else {
@@ -150,7 +157,7 @@ public class SupplierController {
         }
 
         SupplierDTO createdSupplier = supplierService.createSupplier(supplierDTO);
-        LOGGER.info("Created supplier with logo: " + createdSupplier.getLogo());
+        LOGGER.info("Created supplier with name: '{}', logo: '{}'");
         return new ResponseEntity<>(createdSupplier, HttpStatus.CREATED);
     }
 
@@ -161,36 +168,33 @@ public class SupplierController {
             @RequestPart("contactInfo") String contactInfo,
             @RequestPart(value = "logo", required = false) MultipartFile logo) {
 
+        LOGGER.info("Received update request for supplier ID: {}, name: '{}', contactInfo: '{}'"
+        );
+
         // Validate input
         if (supplierName == null || supplierName.trim().isEmpty() || contactInfo == null || contactInfo.trim().isEmpty()) {
             LOGGER.warning("Invalid input: supplierName or contactInfo is empty");
             return ResponseEntity.badRequest().body(Map.of("error", "Tên nhà cung cấp và thông tin liên hệ là bắt buộc."));
         }
 
-        // Kiểm tra trùng tên
         String normalizedName = supplierName.trim().replaceAll("\\s+", " ");
-        if (!normalizedName.matches("^[a-zA-Z\\s\u00C0-\u00FF\u1EA0-\u1EFF]+$")) {
-            LOGGER.warning("Invalid supplierName format: " + normalizedName);
-            return ResponseEntity.badRequest().body(Map.of("error", "Tên nhà cung cấp chỉ chứa chữ cái (tiếng Việt),  khoảng trắng"));
+        LOGGER.info("Normalized supplier name: '{}'");
+        if (!normalizedName.matches("^[a-zA-Z\\s\\u00C0-\\u00FF\\u0110\\u0111\\u1EA0-\\u1EFF]+$")) {
+            LOGGER.warning("Invalid supplierName format: '{}'");
+            return ResponseEntity.badRequest().body(Map.of("error", "Tên nhà cung cấp chỉ chứa chữ cái (tiếng Việt) và khoảng trắng"));
         }
 
-        if (supplierService.isSupplierNameExists(supplierName.trim(), supplierID)) {
+        if (supplierService.isSupplierNameExists(normalizedName, supplierID)) {
             LOGGER.warning("Supplier name '{}' already exists for supplier ID: {}");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Tên nhà cung cấp đã tồn tại."));
         }
 
-        // Validate contactInfo
-        if (contactInfo == null || contactInfo.trim().isEmpty()) {
-            LOGGER.warning("Invalid input: contactInfo is empty");
-            return ResponseEntity.badRequest().body(Map.of("error", "Thông tin liên hệ là bắt buộc."));
-        }
         String contactValidationError = validateContactInfo(contactInfo.trim());
         if (contactValidationError != null) {
-            LOGGER.warning("Invalid contactInfo format: " + contactValidationError);
+            LOGGER.warning("Invalid contactInfo format: '{}'");
             return ResponseEntity.badRequest().body(Map.of("error", contactValidationError));
         }
 
-        // Kiểm tra trùng contactInfo (case-insensitive cho email)
         String normalizedContact = contactInfo.trim();
         if (normalizedContact.contains("@")) {
             normalizedContact = normalizedContact.toLowerCase();
@@ -202,26 +206,23 @@ public class SupplierController {
 
         SupplierDTO supplierDTO = new SupplierDTO();
         supplierDTO.setSupplierID(supplierID);
-        supplierDTO.setSupplierName(supplierName);
-        supplierDTO.setContactInfo(contactInfo);
+        supplierDTO.setSupplierName(normalizedName);
+        supplierDTO.setContactInfo(normalizedContact);
 
         if (logo != null && !logo.isEmpty()) {
             try {
                 if (!logo.getContentType().startsWith("image/")) {
-                    LOGGER.warning("Invalid file type: " + logo.getContentType());
+                    LOGGER.warning("Invalid file type: '{}'");
                     return ResponseEntity.badRequest().body(Map.of("error", "Chỉ chấp nhận file hình ảnh."));
                 }
 
                 String fileName = saveLogoFile(logo);
                 supplierDTO.setLogo(fileName);
-                LOGGER.info("Logo file set for updateSupplier: " + fileName);
+                LOGGER.info("Logo file set for updateSupplier: '{}'");
             } catch (Exception e) {
-                LOGGER.severe("Failed to save logo file for updateSupplier: " + e.getMessage());
+                LOGGER.severe("Failed to save logo file for updateSupplier: '{}'");
                 return ResponseEntity.badRequest().body(Map.of("error", "Không thể lưu logo: " + e.getMessage()));
             }
-        } else {
-            LOGGER.info("No logo file provided for supplier ID: {}, keeping existing logo");
-            // Không set logo để giữ giá trị hiện tại
         }
 
         SupplierDTO updatedSupplier = supplierService.updateSupplier(supplierID, supplierDTO);
@@ -229,9 +230,10 @@ public class SupplierController {
             LOGGER.warning("Supplier not found for ID: {}");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Không tìm thấy nhà cung cấp với ID: " + supplierID));
         }
-        LOGGER.info("Updated supplier with logo: " + updatedSupplier.getLogo());
+        LOGGER.info("Updated supplier with name: '{}', logo: '{}'");
         return ResponseEntity.ok(updatedSupplier);
     }
+
     private String saveLogoFile(MultipartFile file) {
         try {
             // Define upload directory
