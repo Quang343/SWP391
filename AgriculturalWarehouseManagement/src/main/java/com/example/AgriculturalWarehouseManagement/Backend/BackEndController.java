@@ -23,10 +23,7 @@ public class BackEndController {
         return "BackEnd/signup";
     }
 
-    @RequestMapping("/admin/order_tracking")
-    public String orderTracking() {
-        return "BackEnd/Admin/OrderTracking";
-    }
+
 
     @RequestMapping("/warehouse")
     public String warehouse() {return "BackEnd/WareHouse/warehouseDashboard";}

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -17,6 +18,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     boolean existsByOrderCode(String orderCode);
 
     List<Order> findByStatus(String status);
+
+    Optional<Order> findByOrderCode(String orderCode);
 
     // Tổng tất cả order (bao gồm cả đã huỷ)
     @Query("SELECT COUNT(o) FROM Order o")

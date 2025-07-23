@@ -464,81 +464,28 @@
                                         </div>
 
                                         <div class="save-details-box">
-                                            <div class="row g-4">
+                                            <div class="row g-4" th:each="address : ${user.getMyAddressBooks()}">
                                                 <div class="col-xl-4 col-md-6">
                                                     <div class="save-details">
                                                         <div class="save-name">
-                                                            <h5>Mark Jugal</h5>
+                                                            <h5 th:text="${address.getFullName()}">Mark Jugal</h5>
                                                         </div>
 
                                                         <div class="save-position">
-                                                            <h6>Home</h6>
+                                                            <h6 th:text="${address.setToAddress}">Home</h6>
                                                         </div>
 
                                                         <div class="save-address">
-                                                            <p>549 Sulphur Springs Road</p>
-                                                            <p>Downers Grove, IL</p>
-                                                            <p>60515</p>
+                                                            <p th:text="'Địa chỉ: ' +  ${address.address}">549 Sulphur Springs Road</p>
+                                                            <p th:text="'Ghi chú: ' +  ${address.note}">Downers Grove, IL</p>
                                                         </div>
 
                                                         <div class="mobile">
-                                                            <p class="mobile">Mobile No. +1-123-456-7890</p>
+                                                            <p class="mobile" th:text="'Phone: ' + ${address.phone}">Mobile No. +1-123-456-7890</p>
                                                         </div>
 
-                                                        <div class="button">
-                                                            <a href="javascript:void(0)" class="btn btn-sm">Edit</a>
-                                                            <a href="javascript:void(0)"
-                                                               class="btn btn-sm">Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xl-4 col-md-6">
-                                                    <div class="save-details">
-                                                        <div class="save-name">
-                                                            <h5>Method Zaki</h5>
-                                                        </div>
-
-                                                        <div class="save-position">
-                                                            <h6>Office</h6>
-                                                        </div>
-
-                                                        <div class="save-address">
-                                                            <p>549 Sulphur Springs Road</p>
-                                                            <p>Downers Grove, IL</p>
-                                                            <p>60515</p>
-                                                        </div>
-
-                                                        <div class="mobile">
-                                                            <p class="mobile">Mobile No. +1-123-456-7890</p>
-                                                        </div>
-
-                                                        <div class="button">
-                                                            <a href="javascript:void(0)" class="btn btn-sm">Edit</a>
-                                                            <a href="javascript:void(0)" class="btn btn-sm">
-                                                                Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xl-4 col-md-6">
-                                                    <div class="save-details">
-                                                        <div class="save-name">
-                                                            <h5>Mark Jugal</h5>
-                                                        </div>
-
-                                                        <div class="save-position">
-                                                            <h6>Home</h6>
-                                                        </div>
-
-                                                        <div class="save-address">
-                                                            <p>549 Sulphur Springs Road</p>
-                                                            <p>Downers Grove, IL</p>
-                                                            <p>60515</p>
-                                                        </div>
-
-                                                        <div class="mobile">
-                                                            <p class="mobile">Mobile No. +1-123-456-7890</p>
+                                                        <div class="email">
+                                                            <p class="email" th:text="'Email: ' + ${address.email}">Mobile No. +1-123-456-7890</p>
                                                         </div>
 
                                                         <div class="button">

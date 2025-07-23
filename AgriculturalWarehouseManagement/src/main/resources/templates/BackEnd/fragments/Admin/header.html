@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Document</title>
 </head>
+<style>
 
+    .page-wrapper .page-header .header-wrapper .nav-right .sidebar-menu > li:hover > a{
+        margin: 0 -10px !important;
+        background-color: #f5f6fa !important;
+    }
+</style>
 <body>
 <div class="page-header" th:fragment="header">
     <div class="header-wrapper m-0">
@@ -139,17 +145,31 @@
                              src="https://jbagy.me/wp-content/uploads/2025/03/Hinh-anh-avatar-nam-cute-2.jpg"
                              alt="User Avatar"
                              style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #e0e0e0;">
-
-                        <div class="media-body">
-                            <span class="fw-semibold" th:text="${session.account.email}">Username</span>
-                            <p class="mb-0 font-roboto text-muted text-capitalize">
-<!--                                <span th:text="${#authentication.authorities[0].authority.replace('ROLE_', '').toLowerCase()}">Role</span>-->
-                                <i class="middle ri-arrow-down-s-line"></i>
-                            </p>
-                        </div>
+                        <i class="middle ri-arrow-down-s-line"></i>
+<!--                        <div class="media-body">-->
+<!--&lt;!&ndash;                            <span class="fw-semibold" th:text="${session.account.email}">Username</span>&ndash;&gt;-->
+<!--                            <p class="mb-0 font-roboto text-muted text-capitalize">-->
+<!--&lt;!&ndash;                                <span th:text="${#authentication.authorities[0].authority.replace('ROLE_', '').toLowerCase()}">Role</span>&ndash;&gt;-->
+<!--                                <i class="middle ri-arrow-down-s-line"></i>-->
+<!--                            </p>-->
+<!--                        </div>-->
                     </div>
 
-                    <ul class="profile-dropdown onhover-show-div">
+                    <ul class="profile-dropdown onhover-show-div sidebar-menu" style="border-radius: 15px;">
+                        <li class="profile-dropdown-item" style="display: flex;
+                            align-items: center;
+                            border-bottom: 1px solid #f3f3f3;
+                            margin: 0 -10px;
+                            background: #f3f3f3;">
+                            <img class="user-profile rounded-circle me-2"
+                                 src="https://jbagy.me/wp-content/uploads/2025/03/Hinh-anh-avatar-nam-cute-2.jpg"
+                                 alt="User Avatar"
+                                 style="width: 60px; object-fit: cover; border: 2px solid #e0e0e0;">
+                            <div class="d-inline-block">
+                                <a th:text="${session.account.fullName}"></a>
+                                <small th:text="${session.account.email}"></small>
+                            </div>
+                        </li>
                         <li>
                             <a th:href="@{/admin/users}">
                                 <i data-feather="users"></i>
@@ -165,7 +185,7 @@
                         <li>
                             <a th:href="@{/admin/profile}">
                                 <i data-feather="user"></i>
-                                <span>Profile</span>
+                                <span>My Profile</span>
                             </a>
                         </li>
                         <!--

@@ -33,7 +33,9 @@ public class OrderService implements IOrderService {
         return orderRepository.findByStatus(status);
     }
 
-
+    public boolean existByOrderCode(String orderCode) {
+        return orderRepository.existsByOrderCode(orderCode);
+    }
 
     @Override
     public Order createOrder(OrderDTO orderDTO) {
@@ -80,6 +82,13 @@ public class OrderService implements IOrderService {
     public Order findById(Long id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
+    }
+
+    public Order findByOrderCode(String orderCode){
+        if(orderRepository.findByOrderCode(orderCode).isPresent()){
+            return orderRepository.findByOrderCode(orderCode).get();
+        }
+        return null;
     }
 
     @Override

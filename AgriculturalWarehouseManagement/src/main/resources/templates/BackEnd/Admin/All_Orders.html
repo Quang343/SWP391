@@ -232,7 +232,7 @@
                                                         <!-- Theo dõi đơn hàng -->
                                                         <li>
                                                             <a class="btn btn-sm btn-solid text-white"
-                                                               th:href="@{/admin/orders/{orderId}/details(orderId=${order.getId()})}">
+                                                               th:href="@{/admin/orders/order_tracking/{orderCode}(orderCode=${order.getOrderCode()})}">
                                                                 Theo dõi
                                                             </a>
                                                         </li>

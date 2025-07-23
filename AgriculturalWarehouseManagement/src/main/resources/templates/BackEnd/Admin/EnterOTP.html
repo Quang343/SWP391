@@ -430,14 +430,14 @@
             }
 
             const otp = digits.join("");
-            const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+            // const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+            // const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
             fetch(`/AgriculturalWarehouseManagementApplication/forgotPasswordAdmin/verifyOtp?otp=${otp}&email=${encodeURIComponent(email)}`, {
                 method: "POST",
-                headers: {
-                    [csrfHeader]: csrfToken,
-                }
+                // headers: {
+                //     [csrfHeader]: csrfToken,
+                // }
             })
                 .then(async res => {
                     if (res.ok) {
