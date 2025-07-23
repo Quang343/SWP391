@@ -6,8 +6,8 @@ public enum BlogStatus {
     ACTIVE("ACTIVE"),
     INACTIVE("INACTIVE"), // Admin xóa mềm
     DRAFT("DRAFT"),
-    PENDING("PENDING"),
-    PUBLISHED("PUBLISHED"),
+ //   PENDING("PENDING"),
+   // PUBLISHED("PUBLISHED"),
     DELETED("DELETED");
 
     private final String status;

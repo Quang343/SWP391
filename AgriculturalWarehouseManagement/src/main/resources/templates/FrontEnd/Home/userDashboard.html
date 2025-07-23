@@ -774,10 +774,10 @@
                                                     </tr>
                                                     <tr>
                                                         <td>Giới tính :</td>
-                                                        <td th:if="${session.account.getGender == 'male'}"
+                                                        <td th:if="${session.account.getGender == 'Nam'}"
                                                             th:text="${'Nam'}">Your gender
                                                         </td>
-                                                        <td th:if="${session.account.getGender == 'female'}"
+                                                        <td th:if="${session.account.getGender == 'Nữ'}"
                                                             th:text="${'Nữ'}">Your gender
                                                         </td>
                                                     </tr>
@@ -1096,14 +1096,19 @@
         const words = str.trim().split(/\s+/);
 
         for (const word of words) {
-            if (word.length === 0) continue;           // an toàn, giống Java
+            if (word.length === 0) continue;  // An toàn, bỏ qua từ rỗng
+
             const firstChar = word.charAt(0);
-            if (firstChar < 'A' || firstChar > 'Z') {  // Character.isUpperCase ASCII
+
+            // Kiểm tra nếu ký tự đầu tiên không phải là chữ hoa
+            if (firstChar !== firstChar.toUpperCase()) {
                 return false;
             }
         }
+
         return true;
     }
+
 
     function showAlert(type, message) {
         // Ẩn tất cả alert đang hiển thị
@@ -1155,7 +1160,7 @@
         console.log(email)
 
         if (!isCapitalizedEachWord(fullname)) {
-            showAlert('error', 'Tên đầy đủ không được viết hoa mỗi từ');
+            showAlert('error', 'Tên đầy đủ không được viết chữ hoa mỗi từ');
             return;
         }
 
@@ -1682,14 +1687,14 @@
 
                     <div class="form-floating theme-form-floating">
                         <div class="form-check form-check-inline">
-                            <input type="radio" class="form-check-input" name="gender" id="maleProfile" value="male"
-                                   th:checked="${session.account.gender} == 'male'" required>
+                            <input type="radio" class="form-check-input" name="gender" id="maleProfile" value="Nam"
+                                   th:checked="${session.account.gender} == 'Nam'" required>
                             <label class="form-check-label" for="maleProfile">Nam</label>
                         </div>
 
                         <div class="form-check form-check-inline">
-                            <input type="radio" class="form-check-input" name="gender" id="femaleProfile" value="female"
-                                   th:checked="${session.account.gender} == 'female'" required>
+                            <input type="radio" class="form-check-input" name="gender" id="femaleProfile" value="Nữ"
+                                   th:checked="${session.account.gender} == 'Nữ'" required>
                             <label class="form-check-label" for="femaleProfile">Nữ</label>
                         </div>
                     </div>

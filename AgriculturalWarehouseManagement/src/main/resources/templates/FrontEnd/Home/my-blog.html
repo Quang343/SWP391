@@ -3,89 +3,43 @@
 
 <head th:replace="FrontEnd/fragments/head::head">
 
-    <style>
-
-        /* Căn giữa ảnh trong container */
-        img {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            object-fit: contain; /* Hoặc 'cover' nếu bạn muốn ảnh phủ toàn bộ container */
-            max-width: 100%; /* Đảm bảo ảnh đáp ứng và không vượt quá chiều rộng của container */
-            height: auto; /* Giữ tỷ lệ ảnh khi thay đổi kích thước */
-        }
-
-        /* Căn giữa tất cả các phần tử trong profile box */
-        .profile-box {
-            display: flex;
-            justify-content: center; /* Căn giữa theo chiều ngang */
-            align-items: center; /* Căn giữa theo chiều dọc */
-            padding: 0;
-            margin: 0;
-            height: 100%; /* Đảm bảo chiều cao của box là 100% */
-        }
-
-        /* Mẫu cho background của ảnh */
-        .cover-image {
-            width: 100%; /* Đảm bảo ảnh cover chiếm toàn bộ chiều rộng */
-            height: 200px; /* Tùy chỉnh chiều cao của ảnh cover */
-            background-size: cover;
-            background-position: center;
-        }
-
-        /* Kiểm tra và sửa layout cho các phần tử trong profile */
-        .profile-contain {
-            text-align: center; /* Căn giữa văn bản */
-        }
-
-        /* Nếu bạn muốn thêm padding hoặc margin cho các phần tử trong profile */
-        .profile-name {
-            margin-top: 10px;
-        }
-
-        .cover-icon input[type="file"] {
-            position: absolute;
-            top: 0;
-            right: 0;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        /* Màu nền của các trang đã chọn */
-        ul.custom-pagination li.page-item.active > a.page-link,
-        ul.custom-pagination li.page-item.active > span.page-link {
-            background-color: #19a877 !important; /* Màu xanh bạn muốn */
-            color: #fff !important;
-            border: none !important;
-        }
-
-        /* Màu cho các nút phân trang chưa chọn */
-        ul.custom-pagination .page-link {
-            color: #198754 !important; /* Màu chữ xanh đậm */
-            border-radius: 6px !important;
-            min-width: 38px;
-            text-align: center;
-            box-shadow: none !important;
-        }
-
-        /* Màu khi hover lên nút phân trang */
-        ul.custom-pagination .page-link:hover {
-            background-color: #e5f6ee !important; /* Màu nền sáng khi hover */
-            color: #198754 !important;
-        }
-
-        /* Thêm sự ưu tiên cho phân trang khi chọn */
-        .pagination .page-item.active .page-link {
-            background-color: #19a877 !important; /* Màu xanh Fastkart */
-            border-color: #19a877 !important;
-            color: #fff !important;
-            font-weight: 600;
-            border-radius: 10px;
-        }
-
-    </style>
 </head>
 
+<style>
+
+    /* Màu nền của các trang đã chọn */
+    ul.custom-pagination li.page-item.active > a.page-link,
+    ul.custom-pagination li.page-item.active > span.page-link {
+        background-color: #19a877 !important; /* Màu xanh bạn muốn */
+        color: #fff !important;
+        border: none !important;
+    }
+
+    /* Màu cho các nút phân trang chưa chọn */
+    ul.custom-pagination .page-link {
+        color: #198754 !important; /* Màu chữ xanh đậm */
+        border-radius: 6px !important;
+        min-width: 38px;
+        text-align: center;
+        box-shadow: none !important;
+    }
+
+    /* Màu khi hover lên nút phân trang */
+    ul.custom-pagination .page-link:hover {
+        background-color: #e5f6ee !important; /* Màu nền sáng khi hover */
+        color: #198754 !important;
+    }
+
+    /* Thêm sự ưu tiên cho phân trang khi chọn */
+    .pagination .page-item.active .page-link {
+        background-color: #19a877 !important; /* Màu xanh Fastkart */
+        border-color: #19a877 !important;
+        color: #fff !important;
+        font-weight: 600;
+        border-radius: 10px;
+    }
+
+</style>
 
 <body>
 
@@ -305,7 +259,7 @@
                         <div class="tab-pane fade " id="pills-product" role="tabpanel">
                             <div class="product-tab">
                                 <div class="title">
-                                    <h2>All Blog</h2>
+                                    <h2>Blog của tôi</h2>
                                     <span class="title-leaf">
                 <svg class="icon-width bg-gray">
                     <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
@@ -316,7 +270,7 @@
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#addProductModal"
                                                 style="width:100%; background-color: #198754; color: white; border: none; padding: 8px 16px; font-weight: 500; border-radius: 4px">
-                                            + Add Blog
+                                            + Thêm Blog
                                         </button>
                                     </div>
                                 </div>
@@ -326,64 +280,22 @@
                                         <!--Bảng Blog-->
                                         <thead>
                                         <tr>
-                                            <th scope="col">Number</th>
-                                            <th scope="col">Images</th>
-                                            <th scope="col">Content</th>
-                                            <th scope="col">Title</th>
-                                            <th scope="col">Author</th>
-                                            <th scope="col">Status</th>
-                                            <th scope="col">Created At</th>
-                                            <th scope="col">Edit / Delete</th>
+                                            <th scope="col">STT</th>
+                                            <th scope="col">Hình ảnh</th>
+                                            <th scope="col">Nội dung</th>
+                                            <th scope="col">Tiêu đề </th>
+                                            <th scope="col">Tác giả</th>
+                                            <th scope="col">Trạng thái </th>
+                                            <th scope="col">Ngày tạo</th>
+                                            <th scope="col">Sửa / Xóa</th>
 
                                         </tr>
                                         </thead>
-                                        <!--                                        <tbody>-->
-                                        <!--                                        <tr th:each="blog, iterStat : ${blogs}">-->
-                                        <!--                                            &lt;!&ndash; Number (STT) &ndash;&gt;-->
-                                        <!--                                            <td th:text="${iterStat.index + 1}"></td>-->
-
-                                        <!--                                            &lt;!&ndash; Images &ndash;&gt;-->
-                                        <!--                                            <td>-->
-                                        <!--                                                <img th:src="@{'/Frontend/assets/images/blog/' + ${blog.blogDetail.thumbnail}}"-->
-                                        <!--                                                     style="max-width: 120px; max-height: 70px; object-fit: cover; border-radius: 6px;"-->
-                                        <!--                                                     class="img-fluid" alt="">-->
-                                        <!--                                            </td>-->
-
-                                        <!--                                            &lt;!&ndash; Content (Show ngắn gọn, ví dụ 40 ký tự đầu) &ndash;&gt;-->
-                                        <!--                                            <td>-->
-                                        <!--                                                <h6 th:text="${#strings.length(blog.content) > 40 ? #strings.substring(blog.content, 0, 40) + '...' : blog.content}"></h6>-->
-                                        <!--                                            </td>-->
-
-                                        <!--                                            &lt;!&ndash; Title &ndash;&gt;-->
-                                        <!--                                            <td>-->
-                                        <!--                                                <h6 th:text="${blog.title}"></h6>-->
-                                        <!--                                            </td>-->
-
-                                        <!--                                            &lt;!&ndash; Status &ndash;&gt;-->
-                                        <!--                                            <td>-->
-                                        <!--                                                <h6 th:text="${blog.status}"></h6>-->
-                                        <!--                                            </td>-->
-
-                                        <!--                                            &lt;!&ndash; Created At &ndash;&gt;-->
-                                        <!--                                            <td>-->
-                                        <!--                                                <h6 th:text="${#dates.format(blog.createdAt, 'dd/MM/yyyy')}"></h6>-->
-                                        <!--                                            </td>-->
-
-                                        <!--                                            &lt;!&ndash; Edit/Delete (chỉ là icon, bạn cần gắn link js hoặc url cho action này) &ndash;&gt;-->
-                                        <!--                                            <td class="edit-delete">-->
-                                        <!--                                                <a th:href="@{'/blog/edit?id=' + ${blog.blogID}}"><i data-feather="edit"-->
-                                        <!--                                                                                                     class="edit"></i></a>-->
-                                        <!--                                                <a th:href="@{'/blog/delete?id=' + ${blog.blogID}}"-->
-                                        <!--                                                   onclick="return confirm('Bạn chắc chắn muốn xóa?')">-->
-                                        <!--                                                    <i data-feather="trash-2" class="delete"></i>-->
-                                        <!--                                                </a>-->
-                                        <!--                                            </td>-->
-                                        <!--                                        </tr>-->
-                                        <!--                                        </tbody>-->
 
                                         <tbody id="blogTableBody">
                                         <!-- Blog rows sẽ được JS thêm vào đây -->
                                         </tbody>
+
                                     </table>
                                     <!-- Pagination -->
                                     <nav>

@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org" >
 
-<head th:replace="BackEnd/fragments/Blog/head::head"></head>
+<head th:replace="BackEnd/fragments/Admin/head::head"></head>
 <style>
     .col-stt {
         text-align: center !important;
@@ -22,8 +22,32 @@
         opacity: 0;
         transform: translateY(-10px);
     }
+    /* Màu nền của các trang đã chọn */
+    ul.custom-pagination li.page-item.active > a.page-link,
+    ul.custom-pagination li.page-item.active > span.page-link {
+        background-color: #19a877 !important; /* Màu xanh bạn muốn */
+        color: #fff !important;
+        border: none !important;
+    }
+
+    /* Màu cho các nút phân trang chưa chọn */
+    ul.custom-pagination .page-link {
+        color: #198754 !important; /* Màu chữ xanh đậm */
+        border-radius: 6px !important;
+        min-width: 38px;
+        text-align: center;
+        box-shadow: none !important;
+    }
+
+    /* Màu khi hover lên nút phân trang */
+    ul.custom-pagination .page-link:hover {
+        background-color: #e5f6ee !important; /* Màu nền sáng khi hover */
+        color: #198754 !important;
+    }
+
+    /* Thêm sự ưu tiên cho phân trang khi chọn */
     .pagination .page-item.active .page-link {
-        background-color: #19a877 !important;   /* xanh Fastkart */
+        background-color: #19a877 !important; /* Màu xanh Fastkart */
         border-color: #19a877 !important;
         color: #fff !important;
         font-weight: 600;
@@ -41,13 +65,13 @@
 <!-- page-wrapper Start-->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
     <!-- Page Header Start-->
-    <div th:replace="BackEnd/fragments/Blog/header::header"></div>
+    <div th:replace="BackEnd/fragments/Admin/header::header"></div>
     <!-- Page Header Ends-->
 
     <!-- Page Body Start-->
     <div class="page-body-wrapper">
         <!-- Page Sidebar Start-->
-        <div th:replace="BackEnd/fragments/Blog/sidebar::sidebar"></div>
+        <div th:replace="BackEnd/fragments/Admin/sidebar::sidebar"></div>
         <!-- Page Sidebar Ends-->
 
         <!-- Container-fluid starts-->
@@ -75,12 +99,6 @@
                                     <div class="right-options">
                                         <ul>
                                             <li>
-                                                <a href="javascript:void(0)">import</a>
-                                            </li>
-                                            <li>
-                                                <a href="javascript:void(0)">Export</a>
-                                            </li>
-                                            <li>
                                                 <a class="btn btn-solid" th:href="@{/admin/add_blog}">Add Blog</a>
                                             </li>
                                         </ul>
@@ -107,15 +125,15 @@
                                             <!--Bảng Blog-->
                                             <thead>
                                             <tr>
-                                                <th scope="col">Number</th>
-                                                <th scope="col">Images</th>
-                                                <th scope="col">Content</th>
-                                                <th scope="col">Title</th>
-                                                <th scope="col">Author</th>
-                                                <th scope="col">Category</th> <!-- THÊM DÒNG NÀY -->
-                                                <th scope="col">Status</th>
-                                                <th scope="col">Created At</th>
-                                                <th scope="col">Edit / Delete</th>
+                                                <th scope="col">STT</th>
+                                                <th scope="col">Hình ảnh</th>
+                                                <th scope="col">Nội dung </th>
+                                                <th scope="col">Chi tiết </th>
+                                                <th scope="col">Tác giả </th>
+                                                <th scope="col">Danh mục </th> <!-- THÊM DÒNG NÀY -->
+                                                <th scope="col">Trạng thái</th>
+                                                <th scope="col">Ngày tạo</th>
+                                                <th scope="col">Sửa / Xóa</th>
 
                                             </tr>
                                             </thead>
@@ -143,7 +161,7 @@
             </div>
             <!-- Container-fluid Ends-->
 
-            <div th:replace="BackEnd/fragments/Blog/footer::footer"></div>
+            <div th:replace="BackEnd/fragments/Admin/footer::footer"></div>
 
         </div>
     </div>
@@ -495,7 +513,8 @@
             });
     }
 
-    // Lưu thay đổi khi chỉnh sửa blog
+
+
     function saveEditBlog() {
         const title = document.getElementById('edit-title').value;
         const content = document.getElementById('edit-content').value;
@@ -504,7 +523,6 @@
         const status = document.getElementById('edit-status').value;
         const thumbnailFile = document.getElementById('edit-thumbnail').files[0];
 
-        // Nếu có file ảnh mới, upload trước
         function doUpdate(thumbnailName) {
             const blog = {
                 title,
@@ -512,45 +530,50 @@
                 author,
                 blogCategoryID: parseInt(blogCategoryID),
                 status,
-                blogDetail: {
-                    thumbnail: thumbnailName // Nếu có ảnh mới, dùng ảnh mới
-                }
+                thumbnail: thumbnailName // Gửi trực tiếp vào DTO thumbnail
             };
 
-            // Gửi dữ liệu lên API để cập nhật blog
-            //  axios.put(`${CONTEXT_PATH}/api/admin/blog/${currentEditBlogId}`, blog)
             axios.put(`${CONTEXT_PATH}/api/admin/blog/edit_blog/${currentEditBlogId}`, blog)
-
                 .then(res => {
-                    console.log("Current Edit Blog ID:", currentEditBlogId);
-
                     alert("🎉 Cập nhật blog thành công!");
                     $('#editBlogModal').modal('hide');
-                    loadAdminBlogPage(1);  // Load lại dữ liệu blog
+                    loadAdminBlogPage(1);
                 })
                 .catch(err => {
                     alert("Lỗi cập nhật: " + JSON.stringify(err));
                 });
         }
 
-        // Nếu chọn ảnh mới, upload ảnh trước khi cập nhật
         if (thumbnailFile) {
             const formData = new FormData();
             formData.append("file", thumbnailFile);
             axios.post(`${CONTEXT_PATH}/api/admin/blog/upload-thumbnail`, formData, {
                 headers: {'Content-Type': 'multipart/form-data'}
             }).then(res => {
-                doUpdate(res.data); // Dùng tên ảnh mới
+                doUpdate(res.data); // res.data là tên file mới
             }).catch(err => {
                 alert("Lỗi upload ảnh: " + JSON.stringify(err));
             });
         } else {
-            // Không có ảnh mới, lấy ảnh hiện tại từ preview
             const imgSrc = document.getElementById('edit-preview-thumbnail').src;
-            let thumbnailName = imgSrc.split('/blog/')[1] || '';  // Lấy tên file từ src
-            doUpdate(thumbnailName);  // Cập nhật với ảnh hiện tại
+            let thumbnailName = imgSrc.split('/blog/')[1] || '';
+            doUpdate(thumbnailName);
         }
     }
+
+
+    function previewEditThumbnail(event) {
+        const input = event.target;
+        const preview = document.getElementById('edit-preview-thumbnail');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
     // model deleted
     // Hàm gọi API để chuyển trạng thái blog về DELETED
     function deleteBlog(blogID) {
@@ -609,7 +632,7 @@
                 console.error('Lỗi lấy dữ liệu:', err);
             });
     }
-///===== filter
+    ///===== filter
 
     function loadStatusFilterOptions() {
         axios.get(`${CONTEXT_PATH}/api/admin/blog/status-list`)
