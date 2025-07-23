@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -105,43 +106,43 @@ public class User_SellerServiceImpl implements User_SellerService {
 
     @Override
     public String saveAvatar(Long userId, MultipartFile file) throws Exception {
-        // Kiểm tra định dạng file
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         String extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
 
         if (extension.equals("webp")) {
-            throw new IllegalArgumentException("Định dạng ảnh không được hỗ trợ (webp). Vui lòng chọn PNG hoặc JPG.");
+            throw new IllegalArgumentException("Định dạng ảnh không được hỗ trợ (webp). Vui lòng chọn PNG, JPG hoặc GIF.");
         }
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
 
-        // Đọc ảnh gốc
-        BufferedImage originalImage = ImageIO.read(file.getInputStream());
-        if (originalImage == null) {
-            throw new IllegalArgumentException("File không phải là ảnh hợp lệ.");
-        }
-
-        // Cắt về hình vuông (center crop)
-        int width = originalImage.getWidth();
-        int height = originalImage.getHeight();
-        int squareSize = Math.min(width, height);
-        int x = (width - squareSize) / 2;
-        int y = (height - squareSize) / 2;
-        BufferedImage cropped = originalImage.getSubimage(x, y, squareSize, squareSize);
-
-        // Tạo đường dẫn thư mục upload
         Path uploadDir = Paths.get(rootUploadDir, "Seller", String.valueOf(userId));
         if (!Files.exists(uploadDir)) {
             Files.createDirectories(uploadDir);
         }
 
-        // Tên cố định
         String newFileName = "avatar." + extension;
         Path outputPath = uploadDir.resolve(newFileName);
-        ImageIO.write(cropped, extension, outputPath.toFile());
 
-        // Cập nhật tên vào DB
+        if (extension.equals("gif")) {
+            // Ghi nguyên file gif không xử lý
+            Files.copy(file.getInputStream(), outputPath, StandardCopyOption.REPLACE_EXISTING);
+        } else {
+            // Đọc ảnh gốc và crop
+            BufferedImage originalImage = ImageIO.read(file.getInputStream());
+            if (originalImage == null) {
+                throw new IllegalArgumentException("File không phải là ảnh hợp lệ.");
+            }
+
+            int width = originalImage.getWidth();
+            int height = originalImage.getHeight();
+            int squareSize = Math.min(width, height);
+            int x = (width - squareSize) / 2;
+            int y = (height - squareSize) / 2;
+            BufferedImage cropped = originalImage.getSubimage(x, y, squareSize, squareSize);
+            ImageIO.write(cropped, extension, outputPath.toFile());
+        }
+
         user.setImage(newFileName);
         userRepository.save(user);
 

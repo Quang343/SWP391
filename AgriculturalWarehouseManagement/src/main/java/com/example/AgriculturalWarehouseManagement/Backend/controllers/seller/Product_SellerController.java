@@ -29,6 +29,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 @RestController
 @RequiredArgsConstructor
 public class Product_SellerController {
@@ -94,8 +95,8 @@ public class Product_SellerController {
     }
 
     @PutMapping("/api/seller/products/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable int id, @RequestBody ProductDTO dto) {
-        Product product = productService.findById(id);
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody ProductDTO dto) {
+        Product product = productService.findById(id.intValue());
         if (product == null) {
             return ResponseEntity.status(404).body("Không tìm thấy sản phẩm");
         }
@@ -141,7 +142,7 @@ public class Product_SellerController {
     }
 
     @PostMapping(value = "/api/seller/product/{productId}/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadImage(@PathVariable int productId,
+    public ResponseEntity<?> uploadImage(@PathVariable Long productId,
                                          @RequestParam("file") MultipartFile file) {
         System.out.println(">>>>> uploadImage được gọi với productId = " + productId);
 
@@ -151,7 +152,7 @@ public class Product_SellerController {
 
             String filename = storeFile(file); // giống hàm bạn đang dùng
             ProductImageDTO dto = ProductImageDTO.builder().imageUrl(filename).build();
-            Gallery savedImage = productService.createProductImage(productId, dto);
+            Gallery savedImage = productService.createProductImage(productId.intValue(), dto);
             Map<String, Object> response = new HashMap<>();
             response.put("id", savedImage.getGalleryId());
             response.put("imageUrl", savedImage.getImageUrl());
@@ -162,14 +163,14 @@ public class Product_SellerController {
     }
 
     @DeleteMapping("/api/seller/product/{productId}/images/{imageId}")
-    public ResponseEntity<?> deleteImage(@PathVariable Long productId, @PathVariable int imageId) throws IOException {
-        Optional<Gallery> image = Optional.ofNullable(productImageService.findById(imageId));
-        if (image.isEmpty() || !image.get().getProduct().getId().equals(productId)) {
+    public ResponseEntity<?> deleteImage(@PathVariable Long productId, @PathVariable Long imageId) throws IOException {
+        Optional<Gallery> image = Optional.ofNullable(productImageService.findById(imageId.intValue()));
+        if (image.isEmpty() || !Objects.equals(image.get().getProduct().getId().longValue(), productId)) {
             return ResponseEntity.notFound().build();
         }
 
         // Xóa hẳn
-        productImageService.deleteById(imageId);
+        productImageService.deleteById(imageId.intValue());
 
         // (Optional) Nếu bạn muốn xóa cả file vật lý:
         Files.deleteIfExists(Paths.get(uploadDir + "/Seller", image.get().getImageUrl()));
@@ -179,6 +180,7 @@ public class Product_SellerController {
 
     @Value("${app.upload.product-dir}")
     private String uploadDir;
+
     private String storeFile(MultipartFile file) throws IOException {
         if (file.getOriginalFilename() == null) {
             throw new IOException("Tên tệp trống");

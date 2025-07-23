@@ -2629,31 +2629,44 @@
         }
 
         row.innerHTML = `
-        <td>${index}</td>
-        <td class="text-center align-middle">
-          <button type="button" class="btn btn-sm btn-outline-info btn-view-images" title="Quản lý ảnh" data-id="${product.id}">
-              <i class="ri-image-line"></i>
-            </button>
-        </td>
-        <td class="wrap-text">${product.name}</td>
-        <td>${product.category?.name || 'Unknown'}</td>
-        <td class="wrap-text">${product.description || ''}</td>
-        <td><span style="color: ${statusColor}; font-weight: bold;">${product.status.replace(/_/g, ' ')}</span></td>
-        <td class="text-center align-middle">
-            <ul class="option-list d-flex justify-content-center gap-2 list-unstyled m-0">
-                <li><button type="button" class="btn btn-sm btn-outline-info btn-view" title="Chi tiết sản phẩm" data-id="${product.id}"><i class="ri-eye-line"></i></button></li>
-                <li><button class="btn btn-sm btn-outline-primary btn-edit" title="Chỉnh sửa" data-id="${product.id}"><i class="ri-pencil-line"></i></button></li>
-                <li>
-                    <button class="btn btn-sm btn-outline-danger btn-delete"
-                        title="${product.status === 'INACTIVE' ? 'Sản phẩm đã ngừng kinh doanh' : 'Ngừng kinh doanh'}"
-                        data-id="${product.id}"
-                        ${product.status === 'INACTIVE' ? 'disabled' : ''}>
-                        <i class="ri-delete-bin-line"></i>
-                    </button>
-                </li>
-            </ul>
-        </td>
-    `;
+  <td>${index}</td>
+  <td class="text-center align-middle">
+    <button type="button" class="btn btn-sm btn-outline-info btn-view-images" title="Quản lý ảnh" data-id="${product.id}">
+      <i class="ri-image-line p-1 rounded-circle bg-light"></i>
+    </button>
+  </td>
+  <td class="wrap-text fw-bold">${product.name}</td>
+  <td class="wrap-text">${product.category?.name || 'Unknown'}</td>
+  <td class="wrap-text text-muted">${product.description || ''}</td>
+  <td>
+    <span class="badge px-3 py-2 fw-semibold text-white"
+          style="background-color: ${statusColor}; text-transform: capitalize;">
+      ${product.status.replace(/_/g, ' ')}
+    </span>
+  </td>
+  <td class="text-center align-middle">
+    <ul class="option-list d-flex justify-content-center gap-2 list-unstyled m-0">
+      <li>
+        <button type="button" class="btn btn-sm btn-outline-info btn-view" title="Chi tiết sản phẩm" data-id="${product.id}">
+          <i class="ri-eye-line"></i>
+        </button>
+      </li>
+      <li>
+        <button class="btn btn-sm btn-outline-primary btn-edit" title="Chỉnh sửa" data-id="${product.id}">
+          <i class="ri-pencil-line"></i>
+        </button>
+      </li>
+      <li>
+        <button class="btn btn-sm btn-outline-danger btn-delete"
+                title="${product.status === 'INACTIVE' ? 'Sản phẩm đã ngừng kinh doanh' : 'Ngừng kinh doanh'}"
+                data-id="${product.id}"
+                ${product.status === 'INACTIVE' ? 'disabled' : ''}>
+          <i class="ri-delete-bin-line"></i>
+        </button>
+      </li>
+    </ul>
+  </td>
+`;
 
         tbody.appendChild(row);
         setupProductViewButtons();
@@ -3827,31 +3840,32 @@
                 paginated.forEach((item, index) => {
                     const row = document.createElement("tr");
                     row.innerHTML = `
-                    <td>${start + index + 1}</td>
-                    <td>${item.productName}</td>
-                    <td>${item.detailName}</td>
-                    <td>${item.sellerEmail || 'N/A'}</td> <!-- ✅ Email người bán -->
-                    <td>${item.price}</td>
-                    <td>${item.expiry}</td>
-                    <td><span style="color: ${getStatusColor(item.status)}; font-weight: bold;">${item.status.replace(/_/g, ' ')}</span></td>
-                    <td class="text-center align-middle">
-                        <ul class="option-list d-flex justify-content-center gap-2 list-unstyled m-0">
-                            <li>
-                                <button class="btn btn-sm btn-outline-primary btn-edit-detail" title="Chỉnh sửa" data-id="${item.id}">
-                                    <i class="ri-pencil-line"></i>
-                                </button>
-                            </li>
-                            <li>
-                                <button class="btn btn-sm btn-outline-danger btn-delete-product-detail"
-                                    title="${item.status === 'INACTIVE' ? 'Chi tiết sản phẩm đã ngừng kinh doanh' : 'Ngừng kinh doanh'}"
-                                    data-id="${item.id}"
-                                    ${item.status === 'INACTIVE' ? 'disabled' : ''}>
-                                    <i class="ri-delete-bin-line"></i>
-                                </button>
-                            </li>
-                        </ul>
-                    </td>
-                `;
+        <td>${start + index + 1}</td>
+        <td class="fw-bold">${item.productName}</td>
+        <td class="fw-medium">${item.detailName}</td>
+        <td class="text-muted">${item.sellerEmail || 'N/A'}</td>
+        <td><strong style="color:#28a745;">${item.price.toLocaleString()}₫</strong></td>
+        <td>${item.expiry}</td>
+        <td><span class="badge px-3 py-2 fw-semibold text-white" style="background-color: ${getStatusColor(item.status)}; color: white;">${item.status.replace(/_/g, ' ')}</span></td>
+    </span>
+        <td class="text-center align-middle">
+            <ul class="option-list d-flex justify-content-center gap-2 list-unstyled m-0">
+                <li>
+                    <button class="btn btn-sm btn-outline-primary btn-edit-detail" title="Chỉnh sửa" data-id="${item.id}">
+                        <i class="ri-pencil-line"></i>
+                    </button>
+                </li>
+                <li>
+                    <button class="btn btn-sm btn-outline-danger btn-delete-product-detail"
+                        title="${item.status === 'INACTIVE' ? 'Chi tiết sản phẩm đã ngừng kinh doanh' : 'Ngừng kinh doanh'}"
+                        data-id="${item.id}"
+                        ${item.status === 'INACTIVE' ? 'disabled' : ''}>
+                        <i class="ri-delete-bin-line"></i>
+                    </button>
+                </li>
+            </ul>
+        </td>
+    `;
                     tbody.appendChild(row);
                 });
 
@@ -4117,59 +4131,57 @@
                         let statusColor = "#6c757d"; // default: gray
                         switch (order.status) {
                             case "PENDING":
-                                statusColor = "#ffc107"; // yellow
+                                statusColor = "#e8a512"; // vàng (warning)
                                 break;
                             case "CONFIRMED":
-                                statusColor = "#0dcaf0"; // blue
+                                statusColor = "#188552"; // xanh lá cây (green)
                                 break;
                             case "CANCELLED":
-                                statusColor = "#dc3545"; // red
+                                statusColor = "#e55353"; // đỏ sáng hơn (danger)
                                 break;
                             case "STOCKOUT":
-                                statusColor = "#6c757d"; // gray
+                                statusColor = "#adb5bd"; // xám nhạt (secondary)
                                 break;
                             case "DELIVERED":
-                                statusColor = "#198754"; // green
+                                statusColor = "#0d6efd"; // xanh dương Bootstrap
                                 break;
                             case "COMPLETED":
-                                statusColor = "#0d6efd"; // darker blue
+                                statusColor = "#6610f2"; // tím (hoàn thành)
                                 break;
                         }
 
 
                         row.innerHTML = `
-                            <td>${index + 1}</td>
-                            <td>${order.orderCode}</td>
-                            <td>${new Date(order.orderDate).toLocaleString()}</td>
-                            <td>${order.phone}</td>
-                            <td>${order.address}</td>
-                            <td>${order.totalAmount.toLocaleString()}</td>
-                            <td>${order.finalAmount.toLocaleString()}</td>
-                            <td>
-                              <span class="order-status ${order.status}"
-                                    style="color: white; background-color: ${statusColor}; font-weight: 600; padding: 4px 10px; border-radius: 12px; display: inline-block; text-transform: capitalize;">
-                                ${order.status.replace(/_/g, ' ')}
-                              </span>
-                            </td>
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center align-items-center gap-2">
-                                    <button class="btn btn-sm btn-primary confirm-btn ${order.status !== 'PENDING' ? 'disabled-btn' : ''}"
-                                            data-order-id="${order.orderId}"
-                                            title="Xác nhận"
-                                            ${order.status !== 'PENDING' ? 'disabled' : ''}>
-                                        <i class="bi bi-check-circle me-1"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-info" title="Xem chi tiết">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-tracking-custom"
-                                            data-order-id="${order.orderId}">
-                                        Theo dõi đơn hàng
-                                    </button>
-                                </div>
-                            </td>
-
-                        `;
+  <td>${index + 1}</td>
+  <td class="text-secondary fw-medium">${order.orderCode}</td>
+  <td>${new Date(order.orderDate).toLocaleString()}</td>
+  <td>${order.phone}</td>
+  <td class="text-body">${order.address}</td>
+  <td class="text-success fw-bold">${order.totalAmount.toLocaleString()}</td>
+  <td class="text-danger fw-bold">${order.finalAmount.toLocaleString()}</td>
+  <td>
+    <span class="order-status ${order.status}"
+          style="color: white; background-color: ${statusColor}; font-weight: 600; padding: 4px 10px; border-radius: 12px; display: inline-block; text-transform: capitalize;">
+      ${order.status.replace(/_/g, ' ')}
+    </span>
+  </td>
+  <td class="text-center">
+    <div class="d-flex justify-content-center align-items-center gap-2">
+      <button class="btn btn-sm btn-primary confirm-btn ${order.status !== 'PENDING' ? 'disabled-btn' : ''}"
+              data-order-id="${order.orderId}"
+              title="Xác nhận"
+              ${order.status !== 'PENDING' ? 'disabled' : ''}>
+        <i class="bi bi-check-circle icon-circle me-1"></i>
+      </button>
+      <button class="btn btn-sm btn-tracking-custom ${order.status === 'CANCELLED' ? 'disabled-btn' : ''}"
+              data-order-id="${order.orderId}"
+              title="Theo dõi đơn hàng"
+              ${order.status === 'CANCELLED' ? 'disabled' : ''}>
+        Theo dõi đơn hàng
+      </button>
+    </div>
+  </td>
+`;
                         tbody.appendChild(row);
                     });
 
@@ -4304,6 +4316,19 @@
 
 <!--CSS Order-->
 <style>
+    .icon-circle {
+        background-color: #198754;   /* màu xanh success */
+        color: white;                /* màu icon */
+        width: 24px;
+        height: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 14px;
+    }
+
+
     /* Áp dụng border dọc cho từng ô */
     #orderTable th, #orderTable td {
         border-right: 1px solid #dee2e6; /* màu xám nhạt giống Bootstrap */
