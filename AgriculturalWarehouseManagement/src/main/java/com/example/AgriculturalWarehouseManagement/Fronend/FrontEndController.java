@@ -11,11 +11,11 @@ public class FrontEndController {
     public String shop() {
         return "FrontEnd/Home/shop";
     }
-
-    @RequestMapping("/shop/Home/productdetail")
-    public String productdetail() {
-        return "FrontEnd/Home/productdetail";
-    }
+//
+//    @RequestMapping("/shop/Home/productdetail")
+//    public String productdetail() {
+//        return "FrontEnd/Home/productdetail";
+//    }
 
     @RequestMapping("/login")
     public String login() {

@@ -71,12 +71,70 @@ public class ProductDetailUserService {
 
     }
 
-    public ProductDetailUserResponse getProductDetailUsers(Integer productDetaiId) {
-        if (getProductDetailUser(productDetaiId).isEmpty()) {
+    public ProductDetailUserResponse getProductDetailUsers(Integer productDetailId) {
+        if (getProductDetailUser(productDetailId).isEmpty()) {
             return new ProductDetailUserResponse();
         } else {
-            List<ProductDetailUserResponse> response = getProductDetailUser(productDetaiId);
-            return response.get(0);
+            List<ProductDetailUserResponse> response = getProductDetailUser(productDetailId);
+            int totalRemaining = 0;
+            int totalSold = 0;
+
+            for (ProductDetailUserResponse productDetailRepository1 : response) {
+
+                if (!productDetailRepository1.getExpiryStatus().equals("Hết hạn")
+                        && !productDetailRepository1.getStatus().equals("Hết hàng")) {
+                    totalRemaining += productDetailRepository1.getRemainQuantity();
+                }
+                totalSold += productDetailRepository1.getSoldQuantity();
+            }
+
+            int productDetailIdCheck = 0;
+            String statusMessageStatus = "";
+            String statusMessageStatusExpire = "";
+
+            for (ProductDetailUserResponse productDetailRepository1 : response) {
+                if (productDetailRepository1.getStatus().equals("Hết hàng")) {
+                    statusMessageStatus = "Hết hàng";
+                    continue;
+                }
+
+                if (productDetailRepository1.getExpiryStatus().equals("Hết hạn")) {
+                    statusMessageStatusExpire = "Hết hạn";
+                    continue;
+                }
+
+                productDetailIdCheck = productDetailRepository1.getProductId();
+                break;
+            }
+
+            ProductDetailUserResponse productDetailUserResponse = new ProductDetailUserResponse();
+            if (productDetailIdCheck == 0) {
+                for (ProductDetailUserResponse productDetailRepository1 : response) {
+                    if (productDetailRepository1.getStatus().equals("Hết hàng")) {
+                        productDetailUserResponse = productDetailRepository1;
+                        return productDetailUserResponse;
+                    }
+
+                    if (productDetailRepository1.getExpiryStatus().equals("Hết hạn")) {
+                        productDetailUserResponse = productDetailRepository1;
+                        return productDetailUserResponse;
+                    }
+                }
+
+            } else {
+                for (ProductDetailUserResponse productDetailRepository1 : response) {
+                    if (!productDetailRepository1.getExpiryStatus().equals("Hết hạn")
+                            && !productDetailRepository1.getStatus().equals("Hết hàng")) {
+                        productDetailUserResponse = productDetailRepository1;
+                        productDetailUserResponse.setRemainQuantity(totalRemaining);
+                        productDetailUserResponse.setSoldQuantity(totalSold);
+                        return productDetailUserResponse;
+                    }
+                }
+            }
+
+            return productDetailUserResponse;
+
         }
     }
 
@@ -160,19 +218,19 @@ public class ProductDetailUserService {
 
     public ResponseResult<ProductDetailUserResponse> checkQuantityProduct(int quantity, int productDetailId) {
         ProductDetailUserResponse productDetailUserResponse = getProductDetailUsers(productDetailId);
-
-        if (productDetailUserResponse.getStatus().equals("Hết hàng")) {
-            return new ResponseResult<>("ERROR", "Sản phẩm này hiện không còn hàng. Vui lòng chọn sản phẩm khác.",false);
+        System.out.println("hello"+productDetailUserResponse.toString());
+        if (productDetailUserResponse.getStatus() != null && productDetailUserResponse.getStatus().equals("Hết hàng")) {
+            return new ResponseResult<>("ERROR", "Sản phẩm này hiện không còn hàng. Vui lòng chọn sản phẩm khác.", false);
         }
 
-        if (productDetailUserResponse.getExpiryStatus().equals("Hết hạn")){
-            return new ResponseResult<>("ERROR", "Sản phẩm này hiện hết hạn. Vui lòng chọn sản phẩm khác",false);
+        if (productDetailUserResponse.getExpiryStatus() != null && productDetailUserResponse.getExpiryStatus().equals("Hết hạn")) {
+            return new ResponseResult<>("ERROR", "Sản phẩm này hiện hết hạn. Vui lòng chọn sản phẩm khác", false);
         }
 
         if (quantity > productDetailUserResponse.getRemainQuantity()) {
-            return new ResponseResult<>("ERROR","Số lượng bạn nhập không được lớn hớn số lượng của Shop",false);
+            return new ResponseResult<>("ERROR", "Số lượng bạn nhập không được lớn hơn số lượng của Shop", false);
         }
 
-        return new ResponseResult<>("SUCCESS", "Thêm vào giỏ hàn thành công", true);
+        return new ResponseResult<>("SUCCESS", "Thêm vào giỏ hàng thành công", true);
     }
 }

@@ -252,7 +252,7 @@
                                             setTimeout(function () {
                                                 quantityErrorDivOne.style.display = 'none'; // Ẩn thông báo lỗi sau 10 giây
                                             }, 10000); // 10 giây
-                                        } else if(Number(quantityValue) == -1){
+                                        } else if (Number(quantityValue) == -1) {
                                             errorMessageSpan.textContent = "Số lượng bạn nhập không được nhỏ hơn 0"; // Thông báo lỗi
                                             quantityErrorDivOne.style.display = 'inline-block'; // Hiển thị thông báo lỗi
                                             event.preventDefault(); // Ngừng gửi biểu mẫu
@@ -260,8 +260,7 @@
                                             setTimeout(function () {
                                                 quantityErrorDivOne.style.display = 'none'; // Ẩn thông báo lỗi sau 10 giây
                                             }, 10000);
-                                        }
-                                        else {
+                                        } else {
                                             quantityErrorDivOne.style.display = 'none'; // Ẩn thông báo lỗi nếu không có lỗi
                                         }
                                     });
@@ -288,14 +287,15 @@
                                 <li th:if="${session.account != null}" data-bs-toggle="tooltip"
                                     data-bs-placement="top" title="Wishlist">
                                     <a href="javascript:void(0)" class="btn p-0 wishlist notifi-wishlist"
-                                            th:data-productid="${productId}"
-                                            style="margin-left: 20px">
+                                       th:data-productid="${productId}"
+                                       style="margin-left: 20px">
                                         <i data-feather="heart"></i>
                                         <span style="margin-left: 2px;font-size: 15px;">Yêu thích</span>
                                     </a>
                                 </li>
 
-                                <li th:if="${!galleryUserResponses.isEmpty()}" data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                <li th:if="${!galleryUserResponses.isEmpty()}" data-bs-toggle="tooltip"
+                                    data-bs-placement="top" title="Compare">
                                     <a href="javascript:void(0)"
                                        data-bs-toggle="modal"
                                        data-bs-target="#view"
@@ -311,7 +311,8 @@
                                     <h4>Thông tin sản phẩm</h4>
                                 </div>
 
-                                <div class="product-info">
+                                <div class="product-info"
+                                     th:if="${productDetailUserResponse != null and (productDetailUserResponse.status != 'Hết hàng' and productDetailUserResponse.expiryStatus != 'Hết hạn')}">
                                     <ul class="product-info-list product-info-list-2">
                                         <li th:if="${productDetailUserResponse != null and productDetailUserResponse.status == 'Hết hàng'}">
                                             Hết hàng
@@ -321,14 +322,14 @@
                                         </li>
                                         <li>Số lượng còn lại :
                                             <a th:if="${productDetailUserResponse != null and productDetailUserResponse.status != 'Hết hàng'}"
-                                                th:text="${productDetailUserResponse.remainQuantity}"
-                                                href="javascript:void(0)"></a>
+                                               th:text="${productDetailUserResponse.remainQuantity}"
+                                               href="javascript:void(0)"></a>
                                             <a th:if="${productDetailUserResponse != null and productDetailUserResponse.status == 'Hết hàng'}"
-                                                    href="javascript:void(0)">0</a></li>
+                                               href="javascript:void(0)">0</a></li>
                                         <li>Số đã bán : <a th:if="${productDetailUserResponse != null }"
                                                            th:text="${productDetailUserResponse.soldQuantity}"
                                                            href="javascript:void(0)"></a>
-                                                        </li>
+                                        </li>
                                         <li>Hạn sử dụng : <a th:if="${productDetailUserResponse != null }"
                                                              th:text="'Trong khoảng ' + ${productDetailUserResponse.expiry} + ' tháng'"
                                                              href="javascript:void(0)"></a></li>
@@ -354,12 +355,12 @@
                                     </button>
                                 </li>
 
-<!--                                <li class="nav-item" role="presentation">-->
-<!--                                    <button class="nav-link" id="review-tab-order" data-bs-toggle="tab"-->
-<!--                                            data-bs-target="#reviewOrdeConfirmed" type="button" role="tab">Review Order-->
-<!--                                        Confirmed-->
-<!--                                    </button>-->
-<!--                                </li>-->
+                                <!--                                <li class="nav-item" role="presentation">-->
+                                <!--                                    <button class="nav-link" id="review-tab-order" data-bs-toggle="tab"-->
+                                <!--                                            data-bs-target="#reviewOrdeConfirmed" type="button" role="tab">Review Order-->
+                                <!--                                        Confirmed-->
+                                <!--                                    </button>-->
+                                <!--                                </li>-->
                             </ul>
 
                             <div class="tab-content custom-tab" id="myTabContent">

@@ -213,9 +213,11 @@ public class CartUserService {
                     continue;
                 }
 
-                productDetailId = productDetailUserResponse.getProductId();
+                productDetailId = productDetailUserResponse.getProductDetailId();
                 break;
             }
+
+            System.out.println("aptcart" + productDetailId);
 
             if (productDetailId == 0) {
                 if (statusMessageStatus.equals("")) {

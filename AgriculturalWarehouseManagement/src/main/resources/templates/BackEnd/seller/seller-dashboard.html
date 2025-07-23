@@ -2494,7 +2494,7 @@
                     select.innerHTML = '<option value="" disabled selected>Chọn danh mục...</option>';
                     categories.forEach(cat => {
                         const option = document.createElement("option");
-                        option.value = cat.id;
+                        option.value = cat.categoryId;
                         option.textContent = cat.name;
                         select.appendChild(option);
                     });
@@ -2682,7 +2682,7 @@
                         if (product) {
                             document.getElementById('editProductName').value = product.name;
                             document.getElementById('editDescription').value = product.description || '';
-                            document.getElementById('editCategoryId').value = product.category.id;
+                            document.getElementById('editCategoryId').value = product.category.categoryId;
                             document.getElementById('editStatus').value = product.status;
 
                             document.getElementById('editProductForm').setAttribute("data-edit-id", id);
@@ -3634,7 +3634,7 @@
                 .then(res => {
                     const product = res.data;
                     const category = product.category;
-                    selectedCategoryId = category.id;
+                    selectedCategoryId = category.categoryId;
                     document.getElementById("categoryName").value = category.name;
 
                     axios.get(`/AgriculturalWarehouseManagementApplication/api/seller/product-details/category-weights/${selectedCategoryId}`)

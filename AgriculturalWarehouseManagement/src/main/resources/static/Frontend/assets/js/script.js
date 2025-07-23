@@ -276,7 +276,7 @@ $(".notifi-wishlist").on("click", function () {
     $.notify({
         icon: "fa fa-check",
         title: "Success!",
-        message: "Item Successfully added in wishlist",
+        message: "Thêm sản phẩm yêu thích thành công",
     }, {
         element: "body",
         position: null,

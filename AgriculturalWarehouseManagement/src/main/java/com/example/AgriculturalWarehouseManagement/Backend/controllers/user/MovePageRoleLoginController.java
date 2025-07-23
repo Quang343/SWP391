@@ -67,10 +67,11 @@ public class MovePageRoleLoginController {
                 session.setAttribute("accountSeller", userResponse);
                 session.setAttribute("accountIdSeller", userResponse.getUserID());
                 System.out.println("hello"+session.getAttribute("accountIdSeller").toString());
-
                 return "redirect:/seller-dashboard";
-            } else if (userEntity.getRole().getRoleName().equals("warehourestaff")) {
-                return "redirect:/login";
+            } else if (userEntity.getRole().getRoleName().equalsIgnoreCase("WAREHOUSE")) {
+                UserResponse userResponse = userCustomerService.getUser(userEntity);
+                session.setAttribute("accountWarehouse", userResponse);
+                return "redirect:/warehouse";
             }
 
             session.invalidate();

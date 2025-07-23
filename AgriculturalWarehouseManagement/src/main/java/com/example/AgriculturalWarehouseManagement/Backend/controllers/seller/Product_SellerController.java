@@ -180,7 +180,6 @@ public class Product_SellerController {
 
     @Value("${app.upload.product-dir}")
     private String uploadDir;
-
     private String storeFile(MultipartFile file) throws IOException {
         if (file.getOriginalFilename() == null) {
             throw new IOException("Tên tệp trống");
