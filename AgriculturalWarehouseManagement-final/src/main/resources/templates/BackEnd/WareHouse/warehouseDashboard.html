@@ -1,0 +1,2143 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="BackEnd/fragments/WareHouse/head::head"></head>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    .status-returned {
+        color: #dc3545; /* Red for RETURNED */
+        font-weight: bold;
+    }
+    .status-exported {
+        color: #28a745; /* Green for EXPORTED */
+        font-weight: bold;
+    }
+
+</style>
+
+
+<body>
+<!-- tap on top start -->
+<div class="tap-top">
+    <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <!-- Page Header Start-->
+    <div th:replace="BackEnd/fragments/WareHouse/header::header"></div>
+    <!-- Page Header Ends-->
+
+    <!-- Page Body Start-->
+    <div class="page-body-wrapper">
+        <!-- Page Sidebar Start-->
+        <div th:replace="BackEnd/fragments/WareHouse/sidebar::sidebar"></div>
+        <!-- Page Sidebar Ends-->
+
+        <!-- index body start -->
+        <div class="page-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <!-- chart caard section start -->
+                    <div class="col-sm-6 col-xxl-3 col-lg-6">
+                        <div class="main-tiles border-5 border-0  card-hover card o-hidden">
+                            <div class="custome-1-bg b-r-4 card-body">
+                                <div class="media align-items-center static-top-widget">
+                                    <div class="media-body p-0">
+                                        <span class="m-0">Tổng Chi Tiêu</span>
+                                        <h4 class="mb-0 counter" id="totalSpentDisplay">
+                                            0 VND
+                                            <span class="badge badge-light-primary grow">
+                                              <i data-feather="trending-up"></i>
+                                                     Tổng tiêu
+                                                </span>
+                                        </h4>
+
+                                    </div>
+                                    <div class="align-self-center text-center">
+                                        <i class="ri-database-2-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xxl-3 col-lg-6">
+                        <div class="main-tiles border-5 card-hover border-0 card o-hidden">
+                            <div class="custome-2-bg b-r-4 card-body">
+                                <div class="media static-top-widget">
+                                    <div class="media-body p-0">
+                                        <span class="m-0">Tổng Nhập Kho</span>
+                                        <h4 class="mb-0 counter">
+                                            <span id="stockInCount">0</span>
+                                            <a th:href="@{warehouse/addstockin}" class="badge badge-light-danger grow">
+                                                Thêm Nhập Kho
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div class="align-self-center text-center">
+                                        <i class="ri-shopping-bag-3-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xxl-3 col-lg-6">
+                        <div class="main-tiles border-5 card-hover border-0 card o-hidden">
+                            <div class="custome-3-bg b-r-4 card-body">
+                                <div class="media static-top-widget">
+                                    <div class="media-body p-0">
+                                        <span class="m-0">Tổng Lô Hàng</span>
+                                        <h4 class="mb-0 counter">
+                                            <span id="totalBatchCount">...</span>
+                                            <a th:href="@{warehouse/addproductbatch}" class="badge badge-light-secondary grow">Thêm Lô</a>
+                                        </h4>
+
+                                    </div>
+                                    <div class="align-self-center text-center">
+                                        <i class="ri-chat-3-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-sm-6 col-xxl-3 col-lg-6">
+                        <div class="main-tiles border-5 card-hover border-0 card o-hidden">
+                            <div class="custome-4-bg b-r-4 card-body">
+                                <div class="media static-top-widget">
+                                    <div class="media-body p-0">
+                                        <span class="m-0">Tổng Xuất Kho</span>
+                                        <h4 class="mb-0 counter">
+                                            <span id="stockOutCount">0</span>
+                                            <a th:href="@{warehouse/addstockout}" class="badge badge-light-success grow">
+                                                Xuất Kho
+                                            </a>
+                                        </h4>
+                                    </div>
+
+                                    <div class="align-self-center text-center">
+                                        <i class="ri-user-add-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="card o-hidden card-hover">
+                            <div class="card-header border-0 pb-1">
+                                <div class="card-header-title p-0">
+                                    <h4>Category</h4>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="category-slider no-arrow">
+                                    <div>
+                                        <div class="dashboard-category">
+                                            <a href="javascript:void(0)" class="category-image">
+                                                <img th:src="@{/Backend/assets/svg/vegetable.svg}" class="img-fluid" alt="">
+                                            </a>
+                                            <a href="javascript:void(0)" class="category-name">
+                                                <h6>Vegetables & Fruit</h6>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="dashboard-category">
+                                            <a href="javascript:void(0)" class="category-image">
+                                                <img th:src="@{/Backend/assets/svg/cup.svg}" class="img-fluid" alt="">
+                                            </a>
+                                            <a href="javascript:void(0)" class="category-name">
+                                                <h6>Beverages</h6>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="dashboard-category">
+                                            <a href="javascript:void(0)" class="category-image">
+                                                <img th:src="@{/Backend/assets/svg/meats.svg}" class="img-fluid" alt="">
+                                            </a>
+                                            <a href="javascript:void(0)" class="category-name">
+                                                <h6>Meats & Seafood</h6>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="dashboard-category">
+                                            <a href="javascript:void(0)" class="category-image">
+                                                <img th:src="@{/Backend/assets/svg/breakfast.svg}" class="img-fluid" alt="">
+                                            </a>
+                                            <a href="javascript:void(0)" class="category-name">
+                                                <h6>Breakfast</h6>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="dashboard-category">
+                                            <a href="javascript:void(0)" class="category-image">
+                                                <img th:src="@{/Backend/assets/svg/frozen.svg}" class="img-fluid" alt="">
+                                            </a>
+                                            <a href="javascript:void(0)" class="category-name">
+                                                <h6>Frozen Foods</h6>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="dashboard-category">
+                                            <a href="javascript:void(0)" class="category-image">
+                                                <img th:src="@{/Backend/assets/svg/milk.svg}" class="img-fluid" alt="">
+                                            </a>
+                                            <a href="javascript:void(0)" class="category-name">
+                                                <h6>Milk & Dairies</h6>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="dashboard-category">
+                                            <a href="javascript:void(0)" class="category-image">
+                                                <img th:src="@{/Backend/assets/svg/pet.svg}" class="img-fluid" alt="">
+                                            </a>
+                                            <a href="javascript:void(0)" class="category-name">
+                                                <h6>Pet Food</h6>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="dashboard-category">
+                                            <a href="javascript:void(0)" class="category-image">
+                                                <img th:src="@{/Backend/assets/svg/vegetable.svg}" class="img-fluid" alt="">
+                                            </a>
+                                            <a href="javascript:void(0)" class="category-name">
+                                                <h6>Vegetables & Fruit</h6>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="dashboard-category">
+                                            <a href="javascript:void(0)" class="category-image">
+                                                <img th:src="@{/Backend/assets/svg/cup.svg}" class="img-fluid" alt="">
+                                            </a>
+                                            <a href="javascript:void(0)" class="category-name">
+                                                <h6>Beverages</h6>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="dashboard-category">
+                                            <a href="javascript:void(0)" class="category-image">
+                                                <img th:src="@{/Backend/assets/svg/meats.svg}" class="img-fluid" alt="">
+                                            </a>
+                                            <a href="javascript:void(0)" class="category-name">
+                                                <h6>Meats & Seafood</h6>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="dashboard-category">
+                                            <a href="javascript:void(0)" class="category-image">
+                                                <img th:src="@{/Backend/assets/svg/breakfast.svg}" class="img-fluid" alt="">
+                                            </a>
+                                            <a href="javascript:void(0)" class="category-name">
+                                                <h6>Breakfast</h6>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="dashboard-category">
+                                            <a href="javascript:void(0)" class="category-image">
+                                                <img th:src="@{/Backend/assets/svg/frozen.svg}" class="img-fluid" alt="">
+                                            </a>
+                                            <a href="javascript:void(0)" class="category-name">
+                                                <h6>Frozen Foods</h6>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="dashboard-category">
+                                            <a href="javascript:void(0)" class="category-image">
+                                                <img th:src="@{/Backend/assets/svg/milk.svg}" class="img-fluid" alt="">
+                                            </a>
+                                            <a href="javascript:void(0)" class="category-name">
+                                                <h6>Milk & Dairies</h6>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="dashboard-category">
+                                            <a href="javascript:void(0)" class="category-image">
+                                                <img th:src="@{/Backend/assets/svg/pet.svg}" class="img-fluid" alt="">
+                                            </a>
+                                            <a href="javascript:void(0)" class="category-name">
+                                                <h6>Pet Food</h6>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- chart card section End -->
+
+
+                    <!-- Earning chart star-->
+                    <div class="col-xl-6">
+                        <div class="card o-hidden card-hover">
+                            <div class="card-header border-0 mb-0">
+                                <div class="card-header-title">
+
+                                    <div class="p-3 d-flex justify-content-between align-items-center">
+                                        <h4 class="mb-0">Báo cáo Chi tiêu <span id="total-spending"></span></h4>
+                                        <button class="btn btn-sm btn-outline-success" onclick="exportToExcel()">
+                                            <i class="fa fa-file-excel-o"></i> Xuất báo cáo Excel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="bar-chart-earning1">
+                                    <canvas id="chart-canvas"></canvas>
+                                    <div id="error-message" class="error-message" style="display: none;"></div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Earning chart  end-->
+
+
+                    <!-- Top Inventory Batches Start -->
+                    <div class="col-xl-6 col-md-12">
+                        <div class="card o-hidden card-hover">
+                            <div class="card-header card-header-top card-header--2 px-0 pt-0">
+                                <div class="card-header-title">
+                                    <h4>4 Lô Hàng Còn Tồn Nhiều Nhất</h4>
+                                </div>
+                                <div class="best-selling-box d-sm-flex d-none">
+                                    <span>Sắp Xếp Theo:</span>
+                                    <div class="dropdown">
+                                        <button class="btn p-0 dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" data-bs-auto-close="true">Hôm Nay</button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                            <li><a class="dropdown-item" href="#">Action</a></li>
+                                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div>
+                                    <div class="table-responsive">
+                                        <table class="best-selling-table w-image table border-0">
+                                            <thead>
+
+                                            </thead>
+                                            <tbody id="top-inventory-tbody">
+                                            <!-- No static rows to avoid conflicts -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Top Inventory Batches End -->
+
+                    <!-- Top 4 Đơn Nhập Kho Gần Đây Start -->
+                    <div class="col-xl-6 col-md-12">
+                        <div class="card o-hidden card-hover">
+                            <div class="card-header card-header-top card-header--2 px-0 pt-0">
+                                <div class="card-header-title">
+                                    <h4> 4 Đơn Nhập Kho Gần Đây</h4>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div>
+                                    <div class="table-responsive">
+                                        <table class="best-selling-table w-image table border-0" id="top-stockin-table">
+                                            <thead>
+
+                                            </thead>
+                                            <tbody id="top-stockin-tbody">
+                                            <!-- No static rows to avoid conflicts -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Top 4 Đơn Nhập Kho Gần Đây End -->
+
+                    <!-- Top 4 Đơn Xuất Kho Gần Đây Start -->
+                    <div class="col-xl-6 col-md-12">
+                        <div class="card o-hidden card-hover">
+                            <div class="card-header card-header-top card-header--2 px-0 pt-0">
+                                <div class="card-header-title">
+                                    <h4> 4 Đơn Xuất Kho Gần Đây</h4>
+                                </div>
+                                <div class="best-selling-box d-sm-flex d-none">
+                                    <span>Sắp Xếp Theo:</span>
+                                    <div class="dropdown">
+                                        <button class="btn p-0 dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" data-bs-auto-close="true">Hôm Nay</button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                            <li><a class="dropdown-item" href="#">Action</a></li>
+                                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div>
+                                    <div class="table-responsive">
+                                        <table class="best-selling-table w-image table border-0">
+
+                                            <tbody id="top-stockout-tbody">
+                                            <!-- No static rows to avoid conflicts -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Top 4 Đơn Xuất Kho Gần Đây End -->
+
+                    <!-- Earning chart star-->
+                    <div class="col-xl-6">
+                        <div class="card o-hidden card-hover">
+                            <div class="card-header border-0 mb-0">
+                                <div class="card-header-title">
+                                    <h4>Earning</h4>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="bar-chart-earning"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Earning chart end-->
+
+                    <!-- Earning chart star-->
+                    <div class="col-xl-6">
+                        <div class="card o-hidden card-hover">
+                            <div class="card-header border-0 mb-0">
+                                <div class="card-header-title">
+                                    <h4>Earning</h4>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="bar-chart-earning2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Earning chart end-->
+
+                    <!-- Transactions start-->
+                    <div class="col-xxl-4 col-md-6">
+                        <div class="card o-hidden card-hover">
+                            <div class="card-header border-0">
+                                <div class="card-header-title">
+                                    <h4>Hoạt Động Gần Đây</h4>
+                                </div>
+                            </div>
+
+                            <div class="card-body pt-0">
+                                <div>
+                                    <div class="table-responsive">
+                                        <table class="user-table transactions-table table border-0">
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="transactions-icon">
+                                                        <i class="ri-download-2-line"></i>
+                                                    </div>
+                                                    <div class="transactions-name">
+                                                        <h6>Nhập kho</h6>
+                                                        <p>Lô SP-1034 từ Nhà cung cấp ABC</p>
+                                                    </div>
+                                                </td>
+                                                <td class="success">+1200kg</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="td-color-1">
+                                                    <div class="transactions-icon">
+                                                        <i class="ri-upload-2-line"></i>
+                                                    </div>
+                                                    <div class="transactions-name">
+                                                        <h6>Xuất kho</h6>
+                                                        <p>Đơn hàng #ORD2981</p>
+                                                    </div>
+                                                </td>
+                                                <td class="lost">-800kg</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="td-color-2">
+                                                    <div class="transactions-icon">
+                                                        <i class="ri-loop-left-line"></i>
+                                                    </div>
+                                                    <div class="transactions-name">
+                                                        <h6>Trả hàng</h6>
+                                                        <p>Khách hoàn lô SP-087</p>
+                                                    </div>
+                                                </td>
+                                                <td class="success">+150kg</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="td-color-3">
+                                                    <div class="transactions-icon">
+                                                        <i class="ri-equalizer-line"></i>
+                                                    </div>
+                                                    <div class="transactions-name">
+                                                        <h6>Điều chỉnh tồn kho</h6>
+                                                        <p>Kiểm kê cuối tháng</p>
+                                                    </div>
+                                                </td>
+                                                <td class="lost">-30kg</td>
+                                            </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Transactions end-->
+
+
+                    <!-- visitors chart start-->
+                    <div class="col-xxl-4 col-md-6">
+                        <div class="h-100">
+                            <div class="card o-hidden card-hover">
+                                <div class="card-header border-0">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="card-header-title">
+                                            <h4>Visitors</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body pt-0">
+                                    <div class="pie-chart">
+                                        <div id="pie-chart-visitors"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- visitors chart end-->
+
+                    <!-- To Do List start -->
+                    <div class="col-md-4">
+                        <div class="card o-hidden card-hover">
+                            <div class="card-header border-0">
+                                <div class="card-header-title">
+                                    <h4>Danh sách việc cần làm</h4>
+                                </div>
+                            </div>
+
+                            <div class="card-body pt-0">
+                                <ul class="to-do-list list-unstyled" id="todoList">
+                                    <li class="to-do-item">
+                                        <div class="form-check user-checkbox">
+                                            <input class="form-check-input check-it default-check" type="checkbox" data-index="-1" data-default-index="0">
+                                        </div>
+                                        <div class="to-do-list-name">
+                                            <strong>Kiểm tra số lượng hàng tồn kho</strong>
+                                            <p>Hôm nay</p>
+                                        </div>
+                                    </li>
+                                    <li class="to-do-item">
+                                        <div class="form-check user-checkbox">
+                                            <input class="form-check-input check-it default-check" type="checkbox" data-index="-1" data-default-index="1">
+                                        </div>
+                                        <div class="to-do-list-name">
+                                            <strong>Tiếp nhận lô hàng mới từ nhà cung cấp</strong>
+                                            <p>Hôm nay</p>
+                                        </div>
+                                    </li>
+                                    <li class="to-do-item">
+                                        <div class="form-check user-checkbox">
+                                            <input class="form-check-input check-it default-check" type="checkbox" data-index="-1" data-default-index="2">
+                                        </div>
+                                        <div class="to-do-list-name">
+                                            <strong>Xuất kho theo đơn hàng</strong>
+                                            <p>Hôm nay</p>
+                                        </div>
+                                    </li>
+                                    <li class="to-do-item">
+                                        <div class="form-check user-checkbox">
+                                            <input class="form-check-input check-it default-check" type="checkbox" data-index="-1" data-default-index="3">
+                                        </div>
+                                        <div class="to-do-list-name">
+                                            <strong>Kiểm tra nhiệt độ bảo quản nông sản</strong>
+                                            <p>Hôm nay</p>
+                                        </div>
+                                    </li>
+                                </ul>
+
+                                <!-- Add Task Form (only one!) -->
+                                <form class="row g-2 mt-3" id="addTaskForm">
+                                    <div class="col-8">
+                                        <input type="text" class="form-control" id="taskInput" placeholder="Thêm công việc" required>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="submit" class="btn btn-primary w-100 h-100">Thêm mới</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- To Do List end -->
+
+
+
+
+
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+
+            <!-- footer start-->
+            <div th:replace="BackEnd/fragments/WareHouse/footer::footer"></div>
+            <!-- footer End-->
+        </div>
+        <!-- index body end -->
+
+    </div>
+    <!-- Page Body End -->
+</div>
+<!-- page-wrapper End-->
+
+<!-- Modal Start -->
+<div th:replace="~{BackEnd/fragments/WareHouse/logout::logout}"></div>
+<!-- Modal End -->
+
+<!-- latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- Bootstrap js -->
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+
+<!-- feather icon js -->
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+
+<!-- scrollbar simplebar js -->
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+
+<!-- Sidebar jquery -->
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+
+<!-- tooltip init js -->
+<script th:src="@{/Backend/assets/js/tooltip-init.js}"></script>
+
+<!-- Plugins JS -->
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+
+<!-- Apexchar js -->
+<script th:src="@{/Backend/assets/js/chart/apex-chart/apex-chart1.js}"></script>
+<script th:src="@{/Backend/assets/js/chart/apex-chart/moment.min.js}"></script>
+<script th:src="@{/Backend/assets/js/chart/apex-chart/apex-chart.js}"></script>
+<script th:src="@{/Backend/assets/js/chart/apex-chart/stock-prices.js}"></script>
+<script th:src="@{/Backend/assets/js/chart/apex-chart/chart-custom1.js}"></script>
+
+
+<!-- slick slider js -->
+<script th:src="@{/Backend/assets/js/slick.min.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-slick.js}"></script>
+
+<!-- customizer js -->
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+
+<!-- ratio js -->
+<script th:src="@{/Backend/assets/js/ratio.js}"></script>
+
+<!-- sidebar effect -->
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+
+<!-- Theme js -->
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+
+<!-- Theme js -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/AgriculturalWarehouseManagementApplication/api/product-batches/count")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById("totalBatchCount").textContent = data;
+            })
+            .catch(error => {
+                console.error("Lỗi khi lấy số lượng lô hàng:", error);
+                document.getElementById("totalBatchCount").textContent = "0";
+            });
+    });
+</script>
+
+<!-- count stockin -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/AgriculturalWarehouseManagementApplication/api/stockins/count")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("stockInCount").textContent = data;
+            })
+            .catch(err => {
+                console.error("Lỗi lấy số phiếu nhập:", err);
+                document.getElementById("stockInCount").textContent = "0";
+            });
+    });
+</script>
+
+<!-- count stockout -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/AgriculturalWarehouseManagementApplication/api/stockouts/count")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("stockOutCount").textContent = data;
+            })
+            .catch(error => {
+                console.error("Lỗi khi lấy số lượng StockOut:", error);
+            });
+    });
+</script>
+
+<!-- Total spent -->
+<script>
+    fetch('/AgriculturalWarehouseManagementApplication/api/stockindetails/total-spent')
+        .then(response => response.json())
+        .then(data => {
+            const formatted = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                minimumFractionDigits: 0
+            }).format(data);
+
+            document.getElementById("totalSpentDisplay").innerHTML = `
+                ${formatted}
+                <span class="badge badge-light-primary grow">
+                    <i data-feather="trending-up"></i> Tổng tiêu
+                </span>
+            `;
+            if (feather) feather.replace();
+        })
+        .catch(error => {
+            console.error('Lỗi khi lấy tổng tiền đã chi:', error);
+            document.getElementById("totalSpentDisplay").textContent = 'Lỗi tải dữ liệu';
+        });
+</script>
+
+<!-- batch top4 -->
+<script>
+    $(document).ready(function() {
+        // Hàm định dạng giá tiền sang định dạng VND
+        function formatPrice(number) {
+            return number.toLocaleString('vi-VN') + ' VND';
+        }
+
+        // Hàm định dạng ngày sang định dạng Việt Nam (DD/MM/YYYY)
+        function formatDateToVietnamese(dateString) {
+            if (!dateString || dateString === 'N/A') return 'N/A';
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    console.warn('[WARN] Invalid date:', dateString);
+                    return 'N/A';
+                }
+                const vnTime = new Date(date.getTime());
+                const day = String(vnTime.getDate()).padStart(2, '0');
+                const month = String(vnTime.getMonth() + 1).padStart(2, '0');
+                const year = vnTime.getFullYear();
+                return `${day}/${month}/${year}`;
+            } catch (error) {
+                console.error('[ERROR] Error parsing date:', dateString, error);
+                return 'N/A';
+            }
+        }
+
+        // Hàm định dạng batchID: BAT-[Base36(ID+1000)]-[MMdd]
+        function formatBatchID(batchID, manufactureDate) {
+            try {
+                // Chuyển ID + 1000 sang Base36
+                const offsetID = parseInt(batchID) + 1000;
+                const base36ID = offsetID.toString(36).toUpperCase();
+
+                // Định dạng ngày sản xuất thành MMdd
+                let datePart = '0000';
+                if (manufactureDate && manufactureDate !== 'N/A') {
+                    const date = new Date(manufactureDate);
+                    if (!isNaN(date.getTime())) {
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        datePart = `${month}${day}`;
+                    }
+                }
+
+                return `BAT-${base36ID}-${datePart}`;
+            } catch (error) {
+                console.error('[ERROR] Lỗi định dạng batchID:', batchID, error);
+                return batchID || 'N/A';
+            }
+        }
+
+        // Tải top 3 lô tồn kho
+        $.ajax({
+            url: '/AgriculturalWarehouseManagementApplication/api/product-batches/top4-remaining',
+            method: 'GET',
+            dataType: 'json',
+            success: function(batches) {
+                console.log('[DEBUG] API Response:', batches);
+
+                const tbody = $('#top-inventory-tbody');
+                if (!tbody.length) {
+                    console.error('[ERROR] Table body #top-inventory-tbody not found');
+                    $.notify({ message: 'Không tìm thấy bảng #top-inventory-tbody. Vui lòng kiểm tra HTML.' }, { type: 'danger', delay: 5000 });
+                    return;
+                }
+
+                // Xóa các hàng hiện có
+                tbody.empty();
+                console.log('[DEBUG] Cleared table body');
+
+                // Xử lý từng lô
+                const batchPromises = batches.map((batch, index) => {
+                    return new Promise((resolve) => {
+                        console.log(`[DEBUG] Processing batch ${index + 1}:`, batch);
+
+                        // Xử lý giá trị null hoặc undefined
+                        const batchID = batch.batchID || 'N/A';
+                        const manufactureDate = formatDateToVietnamese(batch.manufactureDate);
+                        const importedQuantity = batch.importedQuantity || 0;
+                        const soldQuantity = batch.soldQuantity || 0;
+                        const remainingQuantity = importedQuantity - soldQuantity; // Không tính totalAdjustment
+
+                        // Tải chi tiết sản phẩm để lấy tên, giá và supplierName
+                        let productName = `Batch #${batchID}`;
+                        let price = 29_000; // Giá mặc định (VND)
+                        let imageUrl = '/seller/default.jpg';
+                        $.ajax({
+                            url: `/AgriculturalWarehouseManagementApplication/api/product-details/${batch.productDetailID}`,
+                            method: 'GET',
+                            async: false,
+                            success: function(productDetail) {
+                                const detailName = productDetail.detailName || 'N/A';
+                                const productId = productDetail.productID || productDetail.productId || 'N/A';
+                                price = parseFloat(productDetail.price) || 29_000;
+                                if (productId !== 'N/A') {
+                                    $.ajax({
+                                        url: `/AgriculturalWarehouseManagementApplication/api/products/${productId}/name`,
+                                        method: 'GET',
+                                        async: false,
+                                        success: function(name) {
+                                            productName = `${name} (${detailName})`;
+                                            console.log(`[DEBUG] Product name for productId ${productId}: ${productName}`);
+                                        },
+                                        error: function(xhr, status, error) {
+                                            productName = `N/A (${detailName})`;
+                                            console.error(`[ERROR] Lỗi khi lấy tên sản phẩm cho productId ${productId}:`, { status, error });
+                                        }
+                                    });
+                                    $.ajax({
+                                        url: `/AgriculturalWarehouseManagementApplication/api/products/first/${productId}`,
+                                        method: 'GET',
+                                        async: false,
+                                        dataType: 'text',
+                                        success: function(response) {
+                                            imageUrl = response && response.trim() !== '' ? `/seller/${response}` : '/seller/default.jpg';
+                                            console.log(`[DEBUG] Image for productId ${productId}: ${imageUrl}`);
+                                        },
+                                        error: function(xhr, status, error) {
+                                            imageUrl = '/seller/default.jpg';
+                                            console.error(`[ERROR] Lỗi khi lấy ảnh cho productId ${productId}:`, { status, error });
+                                        }
+                                    });
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error(`[ERROR] Lỗi khi lấy productDetail ${batch.productDetailID}:`, { status, error });
+                            }
+                        });
+
+                        // Định dạng batch ID
+                        const formattedBatchID = formatBatchID(batchID, batch.manufactureDate);
+
+                        // Tạo hàng bảng
+                        const row = `
+                        <tr>
+                            <td>
+                                <div class="best-product-box">
+                                    <div class="product-image">
+                                        <img src="${imageUrl}" class="img-fluid" alt="Batch">
+                                    </div>
+                                    <div class="product-name">
+                                        <h5>${formattedBatchID}</h5>
+                                        <h6>${productName}</h6>
+                                        <h6>${manufactureDate}</h6>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="product-detail-box">
+                                        <h6>Giá Nhập</h6>
+                                        <h5>${formatPrice(price)}</h5>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="product-detail-box">
+                                        <h6>Số Lượng Nhập</h6>
+                                        <h5>${importedQuantity}</h5>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="product-detail-box">
+                                        <h6>Số Lượng Đã Bán</h6>
+                                        <h5>${soldQuantity}</h5>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="product-detail-box">
+                                        <h6>Số Lượng Còn Lại</h6>
+                                        <h5>${remainingQuantity}</h5>
+                                    </div>
+                                </td>
+                            </tr>
+                    `;
+                        resolve(row);
+                    });
+                });
+
+                // Chờ tất cả hàng được tạo
+                Promise.all(batchPromises).then(rows => {
+                    rows.forEach(row => tbody.append(row));
+                    console.log(`[DEBUG] Added ${rows.length} rows to table`);
+
+                    // Thêm hàng placeholder nếu dưới 3 lô
+                    const rowsToAdd = 3 - batches.length;
+                    if (rowsToAdd > 0) {
+                        console.log(`[DEBUG] Adding ${rowsToAdd} placeholder rows`);
+                        for (let i = 0; i < rowsToAdd; i++) {
+                            tbody.append(`
+                            <tr>
+                                <td>
+                                    <div class="best-product-box">
+                                        <div class="product-image">
+                                            <img src="/seller/default.jpg" class="img-fluid" alt="Batch">
+                                        </div>
+                                        <div class="product-name">
+                                            <h5>N/A</h5>
+                                            <h6>N/A</h6>
+                                            <h6>N/A</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><div class="product-detail-box"><h6>Giá Nhập</h6><h5>N/A</h5></div></td>
+                                <td><div class="product-detail-box"><h6>Số Lượng Nhập</h6><h5>0</h5></div></td>
+                                <td><div class="product-detail-box"><h6>Số Lượng Đã Bán</h6><h5>0</h5></div></td>
+                                <td><div class="product-detail-box"><h6>Số Lượng Còn Lại</h6><h5>0</h5></div></td>
+                            </tr>
+                        `);
+                        }
+                    }
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('[ERROR] Lỗi khi tải top 4 lô tồn kho:', { status, error, response: xhr.responseText });
+                $.notify({ message: 'Không thể tải top 4 lô tồn kho. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 5000 });
+            }
+        });
+    });
+</script>
+
+<!-- stockout top4 -->
+<script>
+    $(document).ready(function () {
+        console.log('[DEBUG] Initializing page at ' + new Date().toISOString());
+
+        // DOM Elements
+        const stockOutTableBody = $('#top-stockout-tbody');
+        const searchInputStockOut = $('#searchInputStockOut');
+
+        // Validate DOM elements
+        console.log('[DEBUG] Validating DOM elements');
+        if (!stockOutTableBody.length) {
+            console.error('[ERROR] Table body #top-stockout-tbody not found');
+            $.notify({ message: 'Không tìm thấy bảng #top-stockout-tbody. Vui lòng kiểm tra HTML.' }, { type: 'danger', delay: 5000 });
+            return;
+        }
+        console.log('[DEBUG] All DOM elements found');
+
+        // Function to format date to HH:mm:ss DD/MM/YYYY
+        function formatDateToVietnamese(dateString) {
+            if (!dateString || dateString === 'N/A') {
+                return 'N/A';
+            }
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    console.warn('[WARN] Invalid date:', dateString);
+                    return 'N/A';
+                }
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const seconds = String(date.getSeconds()).padStart(2, '0');
+                return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
+            } catch (error) {
+                console.error('[ERROR] Error parsing date:', dateString, error);
+                return 'N/A';
+            }
+        }
+
+        // Function to format status with color
+        function formatStatus(status) {
+            if (!status) return 'N/A';
+            switch (status.toUpperCase()) {
+                case 'RETURNED':
+                    return `<span class="status-returned">Đã trả về</span>`;
+                case 'EXPORTED':
+                    return `<span class="status-exported">Đã xuất kho</span>`;
+                default:
+                    return status;
+            }
+        }
+
+        // Load StockOuts
+        function loadStockOuts(searchTerm = '') {
+            console.log('[DEBUG] Loading stockouts from /AgriculturalWarehouseManagementApplication/api/stockouts');
+            $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/api/stockouts',
+                method: 'GET',
+                dataType: 'json',
+                beforeSend: function() {
+                    console.log('[DEBUG] Sending GET request to /AgriculturalWarehouseManagementApplication/api/stockouts');
+                },
+                success: function(data) {
+                    console.log('[DEBUG] Response from /AgriculturalWarehouseManagementApplication/api/stockouts:', JSON.stringify(data, null, 2));
+
+                    // Sort by stockOutDate (descending) and take top 4
+                    const sortedStockOuts = data.sort((a, b) => {
+                        const dateA = new Date(a.stockOutDate);
+                        const dateB = new Date(b.stockOutDate);
+                        return dateB - dateA;
+                    }).slice(0, 4);
+                    console.log('[DEBUG] Top 4 sorted stock-outs:', JSON.stringify(sortedStockOuts, null, 2));
+
+                    stockOutTableBody.empty();
+                    if (Array.isArray(sortedStockOuts) && sortedStockOuts.length > 0) {
+                        const stockOutPromises = sortedStockOuts.map((stockOut, index) => {
+                            return new Promise((resolve) => {
+                                console.log(`[DEBUG] Processing stock-out ${index + 1}:`, stockOut);
+
+                                const id = stockOut.id || 'N/A';
+                                const orderId = stockOut.orderID || 'N/A';
+                                const stockOutDate = formatDateToVietnamese(stockOut.stockOutDate);
+                                const status = formatStatus(stockOut.status);
+
+                                // Fetch orderCode
+                                let orderCode = `ORD${orderId}`;
+                                $.ajax({
+                                    url: `/AgriculturalWarehouseManagementApplication/api/orders/${orderId}`,
+                                    method: 'GET',
+                                    async: false,
+                                    success: function(order) {
+                                        orderCode = order.orderCode || `ORD${orderId}`;
+                                        console.log(`[DEBUG] OrderCode for orderID ${orderId}: ${orderCode}`);
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error(`[ERROR] Lỗi khi lấy order ${orderId}:`, { status, error });
+                                    }
+                                });
+
+                                // Fetch warehouse name
+                                let warehouseName = `Kho #${stockOut.warehouseID}`;
+                                $.ajax({
+                                    url: `/AgriculturalWarehouseManagementApplication/api/warehouses/${stockOut.warehouseID}`,
+                                    method: 'GET',
+                                    async: false,
+                                    success: function(warehouse) {
+                                        warehouseName = warehouse.name || `Kho #${stockOut.warehouseID}`;
+                                        console.log(`[DEBUG] Warehouse name for warehouseID ${stockOut.warehouseID}: ${warehouseName}`);
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error(`[ERROR] Lỗi khi lấy warehouse ${stockOut.warehouseID}:`, { status, error });
+                                    }
+                                });
+
+                                // Apply search filter
+                                if (!searchTerm ||
+                                    id.toString().includes(searchTerm) ||
+                                    orderCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                    stockOutDate.includes(searchTerm) ||
+                                    warehouseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                    stockOut.status?.toUpperCase().includes(searchTerm.toUpperCase())) {
+                                    const row = `
+                                    <tr>
+                                        <td>
+                                            <div class="best-product-box">
+                                                <div class="product-name">
+                                                    <h5>Mã Đơn Xuất: ${id}</h5>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="product-detail-box">
+                                                <h6>Mã Đơn Hàng</h6>
+                                                <h5>${orderCode}</h5>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="product-detail-box">
+                                                <h6>Ngày Xuất Kho</h6>
+                                                <h5>${stockOutDate}</h5>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="product-detail-box">
+                                                <h6>Kho</h6>
+                                                <h5>${warehouseName}</h5>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="product-detail-box">
+                                                <h6>Trạng Thái</h6>
+                                                <h5>${status}</h5>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+                                    resolve(row);
+                                } else {
+                                    resolve(null);
+                                }
+                            });
+                        });
+
+                        Promise.all(stockOutPromises).then(rows => {
+                            const filteredRows = rows.filter(row => row !== null);
+                            stockOutTableBody.empty();
+                            filteredRows.forEach(row => stockOutTableBody.append(row));
+                            console.log(`[DEBUG] Added ${filteredRows.length} rows to table`);
+
+                            // Add placeholder rows if fewer than 4
+                            const rowsToAdd = 4 - filteredRows.length;
+                            if (rowsToAdd > 0) {
+                                console.log(`[DEBUG] Adding ${rowsToAdd} placeholder rows`);
+                                for (let i = 0; i < rowsToAdd; i++) {
+                                    stockOutTableBody.append(`
+                                    <tr>
+                                        <td>
+                                            <div class="best-product-box">
+                                                <div class="product-name">
+                                                    <h5>N/A</h5>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><div class="product-detail-box"><h6>Mã Đơn Hàng</h6><h5>N/A</h5></div></td>
+                                        <td><div class="product-detail-box"><h6>Ngày Xuất Kho</h6><h5>N/A</h5></div></td>
+                                        <td><div class="product-detail-box"><h6>Kho</h6><h5>N/A</h5></div></td>
+                                        <td><div class="product-detail-box"><h6>Trạng Thái</h6><h5>N/A</h5></div></td>
+                                    </tr>
+                                `);
+                                }
+                            }
+                        });
+                    } else {
+                        console.warn('[WARN] No stockouts found or invalid data:', data);
+                        stockOutTableBody.append('<tr><td colspan="5">Không có xuất kho.</td></tr>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('[ERROR] Failed to load stockouts:', {
+                        url: '/AgriculturalWarehouseManagementApplication/api/stockouts',
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        response: xhr.responseText ? JSON.stringify(JSON.parse(xhr.responseText), null, 2) : 'No response body',
+                        error: error
+                    });
+                    stockOutTableBody.append('<tr><td colspan="5">Lỗi tải dữ liệu.</td></tr>');
+                }
+            });
+        }
+
+        // Search functionality
+        if (searchInputStockOut.length) {
+            searchInputStockOut.on('input', function() {
+                const searchTerm = this.value.trim();
+                console.log('[DEBUG] Search term:', searchTerm);
+                loadStockOuts(searchTerm);
+            });
+        }
+
+        // Initialize
+        console.log('[DEBUG] Starting initialization');
+        loadStockOuts();
+    });
+</script>
+
+<!-- stockin top4 -->
+<script>
+    $(document).ready(function () {
+        console.log('[DEBUG] Initializing page at ' + new Date().toISOString());
+
+        // DOM Elements
+        const stockInTableBody = $('#top-stockin-tbody');
+        const searchInputStockIn = $('#searchInputStockIn');
+
+        // Validate DOM elements
+        console.log('[DEBUG] Validating DOM elements');
+        if (!stockInTableBody.length) {
+            console.error('[ERROR] Table body #top-stockin-tbody not found');
+            $.notify({ message: 'Không tìm thấy bảng #top-stockin-tbody. Vui lòng kiểm tra HTML.' }, { type: 'danger', delay: 5000 });
+            return;
+        }
+        console.log('[DEBUG] All DOM elements found');
+
+        // Function to format date to HH:mm:ss DD/MM/YYYY
+        function formatDateToVietnamese(dateString) {
+            if (!dateString || dateString === 'N/A') {
+                return 'N/A';
+            }
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    console.warn('[WARN] Invalid date:', dateString);
+                    return 'N/A';
+                }
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const seconds = String(date.getSeconds()).padStart(2, '0');
+                return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
+            } catch (error) {
+                console.error('[ERROR] Error parsing date:', dateString, error);
+                return 'N/A';
+            }
+        }
+
+        // Debounce function for search
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Arrays to store suppliers and warehouses
+        let allSuppliers = [];
+        let allWarehouses = [];
+
+        // Load Suppliers into memory
+        function loadSuppliers() {
+            return $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/api/suppliers',
+                method: 'GET',
+                dataType: 'json'
+            }).then(data => {
+                allSuppliers = data || [];
+                console.log('[DEBUG] Loaded suppliers:', allSuppliers.length);
+            }).catch((xhr, status, error) => {
+                console.error('[ERROR] Lỗi khi tải nhà cung cấp:', status, error);
+                allSuppliers = [];
+                $.notify({ message: 'Lỗi khi tải danh sách nhà cung cấp.' }, { type: 'danger', delay: 3000 });
+            });
+        }
+
+        // Load Warehouses into memory
+        function loadWarehouses() {
+            return $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/api/warehouses',
+                method: 'GET',
+                dataType: 'json'
+            }).then(data => {
+                allWarehouses = data || [];
+                console.log('[DEBUG] Loaded warehouses:', allWarehouses.length);
+            }).catch((xhr, status, error) => {
+                console.error('[ERROR] Lỗi khi tải kho:', status, error);
+                allWarehouses = [];
+                $.notify({ message: 'Lỗi khi tải danh sách kho.' }, { type: 'danger', delay: 3000 });
+            });
+        }
+
+        // Load StockIns
+        function loadStockIns(searchTerm = '') {
+            console.log('[DEBUG] Loading stockins from /AgriculturalWarehouseManagementApplication/api/stockins');
+            // Load suppliers and warehouses first
+            $.when(loadSuppliers(), loadWarehouses()).then(() => {
+                $.ajax({
+                    url: '/AgriculturalWarehouseManagementApplication/api/stockins',
+                    method: 'GET',
+                    dataType: 'json',
+                    beforeSend: function() {
+                        console.log('[DEBUG] Sending GET request to /AgriculturalWarehouseManagementApplication/api/stockins');
+                    },
+                    success: function(data) {
+                        console.log('[DEBUG] Response from /AgriculturalWarehouseManagementApplication/api/stockins:', JSON.stringify(data, null, 2));
+
+                        // Sort by stockInDate (descending) and take top 4
+                        const sortedStockIns = data.sort((a, b) => {
+                            const dateA = new Date(a.stockInDate);
+                            const dateB = new Date(b.stockInDate);
+                            return dateB - dateA;
+                        }).slice(0, 4);
+                        console.log('[DEBUG] Top 4 sorted stock-ins:', JSON.stringify(sortedStockIns, null, 2));
+
+                        stockInTableBody.empty();
+                        if (Array.isArray(sortedStockIns) && sortedStockIns.length > 0) {
+                            const stockInPromises = sortedStockIns.map((stockIn, index) => {
+                                return new Promise((resolve) => {
+                                    console.log(`[DEBUG] Processing stock-in ${index + 1}:`, stockIn);
+
+                                    const id = stockIn.id || 'N/A';
+                                    const stockInDate = formatDateToVietnamese(stockIn.stockInDate);
+                                    const note = stockIn.note || 'Không có ghi chú';
+
+                                    // Get supplier name from allSuppliers
+                                    const supplier = allSuppliers.find(s => (s.supplierID || s.id) == stockIn.supplierID);
+                                    const supplierName = supplier ? (supplier.supplierName || supplier.name || 'N/A') : 'N/A';
+                                    console.log(`[DEBUG] Supplier name for supplierID ${stockIn.supplierID}: ${supplierName}`);
+
+                                    // Get warehouse name from allWarehouses
+                                    const warehouse = allWarehouses.find(w => (w.warehouseId || w.id) == stockIn.warehouseID);
+                                    const warehouseName = warehouse ? (warehouse.warehouseName || warehouse.name || 'N/A') : 'N/A';
+                                    console.log(`[DEBUG] Warehouse name for warehouseID ${stockIn.warehouseID}: ${warehouseName}`);
+
+                                    // Apply search filter
+                                    if (!searchTerm ||
+                                        id.toString().includes(searchTerm) ||
+                                        supplierName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                        warehouseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                        stockInDate.includes(searchTerm) ||
+                                        note.toLowerCase().includes(searchTerm.toLowerCase())) {
+                                        const row = `
+                                        <tr>
+                                            <td>
+                                                <div class="best-product-box">
+                                                    <div class="product-name">
+                                                        <h5>Mã Đơn Nhập: ${id}</h5>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="product-detail-box">
+                                                    <h6>Nhà Cung Cấp</h6>
+                                                    <h5>${supplierName}</h5>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="product-detail-box">
+                                                    <h6>Kho</h6>
+                                                    <h5>${warehouseName}</h5>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="product-detail-box">
+                                                    <h6>Ngày Nhập Kho</h6>
+                                                    <h5>${stockInDate}</h5>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="product-detail-box">
+                                                    <h6>Ghi Chú</h6>
+                                                    <h5>${note}</h5>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `;
+                                        resolve(row);
+                                    } else {
+                                        resolve(null);
+                                    }
+                                });
+                            });
+
+                            Promise.all(stockInPromises).then(rows => {
+                                const filteredRows = rows.filter(row => row !== null);
+                                stockInTableBody.empty();
+                                filteredRows.forEach(row => stockInTableBody.append(row));
+                                console.log(`[DEBUG] Added ${filteredRows.length} rows to table`);
+
+                                // Add placeholder rows if fewer than 4
+                                const rowsToAdd = 4 - filteredRows.length;
+                                if (rowsToAdd > 0) {
+                                    console.log(`[DEBUG] Adding ${rowsToAdd} placeholder rows`);
+                                    for (let i = 0; i < rowsToAdd; i++) {
+                                        stockInTableBody.append(`
+                                        <tr>
+                                            <td>
+                                                <div class="best-product-box">
+                                                    <div class="product-name">
+                                                        <h5>N/A</h5>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><div class="product-detail-box"><h6>Nhà Cung Cấp</h6><h5>N/A</h5></div></td>
+                                            <td><div class="product-detail-box"><h6>Kho</h6><h5>N/A</h5></div></td>
+                                            <td><div class="product-detail-box"><h6>Ngày Nhập Kho</h6><h5>N/A</h5></div></td>
+                                            <td><div class="product-detail-box"><h6>Ghi Chú</h6><h5>N/A</h5></div></td>
+                                        </tr>
+                                    `);
+                                    }
+                                }
+                            });
+                        } else {
+                            console.warn('[WARN] No stockins found or invalid data:', data);
+                            stockInTableBody.append('<tr><td colspan="5">Không có đơn nhập kho.</td></tr>');
+                            $.notify({ message: 'Không có đơn nhập kho nào được tìm thấy.' }, { type: 'warning', delay: 5000 });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('[ERROR] Failed to load stockins:', {
+                            url: '/AgriculturalWarehouseManagementApplication/api/stockins',
+                            status: xhr.status,
+                            statusText: xhr.statusText,
+                            response: xhr.responseText ? JSON.stringify(JSON.parse(xhr.responseText), null, 2) : 'No response body',
+                            error: error
+                        });
+                        stockInTableBody.append('<tr><td colspan="5">Lỗi tải dữ liệu.</td></tr>');
+                        $.notify({ message: 'Không thể tải danh sách đơn nhập kho. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 5000 });
+                    }
+                });
+            }).catch(error => {
+                console.error('[ERROR] Failed to load suppliers or warehouses:', error);
+                stockInTableBody.append('<tr><td colspan="5">Lỗi tải dữ liệu nhà cung cấp hoặc kho.</td></tr>');
+                $.notify({ message: 'Không thể tải dữ liệu nhà cung cấp hoặc kho. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 5000 });
+            });
+        }
+
+        // Search functionality with debounce
+        if (searchInputStockIn.length) {
+            const debouncedSearch = debounce(function(searchValue) {
+                console.log('[DEBUG] Search input:', searchValue);
+                loadStockIns(searchValue);
+            }, 300);
+            searchInputStockIn.on('input', function() {
+                const searchValue = $(this).val().trim();
+                debouncedSearch(searchValue);
+            });
+        } else {
+            console.warn('[WARN] Search input #searchInputStockIn not found');
+        }
+
+        // Initialize
+        console.log('[DEBUG] Starting initialization');
+        loadStockIns();
+    });
+</script>
+
+<!-- To do -->
+<script>
+    const todoKey = 'todoListData';
+
+    const today = new Date().toISOString().split('T')[0];
+
+    let tasks = [];
+    let defaultDone = [false, false, false, false]; // trạng thái 4 task mặc định
+
+    $(document).ready(function () {
+        let savedData = null;
+
+        try {
+            const localData = JSON.parse(localStorage.getItem(todoKey));
+            if (localData && localData.date === today) {
+                savedData = localData;
+                tasks = savedData.tasks || [];
+                defaultDone = savedData.defaultDone || [false, false, false, false];
+            } else {
+                localStorage.removeItem(todoKey); // reset nếu khác ngày
+            }
+        } catch (e) {
+            console.warn('[WARN] Error reading localStorage:', e);
+        }
+
+        // Khởi tạo mặc định
+        setDefaultCheckState();
+        renderTasks(tasks);
+
+        // Add new task
+        $('#addTaskForm').on('submit', function (e) {
+            e.preventDefault();
+            const newTask = $('#taskInput').val().trim();
+            if (newTask) {
+                tasks.push({ text: newTask, done: false });
+                saveData();
+                renderTasks(tasks);
+                $('#taskInput').val('');
+            }
+        });
+
+        // Bắt sự kiện change cho tất cả checkbox (cả mặc định và mới thêm)
+        $('#todoList').on('change', '.check-it', function () {
+            const index = $(this).data('index');
+            if (index === -1) {
+                const defaultIndex = $(this).data('default-index');
+                defaultDone[defaultIndex] = this.checked;
+                saveData();
+            } else {
+                tasks[index].done = this.checked;
+                saveData();
+            }
+        });
+
+        // Gán trạng thái tích cho 4 task mặc định
+        function setDefaultCheckState() {
+            $('.default-check').each(function (i) {
+                $(this).prop('checked', defaultDone[i]);
+            });
+        }
+
+        function saveData() {
+            const data = {
+                date: today,
+                defaultDone: defaultDone,
+                tasks: tasks
+            };
+            try {
+                localStorage.setItem(todoKey, JSON.stringify(data));
+            } catch (e) {
+                console.warn('[WARN] Error saving to localStorage:', e);
+            }
+        }
+
+        function renderTasks(tasks) {
+            const list = $('#todoList');
+            // Xóa tất cả task cũ ngoại trừ mặc định
+            list.find('.dynamic-task').remove();
+
+            tasks.forEach((task, index) => {
+                list.append(`
+                    <li class="to-do-item dynamic-task">
+                        <div class="form-check user-checkbox">
+                            <input class="form-check-input check-it" type="checkbox" data-index="${index}" ${task.done ? 'checked' : ''}>
+                        </div>
+                        <div class="to-do-list-name">
+                            <strong>${task.text}</strong>
+                            <p>Hôm nay</p>
+                        </div>
+                    </li>
+                `);
+            });
+        }
+    });
+</script>
+
+<!-- Revenue -->
+<script>
+    const shadowLinePlugin = {
+        id: 'shadowLine',
+        beforeDraw(chart) {
+            const ctx = chart.ctx;
+
+            chart.data.datasets.forEach((dataset, index) => {
+                const meta = chart.getDatasetMeta(index);
+                if (!meta || meta.type !== 'line') return;
+
+                const originalStroke = ctx.stroke;
+                ctx.save();
+
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';   // bóng đen mờ
+                ctx.shadowBlur = 6;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 6;
+
+                ctx.stroke = function () {
+                    originalStroke.apply(this, arguments);
+                };
+
+                meta.dataset.draw(ctx);
+
+                ctx.stroke = originalStroke;
+                ctx.restore();
+            });
+        }
+    };
+
+
+    async function fetchAndRenderChart() {
+        try {
+            const response = await fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/monthly-spending', {
+                cache: 'no-store'
+            });
+            if (!response.ok) {
+                throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
+            }
+            const data = await response.json();
+
+            if (!Array.isArray(data)) {
+                throw new Error('Định dạng dữ liệu không đúng: Yêu cầu một mảng');
+            }
+
+            const recentMonths = data.slice(0, 6);
+            const labels = recentMonths.map(item => item.month.replace('2025-', '')).map(month => month.replace('-', '/2025'));
+            const totals = recentMonths.map(item => Number(item.totalSpent));
+
+            const totalSpending = data.reduce((sum, item) => sum + Number(item.totalSpent), 0);
+            document.getElementById('total-spending').textContent = `(Tổng: ${totalSpending.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })})`;
+
+            const ctx = document.getElementById('chart-canvas').getContext('2d');
+            if (!ctx) {
+                throw new Error('Không tìm thấy phần tử canvas');
+            }
+
+            const chartHeight = ctx.canvas.height;
+            const gradient = ctx.createLinearGradient(0, chartHeight, 0, 0);
+            gradient.addColorStop(0, 'rgba(13, 164, 135, 0)');
+            gradient.addColorStop(1, 'rgba(13, 164, 135, 1)');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Chi tiêu (VND)',
+                        data: totals,
+                        borderColor: '#0DA487',
+                        borderWidth: 4,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHitRadius: 15,
+                        pointBackgroundColor: '#0DA487',
+                        pointHoverBackgroundColor: '#ffffff',
+                        pointHoverBorderColor: '#0DA487',
+                        pointHoverBorderWidth: 3,
+                        backgroundColor: (ctx) => {
+                            const chart = ctx.chart;
+                            const { ctx: canvasCtx, chartArea, scales } = chart;
+
+                            if (!chartArea) return;
+
+                            const y5mil = scales.y.getPixelForValue(5000000);
+                            const yMax = scales.y.max;
+                            const yMaxPixel = scales.y.getPixelForValue(yMax);
+
+                            const gradient = canvasCtx.createLinearGradient(0, y5mil, 0, yMaxPixel);
+                            gradient.addColorStop(0, 'rgba(13, 164, 135, 0)');
+                            gradient.addColorStop(1, 'rgba(13, 164, 135, 1)');
+
+                            return gradient;
+                        }
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: Math.ceil(Math.max(...totals) / 5000000) * 5000000 + 5000000,
+                            title: { display: true, text: 'Chi tiêu (VND)' },
+                            ticks: {
+                                callback: value => value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }),
+                                stepSize: 5000000
+                            },
+                            grid: { display: false }
+                        },
+                        x: {
+                            title: { display: true, text: 'Tháng' },
+                            grid: { display: true, color: '#e9ecef' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true, position: 'top' },
+                        title: { display: true, text: 'Chi tiêu trong 6 tháng gần nhất' }
+                    },
+                    elements: {
+                        line: {
+                            borderJoinStyle: 'round'
+                        }
+                    }
+                },
+                plugins: [shadowLinePlugin]
+            });
+
+        } catch (error) {
+            console.error('Lỗi hiển thị biểu đồ:', error);
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = `Không tải được biểu đồ: ${error.message}`;
+            errorDiv.style.display = 'block';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchAndRenderChart);
+
+    function exportToExcel() {
+        fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/monthly-spending')
+            .then(res => res.json())
+            .then(data => {
+                const formatted = data.map(item => ({
+                    'Tháng': item.month.replace('-', '/'),
+                    'Tổng chi tiêu (VND)': Number(item.totalSpent)
+                }));
+
+                const worksheet = XLSX.utils.json_to_sheet(formatted);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Chi tiêu');
+                XLSX.writeFile(workbook, 'BaoCaoChiTieu.xlsx');
+            })
+            .catch(err => {
+                alert('Lỗi khi xuất Excel: ' + err.message);
+            });
+    }
+</script>
+
+<!-- Transactions -->
+<script>
+    $(document).ready(function() {
+        // Format date to Vietnamese format: HH:mm:ss DD/MM/YYYY
+        function formatDateToVietnamese(dateString) {
+            if (!dateString || dateString === 'N/A') return 'N/A';
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    console.warn('[CẢNH BÁO] Ngày không hợp lệ:', dateString);
+                    return 'N/A';
+                }
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const seconds = String(date.getSeconds()).padStart(2, '0');
+                return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
+            } catch (error) {
+                console.error('[LỖI] Lỗi phân tích ngày:', dateString, error);
+                return 'N/A';
+            }
+        }
+
+        // Format batchID: BAT-[ID+1000 in Base36]-[MMdd]
+        function formatBatchID(batchID, manufactureDate) {
+            try {
+                const offsetID = parseInt(batchID) + 1000;
+                const base36ID = offsetID.toString(36).toUpperCase();
+                let datePart = '0000';
+                if (manufactureDate && manufactureDate !== 'N/A') {
+                    const date = new Date(manufactureDate);
+                    if (!isNaN(date.getTime())) {
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        datePart = `${month}${day}`;
+                    }
+                }
+                return `BAT-${base36ID}-${datePart}`;
+            } catch (error) {
+                console.error('[LỖI] Lỗi định dạng batchID:', batchID, error);
+                return batchID || 'N/A';
+            }
+        }
+
+        // Fetch and display recent transactions
+        function fetchRecentTransactions() {
+            const tableBody = $('.transactions-table tbody');
+            if (!tableBody.length) {
+                console.error('[LỖI] Transaction table body not found');
+                $.notify({ message: 'Không tìm thấy bảng giao dịch. Vui lòng kiểm tra HTML.' }, { type: 'danger', delay: 5000 });
+                return;
+            }
+            tableBody.empty(); // Clear existing rows
+
+            // Fetch suppliers for stockin mapping
+            const loadSuppliers = $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/api/suppliers',
+                method: 'GET',
+                dataType: 'json',
+                timeout: 5000
+            }).then(data => {
+                console.log('[DEBUG] Loaded suppliers:', data?.length || 0);
+                return data || [];
+            }).catch((xhr, status, error) => {
+                console.error('[LỖI] Failed to load suppliers:', status, error, xhr.responseText);
+                $.notify({ message: 'Lỗi khi tải danh sách nhà cung cấp.' }, { type: 'danger', delay: 3000 });
+                return [];
+            });
+
+            // Fetch warehouses for stockin and stockout mapping
+            const loadWarehouses = $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/api/warehouses',
+                method: 'GET',
+                dataType: 'json',
+                timeout: 5000
+            }).then(data => {
+                console.log('[DEBUG] Loaded warehouses:', data?.length || 0);
+                return data || [];
+            }).catch((xhr, status, error) => {
+                console.error('[LỖI] Failed to load warehouses:', status, error, xhr.responseText);
+                $.notify({ message: 'Lỗi khi tải danh sách kho.' }, { type: 'danger', delay: 3000 });
+                return [];
+            });
+
+            // Fetch stockins
+            const loadStockIns = $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/api/stockins',
+                method: 'GET',
+                dataType: 'json',
+                timeout: 5000
+            }).then(data => {
+                console.log('[DEBUG] Loaded stockins:', data?.length || 0);
+                return data || [];
+            }).catch((xhr, status, error) => {
+                console.error('[LỖI] Failed to load stockins:', status, error, xhr.responseText);
+                $.notify({ message: 'Lỗi khi tải danh sách nhập kho.' }, { type: 'danger', delay: 3000 });
+                return [];
+            });
+
+            // Fetch stockouts
+            const loadStockOuts = $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/api/stockouts',
+                method: 'GET',
+                dataType: 'json',
+                timeout: 5000
+            }).then(data => {
+                console.log('[DEBUG] Loaded stockouts:', data?.length || 0);
+                return data || [];
+            }).catch((xhr, status, error) => {
+                console.error('[LỖI] Failed to load stockouts:', status, error, xhr.responseText);
+                $.notify({ message: 'Lỗi khi tải danh sách xuất kho.' }, { type: 'danger', delay: 3000 });
+                return [];
+            });
+
+            // Fetch product batches for adjustments
+            const loadProductBatches = $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/api/product-batches',
+                method: 'GET',
+                dataType: 'json',
+                timeout: 5000
+            }).then(data => {
+                const batchData = {};
+                $.each(data, function(index, batch) {
+                    const id = batch.batchID || batch.id;
+                    batchData[id] = {
+                        batchId: id,
+                        manufactureDate: batch.manufactureDate || 'N/A'
+                    };
+                });
+                console.log('[DEBUG] Loaded product batches:', Object.keys(batchData).length);
+                return batchData;
+            }).catch((xhr, status, error) => {
+                console.error('[LỖI] Failed to load product batches:', status, error, xhr.responseText);
+                $.notify({ message: 'Lỗi khi tải danh sách lô hàng.' }, { type: 'danger', delay: 3000 });
+                return {};
+            });
+
+            // Fetch adjustments
+            const loadAdjustments = $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/api/adjustments/paginatedAdjustment?page=0&size=1000',
+                method: 'GET',
+                dataType: 'json',
+                timeout: 5000
+            }).then(data => {
+                console.log('[DEBUG] Loaded adjustments:', data?.content?.length || 0);
+                return data?.content || [];
+            }).catch((xhr, status, error) => {
+                console.error('[LỖI] Failed to load adjustments:', status, error, xhr.responseText);
+                $.notify({ message: 'Lỗi khi tải danh sách điều chỉnh.' }, { type: 'danger', delay: 3000 });
+                return [];
+            });
+
+            // Process all data
+            $.when(loadSuppliers, loadWarehouses, loadStockIns, loadStockOuts, loadProductBatches, loadAdjustments).then(
+                (suppliers, warehouses, stockIns, stockOuts, batchData, adjustments) => {
+                    const fragment = document.createDocumentFragment();
+
+                    // Process most recent stockin
+                    if (stockIns.length > 0) {
+                        const latestStockIn = stockIns.reduce((latest, current) => {
+                            const currentDate = new Date(current.stockInDate).getTime();
+                            const latestDate = new Date(latest.stockInDate).getTime();
+                            return currentDate > latestDate ? current : latest;
+                        });
+
+                        const supplierId = latestStockIn.supplierID && typeof latestStockIn.supplierID === 'object'
+                            ? (latestStockIn.supplierID.supplierID || latestStockIn.supplierID.id || null)
+                            : latestStockIn.supplierID;
+                        const supplier = suppliers.find(s => (s.supplierID || s.id) == supplierId);
+                        const supplierName = supplier ? (supplier.supplierName || supplier.name || 'N/A') : 'N/A';
+
+                        const warehouseId = latestStockIn.warehouseID && typeof latestStockIn.warehouseID === 'object'
+                            ? (latestStockIn.warehouseID.warehouseId || latestStockIn.warehouseID.id || null)
+                            : latestStockIn.warehouseID;
+                        const warehouse = warehouses.find(w => (w.warehouseId || w.id) == warehouseId);
+                        const warehouseName = warehouse ? (warehouse.warehouseName || warehouse.name || 'N/A') : 'N/A';
+
+                        const stockInDescription = `Nhập kho lô hàng mã ${latestStockIn.id || 'N/A'} từ nhà cung cấp ${supplierName} tại ${warehouseName}`;
+
+                        // Fetch batch count
+                        $.ajax({
+                            url: `/AgriculturalWarehouseManagementApplication/api/stockindetails/${latestStockIn.id}/batch-count`,
+                            method: 'GET',
+                            dataType: 'json',
+                            timeout: 5000
+                        }).then(batchCount => {
+                            const batchQuantity = batchCount?.batchCount || batchCount || 0;
+                            console.log('[DEBUG] Batch count for stockInId', latestStockIn.id, ':', batchQuantity);
+
+                            const stockInRow = document.createElement('tr');
+                            stockInRow.innerHTML = `
+              <td>
+                <div class="transactions-icon">
+                  <i class="ri-download-2-line"></i>
+                </div>
+                <div class="transactions-name">
+                  <h6>Nhập kho</h6>
+                  <p>${stockInDescription}</p>
+                </div>
+              </td>
+              <td class="success">+${batchQuantity} lô</td>
+            `;
+                            fragment.appendChild(stockInRow);
+
+                            // Process stockout
+                            renderStockOut(stockOuts, warehouses, fragment, tableBody, batchData, adjustments);
+                        }).catch((xhr, status, error) => {
+                            console.error('[LỖI] Failed to load batch count for stockInId', latestStockIn.id, ':', status, error, xhr.responseText);
+                            $.notify({ message: 'Lỗi khi tải số lô hàng cho phiếu nhập kho.' }, { type: 'danger', delay: 3000 });
+
+                            const stockInRow = document.createElement('tr');
+                            stockInRow.innerHTML = `
+              <td>
+                <div class="transactions-icon">
+                  <i class="ri-download-2-line"></i>
+                </div>
+                <div class="transactions-name">
+                  <h6>Nhập kho</h6>
+                  <p>${stockInDescription}</p>
+                </div>
+              </td>
+              <td class="success">+0 lô</td>
+            `;
+                            fragment.appendChild(stockInRow);
+
+                            // Process stockout
+                            renderStockOut(stockOuts, warehouses, fragment, tableBody, batchData, adjustments);
+                        });
+                    } else {
+                        // No stockins, process stockouts
+                        renderStockOut(stockOuts, warehouses, fragment, tableBody, batchData, adjustments);
+                    }
+                }
+            ).catch((xhr, status, error) => {
+                console.error('[LỖI] Failed to load transactions:', status, error, xhr.responseText);
+                tableBody.append(`
+        <tr>
+          <td colspan="2" class="text-center" style="background-color: #e6f3f2; color: #555;">
+            Lỗi khi tải giao dịch
+          </td>
+        </tr>
+      `);
+                $.notify({ message: 'Lỗi khi tải danh sách giao dịch.' }, { type: 'danger', delay: 5000 });
+            });
+        }
+
+        // Helper function to fetch orderCode
+        function fetchOrderCode(orderId) {
+            return new Promise((resolve) => {
+                if (!orderId) {
+                    console.warn('[CẢNH BÁO] No orderId provided, using N/A');
+                    resolve('N/A');
+                    return;
+                }
+                $.ajax({
+                    url: `/AgriculturalWarehouseManagementApplication/api/orders/${orderId}`,
+                    method: 'GET',
+                    dataType: 'json',
+                    timeout: 5000
+                }).then(order => {
+                    const orderCode = order?.orderCode || `ORD${orderId}`;
+                    console.log('[DEBUG] OrderCode for orderID', orderId, ':', orderCode);
+                    resolve(orderCode);
+                }).catch((xhr, status, error) => {
+                    console.error('[LỖI] Failed to load order for orderId', orderId, ':', status, error, xhr.responseText);
+                    $.notify({ message: 'Lỗi khi tải mã đơn hàng cho phiếu xuất kho.' }, { type: 'danger', delay: 3000 });
+                    resolve(`ORD${orderId}`);
+                });
+            });
+        }
+
+        // Helper function to process and render stockout and adjustment
+        async function renderStockOut(stockOuts, warehouses, fragment, tableBody, batchData, adjustments) {
+            if (stockOuts.length > 0) {
+                const latestStockOut = stockOuts.reduce((latest, current) => {
+                    const currentDate = new Date(current.stockOutDate || current.createdDate).getTime();
+                    const latestDate = new Date(latest.stockOutDate || latest.createdDate).getTime();
+                    return currentDate > latestDate ? current : latest;
+                });
+
+                const orderId = latestStockOut.orderID && typeof latestStockOut.orderID === 'object'
+                    ? (latestStockOut.orderID.id || latestStockOut.orderID.orderId || null)
+                    : latestStockOut.orderID;
+
+                // Fetch orderCode
+                const orderCode = await fetchOrderCode(orderId);
+
+                // Get warehouse name
+                const warehouseId = latestStockOut.warehouseID && typeof latestStockOut.warehouseID === 'object'
+                    ? (latestStockOut.warehouseID.warehouseId || latestStockOut.warehouseID.id || null)
+                    : latestStockOut.warehouseID;
+                const warehouse = warehouses.find(w => (w.warehouseId || w.id) == warehouseId);
+                const warehouseName = warehouse ? (warehouse.warehouseName || warehouse.name || 'N/A') : 'N/A';
+                console.log('[DEBUG] Warehouse name for warehouseID', warehouseId, ':', warehouseName);
+
+                const stockOutDescription = `Xuất kho đơn hàng ${orderCode} tại ${warehouseName}`;
+
+                // Fetch total quantity
+                $.ajax({
+                    url: `/AgriculturalWarehouseManagementApplication/api/stockoutdetails/${latestStockOut.id}/total-quantity`,
+                    method: 'GET',
+                    dataType: 'json',
+                    timeout: 5000
+                }).then(totalQuantity => {
+                    const quantity = totalQuantity?.totalQuantity || totalQuantity || 0;
+                    console.log('[DEBUG] Total quantity for stockOutId', latestStockOut.id, ':', quantity);
+
+                    const stockOutRow = document.createElement('tr');
+                    stockOutRow.innerHTML = `
+          <td class="td-color-1">
+            <div class="transactions-icon">
+              <i class="ri-upload-2-line"></i>
+            </div>
+            <div class="transactions-name">
+              <h6>Xuất kho</h6>
+              <p>${stockOutDescription}</p>
+            </div>
+          </td>
+          <td class="lost">-${quantity} sản phẩm</td>
+        `;
+                    fragment.appendChild(stockOutRow);
+
+                    // Process adjustment
+                    renderAdjustment(adjustments, batchData, fragment, tableBody);
+                }).catch((xhr, status, error) => {
+                    console.error('[LỖI] Failed to load total quantity for stockOutId', latestStockOut.id, ':', status, error, xhr.responseText);
+                    $.notify({ message: 'Lỗi khi tải số lượng sản phẩm cho phiếu xuất kho.' }, { type: 'danger', delay: 3000 });
+
+                    const stockOutRow = document.createElement('tr');
+                    stockOutRow.innerHTML = `
+          <td class="td-color-1">
+            <div class="transactions-icon">
+              <i class="ri-upload-2-line"></i>
+            </div>
+            <div class="transactions-name">
+              <h6>Xuất kho</h6>
+              <p>${stockOutDescription}</p>
+            </div>
+          </td>
+          <td class="lost">-0 sản phẩm</td>
+        `;
+                    fragment.appendChild(stockOutRow);
+
+                    // Process adjustment
+                    renderAdjustment(adjustments, batchData, fragment, tableBody);
+                });
+            } else {
+                // No stockouts, process adjustments
+                renderAdjustment(adjustments, batchData, fragment, tableBody);
+            }
+        }
+
+        // Helper function to process and render adjustment
+        function renderAdjustment(adjustments, batchData, fragment, tableBody) {
+            // Filter adjustments for the current month (July 2025)
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth(); // 6 for July (0-based)
+
+            const currentMonthAdjustments = adjustments.filter(adjustment => {
+                const adjustDate = new Date(adjustment.adjustDate);
+                return adjustDate.getFullYear() === currentYear && adjustDate.getMonth() === currentMonth;
+            });
+
+            if (currentMonthAdjustments.length > 0) {
+                const latestAdjustment = currentMonthAdjustments.reduce((latest, current) => {
+                    const currentDate = new Date(current.adjustDate).getTime();
+                    const latestDate = new Date(latest.adjustDate).getTime();
+                    return currentDate > latestDate ? current : latest;
+                });
+
+                const batchId = latestAdjustment.batchId && batchData[latestAdjustment.batchId]
+                    ? formatBatchID(latestAdjustment.batchId, batchData[latestAdjustment.batchId].manufactureDate)
+                    : latestAdjustment.batchId || 'N/A';
+                const reason = latestAdjustment.reason || 'Kiểm kê cuối tháng';
+                const adjustmentDescription = `Điều chỉnh tồn kho ${batchId} (${reason})`;
+                const quantity = latestAdjustment.quantity || 0;
+                const adjustmentType = latestAdjustment.adjustmentType || 'Remove';
+                const quantityClass = adjustmentType === 'Add' ? 'success' : 'lost';
+                const quantityPrefix = adjustmentType === 'Add' ? '+' : '-';
+
+                const adjustmentRow = document.createElement('tr');
+                adjustmentRow.innerHTML = `
+        <td class="td-color-3">
+          <div class="transactions-icon">
+            <i class="ri-equalizer-line"></i>
+          </div>
+          <div class="transactions-name">
+            <h6>Điều chỉnh tồn kho</h6>
+            <p>${adjustmentDescription}</p>
+          </div>
+        </td>
+        <td class="${quantityClass}">${quantityPrefix}${quantity} sản phẩm</td>
+      `;
+                fragment.appendChild(adjustmentRow);
+            }
+
+            // Append to table
+            if (fragment.childNodes.length > 0) {
+                tableBody[0].appendChild(fragment);
+            } else {
+                tableBody.append(`
+        <tr>
+          <td colspan="2" class="text-center" style="background-color: #e6f3f2; color: #555;">
+            Không tìm thấy giao dịch nào
+          </td>
+        </tr>
+      `);
+            }
+        }
+
+        // Initial fetch
+        fetchRecentTransactions();
+    });
+</script>
+
+</body>
+</html>

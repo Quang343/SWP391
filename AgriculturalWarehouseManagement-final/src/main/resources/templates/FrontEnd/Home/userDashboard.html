@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fastkart">
+    <meta name="keywords" content="Fastkart">
+    <meta name="author" content="Fastkart">
+    <link rel="icon" th:href="@{FrontEnd/assets/images/favicon/1.png}" type="image/x-icon">
+    <title>On-demand last-mile delivery</title>
+
+    <!-- Google font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap">
+
+    <!-- bootstrap css -->
+    <link id="rtl-link" rel="stylesheet" type="text/css" th:href="@{FrontEnd/assets/css/vendors/bootstrap.css}">
+
+    <!-- Iconly css -->
+    <link rel="stylesheet" type="text/css" th:href="@{FrontEnd/assets/css/bulk-style.css}">
+
+    <!-- Template css -->
+    <link id="color-link" rel="stylesheet" type="text/css" th:href="@{FrontEnd/assets/css/style.css}">
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        @keyframes shake {
+            0% {
+                transform: translateX(0);
+            }
+            20% {
+                transform: translateX(-5px);
+            }
+            40% {
+                transform: translateX(5px);
+            }
+            60% {
+                transform: translateX(-5px);
+            }
+            80% {
+                transform: translateX(5px);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+            animation-iteration-count: infinite; /*Và lặp đi lặp lại mãi */
+        }
+
+        .shake-10s { /* class mới */
+            animation: shake 0.5s ease-in-out;
+            animation-iteration-count: 20; /* 0.5 s × 20 = 10 s */
+        }
+
+        /* ---- CSS ---- */
+
+        .glow-btn {
+            position: relative;
+            isolation: isolate;
+            border-radius: 10px;
+            z-index: 1;
+            padding: 10px 12px;
+            color: white;
+            background-color: #689aec;
+            border: none;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Lớp nền mờ bên dưới */
+        .glow-btn::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-color: #689aec; /* giống nền gốc */
+            border-radius: inherit;
+            z-index: -2;
+        }
+
+        /* Viền phát sáng mở rộng rõ ràng */
+        .glow-btn::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            background: linear-gradient(
+                    45deg,
+                    #FF0000, #FF7300, #FFFB00, #48FF00,
+                    #00FFD5, #002BFF, #FF00C8, #FF0000
+            );
+            background-size: 600%;
+            filter: blur(8px); /* tăng độ lan */
+            border-radius: inherit;
+            z-index: -3;
+            opacity: 1;
+            animation: glowing 20s linear infinite, pulseGlow 4s ease-in-out infinite;
+        }
+
+        /* Gradient di chuyển liên tục */
+        @keyframes glowing {
+            0% {
+                background-position: 0 0;
+            }
+            50% {
+                background-position: 400% 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
+
+        /* Nhịp sáng giãn–thu */
+        @keyframes pulseGlow {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .div1 {
+            font-size: 12px;
+            background: linear-gradient(-90deg, #dc9898 0%, #d9dd35 100%);
+            margin-left: calc(9px + 11 * (100vw - 320px) / 1600);
+            font-weight: 600;
+            padding: 4px 6px;
+            color: white;
+            border-radius: 4px;
+        }
+
+        .div2 {
+            font-size: 12px;
+            background: linear-gradient(-90deg, #e13636 0%, #d82035 100%);
+            margin-left: calc(9px + 11 * (100vw - 320px) / 1600);
+            font-weight: 600;
+            padding: 4px 6px;
+            color: white;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+
+        /* Đặt kiểu cho div chứa */
+        .payment-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10%;
+            align-items: center; /* Căn giữa các phần tử theo chiều dọc */
+            justify-content: center; /* Căn giữa các phần tử theo chiều ngang */
+        }
+
+        /* Cải thiện style cho label */
+        .payment-container label {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Cải thiện style cho input */
+        .input-field {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 200px;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: #28a745; /* Đổi màu viền khi input được focus */
+            outline: none;
+        }
+
+        /* Cải thiện style cho button */
+        .btn-nap {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #28a745; /* Màu xanh lá */
+            border: 1px solid #28a745;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn-nap:hover {
+            background-color: #218838; /* Màu xanh đậm hơn khi hover */
+            transform: translateY(-2px); /* Hiệu ứng di chuyển nhẹ khi hover */
+        }
+
+        .btn-nap:active {
+            transform: translateY(1px); /* Hiệu ứng khi nhấn button */
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- Loader Start -->
+<div class="fullpage-loader">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+<!-- Loader End -->
+
+<!-- Header Start -->
+<head th:replace="FrontEnd/fragments/header::header"></head>
+<!-- Header End -->
+
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-0">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-contain">
+                    <h2>Trang tổng quan của tôi</h2>
+                    <nav>
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item">
+                                <a href="home">
+                                    <i class="fa-solid fa-house"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active">Trang tổng quan của tôi</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- User Dashboard Section Start -->
+<section class="user-dashboard-section section-b-space">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-xxl-3 col-lg-4">
+                <div class="dashboard-left-sidebar">
+                    <div class="close-button d-flex d-lg-none">
+                        <button class="close-sidebar">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="profile-box">
+                        <div class="cover-image">
+                            <img th:src="@{FrontEnd/assets/images/inner-page/cover-img.jpg}"
+                                 class="img-fluid blur-up lazyload"
+                                 alt="">
+                        </div>
+
+                        <div class="profile-contain">
+                            <form th:action="@{/profileUserEdit/image}"
+                                  method="post"
+                                  enctype="multipart/form-data"
+                                  class="profile-image">
+                                <div class="position-relative">
+                                    <img th:if="${session.account.imageUrl != null}" th:src="${session.account.imageUrl}"
+                                         class="blur-up lazyload update_img" alt="more image"
+                                         accept=".jpg,.jpeg,.png,.gif,.webp,image/*">
+
+                                    <!--                                    th:if="${session.account.getImageUrl != null && session.account.getImageUrl !=''}"-->
+                                    <div class="cover-icon">
+                                        <i class="fa-solid fa-pen">
+                                            <input type="file" name="image" onchange="readURL(this,0)"
+                                                   accept=".jpg,.jpeg,.png,.gif,.webp,image/*">
+                                        </i>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-outline-primary btn-sm glow-btn">Lưu</button>
+                                </div>
+                            </form>
+
+                            <div class="profile-name">
+                                <h3 th:text="${session.account.getUserName}">Your username</h3>
+                                <h6 class="text-content" th:text="${session.account.getEmail}">Your email</h6>
+                            </div>
+
+                            <div class="alert alert-danger shake-10s"
+                                 th:if="${errorUpdateImage != null}"
+                                 th:text="${errorUpdateImage}">
+                            </div>
+
+                            <div class="alert alert-danger shake-10s"
+                                 th:if="${errorUpdateProfile != null}"
+                                 th:text="${errorUpdateProfile}">
+                            </div>
+
+                            <div class="alert alert-danger shake-10s"
+                                 th:if="${errorChangePassword != null}"
+                                 th:text="${errorChangePassword}">
+                            </div>
+
+                            <div class="alert alert-success shake-10s"
+                                 th:if="${successChangePassword != null}"
+                                 th:text="${successChangePassword}">
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <ul class="nav nav-pills user-nav-pills" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pills-dashboard-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-dashboard" type="button"><i data-feather="home"></i>
+                                Trang tổng quản
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-order-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-order" type="button"><i
+                                    data-feather="shopping-bag"></i>Order
+                            </button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-address-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-address" type="button" role="tab"><i
+                                    data-feather="map-pin"></i>Địa chị Order
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-profile" type="button" role="tab"><i data-feather="user"></i>
+                                Hồ sơ
+                            </button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-security-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-security" type="button" role="tab"><i
+                                    data-feather="shield"></i>
+                                Privacy
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-xxl-9 col-lg-8">
+                <button class="btn left-dashboard-show btn-animation btn-md fw-bold d-block mb-4 d-lg-none">Show
+                    Menu
+                </button>
+                <div class="dashboard-right-sidebar">
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-dashboard" role="tabpanel">
+                            <div class="dashboard-home">
+                                <div class="title">
+                                    <h2>Trang tổng quan của tôi</h2>
+                                    <span class="title-leaf">
+                                            <svg class="icon-width bg-gray">
+                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                                            </svg>
+                                        </span>
+                                    <h5 class="glow-btn" style="margin-top: 10px"
+                                        th:text="${'Ví tiền: ' + #numbers.formatInteger(walletsResponse.getBalance(), 0, 'POINT') + '₫'}"></h5>
+                                    <div class="payment-container">
+                                        <form th:action="@{/depositWalletProfile}" method="post">
+                                            <label for="nap">Nạp tiền: </label>
+                                            <input id="nap" type="number" name="totalPrice" class="input-field" placeholder="Nhập số tiền" inputmode="numeric" oninput="validateAmount()" required/>
+                                            <button type="submit" class="btn-nap">Nạp</button>
+                                        </form>
+                                    </div>
+
+                                    <script>
+                                        function validateAmount() {
+                                            const inputField = document.getElementById('nap');
+                                            let amount = inputField.value.trim();  // Lấy giá trị nhập vào và loại bỏ khoảng trắng
+
+                                            console.log("Input value: " + amount); // Để kiểm tra giá trị nhập vào
+
+                                            // Kiểm tra xem giá trị có hợp lệ (là một số)
+                                            if (amount === "" || isNaN(amount) || parseFloat(amount) < 10000) {
+                                                inputField.setCustomValidity("Số tiền nạp tối thiểu là 10000đ.");
+                                            } else {
+                                                inputField.setCustomValidity("");  // Xóa thông báo lỗi nếu hợp lệ
+                                            }
+                                        }
+                                    </script>
+
+
+                                </div>
+
+                                <div class="dashboard-user-name">
+                                    <h6 class="text-content">Xin chào,<b class="text-title"
+                                                                         th:text="${session.account.getUserName}">Your
+                                        username</b></h6>
+                                    <p class="text-content">Từ tài khoản Dashboard, bạn có thể xem hoạt động gần đây và
+                                        cập nhật thông tin tài khoản..</p>
+                                </div>
+
+                                <div class="total-box">
+                                    <div class="row g-sm-4 g-3">
+                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
+                                            <div class="total-contain">
+                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}"
+                                                     class="img-1 blur-up lazyload" alt="">
+                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}"
+                                                     class="blur-up lazyload"
+                                                     alt="">
+                                                <div class="total-detail">
+                                                    <h5>Tổng số Order</h5>
+                                                    <h3 th:if="${totalOrder != null}" th:text="${totalOrder}">3658</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
+                                            <div class="total-contain">
+                                                <img th:src="@{FrontEnd/assets/images/svg/wishlist.svg}"
+                                                     class="img-1 blur-up lazyload" alt="">
+                                                <img th:src="@{FrontEnd/assets/images/svg/wishlist.svg}"
+                                                     class="blur-up lazyload" alt="">
+                                                <div class="total-detail">
+                                                    <h5>Tổng yêu thích</h5>
+                                                    <h3 th:if="${totalWishlist != null}" th:text="${totalWishlist}">
+                                                        32158</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-4">
+                                    <div class="col-xxl-6">
+                                        <div class="dashboard-content-title">
+                                            <h4>Thông tin
+                                            </h4>
+                                        </div>
+                                        <div class="dashboard-detail">
+                                            <h6 class="text-content" th:text="${session.account.getFullName}">Your
+                                                fullname</h6>
+                                            <h6 class="text-content" th:text="${session.account.getEmail}">Your
+                                                email</h6>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-order" role="tabpanel">
+                            <div class="dashboard-order">
+                                <div class="title">
+                                    <h2>Lịch sử đơn hàng của tôi</h2>
+                                    <h2>(Chỉ được hủy đơn hàng trong 24 giờ đã Order, khi hủy sẽ hoàn tiền)</h2>
+                                    <span class="title-leaf title-leaf-gray">
+                                            <svg class="icon-width bg-gray">
+                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                                            </svg>
+                                        </span>
+                                </div>
+
+                                <div class="order-contain">
+                                    <div th:each="order : ${orderUserResponses}" class="order-box dashboard-bg-box">
+                                        <div class="order-container">
+                                            <div class="order-icon">
+                                                <i data-feather="box"></i>
+                                            </div>
+
+                                            <div class="order-detail">
+                                                <h4>
+                                                    Trạng thái Order
+                                                    <div th:if="${order.status == 'PENDING'}" th:text="${'Đang chờ'}"
+                                                         class="div1">Đang chờ
+                                                    </div>
+                                                    <div th:if="${order.status == 'PENDING' and T(java.time.Duration).between(order.orderDate, T(java.time.LocalDateTime).now()).toHours() < 24}">
+                                                        <form th:action="@{/cancellOrder}" method="post">
+                                                            <input name="orderId" type="text"
+                                                                   th:value="${order.orderId}" hidden=""/>
+
+                                                            <button type="submit" class="div2"
+                                                                    style="cursor: pointer; border: none">
+                                                                Hủy
+                                                            </button>
+
+
+                                                        </form>
+
+
+                                                    </div>
+
+
+                                                    <span th:if="${order.status == 'CONFIRMED'}"
+                                                          th:text="${'Đã xác nhận'}"
+                                                          class="success-bg">Đã xác nhận</span>
+                                                    <div th:if="${order.status == 'DELIVERED'}"
+                                                         th:text="${'Đang giao hàng'}"
+                                                         class="div1">Đang giao hàng
+                                                    </div>
+                                                    <span th:if="${order.status == 'CANCELLED'}"
+                                                          th:text="${'Đã hủy'}" class="danger-bg">Đã hủy</span>
+                                                    <span class="success-bg" style="margin-left: 30px">
+                                                        <a th:href="@{/orderDetailsUser(orderCode=${order.orderCode})}"
+                                                           style="color:white;">Chi tiết Order</a>
+                                                    </span>
+
+                                                </h4>
+                                            </div>
+                                        </div>
+
+                                        <div class="product-order-detail">
+
+                                            <div class="order-wrap">
+
+                                                <ul class="product-size">
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Email order: </h6>
+                                                            <h5 th:text="${order.email}">
+                                                                nguyenhoanganh712004qp@gamil.com</h5>
+                                                        </div>
+                                                    </li>
+
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Tổng số lượng : </h6>
+                                                            <h5 th:text="${order.totalQuantity}">100</h5>
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Tổng giá tiền : </h6>
+                                                            <h5 th:text="${#numbers.formatInteger(order.totalPrice, 0, 'POINT') + '₫'}"
+                                                                class="price theme-color">200.000đ</h5>
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                        <div class="size-box">
+                                                            <h6 class="text-content">Ngày Order : </h6>
+                                                            <h5 th:text="${order.formatOrderDate()}">2025-7-05</h5>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="alert-message" class="alert alert-danger" style="display: none;">
+                        </div>
+
+                        <div id="alert-message-success" class="alert alert-success" style="display: none;">
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-address" role="tabpanel">
+                            <div class="dashboard-address">
+                                <div class="title title-flex">
+                                    <div>
+                                        <h2>Sổ địa chỉ của tôi</h2>
+                                        <span class="title-leaf">
+                                                <svg class="icon-width bg-gray">
+                                                    <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                                                </svg>
+                                            </span>
+                                    </div>
+
+                                    <form th:action="@{/checkOut}" method="get">
+                                        <button class="btn theme-bg-color text-white btn-sm fw-bold mt-lg-0 mt-3"
+                                                data-bs-toggle="modal"><i data-feather="plus" class="me-2"></i>
+                                            Đến thanh toán
+                                        </button>
+                                    </form>
+
+                                    <button class="btn theme-bg-color text-white btn-sm fw-bold mt-lg-0 mt-3"
+                                            data-bs-toggle="modal" data-bs-target="#add-address"><i data-feather="plus"
+                                                                                                    class="me-2"></i>
+                                        Thêm địa chỉ mới
+                                    </button>
+
+                                </div>
+
+                                <div class="row g-sm-4 g-3" id="addressBookContainer">
+
+                                    <script>
+                                        async function fetchGetAddressBook() {
+                                            try {
+                                                const userId = "[[${session.accountId}]]";
+                                                console.log("hello--------" + userId)
+                                                // console.log("Account ID from session: [[${session.accountId}]]");
+                                                const response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/addressBook/${userId}`);
+
+                                                const addressBooks = response.data;
+                                                const container = document.getElementById("addressBookContainer");
+
+                                                if (addressBooks.length > 0) {
+                                                    let htmlContent = '';
+                                                    addressBooks.forEach(address => {
+                                                        htmlContent += `
+                                                                <div class="col-xxl-4 col-xl-6 col-lg-12 col-md-6">
+                                                                    <div class="address-box">
+                                                                        <div>
+                                                                            <div class="form-check">
+                                                                                <input class="form-check-input" type="radio" name="jack" id="flexRadioDefault${address.userId}" checked>
+
+                                                                            </div>
+
+                                                                            <div class="label">
+                                                                                <label id="userSetToAddress" contenteditable="false">${address.setToAddress}</label>
+                                                                            </div>
+
+
+                                                                            <div class="table-responsive address-table">
+                                                                                <table class="table">
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                            <td id="userFullName" colspan="2" >${address.fullName}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td>Address :</td>
+                                                                                            <td id="userAddress">${address.address}
+                                                                                            </td>
+                                                                                        </tr>
+
+                                                                                        <tr>
+                                                                                            <td>Phone :</td>
+                                                                                            <td id="userPhone" >${address.phone || 'N/A'}</td>
+                                                                                        </tr>
+
+                                                                                        <tr>
+                                                                                            <td>Note :</td>
+                                                                                            <td id="userNote">${address.note || 'N/A'}</td>
+                                                                                        </tr>
+
+                                                                                        <tr>
+                                                                                            <td>Email :</td>
+                                                                                            <td id="userEmail" >${address.email || 'N/A'}</td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="button-group">
+                                                                           <button class="btn btn-sm add-button w-100"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target="#editAddressBook"
+                                                                                data-id="${address.userId}"
+                                                                                data-fullname="${address.fullName}"
+                                                                                data-address="${address.address}"
+                                                                                data-phone="${address.phone || ''}"
+                                                                                data-settoaddress="${address.setToAddress}"
+                                                                                data-email="${address.email}"
+                                                                                data-note="${address.note}"
+                                                                                data-addressbookid="${address.addressBookId}">
+                                                                            <i data-feather="edit"></i> Sửa
+                                                                        </button>
+
+
+                                                                            <button class="btn btn-sm add-button w-100" data-bs-toggle="modal"
+                                                                                    data-bs-target="#removeProfile"
+                                                                                    data-bs-target="removeAddress"
+                                                                                    data-addressbookid="${address.addressBookId}"
+                                                                                    data-id="${address.userId}">
+                                                                                    <i data-feather="trash-2"></i>
+                                                                                Xóa
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            `;
+                                                    });
+                                                    container.innerHTML = htmlContent;
+                                                } else {
+                                                    container.innerHTML = "Không tìm thấy sổ địa chỉ.";
+                                                }
+                                            } catch (error) {
+                                                console.error('Error fetching the address book:', error);
+                                                document.getElementById("addressBookContainer").innerText = "Failed to load address book.";
+                                            }
+                                        }
+
+                                        // Gọi hàm bất đồng bộ khi trang được tải
+                                        fetchGetAddressBook();
+                                    </script>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-profile" role="tabpanel">
+                            <div class="dashboard-profile">
+                                <div class="title">
+                                    <h2>Thông tin cái nhân</h2>
+                                    <span class="title-leaf">
+                                            <svg class="icon-width bg-gray">
+                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                                            </svg>
+                                        </span>
+                                </div>
+
+                                <div class="profile-detail dashboard-bg-box">
+                                    <div class="profile-name-detail">
+                                        <div class="d-sm-flex align-items-center d-block">
+                                            <h3 th:text="${session.account.getUserName}">Your username</h3>
+
+                                        </div>
+
+                                        <a href="javascript:void(0)" data-bs-toggle="modal"
+                                           data-bs-target="#editProfile">Sửa</a>
+                                    </div>
+
+                                    <div class="location-profile">
+                                        <ul>
+                                            <li>
+                                                <div class="location-box">
+                                                    <i data-feather="map-pin"></i>
+                                                    <h6 th:text="${session.account.getAddress}">Your address</h6>
+                                                </div>
+                                            </li>
+
+                                            <li>
+                                                <div class="location-box">
+                                                    <i data-feather="mail"></i>
+                                                    <h6 th:text="${session.account.getEmail}">Your email</h6>
+                                                </div>
+                                            </li>
+
+                                            <li>
+                                                <div class="location-box">
+                                                    <i data-feather="check-square"></i>
+                                                    <h6>Ngày tạo</h6>
+                                                    <h6 th:text="${session.account.formatCreateAt}">Your create at</h6>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+
+                                <div class="profile-about dashboard-bg-box">
+                                    <div class="row">
+                                        <div class="col-xxl-7">
+                                            <div class="dashboard-title mb-3">
+                                                <h3>Thông tin cái nhân về tôi</h3>
+                                            </div>
+
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>Tên người dùng:</td>
+                                                        <td th:text="${session.account.getUserName}">Your username</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Tên đầy đủ:</td>
+                                                        <td th:text="${session.account.getFullName}">Your Fullname</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Giới tính :</td>
+                                                        <td th:if="${session.account.getGender == 'male'}"
+                                                            th:text="${'Nam'}">Your gender
+                                                        </td>
+                                                        <td th:if="${session.account.getGender == 'female'}"
+                                                            th:text="${'Nữ'}">Your gender
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Ngày sinh :</td>
+                                                        <td th:text="${session.account.getDob}">Your dob</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Số điện thoại :</td>
+                                                        <td>
+                                                            <a href="javascript:void(0)"
+                                                               th:text="${session.account.getPhone}">Your phone</a>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Địa ch :</td>
+                                                        <td th:text="${session.account.getAddress}">549 Sulphur Springs
+                                                            Road, Downers, IL
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <div class="dashboard-title mb-3">
+                                                <h3>Chi tiết đăng nhập</h3>
+                                            </div>
+
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>Email :</td>
+                                                        <td>
+                                                            <a href="javascript:void(0)"
+                                                               th:text="${session.account.getEmail}">Your email</a>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Mật khẩu :</td>
+                                                        <td>
+                                                            <a href="javascript:void(0)">●●●●●●
+                                                                <span data-bs-toggle="modal"
+                                                                      data-bs-target="#editProfilePassword">Sửa</span></a>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xxl-5">
+                                            <div class="profile-image">
+                                                <img th:src="@{FrontEnd/assets/images/inner-page/dashboard-profile.png}"
+                                                     class="img-fluid blur-up lazyload" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="tab-pane fade" id="pills-security" role="tabpanel">
+                            <form th:action="@{/deleteAccount}" method="post" class="dashboard-privacy">
+
+
+                                <div class="dashboard-bg-box mt-4">
+                                    <div class="dashboard-title mb-4">
+                                        <h3>Xóa tài khoản</h3>
+                                    </div>
+
+
+                                    <div class="privacy-box">
+                                        <div class="d-flex align-items-start">
+                                            <h6>Xóa tài khoản của bạn</h6>
+                                            <div class="form-check form-switch switch-radio ms-auto">
+                                                <input name="deleteAccount" class="form-check-input" type="checkbox"
+                                                       role="switch"
+                                                       id="redio4" required>
+                                                <label class="form-check-label" for="redio4"></label>
+                                            </div>
+                                        </div>
+
+                                        <p class="text-content">Sau khi tài khoản của bạn bị xóa, bạn sẽ được đăng xuất
+                                            và tạo tài khoản mới. Bạn không thể đăng ký email đã xóa</p>
+                                    </div>
+
+                                    <button class="btn theme-bg-color btn-md fw-bold mt-4 text-white">Xóa tài khoản của
+                                        tôi
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- User Dashboard Section End -->
+
+<!-- Footer Section Start -->
+<!--<footer th:replace="FrontEnd/fragments/footer::footer"></footer>-->
+<!-- Footer Section End -->
+
+<!-- Deal Box Modal Start -->
+<div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title w-100" id="deal_today">Deal Today</h5>
+                    <p class="mt-1 text-content">Recommended deals for you.</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="deal-offer-box">
+                    <ul class="deal-offer-list">
+                        <li class="list-1">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/10.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-2">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/11.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-3">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/12.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="list-1">
+                            <div class="deal-offer-contain">
+                                <a href="shop-left-sidebar.html" class="deal-image">
+                                    <img src="../assets/images/vegetable/product/13.png" class="blur-up lazyload"
+                                         alt="">
+                                </a>
+
+                                <a href="shop-left-sidebar.html" class="deal-contain">
+                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
+                                    <h6>$52.57
+                                        <del>57.62</del>
+                                        <span>500 G</span></h6>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Deal Box Modal End -->
+
+<!-- Tap to top and theme setting button start -->
+<div class="theme-option">
+    <div class="setting-box">
+        <button class="btn setting-button">
+            <i class="fa-solid fa-gear"></i>
+        </button>
+
+        <div class="theme-setting-2">
+            <div class="theme-box">
+                <ul>
+                    <li>
+                        <div class="setting-name">
+                            <h4>Color</h4>
+                        </div>
+                        <div class="theme-setting-button color-picker">
+                            <form class="form-control">
+                                <label for="colorPick" class="form-label mb-0">Theme Color</label>
+                                <input type="color" class="form-control form-control-color" id="colorPick"
+                                       value="#0da487" title="Choose your color">
+                            </form>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>Dark</h4>
+                        </div>
+                        <div class="theme-setting-button">
+                            <button class="btn btn-2 outline" id="darkButton">Dark</button>
+                            <button class="btn btn-2 unline" id="lightButton">Light</button>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>RTL</h4>
+                        </div>
+                        <div class="theme-setting-button rtl">
+                            <button class="btn btn-2 rtl-unline">LTR</button>
+                            <button class="btn btn-2 rtl-outline">RTL</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-to-top">
+        <a id="back-to-top" href="#">
+            <i class="fas fa-chevron-up"></i>
+        </a>
+    </div>
+</div>
+<!-- Tap to top and theme setting button end -->
+
+<!-- Bg overlay Start -->
+<div class="bg-overlay"></div>
+<!-- Bg overlay End -->
+
+<!-- Add address modal box start -->
+<div class="modal fade theme-modal" id="add-address" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm một địa chỉ mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="form-floating mb-4 theme-form-floating">
+                    <input type="text" class="form-control" id="fullNameAdd" placeholder="Enter Full name" required>
+                    <label for="fullNameAdd">Tên đầy đủ</label>
+                </div>
+
+                <div class="form-floating mb-4 theme-form-floating">
+                    <input type="text" class="form-control" id="phone" placeholder="Phone" required>
+                    <label for="phone">Số điện thoại</label>
+                </div>
+
+                <div class="form-floating mb-4 theme-form-floating">
+                    <input type="email" class="form-control" id="address" placeholder="Enter Address" required>
+                    <label for="address">Địa chỉ</label>
+                </div>
+
+                <div class="form-floating mb-4 theme-form-floating">
+                    <textarea type="text" class="form-control" id="note" placeholder="Enter note" required></textarea>
+                    <label for="note">Ghi chú</label>
+                </div>
+
+                <div class="form-floating mb-4 theme-form-floating">
+                    <input class="form-control" placeholder="Leave a comment here" id="settoaddress"
+                           required/>
+                    <label for="settoaddress">Gửi địa chỉ</label>
+                </div>
+
+
+                <div class="form-floating mb-4 theme-form-floating">
+                    <input type="email" class="form-control" id="email" placeholder="Enter email" required>
+                    <label for="email">Email</label>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-md" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="add-address-submit btn theme-bg-color btn-md text-white"
+                        data-bs-dismiss="modal">Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /** Kiểm tra xem str đã viết hoa đúng chưa */
+    function isCapitalizedEachWord(str) {
+        if (str == null || str.trim().length === 0) return false;
+
+        const words = str.trim().split(/\s+/);
+
+        for (const word of words) {
+            if (word.length === 0) continue;           // an toàn, giống Java
+            const firstChar = word.charAt(0);
+            if (firstChar < 'A' || firstChar > 'Z') {  // Character.isUpperCase ASCII
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function showAlert(type, message) {
+        // Ẩn tất cả alert đang hiển thị
+        $('#alert-message, #alert-message-success')
+            .stop(true, true)
+            .hide()
+            .removeClass('shake');
+
+        // Chọn alert tương ứng
+        const $alert = type === 'success'
+            ? $('#alert-message-success')
+            : $('#alert-message');
+
+        // Gán nội dung và hiển thị
+        $alert.text(message).show().addClass('shake');
+
+        setTimeout(() => {
+            $alert.fadeOut(() => {
+                $alert.removeClass('shake');
+            });
+        }, 10000);
+    }
+
+
+    // Add event listener to the Save button
+    document.querySelector('.add-address-submit').addEventListener('click', async function () {
+
+        const userid = "[[${session.accountId}]]";
+        console.log("page22---------------" + userid)
+
+        const fullname = document.getElementById('fullNameAdd').value;
+        const phone = document.getElementById('phone').value;
+        const address = document.getElementById('address').value;
+        const note = document.getElementById('note').value;
+        const settoaddress = document.getElementById('settoaddress').value;
+        const email = document.getElementById('email').value;
+
+        console.log("email:---" + email)
+
+        if (!fullname || !email || !note || !settoaddress || !address || !phone) {
+            showAlert('error', 'Vui lòng điền vào tất cả các trường bắt buộc.')
+            return;
+        }
+        console.log(fullname)
+        console.log(phone)
+        console.log(address)
+        console.log(note)
+        console.log(settoaddress)
+        console.log(email)
+
+        if (!isCapitalizedEachWord(fullname)) {
+            showAlert('error', 'Tên đầy đủ không được viết hoa mỗi từ');
+            return;
+        }
+
+        const phoneRegex = /^(03|05|07|08|09)\d{8}$/;
+        if (!phoneRegex.test(phone)) {
+            showAlert('error', 'Vui lòng nhập số điện thoại hợp lệ (bắt đầu bằng 03, 05, 07, 08 hoặc 09 và 10 chữ số).');
+            return;
+        }
+
+        if (email.indexOf('@') === -1 || email.indexOf('.') === -1 || email.indexOf('@') > email.indexOf('.')) {
+            showAlert('error', 'Vui lòng nhập địa chỉ email hợp lệ.');
+            return;
+        } else {
+            $('#alert-message').hide();
+        }
+
+
+        // Tạo đối tượng dữ liệu gửi lên server
+        const addressBookRequest = {
+            userId: userid,
+            fullName: fullname,
+            phone: phone,
+            address: address,
+            note: note,
+            setToAddress: settoaddress,
+            email: email
+        };
+
+        try {
+            // Gửi PUT request đến server bằng axios
+            const response = await axios.post('http://localhost:8080/AgriculturalWarehouseManagementApplication/addressBook', addressBookRequest);
+
+            showAlert('success', 'Thêm thành công !!!');
+
+            fetchGetAddressBook();
+
+            // Đóng modal sau khi lưu thành công
+            $('#add-address').modal('hide');
+
+        } catch (error) {
+            console.error('Error updating address book:', error);
+            alert('Failed to update address book.');
+        }
+    });
+
+</script>
+
+<!-- Add address modal box end -->
+
+<!-- Location Modal Start -->
+<div class="modal location-modal fade theme-modal" id="locationModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel1">Choose your Delivery Location</h5>
+                <p class="mt-1 text-content">Enter your address and we will specify the offer for your area.</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="location-list">
+                    <div class="search-input">
+                        <input type="search" class="form-control" placeholder="Search Your Area">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+
+                    <div class="disabled-box">
+                        <h6>Select a Location</h6>
+                    </div>
+
+                    <ul class="location-select custom-height">
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Alabama</h6>
+                                <span>Min: $130</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Arizona</h6>
+                                <span>Min: $150</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>California</h6>
+                                <span>Min: $110</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Colorado</h6>
+                                <span>Min: $140</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Florida</h6>
+                                <span>Min: $160</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Georgia</h6>
+                                <span>Min: $120</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Kansas</h6>
+                                <span>Min: $170</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Minnesota</h6>
+                                <span>Min: $120</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>New York</h6>
+                                <span>Min: $110</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="javascript:void(0)">
+                                <h6>Washington</h6>
+                                <span>Min: $130</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Location Modal End -->
+
+<!-- Edit Profile Start -->
+<div class="modal fade theme-modal" id="editAddressBook" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel2">Chỉnh sửa sổ địa chỉ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row g-4">
+                    <div class="col-xxl-12">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" class="form-control" id="editfullname" value="" required>
+                            <label for="editfullname">Họ và tên đầy đủ</label>
+                        </div>
+                    </div>
+                    <div class="col-xxl-6">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" class="form-control" id="editemail" value="" required>
+                            <label for="editemail">Email</label>
+                        </div>
+                    </div>
+                    <div class="col-xxl-6">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" class="form-control" id="editnote" value="" required>
+                            <label for="editnote">Ghi chú</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" class="form-control" id="editsettoaddress" value="" required>
+                            <label for="editsettoaddress">Gửi đến địa chỉ</label>
+                        </div>
+                    </div>
+                    <div class="col-xxl-6">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" class="form-control" id="editphone" value="" required>
+                            <label for="editphone">Số điện thoại</label>
+                        </div>
+
+                    </div>
+                    <div class="col-xxl-6">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" class="form-control" id="editaddress" value="" required>
+                            <label for="editaddress">Địa chỉ</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" data-bs-dismiss="modal"
+                        class="save-change-edit btn theme-bg-color btn-md fw-bold text-light">Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Edit Profile End -->
+
+
+<script>
+
+    $(document).ready(function () {
+        // Đăng ký sự kiện click cho nút "Edit"
+        $(document).on('click', '.btn[data-bs-toggle="modal"]', function () {
+            const button = $(this); // Nút Edit
+            const userId = button.data('id');
+            const fullName = button.data('fullname');
+            const address = button.data('address');
+            const phone = button.data('phone');
+            const setToAddress = button.data('settoaddress');
+            const note = button.data('note');
+            const email = button.data('email');
+            const addressBookId = button.data('addressbookid');
+
+            // console.log('userId:', userId);
+            // console.log('fullName:', fullName);
+            // console.log('address:', address);
+            // console.log('phone:', phone);
+            // console.log('setToAddress:', setToAddress);
+            // console.log('note:', note);
+            // console.log('email:', email);
+            // console.log('addressBookId:', addressBookId);
+
+            // Gán giá trị vào các trường trong modal
+            $('#editfullname').val(fullName);
+            $('#editemail').val(email);
+            $('#editnote').val(note);
+            $('#editsettoaddress').val(setToAddress);
+            $('#editaddress').val(address);
+            $('#editphone').val(phone);
+
+            // Lưu trữ userId và addressBookId trong modal để sử dụng khi lưu thay đổi
+            $('#editAddressBook').data('userId', userId);
+            $('#editAddressBook').data('addressBookId', addressBookId);
+
+            // Lưu giá trị ban đầu để so sánh
+            // $('#editAddressBook').data('originalValues', {
+            //     fullName,
+            //     email,
+            //     note,
+            //     setToAddress,
+            //     address,
+            //     phone
+            // });
+        });
+
+        // Sự kiện khi nhấn save thay đổi
+        document.querySelector('.save-change-edit').addEventListener('click', async function () {
+            const fullName = document.getElementById('editfullname').value;
+            const setToAddress = document.getElementById('editsettoaddress').value;
+            const address = document.getElementById('editaddress').value;
+            const phone = document.getElementById('editphone').value;
+            const note = document.getElementById('editnote').value;
+            const email = document.getElementById('editemail').value;
+
+            const userId = $('#editAddressBook').data('userId');
+            const addressBookId = $('#editAddressBook').data('addressBookId');
+
+            // console.log(userId);
+            // console.log(addressBookId);
+            // console.log("--------------------------")
+
+
+            if (!fullName || !email || !note || !setToAddress || !address || !phone) {
+                showAlert('error', 'Vui lòng điền đầy đủ các trường bắt buộc.');
+                return;
+            }
+
+            if (!isCapitalizedEachWord(fullName)) {
+                console.log(fullName)
+                showAlert('error', 'Tên đầy đủ không được viết hoa mỗi từ');
+                return;
+            }
+
+            const phoneRegex = /^(03|05|07|08|09)\d{8}$/;
+            if (!phoneRegex.test(phone)) {
+                showAlert('error', 'Vui lòng nhập số điện thoại hợp lệ (bắt đầu bằng 03, 05, 07, 08 hoặc 09 và 10 chữ số).');
+                return;
+            }
+
+            if (email.indexOf('@') === -1 || email.indexOf('.') === -1 || email.indexOf('@') > email.indexOf('.')) {
+                showAlert('error', 'Vui lòng nhập địa chỉ email hợp lệ.').show();
+                return;
+            } else {
+                $('#alert-message').hide();
+            }
+
+
+            const addressBookRequest = {
+                userId: userId,
+                fullName: fullName,
+                phone: phone,
+                address: address,
+                note: note,
+                setToAddress: setToAddress,
+                email: email
+            };
+
+            try {
+                const response = await axios.put(`http://localhost:8080/AgriculturalWarehouseManagementApplication/addressBook/${userId}/${addressBookId}`, addressBookRequest);
+
+                if (response.status === 200) {
+
+                    showAlert('success', 'Chỉnh sửa thành công');
+                    fetchGetAddressBook();
+                } else {
+                    alert("Error updating address");
+                }
+            } catch (error) {
+                console.error('Error updating address:', error);
+                alert('Failed to update address');
+            }
+        });
+
+        // Xóa dữ liệu của modal khi đóng
+        $('#editAddressBook').on('hidden.bs.modal', function () {
+            $('#editfullname').val('');
+            $('#editemail').val('');
+            $('#editnote').val('');
+            $('#editsettoaddress').val('');
+            $('#editaddress').val('');
+            $('#editphone').val('');
+        });
+    });
+
+
+</script>
+<!-- Edit Profile End -->
+
+<!-- Edit Card Start -->
+<div class="modal fade theme-modal" id="editCard" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel8">Edit Card</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-4">
+                    <div class="col-xxl-6">
+                        <form>
+                            <div class="form-floating theme-form-floating">
+                                <input type="text" class="form-control" id="finame" value="Mark">
+                                <label for="finame">First Name</label>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-xxl-6">
+                        <form>
+                            <div class="form-floating theme-form-floating">
+                                <input type="text" class="form-control" id="laname" value="Jecno">
+                                <label for="laname">Last Name</label>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-xxl-4">
+                        <form>
+                            <div class="form-floating theme-form-floating">
+                                <select class="form-select" id="floatingSelect12">
+                                    <option selected>Card Type</option>
+                                    <option value="kingdom">Visa Card</option>
+                                    <option value="states">MasterCard Card</option>
+                                    <option value="fra">RuPay Card</option>
+                                    <option value="china">Contactless Card</option>
+                                    <option value="spain">Maestro Card</option>
+                                </select>
+                                <label for="floatingSelect12">Card Type</label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-animation btn-md fw-bold"
+                        data-bs-dismiss="modal">Cancel
+                </button>
+                <button type="button" class="btn theme-bg-color btn-md fw-bold text-light">Update Card</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Edit Card End -->
+
+<!-- Remove Profile Modal Start -->
+<div class="modal fade theme-modal remove-profile" id="removeProfile" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header d-block text-center">
+                <h5 class="modal-title w-100" id="exampleModalLabel22">Bạn có chắc chắn xóa địa chỉ không?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Không</button>
+                <button type="button" data-bs-dismiss="modal"
+                        class="remove-address btn theme-bg-color btn-md fw-bold text-light"
+                >Có
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade theme-modal remove-profile" id="removeAddress" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="exampleModalLabel12">Done!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="remove-box text-center">
+                    <h4 class="text-content">It's Removed.</h4>
+                </div>
+            </div>
+            <div class="modal-footer pt-0">
+                <button type="button" class="btn theme-bg-color btn-md fw-bold text-light"
+                        data-bs-dismiss="modal">Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        $(document).on('click', '.btn[data-bs-toggle="modal"]', function () {
+            const button = $(this);
+            const userId = button.data('id');
+            const addressBookId = button.data('addressbookid');
+
+            console.log(userId, addressBookId);
+            console.log("-------------")
+            $('#removeProfile').data('userId', userId);
+            $('#removeProfile').data('addressBookId', addressBookId);
+        });
+
+        $(document).on('click', '.remove-address', async function () {
+            const userId = $('#removeProfile').data('userId');
+            const addressBookId = $('#removeProfile').data('addressBookId');
+            console.log(userId, addressBookId);
+            console.log("-------------")
+            if (!userId || !addressBookId) {
+                showAlert('error', 'Vui lòng điền đầy đủ các trường bắt buộc.')
+                return;
+            }
+
+            try {
+                const response = await axios.delete(`http://localhost:8080/AgriculturalWarehouseManagementApplication/addressBook/${userId}/${addressBookId}`);
+                const active = response.data.active;
+
+                showAlert('success', response.data.message);
+
+                var modal = bootstrap.Modal.getInstance(document.getElementById('removeProfile'));
+                if (modal) modal.hide();
+
+                fetchGetAddressBook();
+
+            } catch (error) {
+                console.error('Error updating address:', error);
+                alert('Failed to update address');
+            }
+        });
+    });
+
+</script>
+<!-- Remove Profile Modal End -->
+
+<!--Edit profile-->
+<div class="modal fade theme-modal" id="editProfile" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa hồ sơ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="row g-4" th:action="@{/profileUserEdit}" method="POST">
+                    <div class="col-xxl-12">
+
+                        <input type="hidden" name="userID" th:value="${session.account.getUserID}"/>
+                        <input type="hidden" name="email" th:value="${session.account.getEmail}"/>
+
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" name="userName" class="form-control" id="userNameProfile"
+                                   th:value="${session.account.getUserName}" required>
+                            <label for="userNameProfile">Tên người dùng</label>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-12">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" name="fullName" class="form-control" id="fullNameProfile"
+                                   th:value="${session.account.getFullName}" required>
+                            <label for="fullNameProfile">Tên đầy đủ</label>
+                        </div>
+                    </div>
+
+                    <div class="form-floating theme-form-floating">
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" name="gender" id="maleProfile" value="male"
+                                   th:checked="${session.account.gender} == 'male'" required>
+                            <label class="form-check-label" for="maleProfile">Nam</label>
+                        </div>
+
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" name="gender" id="femaleProfile" value="female"
+                                   th:checked="${session.account.gender} == 'female'" required>
+                            <label class="form-check-label" for="femaleProfile">Nữ</label>
+                        </div>
+                    </div>
+
+
+                    <div class="col-xxl-6">
+                        <div class="form-floating theme-form-floating">
+                            <input type="date" name="dob" class="form-control" id="dobProfile"
+                                   th:value="${session.account.getDob}"
+                                   th:max="${#temporals.format(#temporals.createNow().minusYears(18), 'yyyy-MM-dd')}"
+                                   required>
+                            <label for="dobProfile">Ngày sinh</label>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-6">
+                        <div class="form-floating theme-form-floating">
+                            <input type="tel" name="phone" class="form-control" id="phoneProfile"
+                                   th:value="${session.account.getPhone}"
+                                   pattern="^(03|05|07|08|09)[0-9]{8}$"
+                                   maxlength="10"
+                                   inputmode="numeric"
+                                   required>
+                            <label for="phoneProfile">Số điện thoại</label>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12">
+                        <div class="form-floating theme-form-floating">
+                            <input type="text" name="address" class="form-control" id="addressProfile"
+                                   th:value="${session.account.getAddress}" required>
+                            <label for="addressProfile">Địa chỉ</label>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-animation btn-md fw-bold"
+                                data-bs-dismiss="modal">Đóng
+                        </button>
+                        <button type="submit"
+                                class="btn theme-bg-color btn-md fw-bold text-light">Lưu
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Edit Profile password-->
+<div class="modal fade theme-modal" id="editProfilePassword" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Mật khẩu mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="row g-4" th:action="@{/profileUserEdit/password}" method="POST">
+                    <div class="col-xxl-12">
+
+                        <input type="hidden" name="userID" th:value="${session.account.getUserID}"/>
+                        <input type="hidden" name="email" th:value="${session.account.getEmail}"/>
+
+                        <div class="form-floating theme-form-floating">
+                            <input type="password" name="oldPassword" class="form-control" id="oldPasswordProfile"
+                                   required>
+                            <label for="oldPasswordProfile">Mật khẩu cũ</label>
+                        </div>
+                    </div>
+                    <div class="col-xxl-12">
+                        <div class="form-floating theme-form-floating">
+                            <input type="password" name="newPassword" class="form-control" id="changePasswordProfile"
+                                   required>
+                            <label for="changePasswordProfile">Mật khẩu mới</label>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-animation btn-md fw-bold"
+                                data-bs-dismiss="modal">Đóng
+                        </button>
+                        <button type="submit"
+                                class="btn theme-bg-color btn-md fw-bold text-light">Lưu
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- latest jquery-->
+<script th:src="@{FrontEnd/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- jquery ui-->
+<script th:src="@{FrontEnd/assets/js/jquery-ui.min.js}"></script>
+
+<!-- Bootstrap js-->
+<script th:src="@{FrontEnd/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/bootstrap/bootstrap-notify.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/bootstrap/popper.min.js}"></script>
+
+<!-- feather icon js-->
+<script th:src="@{FrontEnd/assets/js/feather/feather.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/feather/feather-icon.js}"></script>
+
+<!-- Lazyload Js -->
+<script th:src="@{FrontEnd/assets/js/lazysizes.min.js}"></script>
+
+<!-- Slick js-->
+<script th:src="@{FrontEnd/assets/js/slick/slick.js}"></script>
+<script th:src="@{FrontEnd/assets/js/slick/custom_slick.js}"></script>
+
+<!-- Quantity js -->
+<script th:src="@{FrontEnd/assets/js/quantity-2.js}"></script>
+
+<!-- Nav & tab upside js -->
+<script th:src="@{FrontEnd/assets/js/nav-tab.js}"></script>
+
+<!-- script js -->
+<script th:src="@{FrontEnd/assets/js/script.js}"></script>
+
+<!-- theme setting js -->
+<script th:src="@{/FrontEnd/assets/js/theme-setting.js}"></script>
+
+
+</body>
+
+</html>

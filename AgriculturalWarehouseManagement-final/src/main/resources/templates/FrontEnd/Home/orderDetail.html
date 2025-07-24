@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fastkart">
+    <meta name="keywords" content="Fastkart">
+    <meta name="author" content="Fastkart">
+    <link rel="icon" th:href="@{/FrontEnd/assets/images/favicon/1.png}" type="image/x-icon">
+    <title>On-demand last-mile delivery</title>
+
+    <!-- Google font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap">
+
+    <!-- bootstrap css -->
+    <link id="rtl-link" rel="stylesheet" type="text/css" th:href="@{/FrontEnd/assets/css/vendors/bootstrap.css}">
+
+    <!-- Iconly css -->
+    <link rel="stylesheet" type="text/css" th:href="@{/FrontEnd/assets/css/bulk-style.css}">
+
+    <!-- Template css -->
+    <link id="color-link" rel="stylesheet" type="text/css" th:href="@{/FrontEnd/assets/css/style.css}">
+
+    <style>
+        .glow-btn {
+            position: relative;
+            isolation: isolate;
+            border-radius: 10px;
+            z-index: 1;
+            padding: 10px 12px;
+            color: black;
+            background-color: #f8f9fe;
+            border: none;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Lớp nền mờ bên dưới */
+        .glow-btn::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-color: #f8f9fe; /* giống nền gốc */
+            border-radius: inherit;
+            z-index: -2;
+        }
+
+        /* Viền phát sáng mở rộng rõ ràng */
+        .glow-btn::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            background: linear-gradient(
+                    45deg,
+                    #FF0000, #FF7300, #FFFB00, #48FF00,
+                    #00FFD5, #002BFF, #FF00C8, #FF0000
+            );
+            background-size: 600%;
+            filter: blur(8px); /* tăng độ lan */
+            border-radius: inherit;
+            z-index: -3;
+            opacity: 1;
+            animation: glowing 20s linear infinite, pulseGlow 4s ease-in-out infinite;
+        }
+
+        /* Gradient di chuyển liên tục */
+        @keyframes glowing {
+            0% {
+                background-position: 0 0;
+            }
+            50% {
+                background-position: 400% 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
+
+        /* Nhịp sáng giãn–thu */
+        @keyframes pulseGlow {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+    </style>
+</head>
+</head>
+
+<body>
+
+<!-- Header Start -->
+<head th:replace="FrontEnd/fragments/header::header"></head>
+<!-- Header End -->
+
+<!-- mobile fix menu start -->
+<!-- mobile fix menu end -->
+
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-0">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-contain breadcrumb-order">
+                    <div class="order-box">
+                        <div class="order-image">
+                            <div class="checkmark">
+                                <svg class="star" height="19" viewBox="0 0 19 19" width="19"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                            d="M8.296.747c.532-.972 1.393-.973 1.925 0l2.665 4.872 4.876 2.66c.974.532.975 1.393 0 1.926l-4.875 2.666-2.664 4.876c-.53.972-1.39.973-1.924 0l-2.664-4.876L.76 10.206c-.972-.532-.973-1.393 0-1.925l4.872-2.66L8.296.746z">
+                                    </path>
+                                </svg>
+                                <svg class="star" height="19" viewBox="0 0 19 19" width="19"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                            d="M8.296.747c.532-.972 1.393-.973 1.925 0l2.665 4.872 4.876 2.66c.974.532.975 1.393 0 1.926l-4.875 2.666-2.664 4.876c-.53.972-1.39.973-1.924 0l-2.664-4.876L.76 10.206c-.972-.532-.973-1.393 0-1.925l4.872-2.66L8.296.746z">
+                                    </path>
+                                </svg>
+                                <svg class="star" height="19" viewBox="0 0 19 19" width="19"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                            d="M8.296.747c.532-.972 1.393-.973 1.925 0l2.665 4.872 4.876 2.66c.974.532.975 1.393 0 1.926l-4.875 2.666-2.664 4.876c-.53.972-1.39.973-1.924 0l-2.664-4.876L.76 10.206c-.972-.532-.973-1.393 0-1.925l4.872-2.66L8.296.746z">
+                                    </path>
+                                </svg>
+                                <svg class="star" height="19" viewBox="0 0 19 19" width="19"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                            d="M8.296.747c.532-.972 1.393-.973 1.925 0l2.665 4.872 4.876 2.66c.974.532.975 1.393 0 1.926l-4.875 2.666-2.664 4.876c-.53.972-1.39.973-1.924 0l-2.664-4.876L.76 10.206c-.972-.532-.973-1.393 0-1.925l4.872-2.66L8.296.746z">
+                                    </path>
+                                </svg>
+                                <svg class="star" height="19" viewBox="0 0 19 19" width="19"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                            d="M8.296.747c.532-.972 1.393-.973 1.925 0l2.665 4.872 4.876 2.66c.974.532.975 1.393 0 1.926l-4.875 2.666-2.664 4.876c-.53.972-1.39.973-1.924 0l-2.664-4.876L.76 10.206c-.972-.532-.973-1.393 0-1.925l4.872-2.66L8.296.746z">
+                                    </path>
+                                </svg>
+                                <svg class="star" height="19" viewBox="0 0 19 19" width="19"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                            d="M8.296.747c.532-.972 1.393-.973 1.925 0l2.665 4.872 4.876 2.66c.974.532.975 1.393 0 1.926l-4.875 2.666-2.664 4.876c-.53.972-1.39.973-1.924 0l-2.664-4.876L.76 10.206c-.972-.532-.973-1.393 0-1.925l4.872-2.66L8.296.746z">
+                                    </path>
+                                </svg>
+                                <svg class="checkmark__check" height="36" viewBox="0 0 48 36" width="48"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                            d="M47.248 3.9L43.906.667a2.428 2.428 0 0 0-3.344 0l-23.63 23.09-9.554-9.338a2.432 2.432 0 0 0-3.345 0L.692 17.654a2.236 2.236 0 0 0 .002 3.233l14.567 14.175c.926.894 2.42.894 3.342.01L47.248 7.128c.922-.89.922-2.34 0-3.23">
+                                    </path>
+                                </svg>
+                                <svg class="checkmark__background" height="115" viewBox="0 0 120 115" width="120"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                            d="M107.332 72.938c-1.798 5.557 4.564 15.334 1.21 19.96-3.387 4.674-14.646 1.605-19.298 5.003-4.61 3.368-5.163 15.074-10.695 16.878-5.344 1.743-12.628-7.35-18.545-7.35-5.922 0-13.206 9.088-18.543 7.345-5.538-1.804-6.09-13.515-10.696-16.877-4.657-3.398-15.91-.334-19.297-5.002-3.356-4.627 3.006-14.404 1.208-19.962C10.93 67.576 0 63.442 0 57.5c0-5.943 10.93-10.076 12.668-15.438 1.798-5.557-4.564-15.334-1.21-19.96 3.387-4.674 14.646-1.605 19.298-5.003C35.366 13.73 35.92 2.025 41.45.22c5.344-1.743 12.628 7.35 18.545 7.35 5.922 0 13.206-9.088 18.543-7.345 5.538 1.804 6.09 13.515 10.696 16.877 4.657 3.398 15.91.334 19.297 5.002 3.356 4.627-3.006 14.404-1.208 19.962C109.07 47.424 120 51.562 120 57.5c0 5.943-10.93 10.076-12.668 15.438z">
+                                    </path>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="order-contain">
+                            <h3 class="theme-color">Order Chi tiết</h3>
+                            <h6 th:text="${'Order code: ' + rightNavOrderDetailUserResponses.orderCode}">Order code</h6>
+                        </div>
+
+                        <div class="order-contain">
+                            <form th:action="@{/order/orderTracking}" method="get">
+                                <input name="orderId" type="number" th:value="${orderDetailUserResponses.get(0).orderId}" hidden/>
+                                <button class="btn-outline-success glow-btn" style="padding: 20px; border: none;font-size: 16px; margin-top: 22px">Theo dõi đơn hàng</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Cart Section Start -->
+<section class="cart-section section-b-space">
+    <div class="container-fluid-lg">
+        <div class="row g-sm-4 g-3">
+            <div class="col-xxl-9 col-lg-8">
+                <div class="cart-table order-table order-table-2">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <tbody>
+                            <tr th:each="orderDetail : ${orderDetailUserResponses}">
+                                <td class="product-detail">
+                                    <div class="product border-0">
+                                        <a th:href="@{/productDetail(productId=${orderDetail.productId})}"
+                                           class="product-image">
+                                            <img th:src="${orderDetail.imageUrl}"
+                                                 class="img-fluid blur-up lazyload" alt="">
+                                        </a>
+                                        <div class="product-detail">
+                                            <ul>
+                                                <li class="name" th:text="${orderDetail.productName}">
+                                                    <a th:href="@{/productDetail(productId=${orderDetail.productId})}"></a>
+                                                </li>
+
+                                                <li class="text-content"
+                                                    th:text="${'Bán bởi:' + orderDetail.sellerName}">Bán bởi
+                                                </li>
+
+                                                <li class="text-content"
+                                                    th:text="${'Cân nặng' + orderDetail.productWeight}">Cân nặng
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="price">
+                                    <h4 class="table-title text-content">Giá</h4>
+                                    <h6 th:text="${#numbers.formatInteger(orderDetail.productPrice, 0, 'POINT') + '₫'}"
+                                        class="price theme-color"></h6>
+                                </td>
+
+                                <td class="quantity">
+                                    <h4 class="table-title text-content">Số lượng</h4>
+                                    <h4 class="text-title" th:text="${orderDetail.quantity}"></h4>
+                                </td>
+
+                                <td class="subtotal">
+                                    <h4 class="table-title text-content">Tổng cộng</h4>
+                                    <h5 th:text="${#numbers.formatInteger(orderDetail.productTotalPrice, 0, 'POINT') + '₫'}"
+                                        class="price theme-color"></h5>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xxl-3 col-lg-4">
+                <div class="row g-4">
+                    <div class="col-lg-12 col-sm-6">
+                        <div class="summery-box">
+                            <div class="summery-header">
+                                <h3>Tổng số tiền</h3>
+                            </div>
+
+                            <ul class="summery-contain">
+                                <li th:if="${rightNavOrderDetailUserResponses.voucherCode != ''}">
+                                    <h4>Tổng trước voucher</h4>
+                                    <h4 th:text="${#numbers.formatInteger(rightNavOrderDetailUserResponses.totalAmount, 0, 'POINT') + '₫'}"
+                                        class="price theme-color"></h4>
+                                </li>
+
+                                <li th:if="${rightNavOrderDetailUserResponses.voucherCode != ''}">
+                                    <h4>Voucher
+                                        <span th:text="${'('+rightNavOrderDetailUserResponses.voucherCode+')'}"></span>
+                                    </h4>
+                                    <h4 th:text="${#numbers.formatInteger(rightNavOrderDetailUserResponses.discountAmount, 0, 'POINT') + '₫'}"
+                                        class="price theme-color"></h4>
+                                </li>
+
+                            </ul>
+
+                            <ul class="summery-total">
+                                <li class="list-total">
+                                    <h4>Tổng (VND)</h4>
+                                    <h4 th:text="${#numbers.formatInteger(rightNavOrderDetailUserResponses.finalAmount, 0, 'POINT') + '₫'}"
+                                        class="price theme-color"></h4>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12 col-sm-6">
+                        <div class="summery-box">
+                            <div class="summery-header d-block">
+                                <h3>Địa chỉ vận chuyển</h3>
+                            </div>
+
+                            <ul class="summery-contain pb-0 border-bottom-0">
+                                <li class="d-block">
+                                    <h4 th:text="${'Địa chỉ ship: '+ rightNavOrderDetailUserResponses.addressShip}">Địa
+                                        chỉ ship</h4>
+                                </li>
+                                <li class="d-block">
+                                    <h4 th:text="${'Ghi chú: ' + rightNavOrderDetailUserResponses.noteShip}">Note</h4>
+                                </li>
+
+                                <li class="pb-0">
+                                    <h4>Lấy hóa đơn:</h4>
+                                    <h4 class="price theme-color">
+                                        <form th:action="@{/invoiceUser}" method="get">
+                                            <input type="text" name="orderCode"
+                                                   th:value="${rightNavOrderDetailUserResponses.orderCode}" hidden>
+                                            <button type="submit" class="btn-outline-success btn-lg"
+                                                    style="margin-top: 10px;color: #50dd92; border: 1px solid #43ca85">
+                                                Hóa đơn
+                                            </button>
+                                        </form>
+                                    </h4>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="summery-box">
+                            <div class="summery-header d-block">
+                                <h3>Phương thức thanh toán</h3>
+                            </div>
+
+                            <ul class="summery-contain pb-0 border-bottom-0">
+                                <li class="d-block pt-0">
+                                    <p class="text-content">Quét QR OCB</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Cart Section End -->
+<section class="contact-box-section">
+    <div class="container-fluid-lg">
+        <div class="row g-lg-5 g-3">
+            <div class="col-lg-3">
+                <div class="left-sidebar-box">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <h6 class="glow-btn" style="color: #096509; margin-left: 10px;"
+                                th:if="${messageOrderReview != null}"
+                                th:text="${messageOrderReview}">errorMessageOrderReview</h6>
+
+                            <h6 class="glow-btn" style="color: #096509; margin-left: 10px; margin-top: 30px"
+                                th:if="${messageUpdateImage != null}"
+                                th:text="${messageUpdateImage}">messageUpdateImage</h6>
+
+                            <h6 class="glow-btn" style="color: #096509; margin-left: 10px; margin-top: 30px"
+                                th:if="${messageUpdateForm != null}"
+                                th:text="${messageUpdateForm}">messageUpdateForm</h6>
+                            <div class="contact-image">
+                                <img th:src="@{FrontEnd/assets/images/inner-page/contact-us.png}"
+                                     class="img-fluid blur-up lazyloaded" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="title d-xxl-none d-block">
+                </div>
+                <form th:action="@{/orderDetailsUser}" method="post" class="right-sidebar-box">
+                    <input type="number" name="orderReviewId" th:value="${orderReviewUserResponse.orderReviewUserId}"
+                           hidden>
+                    <input type="number" name="orderCode" th:value="${orderReviewUserResponse.orderCode}" hidden>
+
+                    <div class="row">
+                        <div class="col-xxl-6 col-lg-12 col-sm-6">
+                            <div class="mb-md-4 mb-3 custom-form">
+                                <label class="form-label">Tên</label>
+                                <div class="custom-input">
+                                    <input type="text" name="userName" class="form-control"
+                                           th:value="${orderReviewUserResponse.userName}"
+                                           readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-6 col-lg-12 col-sm-6">
+                            <div class="mb-md-4 mb-3 custom-form">
+                                <label class="form-label">Email</label>
+                                <div class="custom-input">
+                                    <input type="email" name="email" class="form-control"
+                                           th:value="${orderReviewUserResponse.userEmail}"
+                                           style="padding-left: 19px"
+                                           readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-6 col-lg-12 col-sm-6">
+                            <div class="mb-md-4 mb-3 custom-form">
+                                <div class="review-box">
+                                    <div class="product-review-rating">
+                                        <label for="rating">xếp hạng</label>
+                                        <div class="product-rating">
+                                            <select class="form-control" id="rating" name="rating">
+                                                <option value="5" th:selected="${orderReviewUserResponse.rating == 5}">
+                                                    ⭐⭐⭐⭐⭐
+                                                </option>
+                                                <option value="4" th:selected="${orderReviewUserResponse.rating == 4}">
+                                                    ⭐⭐⭐⭐
+                                                </option>
+                                                <option value="3" th:selected="${orderReviewUserResponse.rating == 3}">
+                                                    ⭐⭐⭐
+                                                </option>
+                                                <option value="2" th:selected="${orderReviewUserResponse.rating == 2}">
+                                                    ⭐⭐
+                                                </option>
+                                                <option value="1" th:selected="${orderReviewUserResponse.rating == 1}">
+                                                    ⭐
+                                                </option>
+                                            </select>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-12" style="width: 50%">
+                            <div class="mb-md-4 mb-3 custom-form">
+                                <label class="form-label">Ngày review</label>
+                                <div class="custom-textarea">
+                                    <input name="updateDateTime"
+                                           th:value="${orderReviewUserResponse.formatUpdateDateTime()}"
+                                           style="border: 1px solid #e8d1d1" placeholder="Ngày review"
+                                           class="form-control" readonly></input>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-md-4 mb-3 custom-form">
+                                <label class="form-label">Nội dung</label>
+                                <div class="custom-textarea">
+                                        <textarea class="form-control" name="message"
+                                                  placeholder="Nhập nội dung của bạn"
+                                                  style="border: 1px solid #e8d1d1; padding-left: 20px"
+                                                  required
+                                                  th:text="${orderReviewUserResponse.message}"></textarea>
+                                </div>
+                            </div>
+                            <div class="mb-md-4 mb-3 custom-form">
+                                <button class="btn btn-animation btn-md fw-bold ms-auto"
+                                        th:if="${activeOrderReview and orderDetailUserResponses.get(0).getOrderStatus() == 'COMPLETED'}">
+                                    Gửi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!--            margin-top: -178px;  display: inline-block; width: 108px; margin-left: 200%"-->
+            <div class="col-lg-3">
+                <label class="form-label">Ảnh review</label>
+                <div class="custom-input">
+                    <div class="profile-image">
+                        <div class="profile-box">
+
+                            <div class="profile-contain">
+                                <div class="profile-image">
+                                    <form th:action="@{/editOrderReview/image}" method="post"
+                                          enctype="multipart/form-data">
+                                        <div class="position-relative">
+                                            <img th:if="${orderReviewUserResponse.image == ''}"
+                                                 th:src="@{FrontEnd/assets/images/orderReview.png}"
+                                                 style="width: 800%; object-fit: cover; display: block;"
+                                                 class="blur-up lazyload update_img"
+                                                 alt="">
+
+                                            <img th:if="${orderReviewUserResponse.image != ''}"
+                                                 th:src="${orderReviewUserResponseImage.image}"
+                                                 style="width: 800%; object-fit: cover; display: block;"
+                                                 class="blur-up lazyload update_img" alt="more image"
+                                            >
+
+                                            <input type="number" name="orderReviewId"
+                                                   th:value="${orderReviewUserResponse.orderReviewUserId}" hidden>
+                                            <input type="number" name="orderCode"
+                                                   th:value="${orderReviewUserResponse.orderCode}" hidden>
+
+                                            <div class="cover-icon" style="margin-left: 290px;
+                                                                margin-top: -100px;
+                                                                position: absolute;">
+                                                <label for="file-upload-0">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </label>
+                                                <input type="file" id="file-upload-0" name="image"
+                                                       onchange="readURL(this,0)"
+                                                       style="display: none;"
+                                                       accept=".jpg,.jpeg,.png,.gif,.webp,image/*">
+                                            </div>
+                                            <button style="margin-left: 290px; position: absolute; margin-top: -39px;"
+                                                    type="submit"
+                                                    class="btn btn-sm glow-btn"
+                                                    th:if="${activeOrderReviewImage and orderDetailUserResponses.get(0).getOrderStatus() == 'COMPLETED'}">
+                                                Lưu
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Footer Section Start -->
+<footer th:replace="FrontEnd/fragments/footer::footer"></footer>
+<!-- Footer Section End -->
+
+<!-- Location Modal Start -->
+<!-- Location Modal End -->
+
+<!-- Deal Box Modal Start -->
+<!-- Deal Box Modal End -->
+
+<!-- Tap to top and theme setting button start -->
+<div class="theme-option">
+    <div class="setting-box">
+        <button class="btn setting-button">
+            <i class="fa-solid fa-gear"></i>
+        </button>
+
+        <div class="theme-setting-2">
+            <div class="theme-box">
+                <ul>
+                    <li>
+                        <div class="setting-name">
+                            <h4>Color</h4>
+                        </div>
+                        <div class="theme-setting-button color-picker">
+                            <form class="form-control">
+                                <label for="colorPick" class="form-label mb-0">Theme Color</label>
+                                <input type="color" class="form-control form-control-color" id="colorPick"
+                                       value="#0da487" title="Choose your color">
+                            </form>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>Dark</h4>
+                        </div>
+                        <div class="theme-setting-button">
+                            <button class="btn btn-2 outline" id="darkButton">Dark</button>
+                            <button class="btn btn-2 unline" id="lightButton">Light</button>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>RTL</h4>
+                        </div>
+                        <div class="theme-setting-button rtl">
+                            <button class="btn btn-2 rtl-unline">LTR</button>
+                            <button class="btn btn-2 rtl-outline">RTL</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-to-top">
+        <a id="back-to-top" href="#">
+            <i class="fas fa-chevron-up"></i>
+        </a>
+    </div>
+</div>
+<!-- Tap to top and theme setting button end -->
+
+
+<!-- Bg overlay Start -->
+<div class="bg-overlay"></div>
+<!-- Bg overlay End -->
+
+<!-- latest jquery-->
+<script th:src="@{/FrontEnd/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- jquery ui-->
+<script th:src="@{/FrontEnd/assets/js/jquery-ui.min.js}"></script>
+
+<!-- Bootstrap js-->
+<script th:src="@{/FrontEnd/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/bootstrap/bootstrap-notify.min.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/bootstrap/popper.min.js}"></script>
+
+<!-- feather icon js-->
+<script th:src="@{/FrontEnd/assets/js/feather/feather.min.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/feather/feather-icon.js}"></script>
+
+<!-- Lazyload Js -->
+<script th:src="@{/FrontEnd/assets/js/lazysizes.min.js}"></script>
+
+<!-- Slick js-->
+<script th:src="@{/FrontEnd/assets/js/slick/slick.js}"></script>
+<script th:src="@{/FrontEnd/assets/js/slick/custom_slick.js}"></script>
+
+<!-- script js -->
+<script th:src="@{/FrontEnd/assets/js/script.js}"></script>
+
+<!-- theme setting js -->
+<script th:src="@{/FrontEnd/assets/js/theme-setting.js}"></script>
+
+<!-- Nav & tab upside js -->
+<script th:src="@{FrontEnd/assets/js/nav-tab.js}"></script>
+
+<!-- Quantity js -->
+<script th:src="@{FrontEnd/assets/js/quantity-2.js}"></script>
+</body>
+
+</html>

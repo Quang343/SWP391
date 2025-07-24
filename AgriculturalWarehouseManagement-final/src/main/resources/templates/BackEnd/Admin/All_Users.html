@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="BackEnd/fragments/Admin/head::head"></head>
+
+<style>
+
+    /* Canh giữa nội dung trong th */
+    table.dataTable thead th {
+        text-align: center !important;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    /* Canh giữa icon sort */
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_desc:after {
+        margin-left: 5px;
+        float: none;
+        position: relative;
+        top: 1px;
+    }
+
+    div.dataTables_filter {
+        float: left !important; /* Đẩy sang trái */
+        margin-bottom: 1rem;
+    }
+
+    .table-product .table tbody tr td {
+        text-align: center;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        padding: 7px;
+        font-size: 16px;
+    }
+
+    .img-fluid {
+        max-width: 100%;
+        height: 100%;
+    }
+
+    .user-img {
+        width: 65px;
+        height: 65px;
+    }
+
+    li.page-item {
+        margin: auto 5px;
+    }
+
+    a.page-link {
+        border: 3px solid #fff;
+    }
+
+    .page-link:focus {
+        box-shadow: none;
+    }
+
+    /*#2ecc71;*/
+    a.page-link.is-active, li.page-item.is-active a {
+        background: rgb(13 191 174);
+        color: #fff;
+        border: 3px solid rgb(13 191 174);
+        font-weight: bold;
+    }
+
+    .disabled {
+        cursor: default !important;
+    }
+
+    .modal.fade.show .modal-slide-down {
+        transform: translateY(-100px);
+        opacity: 0;
+        transition: all 0.4s ease;
+    }
+
+    .modal.fade.show .modal-slide-down {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    .page-item:first-child .page-link,
+    .page-item:last-child .page-link {
+        min-width: 100px;
+        text-align: center;
+    }
+
+    .input-group-floating {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .input-group-floating input {
+        width: 100%;
+        padding: 12px 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        outline: none;
+    }
+
+    .input-group-floating label {
+        position: absolute;
+        left: 10px;
+        top: 12px;
+        color: #888;
+        background-color: white;
+        padding: 0 4px;
+        transition: all 0.2s ease;
+        pointer-events: none;
+    }
+
+    .input-group-floating input:focus + label,
+    .input-group-floating input:not(:placeholder-shown) + label {
+        top: -8px;
+        left: 8px;
+        font-size: 13px;
+        color: #0dbfae;
+    }
+
+    .form-check-label{
+        position: absolute;
+        margin: 0;
+        left: 30px;
+        opacity: unset !important;
+        font-weight: bold !important;
+    }
+
+    .close-btn{
+        background-color: #ff1818;
+        color: #fff;
+    }
+    .close-btn:hover{
+        background-color: red;
+        color: #fff;
+    }
+
+    #status-active:checked {
+        background-color: #0dbfae;
+        border-color: #0dbfae;
+    }
+
+    #status-inactive:checked {
+        background-color: red;
+        border-color: red;
+    }
+
+
+</style>
+<body>
+<!-- tap on top start -->
+<div class="tap-top">
+    <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+    <!-- Page Header Start-->
+    <div th:replace="BackEnd/fragments/Admin/header::header"></div>
+    <!-- Page Header Ends-->
+
+    <!-- Page Body Start -->
+    <div class="page-body-wrapper">
+        <!-- Page Sidebar Start-->
+        <div th:replace="BackEnd/fragments/Admin/sidebar::sidebar"></div>
+        <!-- Page Sidebar Ends-->
+
+        <!-- Container-fluid starts-->
+        <div class="page-body">
+            <!-- All User Table Start -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card card-table">
+                            <div class="card-body">
+                                <div class="title-header option-title">
+                                    <h5>Danh sách người dùng</h5>
+                                    <form class="d-inline-flex">
+                                        <a th:href="@{/admin/add_user}" class="align-items-center btn btn-theme d-flex">
+                                            <i data-feather="plus"></i>Thêm mới
+                                        </a>
+                                    </form>
+                                </div>
+
+                                <div class="table-responsive table-product">
+                                    <table class="table all-package theme-table" id="table_id">
+                                        <thead>
+                                        <tr>
+                                            <th class="col-stt text-center">STT</th>
+                                            <th>Tên đăng nhập</th>
+                                            <th>Ảnh đại diện</th>
+                                            <th>Vai trò</th>
+                                            <th>Trạng thái</th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr th:each="user, iterStat : ${users}"
+                                            th:id="'user-row-' + ${user.getUserId()}">
+                                            <td class="col-stt text-center" th:text="${iterStat.count}"></td>
+                                            <td th:text="${user.getUserName()}"></td>
+                                            <td>
+                                                <div class="user-img w-100">
+                                                    <img th:src="@{'/admin/' + ${user.getImage()}}"
+                                                         class="img-fluid rounded-circle avatar">
+                                                </div>
+                                            </td>
+                                            <td th:text="${user.getRole().getRoleName()}"></td>
+                                            <td th:text="${user.getStatus() == 'Active' ? 'Đang hoạt động' : 'Ngừng hoạt động'}"
+                                                th:class="${user.getStatus() == 'Active'} ? 'text-success' : 'text-danger'"
+                                                th:id="'user-status-' + ${user.getUserId()}"
+                                                style="font-weight: bold; font-size: 1rem;">
+                                            </td>
+                                            <td>
+                                                <ul>
+                                                    <li>
+                                                        <a href="javascript:void(0)" class="view-user"
+                                                           th:attr="data-id=${user.getUserId()},
+                                                            data-username=${user.getUserName()},
+                                                            data-fullName=${user.getFullName()},
+                                                            data-email=${user.getEmail()},
+                                                            data-phone=${user.getPhone()},
+                                                            data-address=${user.getAddress()},
+                                                            data-role=${user.getRole().getRoleName()},
+                                                            data-status=${user.getStatus()},
+                                                            data-dob=${user.getDob()}"
+                                                           data-bs-toggle="modal"
+                                                           data-bs-target="#userDetailModal"
+                                                           title="Xem chi tiết">
+                                                            <i class="ri-eye-line"></i>
+                                                        </a>
+                                                    </li>
+
+                                                    <li>
+                                                        <a th:href="@{'/admin/edit_user/' + ${user.getUserId()}}"
+                                                           title="Chỉnh sửa">
+                                                            <i class="ri-pencil-line"></i>
+                                                        </a>
+                                                    </li>
+
+                                                    <li>
+                                                        <a href="javascript:void(0)"
+                                                           th:attr="data-id=${user.getUserId()}"
+                                                           data-bs-toggle="modal"
+                                                           data-bs-target="#ModalToggle1"
+                                                           title="Xóa người dùng">
+                                                            <i class="ri-delete-bin-line" style="color: red"></i>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div> <!-- table responsive -->
+                            </div> <!-- card-body -->
+                        </div> <!-- card -->
+                    </div> <!-- col -->
+                </div> <!-- row -->
+            </div> <!-- container-fluid -->
+
+            <!-- All User Table Ends-->
+
+            <!-- Pagination Start -->
+            <nav th:if="${totalPages > 1}" aria-label="Page navigation" style="margin-bottom: 5% !important;">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                        <a class="page-link is-active" th:href="@{'/admin/users?page=' + ${currentPage - 1}}"
+                           aria-label="Previous">
+                            <span aria-hidden="true">Previous</span>
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:each="pageNumber : ${pageNumbers}"
+                        th:classappend="${pageNumber == currentPage.toString()} ? 'is-active'">
+                        <span style="padding: .375rem .75rem; border: 3px solid transparent;"
+                              th:if="${pageNumber == '...'}">...</span>
+                        <a class="page-link" th:if="${pageNumber != '...'}"
+                           th:href="@{'/admin/users?page=' + ${pageNumber}}"
+                           th:text="${pageNumber}">
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                        <a class="page-link is-active" th:href="@{'/admin/users?page=' + ${currentPage + 1}}"
+                           aria-label="Next">
+                            <span aria-hidden="true">Next</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- Pagination End -->
+
+            <!-- footer start-->
+            <div th:replace="BackEnd/fragments/Admin/footer::footer"></div>
+            <!-- footer end-->
+        </div>
+        <!-- Container-fluid end -->
+    </div>
+    <!-- Page Body End -->
+
+    <!-- Modal Start -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body justify-content-center">
+                    <h5 class="modal-title"  id="staticBackdropLabel">Logging Out</h5>
+                    <p>Are you sure you want to log out?</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="button-box">
+                        <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+                        <button type="button" class="btn btn--yes btn-primary">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal End -->
+</div>
+
+<!-- Delete Modal Box Start -->
+<div class="modal fade theme-modal remove-coupon" id="ModalToggle1" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-block text-center">
+                <h5 class="modal-title w-100" id="exampleModalLabel22">Xoá người dùng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="firstModalMessage" class="remove-box">
+                    <p>Message</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Huỷ bỏ</button>
+                <button type="button" class="btn btn-animation btn-md fw-bold"
+                        data-bs-dismiss="modal" onclick="confirmDelete()">Xác nhận
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade theme-modal remove-coupon" id="resultModal" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center" id="resultModalTitle">Done!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="remove-box text-center">
+                    <div id="resultModalIcon" class="wrapper">
+                        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                        </svg>
+                    </div>
+                    <h4 id="resultModalMessage" class="text-content">It's Removed.</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Modal Box End -->
+
+<div class="modal fade" id="userDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-slide-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color: #000; font-size: 1.5rem; font-weight: bold;">Thông tin người dùng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <form id="user-edit-form">
+                    <div class="row g-3">
+                        <!-- Tên đăng nhập (disabled) -->
+                        <div class="col-md-6">
+                            <div class="input-group-floating">
+                                <input type="text" id="detail-username" placeholder="" readonly />
+                                <label for="detail-username">Tên đăng nhập</label>
+                            </div>
+                        </div>
+
+                        <!-- Họ và tên -->
+                        <div class="col-md-6">
+                            <div class="input-group-floating">
+                                <input type="text" id="detail-fullname" placeholder="" readonly />
+                                <label for="detail-fullname">Họ và tên</label>
+                            </div>
+                        </div>
+
+                        <!-- Ngày sinh -->
+                        <div class="col-md-6">
+                            <div class="input-group-floating">
+                                <input type="date" id="detail-dob" placeholder="" readonly />
+                                <label for="detail-dob">Ngày sinh</label>
+                            </div>
+                        </div>
+
+                        <!-- Số điện thoại -->
+                        <div class="col-md-6">
+                            <div class="input-group-floating">
+                                <input type="text" id="detail-phone" placeholder="" readonly />
+                                <label for="detail-phone">Số điện thoại</label>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-md-6">
+                            <div class="input-group-floating">
+                                <input type="email" id="detail-email" placeholder="" readonly />
+                                <label for="detail-email">Email</label>
+                            </div>
+                        </div>
+
+                        <!-- Địa chỉ -->
+                        <div class="col-md-6">
+                            <div class="input-group-floating">
+                                <input type="text" id="detail-address" placeholder="" readonly />
+                                <label for="detail-address">Địa chỉ</label>
+                            </div>
+                        </div>
+
+                        <!-- Vai trò -->
+                        <div class="col-md-6">
+                            <div class="input-group-floating">
+                                <input type="text" id="detail-role" placeholder="" readonly/>
+                                <label for="detail-role">Vai trò</label>
+                            </div>
+                        </div>
+
+                        <!-- Trạng thái -->
+                        <div class="col-md-6">
+                            <div class="status-group">
+                                <label class="form-label d-block mb-2 fw-bold">Trạng thái</label>
+
+                                <div class="form-check form-status-active form-check-inline">
+                                    <input class="form-check-input" type="radio" name="status" id="status-active" value="active" disabled>
+                                    <label class="form-check-label text-success fw-semibold" for="status-active">Đang hoạt động</label>
+                                </div>
+
+                                <div class="form-check form-status-inactive">
+                                    <input class="form-check-input" type="radio" name="status" id="status-inactive" value="inactive" disabled>
+                                    <label class="form-check-label text-danger fw-semibold" for="status-inactive">Không hoạt động</label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer mt-3">
+                <button type="button" class="btn close-btn" data-bs-dismiss="modal">Đóng</button>
+<!--                <button type="submit" form="user-edit-form" class="btn btn-success">Lưu</button>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- Bootstrap js -->
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+
+<!-- feather icon js -->
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+
+<!-- scrollbar simplebar js -->
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+
+<!-- Sidebar js -->
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+
+<!-- customizer js -->
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+
+<!-- Plugins js -->
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+
+<!-- Data table js -->
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+
+<!-- all checkbox select js -->
+<script th:src="@{/Backend/assets/js/checkbox-all-check.js}"></script>
+
+<!-- sidebar effect -->
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+
+<!-- Theme js -->
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+
+
+<script>
+    let selectedUserId = null;
+
+    // const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    // const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+    const deleteModal = document.getElementById('ModalToggle1');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        const firstModalMessage = document.getElementById('firstModalMessage');
+        firstModalMessage.innerHTML = `<p style="font-size: 1rem;">Bạn có chắc chắn muốn xoá người dùng này không?</p>`
+
+        const triggerElement = event.relatedTarget;
+        selectedUserId = triggerElement.getAttribute('data-id');
+    });
+
+    function confirmDelete() {
+        if (!selectedUserId) return;
+
+        fetch(`/AgriculturalWarehouseManagementApplication/admin/delete_user/${selectedUserId}`, {
+            method: 'DELETE',
+            // headers: {
+            //     'Content-Type': 'application/json',
+            //     [csrfHeader]: csrfToken
+            // }
+        })
+            .then(response => response.json())
+            .then(data => {
+
+                document.getElementById('resultModalMessage').innerText = data.message;
+                const resultModalElement = document.getElementById('resultModal');
+                const resultModal = new bootstrap.Modal(resultModalElement);
+                resultModal.show();
+
+                const statusCell = document.getElementById(`user-status-${selectedUserId}`);
+                if (statusCell) {
+                    statusCell.innerText = 'Ngừng hoạt động';
+                    statusCell.classList.add('text-danger');
+                    statusCell.style.fontWeight = 'bold';
+                    statusCell.style.fontSize = '1rem';
+                }
+
+                selectedUserId = null;
+                setTimeout(() => {
+                    resultModal.hide();
+                }, 1500);
+            })
+            .catch(error => {
+                alert("Lỗi khi xoá user: " + error);
+            })
+    }
+</script>
+
+<script>
+    function setStatusRadio(status) {
+        const formStatusActive = document.querySelector('.form-status-active');
+        const formStatusInactive = document.querySelector('.form-status-inactive');
+        const activeRadio = document.getElementById('status-active');
+        const inactiveRadio = document.getElementById('status-inactive');
+
+        if (status === 'Active') {
+            activeRadio.checked = true;
+            formStatusInactive.style.display = 'none';
+        } else {
+            inactiveRadio.checked = true;
+            formStatusActive.style.display = 'none';
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const viewButtons = document.querySelectorAll('.view-user');
+
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Gán giá trị vào các ô hiển thị
+                document.getElementById('detail-username').value = this.dataset.username;
+                document.getElementById('detail-fullname').value = this.dataset.fullname;
+                document.getElementById('detail-dob').value = this.dataset.dob;
+                document.getElementById('detail-email').value = this.dataset.email;
+                document.getElementById('detail-address').value = this.dataset.address;
+                document.getElementById('detail-role').value = this.dataset.role;
+                document.getElementById('detail-phone').value = this.dataset.phone;
+
+                setStatusRadio(this.dataset.status);
+            });
+        });
+
+    })
+</script>
+
+<script>
+    $(document).ready(function () {
+        if ($.fn.DataTable.isDataTable('#table_id')) {
+            $('#table_id').DataTable().destroy(); // huỷ trước nếu đã khởi tạo
+        }
+        const table = $('#table_id').DataTable({
+            paging: false,
+            searching: true,
+            ordering: true,
+            info: false,
+            language: {
+                search: "", // Xóa label cũ
+                searchPlaceholder: "Tìm kiếm..."
+            }
+        });
+    });
+
+</script>
+</body>
+
+</html>

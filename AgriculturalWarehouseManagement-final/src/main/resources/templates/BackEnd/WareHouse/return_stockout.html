@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{BackEnd/fragments/WareHouse/head::head}"></head>
+
+<body>
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+
+<!-- page-wrapper start -->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  <div th:replace="~{BackEnd/fragments/WareHouse/header::header}"></div>
+  <!-- Page Header Ends-->
+
+  <!-- Page Body start -->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    <div th:replace="~{BackEnd/fragments/WareHouse/sidebar::sidebar}"></div>
+    <!-- Page Sidebar Ends-->
+
+    <div class="page-body">
+      <!-- Pending StockOuts for Return Table -->
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="card">
+              <div class="card-body">
+                <div class="card-header-2">
+                  <h5>Danh sách Đơn hàng Chờ Nhập lại kho</h5>
+                </div>
+                <div class="table-responsive">
+                  <table class="table table-borderless">
+                    <thead>
+                    <tr>
+                      <th>STT</th>
+                      <th>Đơn hàng</th>
+                      <th>Trạng thái</th>
+                      <th>Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody id="orderTableBody">
+                    <tr>
+                      <td colspan="4">Đang tải dữ liệu...</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Pending StockOuts for Return End -->
+
+      <!-- footer Start -->
+      <div th:replace="BackEnd/fragments/WareHouse/footer::footer"></div>
+      <!-- footer End -->
+    </div>
+    <!-- Container-fluid End -->
+  </div>
+  <!-- Page Body End -->
+</div>
+<!-- page-wrapper End -->
+
+<!-- Logout Modal -->
+<div th:replace="~{BackEnd/fragments/WareHouse/logout::logout}"></div>
+<!-- Modal End -->
+
+<!-- Latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+
+<!-- Custom JavaScript -->
+<script>
+  $(document).ready(function () {
+    console.log('[DEBUG] Initializing page at ' + new Date().toISOString());
+
+    // DOM Elements
+    const orderTableBody = $('#orderTableBody');
+
+    // Validate DOM elements
+    console.log('[DEBUG] Validating DOM elements');
+    if (!orderTableBody.length) {
+      console.error('[ERROR] Missing orderTableBody element');
+      $.notify({ message: 'Không tìm thấy bảng #orderTableBody. Vui lòng kiểm tra HTML.' }, { type: 'danger', delay: 3000 });
+      return;
+    }
+    console.log('[DEBUG] All DOM elements found');
+
+    // Function to format status with color
+    function formatStatus(status) {
+      if (!status) return 'N/A';
+      switch (status.toUpperCase()) {
+        case 'RETURNED':
+          return `<span class="status-returned">Đã trả hàng</span>`;
+        case 'EXPORTED':
+          return `<span class="status-exported">Đã xuất kho</span>`;
+        default:
+          return status;
+      }
+    }
+
+    // Load Pending StockOuts for Return
+    function loadPendingStockOutsForReturn() {
+      console.log('[DEBUG] Loading pending stockouts for return from /AgriculturalWarehouseManagementApplication/api/stockouts/exported-stockouts');
+      $.ajax({
+        url: '/AgriculturalWarehouseManagementApplication/api/stockouts/exported-stockouts',
+        method: 'GET',
+        dataType: 'json',
+        beforeSend: function() {
+          console.log('[DEBUG] Sending GET request to /AgriculturalWarehouseManagementApplication/api/stockouts/exported-stockouts');
+        },
+        success: function(data) {
+          console.log('[DEBUG] Response from /AgriculturalWarehouseManagementApplication/api/stockouts/exported-stockouts:', JSON.stringify(data, null, 2));
+          orderTableBody.empty();
+          if (Array.isArray(data) && data.length > 0) {
+            const stockOutPromises = data.map((stockOut, index) => {
+              return new Promise((resolve) => {
+                const stockOutId = stockOut.id || 'N/A';
+                const orderId = stockOut.orderID || 'N/A';
+                const status = formatStatus(stockOut.status);
+
+                // Fetch orderCode
+                let orderCode = `ORD${orderId}`;
+                $.ajax({
+                  url: `/AgriculturalWarehouseManagementApplication/api/orders/${orderId}`,
+                  method: 'GET',
+                  async: false,
+                  success: function(order) {
+                    orderCode = order.orderCode || `ORD${orderId}`;
+                    console.log(`[DEBUG] OrderCode for orderID ${orderId}: ${orderCode}`);
+                  },
+                  error: function(xhr, status, error) {
+                    console.error(`[ERROR] Lỗi khi lấy order ${orderId}:`, { status, error });
+                  }
+                });
+
+                if (stockOutId) {
+                  const stt = index + 1; // Tính STT từ index
+                  const row = `
+                <tr>
+                  <td>${stt}</td> <!-- Hiển thị STT thay vì stockOutId -->
+                  <td>${orderCode}</td>
+                  <td>${status}</td>
+                  <td>
+                    <button class="btn btn-sm btn-warning return-stockout-btn" data-stockout-id="${stockOutId}">Nhập lại kho</button>
+                  </td>
+                </tr>
+              `;
+                  resolve(row);
+                } else {
+                  console.warn('[WARN] Invalid stockout data:', stockOut);
+                  resolve(null);
+                }
+              });
+            });
+
+            Promise.all(stockOutPromises).then(rows => {
+              const filteredRows = rows.filter(row => row !== null);
+              orderTableBody.empty();
+              filteredRows.forEach(row => orderTableBody.append(row));
+              console.log(`[DEBUG] Added ${filteredRows.length} rows to table`);
+
+              if (filteredRows.length === 0) {
+                orderTableBody.append('<tr><td colspan="4">Không có đơn hàng chờ nhập lại kho.</td></tr>');
+              }
+              bindTableActions();
+            });
+          } else {
+            console.warn('[WARN] No stockouts found or invalid data:', data);
+            orderTableBody.append('<tr><td colspan="4">Không có đơn hàng chờ nhập lại kho.</td></tr>');
+            bindTableActions();
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error('[ERROR] Failed to load stockouts for return:', {
+            url: '/AgriculturalWarehouseManagementApplication/api/stockouts/exported-stockouts',
+            status: xhr.status,
+            statusText: xhr.statusText,
+            response: xhr.responseText ? JSON.stringify(JSON.parse(xhr.responseText), null, 2) : 'No response body',
+            error: error
+          });
+          orderTableBody.append('<tr><td colspan="4">Lỗi tải dữ liệu.</td></tr>');
+        }
+      });
+    }
+
+    // Bind Table Actions
+    function bindTableActions() {
+      console.log('[DEBUG] Binding table actions');
+      $('.return-stockout-btn').on('click', function() {
+        const stockOutId = parseInt($(this).data('stockout-id'));
+        console.log('[DEBUG] Return StockOut button clicked for StockOut ID:', stockOutId);
+        updateStockOutStatus(stockOutId);
+      });
+    }
+
+    // Update StockOut Status to RETURNED and trigger processed API
+    function updateStockOutStatus(stockOutId) {
+      console.log('[DEBUG] Sending PUT request to update stockout status for ID:', stockOutId);
+      $.ajax({
+        url: `/AgriculturalWarehouseManagementApplication/api/stockouts/return/${stockOutId}/status`,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify({ status: 'RETURNED' }),
+        beforeSend: function() {
+          console.log('[DEBUG] PUT request initiated to /AgriculturalWarehouseManagementApplication/api/stockouts/return/${stockOutId}/status');
+        },
+        success: function(response) {
+          console.log('[DEBUG] Success response from /AgriculturalWarehouseManagementApplication/api/stockouts/return/${stockOutId}/status:', JSON.stringify(response, null, 2));
+          $.notify({ message: 'Cập nhật trạng thái thành RETURNED thành công!' }, { type: 'success', delay: 3000 });
+
+          // Gọi API để reset soldQuantity
+          $.ajax({
+            url: '/AgriculturalWarehouseManagementApplication/api/stockouts/returnstockout/details/processed',
+            method: 'GET',
+            dataType: 'json',
+            beforeSend: function() {
+              console.log('[DEBUG] Sending GET request to /AgriculturalWarehouseManagementApplication/api/stockouts/returnstockout/details/processed');
+            },
+            success: function(processedResponse) {
+              console.log('[DEBUG] Success response from /AgriculturalWarehouseManagementApplication/api/stockouts/returnstockout/details/processed:', JSON.stringify(processedResponse, null, 2));
+              $.notify({ message: 'Đã cập nhật soldQuantity thành công!' }, { type: 'success', delay: 3000 });
+              setTimeout(() => {
+                window.location.href = '/AgriculturalWarehouseManagementApplication/warehouse/stockout';
+              }, 1000);
+            },
+            error: function(xhr, status, error) {
+              console.error('[ERROR] Failed to process soldQuantity:', {
+                url: '/AgriculturalWarehouseManagementApplication/api/stockouts/returnstockout/details/processed',
+                status: xhr.status,
+                statusText: xhr.statusText,
+                response: xhr.responseText ? JSON.stringify(JSON.parse(xhr.responseText), null, 2) : 'No response body',
+                error: error
+              });
+              $.notify({ message: 'Lỗi khi cập nhật soldQuantity: ' + (xhr.responseJSON?.message || 'Vui lòng thử lại.') }, { type: 'danger', delay: 3000 });
+            }
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error('[ERROR] Failed to update stockout status:', {
+            url: `/AgriculturalWarehouseManagementApplication/api/stockouts/return/${stockOutId}/status`,
+            status: xhr.status,
+            statusText: xhr.statusText,
+            response: xhr.responseText ? JSON.stringify(JSON.parse(xhr.responseText), null, 2) : 'No response body',
+            error: error
+          });
+          $.notify({ message: 'Lỗi khi cập nhật trạng thái: ' + (xhr.responseJSON?.message || 'Vui lòng thử lại.') }, { type: 'danger', delay: 3000 });
+        }
+      });
+    }
+
+    // Initialize
+    console.log('[DEBUG] Starting initialization');
+    loadPendingStockOutsForReturn();
+  });
+</script>
+
+<style>
+  .status-returned {
+    color: #ff0000; /* Red for RETURNED */
+    font-weight: bold;
+  }
+
+  .status-exported {
+    color: #008000; /* Green for EXPORTED */
+    font-weight: bold;
+  }
+</style>
+
+</body>
+</html>
