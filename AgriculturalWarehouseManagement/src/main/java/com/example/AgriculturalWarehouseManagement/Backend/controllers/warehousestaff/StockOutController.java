@@ -2,6 +2,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.warehous
 
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.OrderDetailDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.OrderDTO_WareHouse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.StockOutDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.StockOutDetailDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.mappers.StockOutMapper;
@@ -21,6 +22,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -78,11 +82,23 @@ public class StockOutController {
     }
 
     @GetMapping("/paginatedStockOut")
-    @ResponseBody
-    public Page<StockOut> getPaginatedStockOut(
+    public Page<StockOutDTO> getPaginatedStockOut(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        return stockOutService.getPaginatedStockOut(page, size);
+            @RequestParam(defaultValue = "1000") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<StockOut> stockOutPage = stockOutRepository.findPaginatedStockOut(pageable);
+
+        // Debug output
+        System.out.println("Debug - Page: " + page + ", Size: " + size +
+                ", Total Pages: " + stockOutPage.getTotalPages() +
+                ", Total Elements: " + stockOutPage.getTotalElements());
+
+        // Map StockOut to StockOutDTO
+        List<StockOutDTO> stockOutDTOs = stockOutPage.getContent().stream()
+                .map(stockOutMapper::toDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(stockOutDTOs, pageable, stockOutPage.getTotalElements());
     }
 
     @GetMapping("/warehouse/stockout")
@@ -111,14 +127,14 @@ public class StockOutController {
     @GetMapping("/returnstockout/details")
     public ResponseEntity<List<StockOutDTO>> getStockOutsForCanceledOrders() {
         // Lấy danh sách Order bị hủy
-        List<Order> canceledOrders = orderService.findByStatus("CANCELLED");
+        List<OrderDTO_WareHouse> canceledOrders = orderService.findByStatus("CANCELLED");
         if (canceledOrders.isEmpty()) {
             return ResponseEntity.ok().body(List.of()); // Trả về danh sách rỗng nếu không có order bị hủy
         }
 
         // Lấy danh sách orderId từ các Order bị hủy
         List<Long> canceledOrderIds = canceledOrders.stream()
-                .map(Order::getId)
+                .map(OrderDTO_WareHouse::getOrderId) // ✅ Sửa lại
                 .collect(Collectors.toList());
 
         // Lọc các StockOut dựa trên orderId

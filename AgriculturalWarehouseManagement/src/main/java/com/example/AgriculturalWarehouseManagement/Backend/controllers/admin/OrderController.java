@@ -1,6 +1,7 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.admin;
 
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.OrderDTO_WareHouse;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Order;
 import com.example.AgriculturalWarehouseManagement.Backend.models.OrderStatus;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.order.OrderService;
@@ -56,22 +57,32 @@ public class OrderController {
         return "BackEnd/Admin/All_Orders";
     }
 
+    @GetMapping("/api/orders")
+    public ResponseEntity<List<OrderDTO_WareHouse>> getAllOrders() {
+        List<OrderDTO_WareHouse> orders = orderService.findAllForStockOut(); // lấy tất cả từ DB
+        if (orders.isEmpty()) {
+            return ResponseEntity.noContent().build(); // HTTP 204 nếu không có dữ liệu
+        }
+        return ResponseEntity.ok(orders); // HTTP 200 kèm danh sách orders
+    }
+
+
+    @GetMapping("/api/addstockout")
+    public ResponseEntity<List<OrderDTO_WareHouse>> getPendingOrdersForStockOut() {
+        List<OrderDTO_WareHouse> pendingOrders = orderService.findByStatus(OrderStatus.CONFIRMED.name());
+        return ResponseEntity.ok(pendingOrders);
+    }
+
     @GetMapping("/api/orders/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
-        Order order = orderService.findById(id);
+    public ResponseEntity<OrderDTO_WareHouse> getOrderById(@PathVariable Long id) {
+        OrderDTO_WareHouse order = orderService.findDtoById(id);
         return ResponseEntity.ok(order);
     }
 
 
-    @GetMapping("/warehouse/api/addstockout")
-    public ResponseEntity<List<Order>> getPendingOrdersForStockOut() {
-        List<Order> pendingOrders = orderService.findByStatus(OrderStatus.CONFIRMED.name());
-        return ResponseEntity.ok(pendingOrders);
-    }
-
-    @GetMapping("/warehouse/api/returnstockout")
-    public ResponseEntity<List<Order>> getReturnOrdersForStockOut() {
-        List<Order> pendingOrders = orderService.findByStatus(OrderStatus.CANCELLED.name());
+    @GetMapping("/api/returnstockout")
+    public ResponseEntity<List<OrderDTO_WareHouse>> getReturnOrdersForStockOut() {
+        List<OrderDTO_WareHouse> pendingOrders = orderService.findByStatus(OrderStatus.CANCELLED.name());
         return ResponseEntity.ok(pendingOrders);
     }
 

@@ -307,13 +307,14 @@
         const searchInputStockOut = $('#searchInputStockOut');
         const tableContainer = $('#table-container');
         let allStockOuts = [];
+        let orderCache = new Map(); // Cache for orderCode by orderId
         let currentPage = 0;
         let totalPages = 1;
         const pageSize = 2;
         let searchTerm = '';
         let sortColumn = 'stockOutId';
         let sortDirection = 'asc';
-        let isPaginating = false; // Flag to track pagination actions
+        let isPaginating = false;
 
         // Validate DOM elements
         console.log('[DEBUG] Validating DOM elements');
@@ -418,14 +419,67 @@
             });
         }
 
+        // Fetch Order by ID
+        function fetchOrderById(orderId) {
+            if (!orderId) {
+                console.log('[DEBUG] No orderId provided, returning N/A');
+                return Promise.resolve('N/A');
+            }
+
+            // Check cache first
+            if (orderCache.has(orderId)) {
+                console.log('[DEBUG] Order code from cache for orderId:', orderId, 'value:', orderCache.get(orderId));
+                return Promise.resolve(orderCache.get(orderId));
+            }
+
+            const url = `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/orders/${orderId}`;
+            console.log('[DEBUG] Fetching order from', url);
+            return $.ajax({
+                url: url,
+                method: 'GET',
+                dataType: 'json',
+                timeout: 5000,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content') || '' },
+                beforeSend: function () {
+                    console.log('[DEBUG] Sending GET request to', url);
+                }
+            }).then(data => {
+                console.log('[DEBUG] Order API response for orderId', orderId, ':', JSON.stringify(data, null, 2));
+                const orderCode = data && data.orderCode ? data.orderCode : 'N/A';
+                orderCache.set(orderId, orderCode); // Cache the result
+                return orderCode;
+            }).catch(error => {
+                console.error('[ERROR] Failed to fetch order for orderId', orderId, ':', {
+                    url,
+                    status: error.status || 'unknown',
+                    statusText: error.statusText || 'unknown',
+                    response: error.responseText ? error.responseText : 'No response body',
+                    error: error.message || 'Unknown error'
+                });
+                orderCache.set(orderId, 'N/A'); // Cache N/A for failed fetches
+                return 'N/A';
+            });
+        }
+
+        // Get order code by order ID (async)
+        async function getOrderCode(orderId) {
+            return await fetchOrderById(orderId);
+        }
+
         // Sort StockOuts
-        function sortStockOuts(stockOuts) {
-            return [...stockOuts].sort((a, b) => {
+        async function sortStockOuts(stockOuts) {
+            // Create a copy of stockOuts with resolved orderCodes
+            const stockOutsWithOrderCodes = await Promise.all(stockOuts.map(async stockOut => {
+                const orderCode = await getOrderCode(stockOut.orderID);
+                return { ...stockOut, resolvedOrderCode: orderCode };
+            }));
+
+            return stockOutsWithOrderCodes.sort((a, b) => {
                 let valueA, valueB;
                 const warehouseNameA = a.warehouseID ? (a.warehouseID.warehouseName || 'N/A') : 'N/A';
                 const warehouseNameB = b.warehouseID ? (b.warehouseID.warehouseName || 'N/A') : 'N/A';
-                const orderCodeA = a.orderID ? (a.orderID.orderCode || `ORD${a.orderID.id}` || 'N/A') : 'N/A';
-                const orderCodeB = b.orderID ? (b.orderID.orderCode || `ORD${b.orderID.id}` || 'N/A') : 'N/A';
+                const orderCodeA = a.resolvedOrderCode || 'N/A';
+                const orderCodeB = b.resolvedOrderCode || 'N/A';
 
                 switch (sortColumn) {
                     case 'stockOutId':
@@ -462,7 +516,7 @@
         }
 
         // Render stockouts to table
-        function renderStockOuts(stockOuts, pageIndex) {
+        async function renderStockOuts(stockOuts, pageIndex) {
             const { tableBody, noDataRow } = ensureElements();
             if (!tableBody || !noDataRow) {
                 console.error('[ERROR] Failed to ensure table elements');
@@ -473,13 +527,19 @@
             tableBody.empty();
             if (stockOuts.length > 0) {
                 noDataRow.hide();
-                stockOuts.forEach(stockOut => {
+                // Fetch order codes for all stockouts in the current page
+                const stockOutsWithOrderCodes = await Promise.all(stockOuts.map(async stockOut => {
+                    const orderCode = await getOrderCode(stockOut.orderID);
+                    return { ...stockOut, resolvedOrderCode: orderCode };
+                }));
+
+                stockOutsWithOrderCodes.forEach(stockOut => {
                     const warehouseName = stockOut.warehouseID ? (stockOut.warehouseID.warehouseName || 'N/A') : 'N/A';
-                    const orderCode = stockOut.orderID ? (stockOut.orderID.orderCode || `ORD${stockOut.orderID.id}` || 'N/A') : 'N/A';
+                    const orderCode = stockOut.resolvedOrderCode || 'N/A';
                     const row = `
                     <tr>
                         <td>${stockOut.id || 'N/A'}</td>
-                        <td>${warehouseName}</td>
+                        <td>Kho Trung Tâm</td>
                         <td>${orderCode}</td>
                         <td>${formatDateToVietnamese(stockOut.stockOutDate)}</td>
                         <td>${stockOut.note || 'N/A'}</td>
@@ -489,7 +549,7 @@
                 `;
                     tableBody.append(row);
                 });
-                console.log('[DEBUG] Table rendered with', stockOuts.length, 'rows');
+                console.log('[DEBUG] Table rendered with', stockOutsWithOrderCodes.length, 'rows');
             } else {
                 noDataRow.show();
                 console.log('[DEBUG] No data to display, showing no-data-row');
@@ -497,10 +557,10 @@
         }
 
         // Fetch StockOut data and populate table
-        function fetchStockOuts(search = '', isPaginationClick = false) {
+        async function fetchStockOuts(search = '', isPaginationClick = false) {
             searchTerm = search;
             if (!isPaginationClick) {
-                currentPage = 0; // Only reset page on search or sort, not pagination
+                currentPage = 0;
             }
             updateURL(currentPage);
             const { tableBody, noDataRow } = ensureElements();
@@ -513,24 +573,24 @@
 
             console.log('[DEBUG] Fetching stockouts for page:', currentPage, 'search:', searchTerm, 'sortColumn:', sortColumn, 'sortDirection:', sortDirection, 'isPaginationClick:', isPaginationClick);
 
-            // Show loading state
             tableContainer.addClass('loading');
 
-            // Fetch all stockouts
             const url = `/AgriculturalWarehouseManagementApplication/api/stockouts/paginatedStockOut?page=0&size=1000`;
-            $.ajax({
-                url: url,
-                method: 'GET',
-                dataType: 'json',
-                timeout: 10000,
-                headers: { 'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content') || '' },
-                beforeSend: function () {
-                    console.log('[DEBUG] Sending GET request to', url);
-                }
-            }).then(data => {
-                console.log('[DEBUG] Stockouts API response:', JSON.stringify(data, null, 2));
-                if (!data || !Array.isArray(data.content) || typeof data.totalPages === 'undefined') {
-                    console.error('[ERROR] Invalid stockout data:', data);
+            try {
+                const response = await $.ajax({
+                    url: url,
+                    method: 'GET',
+                    dataType: 'json',
+                    timeout: 10000,
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content') || '' },
+                    beforeSend: function () {
+                        console.log('[DEBUG] Sending GET request to', url);
+                    }
+                });
+
+                console.log('[DEBUG] Stockouts API response:', JSON.stringify(response, null, 2));
+                if (!response || !Array.isArray(response.content) || typeof response.totalPages === 'undefined') {
+                    console.error('[ERROR] Invalid stockout data:', response);
                     tableBody.empty();
                     noDataRow.show();
                     tableContainer.removeClass('loading');
@@ -539,12 +599,17 @@
                     return;
                 }
 
-                allStockOuts = data.content;
+                allStockOuts = response.content;
 
-                // Filter stockouts based on search term (only orderCode, stockOutDate, note)
-                const filteredStockOuts = allStockOuts.filter(stockOut => {
-                    if (!searchTerm) return true; // No search term, include all
-                    const orderCode = stockOut.orderID ? (stockOut.orderID.orderCode || `ORD${stockOut.orderID.id}` || 'N/A') : 'N/A';
+                // Filter stockouts based on search term
+                const filteredStockOuts = await Promise.all(allStockOuts.map(async stockOut => {
+                    const orderCode = await getOrderCode(stockOut.orderID);
+                    return { ...stockOut, resolvedOrderCode: orderCode };
+                }));
+
+                const filteredResults = filteredStockOuts.filter(stockOut => {
+                    if (!searchTerm) return true;
+                    const orderCode = stockOut.resolvedOrderCode || 'N/A';
                     const stockOutDate = stockOut.stockOutDate ? formatDateToVietnamese(stockOut.stockOutDate) : 'N/A';
                     const note = stockOut.note || 'N/A';
                     const searchLower = searchTerm.toLowerCase();
@@ -556,7 +621,7 @@
                 });
 
                 // Sort filtered stockouts
-                const sortedStockOuts = sortStockOuts(filteredStockOuts);
+                const sortedStockOuts = await sortStockOuts(filteredResults);
 
                 // Paginate sorted and filtered stockouts
                 totalPages = Math.ceil(sortedStockOuts.length / pageSize);
@@ -568,9 +633,9 @@
                 const paginatedStockOuts = sortedStockOuts.slice(startIndex, startIndex + pageSize);
 
                 // Render table data
-                renderStockOuts(paginatedStockOuts, currentPage);
+                await renderStockOuts(paginatedStockOuts, currentPage);
 
-                // Render pagination only if total pages > 1
+                // Render pagination
                 if (totalPages > 1) {
                     renderPagination(totalPages, currentPage);
                 } else {
@@ -578,7 +643,7 @@
                 }
 
                 tableContainer.removeClass('loading');
-            }).catch(error => {
+            } catch (error) {
                 console.error('[ERROR] Failed to fetch stockouts:', {
                     url,
                     status: error.status || 'unknown',
@@ -591,10 +656,10 @@
                 tableContainer.removeClass('loading');
                 renderPagination(0, 0);
                 $.notify({ message: 'Không thể tải danh sách xuất kho. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 5000 });
-            });
+            }
         }
 
-        // Pagination rendering
+        // Pagination rendering (unchanged)
         function renderPagination(totalPagesInput, currentPageInput) {
             const paginationControls = $('#pagination-controls');
             paginationControls.empty();
@@ -618,14 +683,10 @@
 
             const added = new Set();
 
-            // Trước
             addBtn('Trước', currentPage - 1, currentPage === 0);
-
-            // Luôn hiển thị trang 1
             addBtn(1, 0, false, currentPage === 0);
             added.add(0);
 
-            // Form 1: Trang hiện tại <= 2 (trang 1,2,3)
             if (currentPage <= 2) {
                 for (let i = 1; i <= 3 && i < totalPages - 1; i++) {
                     if (!added.has(i)) {
@@ -634,9 +695,7 @@
                     }
                 }
                 if (totalPages > 5) addEllipsis();
-            }
-            // Form 2: 3 <= currentPage <= totalPages - 3 (giữa)
-            else if (currentPage >= 3 && currentPage <= totalPages - 3) {
+            } else if (currentPage >= 3 && currentPage <= totalPages - 3) {
                 const range = [currentPage - 1, currentPage, currentPage + 1];
                 for (let i of range) {
                     if (!added.has(i)) {
@@ -645,9 +704,7 @@
                     }
                 }
                 addEllipsis();
-            }
-            // Form 3: currentPage >= totalPages - 2 (cuối)
-            else if (currentPage >= totalPages - 2) {
+            } else if (currentPage >= totalPages - 2) {
                 if (!added.has(1)) {
                     addBtn(2, 1, false, currentPage === 1);
                     added.add(1);
@@ -661,12 +718,10 @@
                 }
             }
 
-            // Luôn hiển thị trang cuối
             if (totalPages > 1 && !added.has(totalPages - 1)) {
                 addBtn(totalPages, totalPages - 1, false, currentPage === totalPages - 1);
             }
 
-            // Tiếp
             addBtn('Tiếp', currentPage + 1, currentPage === totalPages - 1);
         }
 
@@ -676,10 +731,10 @@
             const page = parseInt($(this).data('page'));
             console.log('[DEBUG] Pagination clicked - page:', page, 'total pages:', totalPages);
             if (!isNaN(page) && page >= 0 && page < totalPages) {
-                isPaginating = true; // Set flag to indicate pagination action
+                isPaginating = true;
                 currentPage = page;
                 fetchStockOuts(searchTerm, true);
-                isPaginating = false; // Reset flag after fetch
+                isPaginating = false;
             }
         });
 
@@ -693,7 +748,7 @@
                     sortDirection = 'asc';
                 }
                 console.log('[DEBUG] Sorting by:', sortColumn, sortDirection);
-                currentPage = 0; // Reset to first page on sort
+                currentPage = 0;
                 fetchStockOuts(searchTerm);
             }
         });
@@ -703,7 +758,7 @@
             console.log('[DEBUG] Search input:', searchValue, 'Resetting to page 0');
             searchTerm = searchValue;
             if (!isPaginating) {
-                currentPage = 0; // Only reset page if not paginating
+                currentPage = 0;
             }
             fetchStockOuts(searchValue);
         }, 300);

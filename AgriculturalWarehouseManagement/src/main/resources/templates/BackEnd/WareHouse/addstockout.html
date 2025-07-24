@@ -219,7 +219,13 @@
                         url: '/AgriculturalWarehouseManagementApplication/api/warehouses',
                         status: xhr.status,
                         statusText: xhr.statusText,
-                        response: xhr.responseText ? JSON.stringify(JSON.parse(xhr.responseText), null, 2) : 'No response body',
+                        response: (function () {
+                            try {
+                                return JSON.stringify(JSON.parse(xhr.responseText), null, 2);
+                            } catch (e) {
+                                return xhr.responseText || 'No response body';
+                            }
+                        })(),
                         error: error
                     });
                     modalWarehouseId.html('<option value="">Lỗi tải kho</option>');
@@ -232,7 +238,7 @@
         // Load Pending Orders
 
         function loadPendingOrders() {
-            console.log('[DEBUG] Loading pending orders from /AgriculturalWarehouseManagementApplication/warehouse/api/addstockout');
+            console.log('[DEBUG] Loading pending orders from /AgriculturalWarehouseManagementApplication/api/addstockout');
             const orderTableBody = $('#orderTableBody');
 
             if (!orderTableBody.length) {
@@ -244,84 +250,49 @@
             orderTableBody.html('<tr><td colspan="3">Đang tải dữ liệu...</td></tr>');
 
             $.ajax({
-                url: '/AgriculturalWarehouseManagementApplication/warehouse/api/addstockout',
+                url: '/AgriculturalWarehouseManagementApplication/api/addstockout',
                 method: 'GET',
                 dataType: 'json',
                 timeout: 10000,
-                beforeSend: function() {
-                    console.log('[DEBUG] Sending GET request to /AgriculturalWarehouseManagementApplication/warehouse/api/addstockout');
-                },
                 success: function(data) {
-                    console.log('[DEBUG] Response from /AgriculturalWarehouseManagementApplication/warehouse/api/addstockout:', JSON.stringify(data, null, 2));
+                    console.log('[DEBUG] Response from /addstockout:', JSON.stringify(data, null, 2));
                     orderTableBody.empty();
 
                     if (!Array.isArray(data) || data.length === 0) {
-                        console.warn('[WARN] No orders found or invalid data:', data);
                         orderTableBody.append('<tr><td colspan="3">Không có đơn hàng chờ xuất kho.</td></tr>');
-                        bindTableActions();
                         return;
                     }
 
-                    const orderPromises = data.map((order, index) => {
-                        return new Promise((resolve) => {
-                            const id = order.id;
-                            if (!id) {
-                                console.warn('[WARN] Invalid order ID:', order);
-                                resolve(null);
-                                return;
-                            }
+                    data.forEach((order, index) => {
+                        const id = order.orderId;
+                        const orderCode = order.orderCode || `ORD${id}`;
+                        const stt = index + 1;
 
-                            let orderCode = `ORD${id}`;
-                            $.ajax({
-                                url: `/AgriculturalWarehouseManagementApplication/api/orders/${id}`,
-                                method: 'GET',
-                                dataType: 'json',
-                                success: function(orderDetails) {
-                                    orderCode = orderDetails.orderCode || `ORD${id}`;
-                                    console.log(`[DEBUG] OrderCode for orderID ${id}: ${orderCode}`);
-                                },
-                                error: function(xhr, status, error) {
-                                    console.error(`[ERROR] Failed to fetch order ${id}:`, { status, error });
-                                },
-                                complete: function() {
-                                    const stt = index + 1;
-                                    const row = `
-                                <tr>
-                                    <td>${stt}</td>
-                                    <td>${orderCode}</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary create-stockout-btn"
-                                                data-order-id="${id}"
-                                                data-order-code="${orderCode}"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#stockOutModal">Tạo Xuất kho</button>
-                                    </td>
-                                </tr>
-                            `;
-                                    resolve(row);
-                                }
-                            });
-                        });
+                        const row = `
+                    <tr>
+                        <td>${stt}</td>
+                        <td>${orderCode}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary create-stockout-btn"
+                                    data-order-id="${id}"
+                                    data-order-code="${orderCode}"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#stockOutModal">Tạo Xuất kho</button>
+                        </td>
+                    </tr>
+                `;
+                        orderTableBody.append(row);
                     });
 
-                    Promise.all(orderPromises).then(rows => {
-                        const filteredRows = rows.filter(row => row !== null);
-                        orderTableBody.empty();
-                        if (filteredRows.length === 0) {
-                            orderTableBody.append('<tr><td colspan="3">Không có đơn hàng chờ xuất kho.</td></tr>');
-                        } else {
-                            filteredRows.forEach(row => orderTableBody.append(row));
-                            console.log(`[DEBUG] Added ${filteredRows.length} rows to table`);
-                        }
-                        bindTableActions();
-                    });
+                    console.log(`[DEBUG] Added ${data.length} rows to table`);
+                    bindTableActions();
                 },
                 error: function(xhr, status, error) {
                     console.error('[ERROR] Failed to load orders:', {
-                        url: '/AgriculturalWarehouseManagementApplication/warehouse/api/addstockout',
+                        url: '/AgriculturalWarehouseManagementApplication/api/addstockout',
                         status: xhr.status,
                         statusText: xhr.statusText,
-                        response: xhr.responseText ? JSON.stringify(JSON.parse(xhr.responseText || '{}'), null, 2) : 'No response body',
+                        response: xhr.responseText ? JSON.stringify(JSON.parse(xhr.responseText), null, 2) : 'No response body',
                         error: error
                     });
                     orderTableBody.empty();
@@ -330,6 +301,7 @@
                 }
             });
         }
+
 
         // Bind Table Actions
 

@@ -2,6 +2,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.services.admin.order
 
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.OrderDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.OrderDTO_WareHouse;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Order;
 import com.example.AgriculturalWarehouseManagement.Backend.models.OrderStatus;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
@@ -18,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,10 +30,55 @@ public class OrderService implements IOrderService {
     private final VoucherRepository voucherRepository;
     private final Random random = new Random();
 
-    @Override
-    public List<Order> findByStatus(String status) {
-        return orderRepository.findByStatus(status);
+    public List<OrderDTO_WareHouse> findByStatus(String status) {
+        return orderRepository.findByStatus(status)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
+
+    public List<OrderDTO_WareHouse> findAllForStockOut() {
+        return orderRepository.findAll()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+
+    public OrderDTO_WareHouse findDtoById(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+
+        return convertToDTO(order);
+    }
+
+    private OrderDTO_WareHouse convertToDTO(Order order) {
+        OrderDTO_WareHouse dto = new OrderDTO_WareHouse();
+        dto.setOrderId(order.getId());
+        dto.setOrderCode(order.getOrderCode());
+        dto.setOrderDate(order.getOrderDate());
+        dto.setFullName(order.getFullName());
+        dto.setPhone(order.getPhone());
+        dto.setStatus(order.getStatus());
+        dto.setTotalAmount(order.getTotalAmount());
+        dto.setFinalAmount(order.getFinalAmount());
+        dto.setDiscountAmount(order.getDiscountAmount());
+        dto.setEmail(order.getEmail());
+        dto.setAddress(order.getAddress());
+        dto.setNote(order.getNote());
+
+        if (order.getUser() != null) {
+            dto.setUserId(order.getUser().getUserId());
+        }
+
+        if (order.getVoucher() != null) {
+            dto.setVoucherId(order.getVoucher().getId());
+            dto.setVoucherCode(order.getVoucher().getVoucherCode());
+        }
+
+        return dto;
+    }
+
 
 
 

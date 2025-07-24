@@ -1,5 +1,6 @@
 package com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.OrderDTO_WareHouse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.StockOutDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.StockOutDetailDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.mappers.StockOutDetailMapper;
@@ -132,11 +133,12 @@ public class StockOutService {
         List<StockOutDetailDTO> returnedDetailsToDisplay = new ArrayList<>();
 
         // 1. Tìm các Order bị hủy
-        List<Order> canceledOrders = orderService.findByStatus("CANCELLED");
+        List<OrderDTO_WareHouse> canceledOrders = orderService.findByStatus("CANCELLED");
         if (canceledOrders.isEmpty()) return returnedDetailsToDisplay;
 
+        // Lấy danh sách orderId từ các Order bị hủy
         List<Long> canceledOrderIds = canceledOrders.stream()
-                .map(Order::getId)
+                .map(OrderDTO_WareHouse::getOrderId) // ✅ Sửa lại
                 .collect(Collectors.toList());
 
         // 2. Tìm các StockOut có status = RETURNED và thuộc các đơn bị hủy
@@ -185,14 +187,15 @@ public class StockOutService {
 
     public List<StockOutDTO> getCanceledOrdersWithExportedStockOuts() {
         // Lấy danh sách Order có status = CANCELLED
-        List<Order> canceledOrders = orderService.findByStatus("CANCELLED");
+        List<OrderDTO_WareHouse> canceledOrders = orderService.findByStatus("CANCELLED");
         if (canceledOrders.isEmpty()) {
             return List.of(); // Trả về danh sách rỗng nếu không có Order bị hủy
         }
 
+
         // Lấy danh sách orderId từ các Order bị hủy
         List<Long> canceledOrderIds = canceledOrders.stream()
-                .map(Order::getId)
+                .map(OrderDTO_WareHouse::getOrderId) // ✅ Sửa lại
                 .collect(Collectors.toList());
 
         // Lấy tất cả StockOut liên quan có status = EXPORTED
