@@ -1,6 +1,7 @@
 package com.example.AgriculturalWarehouseManagement.Backend.services.admin.product;
 
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.BestSellerProductDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductImageDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Category;
@@ -11,6 +12,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.repositorys.CategoryR
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductImageRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.WarehouseRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.services.admin.ProductStockProjection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -129,4 +131,15 @@ public class ProductService implements IProductService {
         }
     }
 
+    public int getProductQuantity(){
+        return productRepository.getTotalRemainingAllProducts();
+    }
+
+//    public List<ProductStockProjection> getAllProductStockProjections(){
+//        return productRepository.getRemainingStockByProduct();
+//    }
+
+    public List<BestSellerProductDTO> getAllBestSellerProductDTO(){
+        return productRepository.getTop5BestSellerProducts();
+    }
 }

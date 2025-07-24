@@ -13,8 +13,8 @@ public interface StockInDetailRepository extends JpaRepository<StockInDetail, In
     List<StockInDetail> findByStockInID(StockIn stockInID);
     Optional<StockInDetail> findByBatchID(ProductBatch batch);
 
-    @Query("SELECT CONCAT(YEAR(s.stockInDate), '-', LPAD(CAST(MONTH(s.stockInDate) AS string), 2, '0')) AS month, " +
-            "SUM(CAST(d.unitPrice AS long) * CAST(d.quantity AS long)) AS totalSpent " +
+    @Query("SELECT YEAR(s.stockInDate), MONTH(s.stockInDate), " +
+            "SUM(d.unitPrice * d.quantity) " +
             "FROM StockInDetail d JOIN d.stockInID s " +
             "WHERE d.unitPrice IS NOT NULL AND d.quantity IS NOT NULL " +
             "GROUP BY YEAR(s.stockInDate), MONTH(s.stockInDate) " +

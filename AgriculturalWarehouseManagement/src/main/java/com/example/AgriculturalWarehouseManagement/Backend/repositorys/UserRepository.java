@@ -27,6 +27,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User FindByEmail(@Param("email") String email);
     //
 
+    @Query("SELECT count(u) from User u")
+    long countAllUsers();
+
     @Modifying
     @Transactional
     @Query("update User u set u.password = ?2 where u.email = ?1")

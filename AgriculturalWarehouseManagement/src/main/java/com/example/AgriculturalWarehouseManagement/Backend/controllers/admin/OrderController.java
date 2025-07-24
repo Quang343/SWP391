@@ -102,4 +102,26 @@ public class OrderController {
         if(isUpdated) return ResponseEntity.ok().build();
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/admin/orders/order_tracking")
+    public String orderTracking() {
+        return "BackEnd/Admin/FindOrderTracking";
+    }
+
+    @PostMapping("/admin/orders/order_tracking/{code}")
+    public ResponseEntity<?> findOrderTrackingByIId(@PathVariable("code") String orderCode) {
+        if(!orderService.existByOrderCode(orderCode)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Mã đơn hàng không tồn tại!"));
+        }
+        return ResponseEntity.ok().body("");
+    }
+
+    @GetMapping("/admin/orders/order_tracking/{code}")
+    public String getOrderTrackingPage(@PathVariable("code") String orderCode, Model model) {
+        Order order = orderService.findByOrderCode(orderCode);
+        model.addAttribute("order", order);
+        return "/BackEnd/Admin/OrderTracking";
+    }
+
 }

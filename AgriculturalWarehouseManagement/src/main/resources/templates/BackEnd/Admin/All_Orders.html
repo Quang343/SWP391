@@ -50,9 +50,14 @@
         color: #42ba96;
     }
 
-     li.page-item {
-         margin: auto 5px;
-     }
+    .all-package tbody tr td.order-success span.stockout {
+        background-color: #FD7E14 !important;
+        color: #FFFFFF !important;
+    }
+
+    li.page-item {
+        margin: auto 5px;
+    }
 
     a.page-link {
         border: 3px solid #fff;
@@ -198,12 +203,12 @@
                                                         <!-- Chỉnh sửa (chỉ khi trạng thái là PENDING hoặc CONFIRMED) -->
                                                         <li>
                                                             <a href="javascript:void(0)"
-                                                               th:if="${order.status == 'PENDING' or order.status == 'CONFIRMED'}"
+                                                               th:if="${order.status == 'PENDING' or order.status == 'CONFIRMED' or order.status == 'STOCKOUT' or order.status == 'DELIVERED'}"
                                                                th:attr="data-order-id=${order.getId()}, data-order-status=${order.getStatus()}"
                                                                onclick="openEditModal(this)">
                                                                 <i class="ri-pencil-line text-warning"></i>
                                                             </a>
-                                                            <a th:if="${order.status == 'CANCELLED' or order.status == 'DELIVERED'}"
+                                                            <a th:if="${order.status == 'CANCELLED' or order.status == 'COMPLETED'}"
                                                                href="javascript:void(0)"
                                                                style="pointer-events: none; opacity: 0.4;">
                                                                 <i class="ri-pencil-line text-warning"></i>
@@ -221,7 +226,7 @@
                                                                 <i class="ri-delete-bin-line text-danger"></i>
                                                             </a>
 
-                                                            <a th:if="${order.status == 'CANCELLED' or order.status == 'DELIVERED'}"
+                                                            <a th:if="${order.status == 'CANCELLED' or order.status == 'STOCKOUT' or order.status == 'DELIVERED' or order.status == 'COMPLETED'}"
                                                                href="javascript:void(0)"
                                                                class="text-muted"
                                                                style="pointer-events: none; opacity: 0.4;">
@@ -232,7 +237,7 @@
                                                         <!-- Theo dõi đơn hàng -->
                                                         <li>
                                                             <a class="btn btn-sm btn-solid text-white"
-                                                               th:href="@{/admin/orders/{orderId}/details(orderId=${order.getId()})}">
+                                                               th:href="@{/admin/orders/order_tracking/{orderCode}(orderCode=${order.getOrderCode()})}">
                                                                 Theo dõi
                                                             </a>
                                                         </li>
@@ -541,6 +546,8 @@
                 return "primary";
             case "DELIVERED":
                 return "success";
+            case "COMPLETED":
+                return "success";
             case "CANCELLED":
                 return "danger";
             default:
@@ -563,7 +570,9 @@
         // Trạng thái kế tiếp
         const nextStatus = {
             PENDING: "CONFIRMED",
-            CONFIRMED: "DELIVERED"
+            CONFIRMED: "STOCKOUT",
+            STOCKOUT : "DELIVERED",
+            DELIVERED : "COMPLETED"
         }[currentStatus] || null;
 
         if (!nextStatus) {
@@ -666,8 +675,8 @@
         fetch(`/AgriculturalWarehouseManagementApplication/admin/delete_order/${selectedOrderId}`, {
             method: 'POST',
             // headers: {
-                // 'Content-Type': 'application/json',
-                // [csrfHeader]: csrfToken
+            // 'Content-Type': 'application/json',
+            // [csrfHeader]: csrfToken
             // }
         })
             .then(res => {

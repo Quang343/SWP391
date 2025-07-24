@@ -70,8 +70,10 @@ public class Order {
                 return "pending";
             case "CONFIRMED":
                 return "primary";
-            case "DELIVERED":
+            case "DELIVERED", "COMPLETED":
                 return "success";
+            case "STOCKOUT":
+                return "stockout";
             case "CANCELLED":
                 return "danger";
             default:

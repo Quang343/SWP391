@@ -58,6 +58,8 @@
     <!-- App css -->
     <link rel="stylesheet" type="text/css" th:href="@{/Backend/assets/css/style.css}">
 
+    <link href="https://cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css" rel="stylesheet" />
+
     <style>
         body {
             background-color: #f8f9fa;
@@ -161,15 +163,15 @@
             border-color: #f5c2c7;
         }
 
-         .styled-tab .nav-link {
-             background: transparent;
-             color: #333;
-             border: none;
-             border-radius: 0;                      /* bo góc vuông */
-             padding: 10px 20px;
-             font-weight: 500;
-             transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
-         }
+        .styled-tab .nav-link {
+            background: transparent;
+            color: #333;
+            border: none;
+            border-radius: 0;                      /* bo góc vuông */
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+        }
         .nav-tabs .nav-link.active{
             border: none;
         }
@@ -319,7 +321,7 @@
                                     </li>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password" type="button" role="tab">
-                                           <i class="ri-lock-2-fill"></i> Thay đổi mật khẩu
+                                            <i class="ri-lock-2-fill"></i> Thay đổi mật khẩu
                                         </button>
                                     </li>
                                 </ul>
@@ -464,81 +466,28 @@
                                         </div>
 
                                         <div class="save-details-box">
-                                            <div class="row g-4">
+                                            <div class="row g-4" th:each="address : ${user.getMyAddressBooks()}">
                                                 <div class="col-xl-4 col-md-6">
                                                     <div class="save-details">
                                                         <div class="save-name">
-                                                            <h5>Mark Jugal</h5>
+                                                            <h5 th:text="${address.getFullName()}">Mark Jugal</h5>
                                                         </div>
 
                                                         <div class="save-position">
-                                                            <h6>Home</h6>
+                                                            <h6 th:text="${address.setToAddress}">Home</h6>
                                                         </div>
 
                                                         <div class="save-address">
-                                                            <p>549 Sulphur Springs Road</p>
-                                                            <p>Downers Grove, IL</p>
-                                                            <p>60515</p>
+                                                            <p th:text="'Địa chỉ: ' +  ${address.address}">549 Sulphur Springs Road</p>
+                                                            <p th:text="'Ghi chú: ' +  ${address.note}">Downers Grove, IL</p>
                                                         </div>
 
                                                         <div class="mobile">
-                                                            <p class="mobile">Mobile No. +1-123-456-7890</p>
+                                                            <p class="mobile" th:text="'Phone: ' + ${address.phone}">Mobile No. +1-123-456-7890</p>
                                                         </div>
 
-                                                        <div class="button">
-                                                            <a href="javascript:void(0)" class="btn btn-sm">Edit</a>
-                                                            <a href="javascript:void(0)"
-                                                               class="btn btn-sm">Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xl-4 col-md-6">
-                                                    <div class="save-details">
-                                                        <div class="save-name">
-                                                            <h5>Method Zaki</h5>
-                                                        </div>
-
-                                                        <div class="save-position">
-                                                            <h6>Office</h6>
-                                                        </div>
-
-                                                        <div class="save-address">
-                                                            <p>549 Sulphur Springs Road</p>
-                                                            <p>Downers Grove, IL</p>
-                                                            <p>60515</p>
-                                                        </div>
-
-                                                        <div class="mobile">
-                                                            <p class="mobile">Mobile No. +1-123-456-7890</p>
-                                                        </div>
-
-                                                        <div class="button">
-                                                            <a href="javascript:void(0)" class="btn btn-sm">Edit</a>
-                                                            <a href="javascript:void(0)" class="btn btn-sm">
-                                                                Remove</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xl-4 col-md-6">
-                                                    <div class="save-details">
-                                                        <div class="save-name">
-                                                            <h5>Mark Jugal</h5>
-                                                        </div>
-
-                                                        <div class="save-position">
-                                                            <h6>Home</h6>
-                                                        </div>
-
-                                                        <div class="save-address">
-                                                            <p>549 Sulphur Springs Road</p>
-                                                            <p>Downers Grove, IL</p>
-                                                            <p>60515</p>
-                                                        </div>
-
-                                                        <div class="mobile">
-                                                            <p class="mobile">Mobile No. +1-123-456-7890</p>
+                                                        <div class="email">
+                                                            <p class="email" th:text="'Email: ' + ${address.email}">Mobile No. +1-123-456-7890</p>
                                                         </div>
 
                                                         <div class="button">

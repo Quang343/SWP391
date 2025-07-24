@@ -3,10 +3,14 @@ package com.example.AgriculturalWarehouseManagement.Backend.repositorys;
 
 import com.example.AgriculturalWarehouseManagement.Backend.models.Order;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -18,6 +22,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByStatus(String status);
 
+    Optional<Order> findByOrderCode(String orderCode);
+
     // Tổng tất cả order (bao gồm cả đã huỷ)
     @Query("SELECT COUNT(o) FROM Order o")
     long countAllOrders();
@@ -25,6 +31,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // Tổng order hợp lệ (không bao gồm huỷ)
     @Query("SELECT COUNT(o) FROM Order o WHERE o.status NOT IN ('CANCELLED')")
     long countValidOrders();
+
+    @Query("select SUM(o.finalAmount) from Order o where o.status not in ('CANCELLED')")
+    BigDecimal sumOfRevenue();
+
+    @Query("select o from Order o order by o.orderDate DESC")
+    Page<Order> getTop5RecentOrders(Pageable pageable);
 
     // Hoặc: đếm theo từng trạng thái nếu cần
     @Query("SELECT o.status, COUNT(o) FROM Order o GROUP BY o.status")

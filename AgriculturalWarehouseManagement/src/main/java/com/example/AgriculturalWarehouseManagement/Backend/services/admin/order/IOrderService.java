@@ -8,8 +8,9 @@ import org.springframework.data.domain.*;
 import java.util.List;
 
 public interface IOrderService {
-
     Order createOrder(OrderDTO orderDTO);
+
+    List<Order> findByStatusOrder(String status);
 
     List<OrderDTO_WareHouse> findByStatus(String status);
 

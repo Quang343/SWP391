@@ -4,6 +4,30 @@
 <html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head th:replace="BackEnd/fragments/Admin/head::head"></head>
 
+<style>
+    .add-user-hover:hover {
+        background-color: #ddd;
+    }
+
+    .best-selling-table tbody tr td .product-detail-box h6, .best-product-box h6{
+        margin-bottom: 10px;
+        font-weight: bold;
+        color: #000;
+    }
+
+    .best-selling-table tbody tr{
+        transition: background-color .15s ease-in-out;
+    }
+
+    .best-selling-table tbody tr:hover{
+        background-color: #ddd;
+    }
+
+    .best-selling-table tbody tr td{
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+</style>
 <body>
 <!-- tap on top start -->
 <div class="tap-top">
@@ -34,7 +58,7 @@
                                 <div class="media align-items-center static-top-widget">
                                     <div class="media-body p-0">
                                         <span class="m-0">Total Revenue</span>
-                                        <h4 class="mb-0 counter">$6659
+                                        <h4 class="mb-0 counter" th:text="${#numbers.formatInteger(totalRevenue, 0, 'POINT')} + '₫'">
                                             <span class="badge badge-light-primary grow">
                                                     <i data-feather="trending-up"></i>8.5%</span>
                                         </h4>
@@ -53,7 +77,7 @@
                                 <div class="media static-top-widget">
                                     <div class="media-body p-0">
                                         <span class="m-0">Total Orders</span>
-                                        <h4 class="mb-0 counter">9856
+                                        <h4 class="mb-0 counter" th:text="${numberOfOrders}">
                                             <span class="badge badge-light-danger grow">
                                                     <i data-feather="trending-down"></i>8.5%</span>
                                         </h4>
@@ -72,8 +96,8 @@
                                 <div class="media static-top-widget">
                                     <div class="media-body p-0">
                                         <span class="m-0">Total Products</span>
-                                        <h4 class="mb-0 counter">893
-                                            <a href="add-new-product.html" class="badge badge-light-secondary grow">
+                                        <h4 class="mb-0 counter" th:text="${numberOfProducts}">
+                                            <a th:href="@{/admin/add_product}" class="badge badge-light-secondary grow">
                                                 ADD NEW</a>
                                         </h4>
                                     </div>
@@ -92,14 +116,16 @@
                                 <div class="media static-top-widget">
                                     <div class="media-body p-0">
                                         <span class="m-0">Total Customers</span>
-                                        <h4 class="mb-0 counter">4.6k
+                                        <h4 class="mb-0 counter" th:text="${numberOfUsers}">
                                             <span class="badge badge-light-success grow">
                                                     <i data-feather="trending-down"></i>8.5%</span>
                                         </h4>
                                     </div>
 
-                                    <div class="align-self-center text-center">
-                                        <i class="ri-user-add-line"></i>
+                                    <div class="add-user-hover align-self-center text-center">
+                                        <a th:href="@{/admin/add_user}">
+                                            <i class="ri-user-add-line"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -115,156 +141,13 @@
                             </div>
                             <div class="card-body p-0">
                                 <div class="category-slider no-arrow">
-                                    <div>
+                                    <div th:each="category : ${categories}">
                                         <div class="dashboard-category">
                                             <a href="javascript:void(0)" class="category-image">
                                                 <img th:src="@{/Backend/assets/svg/vegetable.svg}" class="img-fluid" alt="">
                                             </a>
                                             <a href="javascript:void(0)" class="category-name">
-                                                <h6>Vegetables & Fruit</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/cup.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Beverages</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/meats.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Meats & Seafood</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/breakfast.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Breakfast</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/frozen.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Frozen Foods</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/milk.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Milk & Dairies</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/pet.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Pet Food</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/vegetable.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Vegetables & Fruit</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/cup.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Beverages</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/meats.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Meats & Seafood</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/breakfast.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Breakfast</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/frozen.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Frozen Foods</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/milk.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Milk & Dairies</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/pet.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Pet Food</h6>
+                                                <h6 th:text="${category.name}">Vegetables & Fruit</h6>
                                             </a>
                                         </div>
                                     </div>
@@ -321,7 +204,7 @@
                                             w-image
                                             w-image table border-0">
                                             <tbody>
-                                            <tr>
+                                            <tr th:each="product: ${bestSeller}">
                                                 <td>
                                                     <div class="best-product-box">
                                                         <div class="product-image">
@@ -329,7 +212,7 @@
                                                                  class="img-fluid" alt="Product">
                                                         </div>
                                                         <div class="product-name">
-                                                            <h5>Aata Buscuit</h5>
+                                                            <h5 th:text="${product.getProductName()}">Aata Buscuit</h5>
                                                             <h6>26-08-2022</h6>
                                                         </div>
                                                     </div>
@@ -338,117 +221,32 @@
                                                 <td>
                                                     <div class="product-detail-box">
                                                         <h6>Price</h6>
-                                                        <h5>$29.00</h5>
+                                                        <h5 th:text="${product.getPrice()}">$29.00</h5>
                                                     </div>
                                                 </td>
 
                                                 <td>
                                                     <div class="product-detail-box">
                                                         <h6>Orders</h6>
-                                                        <h5>62</h5>
+                                                        <h5 th:text="${product.getTotalSold()}">62</h5>
                                                     </div>
                                                 </td>
 
                                                 <td>
                                                     <div class="product-detail-box">
                                                         <h6>Stock</h6>
-                                                        <h5>510</h5>
+                                                        <h5 th:text="${product.getTotalInStock()}">510</h5>
                                                     </div>
                                                 </td>
 
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Amount</h6>
-                                                        <h5>$1,798</h5>
-                                                    </div>
-                                                </td>
+                                                <!--                                                <td>-->
+                                                <!--                                                    <div class="product-detail-box">-->
+                                                <!--                                                        <h6>Amount</h6>-->
+                                                <!--                                                        <h5>$1,798</h5>-->
+                                                <!--                                                    </div>-->
+                                                <!--                                                </td>-->
                                             </tr>
 
-                                            <tr>
-                                                <td>
-                                                    <div class="best-product-box">
-                                                        <div class="product-image">
-                                                            <img th:src="@{/Backend/assets/images/product/2.png}"
-                                                                 class="img-fluid" alt="Product">
-                                                        </div>
-                                                        <div class="product-name">
-                                                            <h5>Aata Buscuit</h5>
-                                                            <h6>26-08-2022</h6>
-                                                        </div>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Price</h6>
-                                                        <h5>$29.00</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Orders</h6>
-                                                        <h5>62</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Stock</h6>
-                                                        <h5>510</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Amount</h6>
-                                                        <h5>$1,798</h5>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <div class="best-product-box">
-                                                        <div class="product-image">
-                                                            <img th:src="@{/Backend/assets/images/product/3.png}"
-                                                                 class="img-fluid" alt="Product">
-                                                        </div>
-                                                        <div class="product-name">
-                                                            <h5>Aata Buscuit</h5>
-                                                            <h6>26-08-2022</h6>
-                                                        </div>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Price</h6>
-                                                        <h5>$29.00</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Orders</h6>
-                                                        <h5>62</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Stock</h6>
-                                                        <h5>510</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Amount</h6>
-                                                        <h5>$1,798</h5>
-                                                    </div>
-                                                </td>
-                                            </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -487,161 +285,41 @@
                                     <div class="table-responsive">
                                         <table class="best-selling-table table border-0">
                                             <tbody>
-                                            <tr>
+                                            <tr th:each="order: ${orders}">
                                                 <td>
                                                     <div class="best-product-box">
-                                                        <div class="product-name">
-                                                            <h5>Aata Buscuit</h5>
-                                                            <h6>#64548</h6>
+                                                        <div>
+                                                            <h6>Mã đơn hàng</h6>
+                                                            <h5 th:text="'#' + ${order.getOrderCode()}"></h5>
                                                         </div>
                                                     </div>
                                                 </td>
 
                                                 <td>
                                                     <div class="product-detail-box">
-                                                        <h6>Date Placed</h6>
-                                                        <h5>5/1/22</h5>
+                                                        <h6>Ngày đặt</h6>
+                                                        <h5 th:text="${#temporals.format(order.getOrderDate(), 'dd/MM/yyyy')}"></h5>
                                                     </div>
                                                 </td>
 
                                                 <td>
                                                     <div class="product-detail-box">
-                                                        <h6>Price</h6>
-                                                        <h5>$250.00</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Order Status</h6>
-                                                        <h5>Completed</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Payment</h6>
-                                                        <h5 class="text-danger">Unpaid</h5>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <div class="best-product-box">
-                                                        <div class="product-name">
-                                                            <h5>Aata Buscuit</h5>
-                                                            <h6>26-08-2022</h6>
-                                                        </div>
-                                                    </div>
-                                                </td>
-
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Date Placed</h6>
-                                                        <h5>5/1/22</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Price</h6>
-                                                        <h5>$250.00</h5>
+                                                        <h6>Phone</h6>
+                                                        <h5 th:text="${order.phone}"></h5>
                                                     </div>
                                                 </td>
 
                                                 <td>
                                                     <div class="product-detail-box">
                                                         <h6>Order Status</h6>
-                                                        <h5>Completed</h5>
+                                                        <h5 th:text="${order.getStatus()}"></h5>
                                                     </div>
                                                 </td>
 
                                                 <td>
                                                     <div class="product-detail-box">
-                                                        <h6>Payment</h6>
-                                                        <h5 class="theme-color">Paid</h5>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <div class="best-product-box">
-                                                        <div class="product-name">
-                                                            <h5>Aata Buscuit</h5>
-                                                            <h6>26-08-2022</h6>
-                                                        </div>
-                                                    </div>
-                                                </td>
-
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Date Placed</h6>
-                                                        <h5>5/1/22</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Price</h6>
-                                                        <h5>$250.00</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Order Status</h6>
-                                                        <h5>Completed</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Payment</h6>
-                                                        <h5 class="theme-color">Paid</h5>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <div class="best-product-box">
-                                                        <div class="product-name">
-                                                            <h5>Aata Buscuit</h5>
-                                                            <h6>26-08-2022</h6>
-                                                        </div>
-                                                    </div>
-                                                </td>
-
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Date Placed</h6>
-                                                        <h5>5/1/22</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Price</h6>
-                                                        <h5>$250.00</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Order Status</h6>
-                                                        <h5>Completed</h5>
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="product-detail-box">
-                                                        <h6>Payment</h6>
-                                                        <h5 class="theme-color">Paid</h5>
+                                                        <h6>Tổng (VNĐ)</h6>
+                                                        <h5 th:text="${#numbers.formatInteger(order.finalAmount, 0, 'POINT')} + '₫'"></h5>
                                                     </div>
                                                 </td>
                                             </tr>

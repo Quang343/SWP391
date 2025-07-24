@@ -152,12 +152,12 @@
                             </button>
                         </li>
 
-                        <li class="nav-item" role="presentation">
-                            <a href="#pills-tabContent" class="nav-link" id="pills-dashboard-tab"
-                               data-bs-toggle="pill" data-bs-target="#pills-dashboard" role="tab">
-                                <i data-feather="layout"></i> Tổng quan
-                            </a>
-                        </li>
+<!--                        <li class="nav-item" role="presentation">-->
+<!--                            <a href="#pills-tabContent" class="nav-link" id="pills-dashboard-tab"-->
+<!--                               data-bs-toggle="pill" data-bs-target="#pills-dashboard" role="tab">-->
+<!--                                <i data-feather="layout"></i> Tổng quan-->
+<!--                            </a>-->
+<!--                        </li>-->
 
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-product-tab" data-bs-toggle="pill"
@@ -1563,7 +1563,7 @@
                 })
                 .catch(err => {
                     console.error("Lỗi khi lấy dữ liệu:", err);
-                    showAlert("Không thể tải thông tin người dùng!", "error");
+                    showAlert("Bạn cần cập nhât đầy đủ thông tin người dùng!", "info");
                 });
         }
 
@@ -4140,7 +4140,7 @@
                                 statusColor = "#e55353"; // đỏ sáng hơn (danger)
                                 break;
                             case "STOCKOUT":
-                                statusColor = "#adb5bd"; // xám nhạt (secondary)
+                                statusColor = "#5c636e"; // xám nhạt (secondary)
                                 break;
                             case "DELIVERED":
                                 statusColor = "#0d6efd"; // xanh dương Bootstrap

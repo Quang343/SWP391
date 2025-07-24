@@ -164,12 +164,18 @@ public class StockInService {
     public List<Map<String, Object>> getTotalSpentByMonth() {
         return stockInDetailRepository.findTotalSpentByMonth()
                 .stream()
-                .map(result -> Map.of(
-                        "month", result[0], // YYYY-MM
-                        "totalSpent", new BigDecimal(result[1].toString())
-                ))
+                .map(result -> {
+                    Integer year = (Integer) result[0];
+                    Integer month = (Integer) result[1];
+                    BigDecimal totalSpent = new BigDecimal(result[2].toString());
+
+                    String formattedMonth = String.format("%d-%02d", year, month);
+
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("month", formattedMonth);
+                    map.put("totalSpent", totalSpent);
+                    return map;
+                })
                 .collect(Collectors.toList());
     }
-
-
 }

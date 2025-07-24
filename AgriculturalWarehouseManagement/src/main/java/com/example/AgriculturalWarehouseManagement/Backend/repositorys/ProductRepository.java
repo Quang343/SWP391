@@ -1,9 +1,11 @@
 package com.example.AgriculturalWarehouseManagement.Backend.repositorys;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.BestSellerProductDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductStatus;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ProductUserHomepageResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.models.CommentProduct;
+import com.example.AgriculturalWarehouseManagement.Backend.services.admin.ProductStockProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,12 +34,33 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 //    GROUP BY p.id, p.name
 //    """)
 //    List<ProductStockProjection> getRemainingStockByProduct();
-//
-//    @Query("""
-//    SELECT SUM(pb.importedQuantity - pb.soldQuantity)
-//    FROM ProductBatch pb
-//    """)
-//    Integer getTotalRemainingAllProducts();
+
+
+    @Query("""
+    SELECT SUM(pb.importedQuantity - pb.soldQuantity)
+    FROM ProductBatch pb
+    """)
+    Integer getTotalRemainingAllProducts();
+
+    @Query(value = """
+    SELECT 
+        (SELECT g.imageurl 
+         FROM gallery g 
+         WHERE g.productid = p.productid 
+         LIMIT 1) AS imageUrl,
+        p.productname AS productName,
+        MIN(pd.price) AS price,
+        SUM(pb.soldquantity) AS totalSold,
+        SUM(pb.importedquantity - pb.soldquantity) AS totalInStock
+    FROM product p
+    JOIN productdetail pd ON pd.productid = p.productid
+    JOIN productbatch pb ON pb.productdetailid = pd.productdetailid
+    GROUP BY p.productid, p.productname
+    ORDER BY totalSold DESC
+    LIMIT 3
+""", nativeQuery = true)
+    List<BestSellerProductDTO> getTop5BestSellerProducts();
+
 
     // Lấy ảnh đầu tiên của mỗi sản phẩm (ProductID) trong bảng Gallery, dựa trên GalleryID nhỏ nhất
     // Lấy AVG(Rating) theo ProductID giống nhau tính avg, và đếm số lượng rating khi productid giống nhau

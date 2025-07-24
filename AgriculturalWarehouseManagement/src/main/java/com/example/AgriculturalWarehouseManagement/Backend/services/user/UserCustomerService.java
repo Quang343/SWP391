@@ -52,7 +52,9 @@ public class UserCustomerService {
             if (registerRequestDTO.getUsername().length() < 9) {
                 return new ResponseResult<>("ERROR", "Tên người dùng quá ngắn, ít nhất 9 ký tự !!!", false);
             }
-
+            if (registerRequestDTO.getUsername().matches(".*\\s.*")) {
+                return new ResponseResult<>("ERROR", "Tên người dùng không được chứa khoảng trắng", false);
+            }
             if (registerRequestDTO.getPassword().length() < 9) {
                 return new ResponseResult<>("ERROR", "Mật khẩu không được ít hơn 9 ký tự", false);
             } else {

@@ -3,10 +3,12 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.CartUserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.CategoryUsersResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ProductUserHomepageResponse;
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.CartUserService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.CategoryUsersService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.ProductUsersHomepageService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -154,7 +156,13 @@ public class HomepageUserController {
     }
 
     @PostMapping("/home")
-    public String home() {
+    public String home(HttpSession session) {
+        UserResponse user = (UserResponse) session.getAttribute("account");
+        if (user != null) {
+            if(user.getRole().getRoleName().equalsIgnoreCase("ADMIN")){
+                return "redirect:/admin/orders";
+            }
+        }
         return "redirect:/home";
     }
 

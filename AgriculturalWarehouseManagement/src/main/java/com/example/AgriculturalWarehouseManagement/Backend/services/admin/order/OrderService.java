@@ -80,7 +80,14 @@ public class OrderService implements IOrderService {
     }
 
 
+    @Override
+    public List<Order> findByStatusOrder(String status) {
+        return orderRepository.findByStatus(status);
+    }
 
+    public boolean existByOrderCode(String orderCode) {
+        return orderRepository.existsByOrderCode(orderCode);
+    }
 
     @Override
     public Order createOrder(OrderDTO orderDTO) {
@@ -127,6 +134,13 @@ public class OrderService implements IOrderService {
     public Order findById(Long id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
+    }
+
+    public Order findByOrderCode(String orderCode){
+        if(orderRepository.findByOrderCode(orderCode).isPresent()){
+            return orderRepository.findByOrderCode(orderCode).get();
+        }
+        return null;
     }
 
     @Override
@@ -176,6 +190,22 @@ public class OrderService implements IOrderService {
     @Override
     public boolean isExistsByOrderCode(String orderCode) {
         return orderRepository.existsByOrderCode(orderCode);
+    }
+
+    public long getToTalOrderQuantity(){
+        return orderRepository.countAllOrders();
+    }
+
+    public long getToTalOrderNotCancelledQuantity(){
+        return orderRepository.countValidOrders();
+    }
+
+    public BigDecimal getTotalRevenue(){
+        return orderRepository.sumOfRevenue();
+    }
+
+    public Page<Order> getTopNRecentOrders(Pageable pageable) {
+        return orderRepository.getTop5RecentOrders(pageable);
     }
 
     @Override
