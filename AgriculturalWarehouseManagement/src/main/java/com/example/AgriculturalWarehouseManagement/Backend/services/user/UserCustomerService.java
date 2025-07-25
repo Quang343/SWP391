@@ -248,6 +248,10 @@ public class UserCustomerService {
             return new ResponseResult<>("ERROR", "Tên người dùng không được ít hơn 9 ký tự", false);
         }
 
+        if (profileRequest.getUserName().matches(".*\\s.*")) {
+            return new ResponseResult<>("ERROR", "Tên người dùng không được chứa khoảng trắng", false);
+        }
+
         CapitalizedEachWord capitalizedEachWord = new CapitalizedEachWord();
 
         if (!capitalizedEachWord.isCapitalizedEachWord(profileRequest.getFullName())) {

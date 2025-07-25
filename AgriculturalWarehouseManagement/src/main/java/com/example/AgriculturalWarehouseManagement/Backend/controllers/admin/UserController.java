@@ -263,7 +263,7 @@ public class UserController {
             @RequestParam(value = "image", required = false) MultipartFile image
     ) {
         try {
-            UserResponse userResponse = (UserResponse)session.getAttribute("account");
+            UserResponse userResponse = (UserResponse)session.getAttribute("accountAdmin");
             User user = userService.findById(userResponse.getUserID() * 1L);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -333,7 +333,7 @@ public class UserController {
                                             @RequestParam String confirmPassword,
                                             HttpSession session){
         Map<String,Object> response = new HashMap<>();
-        UserResponse userResponse = (UserResponse)session.getAttribute("account");
+        UserResponse userResponse = (UserResponse)session.getAttribute("accountAdmin");
         User user = userService.findByEmail(userResponse.getEmail());
         if (user == null) {
             Map<String, Object> errorResponse = new HashMap<>();

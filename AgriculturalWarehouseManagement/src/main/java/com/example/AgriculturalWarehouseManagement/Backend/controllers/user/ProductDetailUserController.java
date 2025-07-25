@@ -78,6 +78,9 @@ public class ProductDetailUserController {
         String imageUrl = productDetailUserResponses.isEmpty() ? "" : galleryUserResponses.get(0).getImageUrl();
         String productName = shopDetailService.getProductNameUser(productId);
         model.addAttribute("imageUrl", imageUrl);
+        for (ProductDetailUserResponse productDetailUserResponse : productDetailUserResponses) {
+            System.out.println("hello2"+productDetailUserResponse);
+        }
         model.addAttribute("productName", productName);
         model.addAttribute("productId", productId);
 

@@ -87,7 +87,7 @@
                         <a th:href="@{/shopDetail(categoryId=${category.categoryId})}"
                            class="category-box wow fadeInUp">
                             <div>
-                                <img th:src="@{${category.imageUrl}}" class="blur-up lazyload" alt="">
+                                <img th:src="@{${'seller/'+category.imageUrl}}" class="blur-up lazyload" alt="">
                                 <h5 th:text="${category.categoryName}">Category name</h5>
                             </div>
                         </a>
@@ -553,7 +553,7 @@
     <ul class="items-image">
 
         <li id="image"  th:each="cart : ${cartUserResponses}">
-            <img th:src="${cart.imageUrl}" alt="">
+            <img th:src="${'seller/'+cart.imageUrl}" alt="">
         </li>
         <h6>
             <span th:if="${sizeCart > 3}">...</span>
@@ -617,7 +617,7 @@
                     firstThreeItems.forEach((cart, index) => {
                         const liElement = document.createElement('li');
                         liElement.setAttribute('data-index', index);  // Gán data-index mới
-                        liElement.innerHTML = `<img src="${cart.imageUrl}" alt="Product Image ${index}">`;
+                        liElement.innerHTML = `<img src="${'seller/'+cart.imageUrl}" alt="Product Image ${index}">`;
                         ulElement.appendChild(liElement);
                     });
 

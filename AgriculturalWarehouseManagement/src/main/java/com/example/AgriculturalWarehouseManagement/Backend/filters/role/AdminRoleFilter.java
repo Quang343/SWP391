@@ -29,7 +29,7 @@ public class AdminRoleFilter implements Filter {
         HttpSession session = requestHttp.getSession();
 
         // Lấy đối tượng User từ session (account)
-        UserResponse account = (UserResponse) session.getAttribute("account");
+        UserResponse account = (UserResponse) session.getAttribute("accountAdmin");
 
         // Kiểm tra nếu không có tài khoản hoặc tài khoản không có quyền ADMIN
         if (account == null || !account.getRole().getRoleName().equalsIgnoreCase("ADMIN")) {

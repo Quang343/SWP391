@@ -167,7 +167,7 @@
                             <th>Ảnh</th>
                             <td th:each="item : ${productDetailUserResponses}">
                                 <img class="text-title" th:href="@{/productDetail(productId=${item.productId})}"
-                                     th:src="@{${item.imageUrl}}"  style="width: 100px; height: auto;"></img>
+                                     th:src="@{${'seller/'+item.imageUrl}}"  style="width: 100px; height: auto;"></img>
                             </td>
 
                         </tr>
@@ -466,7 +466,7 @@
     <ul class="items-image">
 
         <li id="image" th:each="cart : ${cartUserResponses}">
-            <img th:src="${cart.imageUrl}" alt="">
+            <img th:src="${'seller/'+cart.imageUrl}" alt="">
         </li>
         <h6>
             <span th:if="${sizeCart > 3}">...</span>
@@ -530,7 +530,7 @@
                     firstThreeItems.forEach((cart, index) => {
                         const liElement = document.createElement('li');
                         liElement.setAttribute('data-index', index);  // Gán data-index mới
-                        liElement.innerHTML = `<img src="${cart.imageUrl}" alt="Product Image ${index}">`;
+                        liElement.innerHTML = `<img src="${'seller/'+cart.imageUrl}" alt="Product Image ${index}">`;
                         ulElement.appendChild(liElement);
                     });
 

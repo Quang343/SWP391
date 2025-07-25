@@ -47,7 +47,7 @@ public class AdminLoginController {
     @GetMapping("/admin/profile")
     public String getAdminProfilePage(Model model, HttpSession session){
 
-        UserResponse userResponse = (UserResponse)session.getAttribute("account");
+        UserResponse userResponse = (UserResponse)session.getAttribute("accountAdmin");
         User user = userService.findById(userResponse.getUserID() * 1L);
 
         model.addAttribute("user", user);

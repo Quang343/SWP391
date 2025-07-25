@@ -97,7 +97,7 @@
                                 </a>
                             </li>
 
-                            <li class="breadcrumb-item active">Product Detail</li>
+                            <li class="breadcrumb-item active">Sản phẩm chi tiết</li>
                         </ol>
                     </nav>
                 </div>
@@ -119,15 +119,15 @@
                                 <div class="col-12 position-relative">
                                     <div class="product-label-group">
                                         <div class="product-label-tag warning-label-tag">
-                                            <span>Featured</span>
+                                            <span>Đặc trưng</span>
                                         </div>
                                     </div>
                                     <div class="product-main-1 no-arrow">
                                         <div th:each="product : ${galleryUserResponses}">
                                             <div class="slider-image">
-                                                <img th:src="@{${product.imageUrl}}"
+                                                <img th:src="@{${'seller/'+product.imageUrl}}"
                                                      id="img-1"
-                                                     data-zoom-image="../assets/images/product/category/1.jpg"
+                                                     th:data-zoom-image="@{${'seller/'+product.imageUrl}}"
                                                      class="img-fluid image_zoom_cls-0 blur-up lazyload" alt="">
                                             </div>
                                         </div>
@@ -139,7 +139,7 @@
                                     <div class="bottom-slider-image left-slider no-arrow slick-top">
                                         <div th:each="product : ${galleryUserResponses}">
                                             <div class="sidebar-image">
-                                                <img th:src="@{${product.imageUrl}}"
+                                                <img th:src="@{${'seller/'+product.imageUrl}}"
                                                      class="img-fluid blur-up lazyload" alt="">
                                             </div>
                                         </div>
@@ -345,7 +345,7 @@
                             <ul class="nav nav-tabs custom-nav" id="myTab" role="tablist">
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
-                                            data-bs-target="#description" type="button" role="tab">Description
+                                            data-bs-target="#description" type="button" role="tab">Mô tả sản phẩm
                                     </button>
                                 </li>
 
@@ -387,7 +387,7 @@
                                                                     <i data-feather="star"></i>
                                                                 </h2>
 
-                                                                <h5>5 Overall Rating</h5>
+                                                                <h5>5 Đánh Giá Tổng Thể</h5>
                                                             </div>
                                                         </div>
 
@@ -477,7 +477,7 @@
                                                                 <div>
                                                                     <div class="people-image people-text">
                                                                         <img alt="user" class="img-fluid"
-                                                                             th:src="${commentProduct.imageUrl}">
+                                                                             th:src="${'seller/'+ commentProduct.getUserId +'/'+commentProduct.imageUrl}">
                                                                     </div>
                                                                 </div>
                                                                 <div class="people-comment">
@@ -486,7 +486,7 @@
                                                                            href="javascript:void(0)" class="name">User
                                                                             name</a>
                                                                         <div class="date-time">
-                                                                            <h6 th:text="${commentProduct.createdAt}"
+                                                                            <h6 th:text="${commentProduct.formatCreateAt}"
                                                                                 class="text-content">Date</h6>
                                                                             <div class="product-rating">
                                                                                 <ul class="rating">
@@ -554,14 +554,14 @@
                                 <li>
                                     <div class="address-contact">
                                         <i data-feather="map-pin"></i>
-                                        <h5>Address: <span class="text-content">Đại học FPT</span></h5>
+                                        <h5>Địa chỉ: <span class="text-content">Đại học FPT</span></h5>
                                     </div>
                                 </li>
 
                                 <li>
                                     <div class="address-contact">
                                         <i data-feather="headphones"></i>
-                                        <h5>Contact Seller: <span class="text-content">(+1)-123-456-789</span></h5>
+                                        <h5>Liên hệ người bán: <span class="text-content">0969652156</span></h5>
                                     </div>
                                 </li>
                             </ul>
@@ -578,7 +578,7 @@
                                     <div class="offer-product">
                                         <a th:href="@{/productDetail(productId=${productDetail.productId})}"
                                            class="offer-image">
-                                            <img th:src="@{${productDetail.imageUrl}}"
+                                            <img th:src="@{${'seller/'+productDetail.imageUrl}}"
                                                  class="img-fluid blur-up lazyload" alt="">
                                         </a>
 
@@ -625,7 +625,7 @@
                             <div class="product-header">
                                 <div class="product-image">
                                     <a th:href="@{/productDetail(productId=${product.productId})}">
-                                        <img th:src="@{${product.imageUrlGallery}}"
+                                        <img th:src="@{${'seller/'+product.imageUrlGallery}}"
                                              class="img-fluid blur-up lazyload" alt="">
                                     </a>
 
@@ -864,7 +864,7 @@
     <ul class="items-image">
 
         <li id="image" th:each="cart : ${cartUserResponses}">
-            <img th:src="${cart.imageUrl}" alt="">
+            <img th:src="${'seller/'+cart.imageUrl}" alt="">
         </li>
         <h6>
             <span th:if="${sizeCart > 3}">...</span>
@@ -1309,7 +1309,7 @@
                                hidden>
                         <div class="product-image">
                             <img class="img-fluid" alt="Solid Collared Tshirts"
-                                 th:src="@{${imageUrl}}">
+                                 th:src="@{${'seller/'+ galleryUserResponses.get(0).getImageUrl}}">
                         </div>
                         <div class="product-content">
                             <h5 th:text="${productName}" class="name">Product name</h5>

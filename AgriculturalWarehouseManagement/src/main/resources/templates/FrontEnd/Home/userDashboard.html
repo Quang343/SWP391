@@ -279,23 +279,23 @@
                                          }
                                          th:src="${'seller/'+session.account.getUserID +'/'+session.account.imageUrl}"
                                          class="blur-up lazyload update_img" alt="more image"
-                                         accept=".jpg,.png,.gif,image/*">
+                                         accept=".jpg,.jpeg,.png,.gif,image/*">
 
                                     <img th:if="${session.account.imageUrl != null and #strings.startsWith(session.account.imageUrl, 'https://lh3.googleusercontent.com/')}"
                                          th:src="${session.account.imageUrl}"
                                          class="blur-up lazyload update_img" alt="more image"
-                                         accept=".jpg,.png,.gif,image/*">
+                                         accept=".jpg,.jpeg,.png,.gif,image/*">
 
 
                                     <img th:if="${session.account.imageUrl != null and session.account.getImageUrl == ''}"
                                          th:src="@{Backend/assets/images/user/default-avatar.png}"
                                          class="blur-up lazyload update_img" alt="more image"
-                                         accept=".jpg,.png,.gif,image/*">
+                                         accept=".jpg,.jpeg,.png,.gif,image/*">
 
                                     <div class="cover-icon">
                                         <i class="fa-solid fa-pen">
                                             <input type="file" name="image" onchange="readURL(this,0)"
-                                                   accept=".jpg,.png,.gif,image/*">
+                                                   accept=".jpg,.jpeg,.png,.gif,image/*">
                                         </i>
                                     </div>
 
@@ -1076,8 +1076,32 @@
                 </div>
 
                 <div class="form-floating mb-4 theme-form-floating">
-                    <input type="email" class="form-control" id="address" placeholder="Enter Address" required>
+                    <input type="email" class="form-control" id="address" placeholder="Enter Address" readonly>
                     <label for="address">Địa chỉ</label>
+                </div>
+
+                <!-- Province Select -->
+                <div class="form-floating mb-4 theme-form-floating">
+                    <label for="provinceSelect"></label>
+                    <select id="provinceSelect" class="form-select" required>
+                        <option value="">Chọn tỉnh</option>
+                    </select>
+                </div>
+
+                <!-- District Select -->
+                <div class="form-floating mb-4 theme-form-floating">
+                    <label for="districtSelect"></label>
+                    <select id="districtSelect" class="form-select" required disabled>
+                        <option value="">Chọn quận/huyện</option>
+                    </select>
+                </div>
+
+                <!-- Ward Select -->
+                <div class="form-floating mb-4 theme-form-floating">
+                    <label for="wardSelect"></label>
+                    <select id="wardSelect" class="form-select" required disabled>
+                        <option value="">Chọn xã/phường</option>
+                    </select>
                 </div>
 
                 <div class="form-floating mb-4 theme-form-floating">
@@ -1108,6 +1132,92 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Fetch danh sách tỉnh
+    axios.get('https://partner.viettelpost.vn/v2/categories/listProvince')
+        .then(response => {
+            const data = response.data;
+            if (data.status === 200 && !data.error) {
+                const provinceSelect = document.getElementById('provinceSelect');
+                data.data.forEach(province => {
+                    const option = document.createElement('option');
+                    option.value = province.PROVINCE_ID;
+                    option.textContent = province.PROVINCE_NAME;
+                    provinceSelect.appendChild(option);
+                });
+            }
+        })
+        .catch(err => console.error("Lỗi khi fetch danh sách tỉnh:", err));
+
+    // Lắng nghe sự kiện khi chọn tỉnh
+    document.getElementById('provinceSelect').addEventListener('change', function() {
+        const provinceId = this.value;
+        const provinceName = this.options[this.selectedIndex].text; // Lấy tên tỉnh
+        updateAddressInput(); // Cập nhật lại trường địa chỉ
+
+        if (provinceId) {
+            axios.get(`https://partner.viettelpost.vn/v2/categories/listDistrict?provinceId=${provinceId}`)
+                .then(response => {
+                    const data = response.data;
+                    const districtSelect = document.getElementById('districtSelect');
+                    districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                    districtSelect.disabled = false;
+                    data.data.forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district.DISTRICT_ID;
+                        option.textContent = district.DISTRICT_NAME;
+                        districtSelect.appendChild(option);
+                    });
+                })
+                .catch(err => console.error("Lỗi khi fetch danh sách quận huyện:", err));
+        }
+    });
+
+    // Lắng nghe sự kiện khi chọn quận huyện
+    document.getElementById('districtSelect').addEventListener('change', function() {
+        const districtId = this.value;
+        const districtName = this.options[this.selectedIndex].text; // Lấy tên quận
+
+        updateAddressInput(); // Cập nhật lại trường địa chỉ
+
+        if (districtId) {
+            axios.get(`https://partner.viettelpost.vn/v2/categories/listWards?districtId=${districtId}`)
+                .then(response => {
+                    const data = response.data;
+                    const wardSelect = document.getElementById('wardSelect');
+                    wardSelect.innerHTML = '<option value="">Chọn xã/phường</option>';
+                    wardSelect.disabled = false;
+                    data.data.forEach(ward => {
+                        const option = document.createElement('option');
+                        option.value = ward.WARDS_ID;
+                        option.textContent = ward.WARDS_NAME;
+                        wardSelect.appendChild(option);
+                    });
+                })
+                .catch(err => console.error("Lỗi khi fetch danh sách xã/phường:", err));
+        }
+    });
+
+    // Lắng nghe sự kiện khi chọn xã/phường
+    document.getElementById('wardSelect').addEventListener('change', function() {
+        const wardId = this.value;
+        const wardName = this.options[this.selectedIndex].text; // Lấy tên xã/phường
+
+        updateAddressInput(); // Cập nhật lại trường địa chỉ
+    });
+
+    // Cập nhật trường input với id="address" bằng giá trị từ các select
+    function updateAddressInput() {
+        const provinceName = document.getElementById('provinceSelect').options[document.getElementById('provinceSelect').selectedIndex].text;
+        const districtName = document.getElementById('districtSelect').options[document.getElementById('districtSelect').selectedIndex]?.text || '';
+        const wardName = document.getElementById('wardSelect').options[document.getElementById('wardSelect').selectedIndex]?.text || '';
+
+        const addressInput = document.getElementById('address');
+        addressInput.value = `${provinceName}, ${districtName}, ${wardName}`;
+    }
+
+</script>
 
 <script>
     /** Kiểm tra xem str đã viết hoa đúng chưa */
@@ -1197,6 +1307,37 @@
         } else {
             $('#alert-message').hide();
         }
+
+        const provinceSelect = document.getElementById('provinceSelect');
+        const districtSelect = document.getElementById('districtSelect');
+        const wardSelect = document.getElementById('wardSelect');
+        // Kiểm tra xem người dùng đã chọn Tỉnh chưa
+        const provinceName = provinceSelect.options[provinceSelect.selectedIndex]?.text;
+        if (provinceName.toLocaleLowerCase() === 'Chọn tỉnh'.toLocaleLowerCase()) {
+            showAlert('error', 'Vui lòng chọn Tỉnh/Thành phố');
+            return ; // Dừng lại nếu không chọn tỉnh
+        } else {
+            $('#alert-message').hide();
+        }
+
+        // Kiểm tra xem người dùng đã chọn Quận/Huyện chưa
+        const districtName = districtSelect.options[districtSelect.selectedIndex]?.text;
+        if (districtName.toLocaleLowerCase() === 'Chọn quận/huyện'.toLocaleLowerCase()) {
+            showAlert('error', 'Vui lòng chọn Quận/Huyện');
+            return; // Dừng lại nếu không chọn quận/huyện
+        } else {
+            $('#alert-message').hide();
+        }
+
+        // Kiểm tra xem người dùng đã chọn Xã/Phường chưa
+        const wardName = wardSelect.options[wardSelect.selectedIndex]?.text;
+        if (wardName.toLocaleLowerCase() === 'Chọn xã/phường'.toLocaleLowerCase()) {
+            showAlert('error', 'Vui lòng chọn Xã/Phường');
+            return; // Dừng lại nếu không chọn xã/phường
+        } else {
+            $('#alert-message').hide();
+        }
+
 
 
         // Tạo đối tượng dữ liệu gửi lên server
@@ -1377,7 +1518,7 @@
                     </div>
                     <div class="col-xxl-6">
                         <div class="form-floating theme-form-floating">
-                            <input type="text" class="form-control" id="editaddress" value="" required>
+                            <input type="text" class="form-control" id="editaddress" value="" readonly>
                             <label for="editaddress">Địa chỉ</label>
                         </div>
                     </div>

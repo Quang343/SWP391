@@ -198,7 +198,7 @@
                                 <div class="checkout-box">
 
                                     <div class="checkout-title">
-                                        <h4>Địa chỉ gia hàng</h4>
+                                        <h4>Địa chỉ giao hàng</h4>
                                         <form th:action="@{/profileUser}" method="get">
                                             <button class="btn theme-bg-color text-white btn-sm fw-bold mt-lg-0 mt-3">
                                                 Đến hồ sơ để thêm địa chỉ
@@ -355,7 +355,7 @@
 
                         <ul class="summery-contain">
                             <li th:each="checkOut : ${checkOutProductsResponses}">
-                                <img th:src="${checkOut.imageUrl}"
+                                <img th:src="${'seller/'+checkOut.imageUrl}"
                                      class="img-fluid blur-up lazyloaded checkout-image" alt="">
                                 <h4>
                                     <span th:text="${checkOut.productName} + ' X ' + ${checkOut.totalQuantityProductDetail}"></span>

@@ -55,7 +55,7 @@
                             <div class="offer-product">
                                 <a th:href="@{/productDetail(productId=${productDetail.productId})}"
                                    class="offer-image">
-                                    <img th:src="@{${productDetail.imageUrl}}"
+                                    <img th:src="@{${'seller/'+productDetail.imageUrl}}"
                                          class="img-fluid blur-up lazyload" alt="">
                                 </a>
 

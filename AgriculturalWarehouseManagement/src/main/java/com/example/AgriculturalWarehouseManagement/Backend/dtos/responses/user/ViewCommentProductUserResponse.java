@@ -1,6 +1,7 @@
 package com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ViewCommentProductUserResponse {
     private int commentProductId;
@@ -33,6 +34,14 @@ public class ViewCommentProductUserResponse {
         this.dislikes = dislikes;
         this.likes = likes;
         this.status = status;
+    }
+
+    public String formatCreateAt() {
+        if (createdAt != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            return createdAt.format(formatter);  // Format without the "T"
+        }
+        return null;  // Return null if createAt is null
     }
 
     // Getters and Setters
