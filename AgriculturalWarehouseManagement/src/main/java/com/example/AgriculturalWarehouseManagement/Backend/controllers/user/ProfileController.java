@@ -23,10 +23,13 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @Controller
@@ -119,6 +122,8 @@ public class ProfileController {
             // View Order
             List<OrderUserResponse> orderUserResponses = orderUsersService.getListOrdersOrEmpty(userEntity.getUserId());
             model.addAttribute("orderUserResponses", orderUserResponses);
+            System.out.println("hello"+orderUserResponses.toString());
+
 
             // Total Order
             model.addAttribute("totalOrder", orderUserResponses.size());
@@ -165,32 +170,54 @@ public class ProfileController {
         return "FrontEnd/Home/userDashboard";
     }
 
+    @Value("${app.upload.product-dir}")
+    private String rootUploadDir;
+
     @PostMapping("/profileUserEdit/image")
     public String editProfileUserImage(@RequestParam("image") MultipartFile file,
-                                       @Value("${app.upload.product-dir}" + "/User") String uploadDir,
                                        HttpSession session) throws IOException {
+        Object account = session.getAttribute("account");
+        if (account == null) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+
         UserResponse userResponseSession = (UserResponse) session.getAttribute("account");
 
         String imagePath = userResponseSession.getImageUrl(); // giữ ảnh cũ
 
-        if (file != null && !file.isEmpty()) {
-            Files.createDirectories(Paths.get(uploadDir)); // tạo thư mục nếu chưa có -> C:\Users/ADMIN/uploads/user,
+        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+        String extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
 
-            String fileName = System.currentTimeMillis() + "_" +
-                    StringUtils.cleanPath(file.getOriginalFilename());
-
-            // Đưa file vào uploadDir
-            Path filePath = Paths.get(uploadDir, fileName);
-
-            // Sao chép dữ liệu từ MultipartFile sang file mới tại đường dẫn vừa tạo
-            file.transferTo(filePath.toFile());
-
-            // lưu đường dẫn truy cập công khai (trình duyệt sẽ dùng đường dẫn này)
-            imagePath = "/AgriculturalWarehouseManagementApplication/FrontEnd/assets/images/inner-page/user/" + fileName;
+        Path uploadDir = Paths.get(rootUploadDir, "Seller", String.valueOf(userResponseSession.getUserID()));
+        if (!Files.exists(uploadDir)) {
+            Files.createDirectories(uploadDir);
         }
 
-        ResponseResult<User> result = userCustomerService.editProfileUserImage(userResponseSession.getEmail(), imagePath, file);
-        System.out.println("hello" + result.getStatus());
+        String newFileName = "avatar." + extension;
+        Path outputPath = uploadDir.resolve(newFileName);
+
+        if (extension.equals("gif")) {
+            // Ghi nguyên file gif không xử lý
+            Files.copy(file.getInputStream(), outputPath, StandardCopyOption.REPLACE_EXISTING);
+        } else {
+            // Đọc ảnh gốc và crop
+            BufferedImage originalImage = ImageIO.read(file.getInputStream());
+            if (originalImage == null) {
+                throw new IllegalArgumentException("File không phải là ảnh hợp lệ.");
+            }
+
+            int width = originalImage.getWidth();
+            int height = originalImage.getHeight();
+            int squareSize = Math.min(width, height);
+            int x = (width - squareSize) / 2;
+            int y = (height - squareSize) / 2;
+            BufferedImage cropped = originalImage.getSubimage(x, y, squareSize, squareSize);
+            ImageIO.write(cropped, extension, outputPath.toFile());
+        }
+
+        ResponseResult<User> result = userCustomerService.editProfileUserImage(userResponseSession.getEmail(), newFileName, file);
+
         if (result.isActive()) {
             User userEntity = userCustomerService.loadUserByEmail(userResponseSession.getEmail());
             UserResponse userResponse = userCustomerService.getUser(userEntity);

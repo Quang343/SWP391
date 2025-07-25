@@ -130,7 +130,7 @@ public class OrderDetailUsersController {
             file.transferTo(filePath.toFile());
 
             // Tạo đường dẫn public (dùng trong <img>)
-            imagePath = "/AgriculturalWarehouseManagementApplication/FrontEnd/assets/images/inner-page/user/" + fileName;
+            imagePath = fileName;
 
         }
 

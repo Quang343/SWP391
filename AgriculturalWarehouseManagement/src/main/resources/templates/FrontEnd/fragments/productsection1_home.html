@@ -17,7 +17,7 @@
                         </div>
 
                         <a th:href="@{/productDetail(productId=${product.productId})}">
-                            <img th:src="@{${product.imageUrlGallery}}" class="img-fluid" alt="">
+                            <img th:src="@{${'seller/'+ product.imageUrlGallery}}" class="img-fluid" alt="">
                         </a>
 
                         <ul class="option">

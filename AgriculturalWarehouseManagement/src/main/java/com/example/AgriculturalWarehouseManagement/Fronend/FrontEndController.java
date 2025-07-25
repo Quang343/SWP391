@@ -29,12 +29,6 @@ public class FrontEndController {
 
 
 
-
-    @RequestMapping("/seller-become")
-    public String sellerBecome() {
-        return "FrontEnd/Seller/seller-become";
-    }
-
 //    @RequestMapping("/blog-grid")
 //    public String bloggrid() {
 //        return "FrontEnd/Home/blog-grid";

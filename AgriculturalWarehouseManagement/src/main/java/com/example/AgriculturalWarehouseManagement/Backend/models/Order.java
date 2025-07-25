@@ -80,4 +80,18 @@ public class Order {
                 return "badge bg-secondary";
         }
     }
+
+    public BigDecimal getDiscountAmount() {
+        if (discountAmount == null) {
+            return BigDecimal.ZERO;
+        }
+        return discountAmount;
+    }
+
+//    public BigDecimal getFinalAmount() {
+//        if(this.voucher.getDiscountType().toString().equals("PERCENT")) {
+//            return this.totalAmount.multiply(this.voucher.getDiscountValue()).divide((BigDecimal.valueOf(100)));
+//        }else
+//
+//    }
 }

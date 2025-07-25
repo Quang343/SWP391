@@ -352,7 +352,7 @@ public class ProductController {
 
     public void deleteFile(String fileName){
         try{
-            Path filePath = Paths.get(uploadDir, "Admin").resolve(fileName);
+            Path filePath = Paths.get(uploadDir, "Seller").resolve(fileName);
             System.out.println("Deleting file: " + filePath.toAbsolutePath());
             Files.deleteIfExists(filePath);
         }catch (Exception e){
@@ -366,7 +366,7 @@ public class ProductController {
         }
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         String uniqueFileName = UUID.randomUUID().toString() + "." + fileName;
-        Path uploadPath = Paths.get(uploadDir, "Admin");
+        Path uploadPath = Paths.get(uploadDir, "Seller");
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }

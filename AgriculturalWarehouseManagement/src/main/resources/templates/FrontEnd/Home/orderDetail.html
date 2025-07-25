@@ -202,7 +202,7 @@
                                     <div class="product border-0">
                                         <a th:href="@{/productDetail(productId=${orderDetail.productId})}"
                                            class="product-image">
-                                            <img th:src="${orderDetail.imageUrl}"
+                                            <img th:src="${'seller/'+orderDetail.imageUrl}"
                                                  class="img-fluid blur-up lazyload" alt="">
                                         </a>
                                         <div class="product-detail">
@@ -476,7 +476,7 @@
                                                  alt="">
 
                                             <img th:if="${orderReviewUserResponse.image != ''}"
-                                                 th:src="${orderReviewUserResponseImage.image}"
+                                                 th:src="${'user/'+orderReviewUserResponseImage.image}"
                                                  style="width: 800%; object-fit: cover; display: block;"
                                                  class="blur-up lazyload update_img" alt="more image"
                                             >

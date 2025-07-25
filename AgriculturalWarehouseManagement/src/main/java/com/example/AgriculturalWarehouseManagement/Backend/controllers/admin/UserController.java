@@ -72,6 +72,7 @@ public class UserController {
         Pageable pageable = PageRequest.of(pageNumber - 1, 5);
         Page<User> pageUser = userService.findAll(pageable);
         List<User> users = pageUser.getContent();
+        users = users.stream().filter(user -> !user.getRole().getRoleName().equalsIgnoreCase("Admin")).toList();
         int totalPages = pageUser.getTotalPages();
         model.addAttribute("users", users);
         model.addAttribute("currentPage", pageNumber);

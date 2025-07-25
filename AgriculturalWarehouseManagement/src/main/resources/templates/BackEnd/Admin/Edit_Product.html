@@ -194,11 +194,11 @@
                                                            id="fileInput" multiple accept="image/*">
                                                     <div id="previewContainer" class="d-flex flex-wrap">
                                                         <div th:each="i : ${images}" class="previewImageItem position-relative m-2"
-                                                             th:data-url="@{'/admin/' + ${i.imageUrl}}"
+                                                             th:data-url="@{'/seller/' + ${i.imageUrl}}"
                                                              style="width: 100px; height: 100px;">
                                                             <!-- Ảnh sản phẩm -->
                                                             <img class="img-thumbnail w-100 h-100"
-                                                                 th:src="@{'/admin/' + ${i.imageUrl}}"
+                                                                 th:src="@{'/seller/' + ${i.imageUrl}}"
                                                                  style="object-fit: cover; border-radius: 8px;"/>
 
                                                             <!-- Nút xoá -->

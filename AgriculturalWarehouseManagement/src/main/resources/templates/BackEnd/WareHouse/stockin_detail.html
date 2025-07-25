@@ -417,13 +417,13 @@
                                                     async: false,
                                                     dataType: 'text',
                                                     success: function(response) {
-                                                        imageUrl = response && response.trim() !== '' ? `/seller/${response}` : '/seller/default.jpg';
+                                                        imageUrl = response && response.trim() !== '' ? `${response}` : '/seller/default.jpg';
                                                         console.log(`Sản phẩm ID: ${productId}, Ảnh: ${imageUrl}`);
                                                     },
-                                                    error: function(xhr, status, error) {
-                                                        imageUrl = '/seller/default.jpg';
-                                                        console.error(`Lỗi khi lấy ảnh cho sản phẩm ID ${productId}:`, { status, error });
-                                                    }
+                                                    // error: function(xhr, status, error) {
+                                                    //     imageUrl = '/seller/default.jpg';
+                                                    //     console.error(`Lỗi khi lấy ảnh cho sản phẩm ID ${productId}:`, { status, error });
+                                                    // }
                                                 });
                                             } else {
                                                 displayName = `N/A (${detailName})`;
@@ -449,7 +449,8 @@
                     <tr class="table-order" data-detail-id="${detail.id || index}" data-batch-id="${detail.batchID || ''}">
                         <td>
                             <a href="javascript:void(0)">
-                                <img src="${imageUrl}" class="img-fluid blur-up lazyload" alt="">
+                            <img src="http://localhost:8080/AgriculturalWarehouseManagementApplication/seller/${imageUrl}" />
+
                             </a>
                         </td>
                         <td>

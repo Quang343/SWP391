@@ -150,7 +150,7 @@ public class CategoryController {
 
     public void deleteFile(String fileName){
         try{
-            Path filePath = Paths.get(uploadDir, "Admin").resolve(fileName);
+            Path filePath = Paths.get(uploadDir, "Seller").resolve(fileName);
             Files.deleteIfExists(filePath);
         }catch (Exception e){
             System.err.println("Failed to delete old file: " + e.getMessage());
@@ -198,7 +198,7 @@ public class CategoryController {
         //Đường dẫn đến thư mục mà bạn muốn lưu file
 //        java.nio.file.Path uploadDir = Paths.get("src/main/resources/static/Backend/assets/images/category");
         //Kiểm tra và tạo nếu thư mục chưa tồn tại
-        Path uploadPath = Paths.get(uploadDir, "Admin");
+        Path uploadPath = Paths.get(uploadDir, "Seller");
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }

@@ -144,7 +144,7 @@
                         <div class="profile-contain">
                             <div class="profile-image">
                                 <div class="position-relative" style="display: flex;justify-content: center; padding-left: 9px">
-                                    <img th:src="${session.account.getImageUrl}"
+                                    <img th:src="${'user/' + session.account.getImageUrl}"
                                          class="blur-up lazyload update_img" alt="more image"
                                          accept=".jpg,.jpeg,.png,.gif,.webp,image/*" style="position: absolute;margin-top: -65px">
 

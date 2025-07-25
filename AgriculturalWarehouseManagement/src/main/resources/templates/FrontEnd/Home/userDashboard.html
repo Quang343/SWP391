@@ -275,15 +275,27 @@
                                   enctype="multipart/form-data"
                                   class="profile-image">
                                 <div class="position-relative">
-                                    <img th:if="${session.account.imageUrl != null}" th:src="${session.account.imageUrl}"
+                                    <img th:if="${session.account.imageUrl != null and session.account.getImageUrl !='' and !#strings.startsWith(session.account.getImageUrl, '/')}"
+                                         }
+                                         th:src="${'seller/'+session.account.getUserID +'/'+session.account.imageUrl}"
                                          class="blur-up lazyload update_img" alt="more image"
-                                         accept=".jpg,.jpeg,.png,.gif,.webp,image/*">
+                                         accept=".jpg,.png,.gif,image/*">
 
-                                    <!--                                    th:if="${session.account.getImageUrl != null && session.account.getImageUrl !=''}"-->
+                                    <img th:if="${session.account.imageUrl != null and #strings.startsWith(session.account.imageUrl, 'https://lh3.googleusercontent.com/')}"
+                                         th:src="${session.account.imageUrl}"
+                                         class="blur-up lazyload update_img" alt="more image"
+                                         accept=".jpg,.png,.gif,image/*">
+
+
+                                    <img th:if="${session.account.imageUrl != null and session.account.getImageUrl == ''}"
+                                         th:src="@{Backend/assets/images/user/default-avatar.png}"
+                                         class="blur-up lazyload update_img" alt="more image"
+                                         accept=".jpg,.png,.gif,image/*">
+
                                     <div class="cover-icon">
                                         <i class="fa-solid fa-pen">
                                             <input type="file" name="image" onchange="readURL(this,0)"
-                                                   accept=".jpg,.jpeg,.png,.gif,.webp,image/*">
+                                                   accept=".jpg,.png,.gif,image/*">
                                         </i>
                                     </div>
 
@@ -377,7 +389,9 @@
                                     <div class="payment-container">
                                         <form th:action="@{/depositWalletProfile}" method="post">
                                             <label for="nap">Nạp tiền: </label>
-                                            <input id="nap" type="number" name="totalPrice" class="input-field" placeholder="Nhập số tiền" inputmode="numeric" oninput="validateAmount()" required/>
+                                            <input id="nap" type="number" name="totalPrice" class="input-field"
+                                                   placeholder="Nhập số tiền" inputmode="numeric"
+                                                   oninput="validateAmount()" required/>
                                             <button type="submit" class="btn-nap">Nạp</button>
                                         </form>
                                     </div>
@@ -510,11 +524,18 @@
                                                     </div>
                                                     <span th:if="${order.status == 'CANCELLED'}"
                                                           th:text="${'Đã hủy'}" class="danger-bg">Đã hủy</span>
+                                                    <span th:if="${order.status == 'COMPLETED'}"
+                                                          th:text="${'Hoàn thành'}"
+                                                          class="success-bg">Hoàn thành
+                                                    </span>
+                                                    <div th:if="${order.status == 'STOCKOUT'}"
+                                                         th:text="${'Xuất kho'}"
+                                                         class="div1">Xuất kho
+                                                    </div>
                                                     <span class="success-bg" style="margin-left: 30px">
                                                         <a th:href="@{/orderDetailsUser(orderCode=${order.orderCode})}"
                                                            style="color:white;">Chi tiết Order</a>
                                                     </span>
-
                                                 </h4>
                                             </div>
                                         </div>

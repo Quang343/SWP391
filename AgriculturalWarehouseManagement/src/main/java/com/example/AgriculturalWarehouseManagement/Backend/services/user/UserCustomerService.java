@@ -100,7 +100,13 @@ public class UserCustomerService {
 
         user.setRole(role);
         user.setUserName(registerRequestDTO.getUsername());
-        user.setImage("https://jbagy.me/wp-content/uploads/2025/03/Hinh-anh-avatar-nam-cute-2.jpg");
+        user.setFullName("");
+        user.setImage("");
+        user.setPhone("");
+        user.setAddress("");
+        user.setGender("");
+        LocalDate dob = LocalDate.now().minusYears(19);
+        user.setDob(dob);
         user.setEmail(registerRequestDTO.getEmail());
         user.setPassword(encodedPassword);
         user.setStatus("Active");
@@ -183,6 +189,11 @@ public class UserCustomerService {
         user.setFullName(googleAccountRequest.getName());
         user.setImage(googleAccountRequest.getPicture());
         user.setEmail(googleAccountRequest.getEmail());
+        user.setPhone("");
+        user.setAddress("");
+        user.setGender("");
+        LocalDate dob = LocalDate.now().minusYears(19);
+        user.setDob(dob);
         user.setStatus("Active");
         user.setGoogleID(googleAccountRequest.getId());
         user.setStatusGG("Active");

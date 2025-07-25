@@ -876,7 +876,7 @@
                                         async: false,
                                         dataType: 'text',
                                         success: function(response) {
-                                            imageUrl = response && response.trim() !== '' ? `/seller/${response}` : '/seller/default.jpg';
+                                            imageUrl = response && response.trim() !== '' ? `${response}` : '/seller/default.jpg';
                                             console.log(`[DEBUG] Image for productId ${productId}: ${imageUrl}`);
                                         },
                                         error: function(xhr, status, error) {
@@ -900,7 +900,7 @@
                             <td>
                                 <div class="best-product-box">
                                     <div class="product-image">
-                                        <img src="${imageUrl}" class="img-fluid" alt="Batch">
+                            <img src="http://localhost:8080/AgriculturalWarehouseManagementApplication/seller/${imageUrl}" class="img-fluid" alt="Batch" />
                                     </div>
                                     <div class="product-name">
                                         <h5>${formattedBatchID}</h5>

@@ -57,6 +57,7 @@ public class Voucher {
         }
     }
 
+
     public String getMinOrderAmountString() {
         return String.format("%s VND", convertBigDecimalToStringFormatted(minOrderAmount));
     }

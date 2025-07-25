@@ -441,7 +441,7 @@
                                 <li th:each="category : ${categoryUsersResponses}" class="onhover-category-list">
                                     <a th:href="@{/shopDetail(categoryId=${category.categoryId})}"
                                        class="category-name">
-                                        <img th:src="@{${category.imageUrl}}" alt="">
+                                        <img th:src="@{'seller/'+${category.imageUrl}}" alt="">
                                         <h6 th:text="${category.categoryName}">Category name</h6>
                                         <i class="fa-solid fa-angle-right"></i>
                                     </a>
@@ -572,7 +572,7 @@
                                                data-bs-toggle="dropdown">Người bán</a>
                                             <ul class="dropdown-menu">
                                                 <li>
-                                                    <a class="dropdown-item" href="seller-become">Trở thành người bán</a>
+                                                    <a class="dropdown-item" href="seller-become">Trở thành người bán hàng</a>
                                                 </li>
 <!--                                                <li>-->
 <!--                                                    <a class="dropdown-item" href="seller-dashboard.html">Dashboard người bán</a>-->

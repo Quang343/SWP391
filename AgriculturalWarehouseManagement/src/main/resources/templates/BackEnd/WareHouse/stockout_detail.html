@@ -278,7 +278,7 @@
                                                     async: false,
                                                     dataType: 'text',
                                                     success: function(response) {
-                                                        imageUrl = response && response.trim() !== '' ? `/seller/${response}` : '/seller/default.jpg';
+                                                        imageUrl = response && response.trim() !== '' ? `${response}` : '/seller/default.jpg';
                                                         console.log(`[DEBUG] Product ID: ${productId}, Image: ${imageUrl}`);
                                                     },
                                                     error: function(xhr, status, error) {
@@ -309,7 +309,7 @@
                         <tr class="table-order">
                             <td>
                                 <a href="javascript:void(0)">
-                                    <img src="${imageUrl}" class="img-fluid blur-up lazyload" alt="">
+                                    <img src="http://localhost:8080/AgriculturalWarehouseManagementApplication/seller/${imageUrl}" class="img-fluid blur-up lazyload" alt="">
                                 </a>
                             </td>
                             <td>
