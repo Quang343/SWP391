@@ -221,9 +221,13 @@
                                                             >
                                                         </div>
 
-                                                        <div class="label">
+                                                        <div class="label" style="margin-top: -22px">
                                                             <label id="userSetToAddress" contenteditable="false"
                                                                    th:text="${address.setToAddress}">home</label>
+                                                            <form th:action="@{/checkMap}" method="post">
+                                                                <input type="text" name="address" th:value="${address.address}" hidden>
+                                                                <button type="submit" style="font-size: 139%; cursor: pointer; background: none; border: none; display: inline">🚚</button>
+                                                            </form>
                                                         </div>
 
                                                         <ul class="delivery-address-detail">

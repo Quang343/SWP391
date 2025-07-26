@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Khoảng cách giao hàng</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link rel="icon" th:href="@{/FrontEnd/assets/images/favicon/1.png}" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        label {
+            width: 100px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        #output {
+            font-size: 16px;
+            margin-top: 10px;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .container-map {
+            height: 400px;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>Khoảng cách để giao hàng</h1>
+
+<div class="row">
+    <label>Điểm bắt đầu:</label>
+    <input type="text" id="location-1" placeholder="Nhập điểm bắt đầu..." th:value="${fromAddress}" />
+</div>
+<div class="row">
+    <label>Điểm đến:</label>
+    <input type="text" id="location-2" placeholder="Nhập điểm đến..." th:value="${toAddress}" />
+</div>
+<div class="row">
+    <button class="button" onclick="clearRoute()">Xóa</button>
+    <button class="button" onclick="calcRoute()">Tìm</button>
+    <form th:action="@{/checkOut}" method="get">
+        <button type="submit" class="button"><i data-feather="plus" class="me-2"></i>
+            Đến thanh toán
+        </button>
+    </form>
+</div>
+
+<div id="output"></div>
+<div id="map" class="container-map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+<script th:inline="none">
+    const map = L.map('map').setView([21.0285, 105.8542], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    let routeLine, originMarker, destMarker;
+
+    function clearRoute() {
+        if (routeLine) map.removeLayer(routeLine);
+        if (originMarker) map.removeLayer(originMarker);
+        if (destMarker) map.removeLayer(destMarker);
+        document.getElementById("output").innerHTML = "";
+    }
+
+    async function geocode(place) {
+        const apiKey = '68e50b1d833a4bf299d9b26172036a13';
+        const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(place)}&key=${apiKey}&language=vi`;
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.status.code === 402) {
+            throw new Error("Bạn đã vượt quá giới hạn 2,500 request/ngày của OpenCage.");
+        }
+
+        if (data.results && data.results.length > 0) {
+            const loc = data.results[0].geometry;
+            return {
+                lat: loc.lat,
+                lon: loc.lng
+            };
+        } else {
+            throw new Error("Không tìm thấy địa điểm: " + place);
+        }
+    }
+    async function calcRoute() {
+        clearRoute();
+        const originName = document.getElementById("location-1").value;
+        const destName = document.getElementById("location-2").value;
+
+        try {
+            const origin = await geocode(originName);
+            const destination = await geocode(destName);
+
+            originMarker = L.marker([origin.lat, origin.lon]).addTo(map).bindPopup("Điểm bắt đầu").openPopup();
+            destMarker = L.marker([destination.lat, destination.lon]).addTo(map).bindPopup("Điểm đến").openPopup();
+
+            routeLine = L.polyline([[origin.lat, origin.lon], [destination.lat, destination.lon]], { color: 'blue' }).addTo(map);
+            map.fitBounds(routeLine.getBounds());
+
+            const distance = map.distance([origin.lat, origin.lon], [destination.lat, destination.lon]) / 1000;
+            document.getElementById("output").innerHTML = `<p>Khoảng cách: ${distance.toFixed(2)} km</p>`;
+        } catch (e) {
+            alert(e.message);
+        }
+    }
+</script>
+</body>
+</html>
