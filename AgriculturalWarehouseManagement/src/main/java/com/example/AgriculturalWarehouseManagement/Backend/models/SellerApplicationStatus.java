@@ -4,5 +4,6 @@ public enum SellerApplicationStatus {
     PENDING,
     APPROVED,
     REJECTED,
-    EXPIRED
+    EXPIRED,
+    CANCELLED
 }

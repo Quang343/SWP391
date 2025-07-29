@@ -6,6 +6,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.models.Role;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.RoleService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.user.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -119,6 +120,27 @@ public class RoleController {
         model.addAttribute("users", users);
         model.addAttribute("roles", roles);
         return  "BackEnd/Admin/Assign_Role";
+    }
+
+    @PutMapping("/api/user/upgrade-to-seller")
+    @ResponseBody
+    public ResponseEntity<?> upgradeToSeller(HttpSession session) {
+        Integer accountId = (Integer) session.getAttribute("accountId");
+        if (accountId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Bạn chưa đăng nhập"));
+        }
+
+        try {
+            User user = userService.findById(accountId.longValue());
+            Role sellerRole = roleService.findByName("SELLER");
+            user.setRole(sellerRole);
+            userService.save(user);
+            return ResponseEntity.ok(Map.of("message", "Đổi vai trò sang SELLER thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Không thể đổi vai trò: " + e.getMessage()));
+        }
     }
 
 }

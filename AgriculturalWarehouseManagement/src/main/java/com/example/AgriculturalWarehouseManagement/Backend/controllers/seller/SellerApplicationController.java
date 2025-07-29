@@ -7,9 +7,12 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -49,5 +52,87 @@ public class SellerApplicationController {
         }
     }
 
+    @GetMapping("/check-status")
+    public ResponseEntity<Map<String, Boolean>> checkAllStatus(@RequestParam Long userId) {
+        boolean hasPending = sellerApplicationService.existsPendingApplication(userId);
+        boolean isApproved = sellerApplicationService.existsApprovedApplication(userId);
+
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("hasPending", hasPending);
+        response.put("isApproved", isApproved);
+
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/my")
+    public ResponseEntity<?> getMyApplications(HttpSession session) {
+        Integer idInt = (Integer) session.getAttribute("accountId");
+        if (idInt == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Bạn chưa đăng nhập"));
+        }
+
+        Long userId = idInt.longValue();
+        return ResponseEntity.ok(sellerApplicationService.getApplicationsByUserId(userId));
+    }
+
+    @PutMapping("/{applicationId}/cancel")
+    public ResponseEntity<?> cancelPendingApplication(@PathVariable Long applicationId, HttpSession session) {
+        Integer accountId = (Integer) session.getAttribute("accountId");
+        System.out.println("Session accountId: " + accountId); // Debug
+        if (accountId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Bạn chưa đăng nhập"));
+        }
+
+        try {
+            sellerApplicationService.cancelPendingApplication(accountId.longValue(), applicationId);
+            return ResponseEntity.ok(Map.of("message", "Hủy đơn thành công. 50% số tiền đã được hoàn lại vào ví của bạn."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Lỗi hệ thống: " + e.getMessage()));
+        }
+    }
+
+    @PutMapping("/{applicationId}/restore")
+    public ResponseEntity<?> restoreCancelledOrExpiredApplication(@PathVariable Long applicationId, HttpSession session) {
+        Integer accountId = (Integer) session.getAttribute("accountId");
+        System.out.println("Session accountId: " + accountId); // Debug
+
+        if (accountId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Bạn chưa đăng nhập"));
+        }
+
+        try {
+            sellerApplicationService.restorePendingApplication(accountId.longValue(), applicationId);
+            return ResponseEntity.ok(Map.of("message", "Khôi phục đơn thành công. Hệ thống đã trừ tiền trong ví của bạn."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Lỗi hệ thống: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/test-auto-cancel")
+    public ResponseEntity<?> testAutoCancelNow() {
+        sellerApplicationService.autoCancelExpiredApplications();
+        return ResponseEntity.ok("Đã chạy scheduler thủ công");
+    }
+
+    @PutMapping("/{applicationId}/cv")
+    public ResponseEntity<?> updateCv(@PathVariable Long applicationId,
+                                      @RequestParam("cvFile") MultipartFile file) {
+        try {
+            sellerApplicationService.updateCv(applicationId, file); // gọi service
+            return ResponseEntity.ok("CV đã được cập nhật");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi: " + e.getMessage());
+        }
+    }
 
 }

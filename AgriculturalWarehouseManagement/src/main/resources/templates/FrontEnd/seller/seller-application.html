@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="FrontEnd/fragments/head::head"></head>
+<body>
+
+<!-- Loader Start -->
+<div class="fullpage-loader">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+<!-- Loader End -->
+
+<!-- Header Start -->
+<header th:replace="FrontEnd/fragments/header::header"></header>
+<!-- Header End -->
+
+<!-- mobile fix menu start -->
+<div class="mobile-menu d-md-none d-block mobile-cart">
+    <ul>
+        <li class="active">
+            <a href="index.html">
+                <i class="iconly-Home icli"></i>
+                <span>Home</span>
+            </a>
+        </li>
+
+        <li class="mobile-category">
+            <a href="javascript:void(0)">
+                <i class="iconly-Category icli js-link"></i>
+                <span>Category</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="search.html" class="search-box">
+                <i class="iconly-Search icli"></i>
+                <span>Search</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="wishlist.html" class="notifi-wishlist">
+                <i class="iconly-Heart icli"></i>
+                <span>My Wish</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="cart.html">
+                <i class="iconly-Bag-2 icli fly-cate"></i>
+                <span>Cart</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- mobile fix menu end -->
+
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-0">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-contain">
+                    <h2>➤ Quản Lý Đơn Đăng Ký</h2>
+                    <nav>
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item">
+                                <a href="home">
+                                    <i class="fa-solid fa-house"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active">
+                                <a href="seller-become">
+                                    Trở thành người bán hàng
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active">
+                                <a href="seller-application">
+                                    Quản lý đơn đăng ký
+                                </a>
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Grid Section Start -->
+<section class="seller-grid-section">
+    <div class="container-fluid-lg">
+
+        <div class="row mb-3">
+            <div class="col text-end">
+                <div class="wallet-balance-box">
+                    Số dư ví hiện tại:
+                    <strong id="walletBalance" class="wallet-balance text-primary"
+                            th:text="${#numbers.formatInteger(walletsResponse.getBalance(), 0, 'POINT') + '₫'}">₫</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col">
+                <label for="statusFilter" class="form-label mb-1">Lọc theo trạng thái:</label>
+                <select id="statusFilter" class="form-select w-auto d-inline-block">
+                    <option value="">Tất cả</option>
+                    <option value="PENDING">PENDING</option>
+                    <option value="APPROVED">APPROVED</option>
+                    <option value="REJECTED">REJECTED</option>
+                    <option value="EXPIRED">EXPIRED</option>
+                    <option value="CANCELLED">CANCELLED</option>
+                </select>
+            </div>
+        </div>
+
+        <table id="applicationTable" class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>STT</th>
+                <th>Thời hạn hợp đồng</th>
+                <th>CV</th>
+                <th>Ngày tạo</th>
+                <th>Ngày hết hạn</th>
+                <th>Trạng thái</th>
+                <th>Đếm ngược xác nhận</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+    </div>
+</section>
+<!-- Grid Section End -->
+
+<!--CRUD đơn đăng ký-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const userId = '[[${session.accountId}]]';
+        initApplicationTable(userId);
+        let hasPending = false;
+        let isApproved = false;
+
+        function checkApplicationStatus(userId) {
+            return axios.get(`/AgriculturalWarehouseManagementApplication/api/seller/applications/check-status`, {
+                params: {userId: userId}
+            }).then(response => {
+                hasPending = response.data.hasPending;
+                isApproved = response.data.isApproved;
+            }).catch(error => {
+                console.error("Lỗi khi kiểm tra trạng thái đơn:", error);
+            });
+        }
+
+        async function initApplicationTable(userId) {
+            await checkApplicationStatus(userId); // Gọi trước khi render
+            $.fn.DataTable.ext.pager.numbers_length = 3;
+
+            const table = $('#applicationTable').DataTable({
+
+                dom:
+                    "<'row mb-3'<'col-sm-6'l><'col-sm-6 text-end'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row mt-3'<'col-sm-5'i><'col-sm-7 text-end'p>>",
+                ajax: {
+                    url: '/AgriculturalWarehouseManagementApplication/api/seller/applications/my',
+                    dataSrc: ''
+                },
+
+                pageLength: 5,
+                lengthMenu: [1, 3, 5, 10],
+                paging: true,
+                searching: true,
+                info: true,
+                ordering: true,
+                responsive: true, // 👈 Tối ưu cho thiết bị nhỏ
+                autoWidth: false, // 👈 Tránh giãn cột bất hợp lý
+                mark: true,
+                language: {
+                    search: "🔍 Tìm kiếm:",
+                    lengthMenu: "Hiển thị _MENU_ dòng mỗi trang",
+                    info: "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
+                    infoEmpty: "Không có dữ liệu để hiển thị",
+                    zeroRecords: "Không tìm thấy kết quả phù hợp",
+                    paginate: {
+                        previous: "<< Trước",
+                        next: "Sau >>"
+                    },
+                },
+
+                columns: [
+                    {
+                        data: null,
+                        render: function (data, type, row, meta) {
+                            return meta.row + 1;
+                        }
+                    },
+                    {
+                        data: 'contractMonths',
+                        render: function (data, type, row) {
+                            return data + ' tháng';
+                        }
+                    },
+                    {
+                        data: 'cvImage',
+                        render: function (data) {
+                            return `
+                            <a href="seller/[[${session.accountId}]]/${data}" target="_blank">Xem</a> |
+                            <a href="seller/[[${session.accountId}]]/${data}" download>
+                                <i class="fas fa-download"></i> Tải
+                            </a>
+                        `;
+                        }
+                    },
+                    {
+                        data: 'createdAt',
+                        render: function (data) {
+                            return new Date(data).toLocaleString();
+                        }
+                    },
+                    {
+                        data: 'contractExpiryDate',
+                        render: function (data) {
+                            return data
+                                ? new Date(data).toLocaleDateString()
+                                : '<span class="text-muted fst-italic small">Sẽ hiển thị ngay sau khi đơn đã được QTV phê duyệt</span>';
+                        }
+                    },
+
+
+                    {
+                        data: 'status',
+                        render: function (data) {
+                            let badgeClass = 'secondary';
+                            if (data === 'PENDING') badgeClass = 'warning';
+                            else if (data === 'APPROVED') badgeClass = 'success';
+                            else if (data === 'REJECTED') badgeClass = 'danger';
+                            else if (data === 'CANCELLED') badgeClass = 'secondary';
+                            else if (data === 'EXPIRED') badgeClass = 'dark';
+                            return `<span class="badge bg-${badgeClass}">${data}</span>`;
+                        }
+                    },
+
+                    {
+                        data: 'cancelDeadline',
+                        render: function (data, type, row) {
+                            if (row.status !== 'APPROVED') {
+                                return '<span class="text-muted small fst-italic">Chỉ hiển thị khi đơn đã được duyệt</span>';
+                            }
+
+                            const id = `countdown-${row.id}`;
+                            setTimeout(() => {
+                                startCountdown(data, id);
+                            }, 0); // gọi sau render
+
+                            return `<span id="${id}" class="text-danger fw-bold"></span>`;
+                        }
+                    },
+                    {
+                        data: null,
+                        orderable: false,
+                        render: function (data, type, row) {
+                            function renderApplicationButtons(row) {
+                                let buttons = '';
+                                const shouldDisableOthers = (hasPending || isApproved) && !['PENDING', 'APPROVED'].includes(row.status);
+
+                                switch (row.status) {
+                                    case 'PENDING':
+                                        buttons += `
+<button class="btn btn-sm btn-danger me-1 action-button" onclick="cancelApplication(${row.id})" title="Hủy đơn & hoàn tiền">
+    <i class="bi bi-trash-fill"></i>
+</button>
+<button class="btn btn-sm btn-primary action-button" onclick="triggerCvUpload(${row.id})" title="Cập nhật CV">
+    <i class="fa-solid fa-upload"></i>
+</button>
+<input type="file" id="cvInput${row.id}" style="display: none;" accept=".pdf,.png,.jpg,.jpeg" onchange="uploadCv(${row.id})" />
+
+`;
+                                         break;
+
+                                    case 'APPROVED':
+                                        buttons += `
+<button class="btn btn-sm btn-success action-button" onclick="redirectToLogout('${row.cancelDeadline}')" title="Bán hàng ngay!">
+    <i class="bi bi-patch-check-fill"></i>
+</button>`;
+                                        break;
+
+
+                                    case 'REJECTED':
+                                        buttons += `
+<button class="btn btn-sm btn-secondary action-button" onclick="restoreApplication(${row.id})" title="Khôi phục đơn" disabled>
+    <i class="bi bi-arrow-counterclockwise"></i>
+</button>
+<a class="btn btn-sm btn-warning action-button" href="/AgriculturalWarehouseManagementApplication/seller-become" title="Đăng ký lại"
+   ${shouldDisableOthers ? 'onclick="return false;" style="pointer-events: none; opacity: 0.6;"' : ''}>
+    <i class="bi bi-box-arrow-up-right"></i>
+</a>`;
+                                        break;
+
+                                    case 'EXPIRED':
+                                    case 'CANCELLED':
+                                        buttons += `
+<button class="btn btn-sm btn-secondary action-button" onclick="restoreApplication(${row.id})" title="Khôi phục đơn" ${shouldDisableOthers ? 'disabled' : ''}>
+    <i class="bi bi-arrow-counterclockwise"></i>
+</button>
+<a class="btn btn-sm btn-warning action-button" href="/AgriculturalWarehouseManagementApplication/seller-become" title="Đăng ký lại"
+   ${shouldDisableOthers ? 'onclick="return false;" style="pointer-events: none; opacity: 0.6;"' : ''}>
+    <i class="bi bi-box-arrow-up-right"></i>
+</a>`;
+                                        break;
+
+                                    default:
+                                        buttons = '<span class="text-muted action-button">Không có</span>';
+                                }
+
+                                // Nếu dòng hiện tại không phải PENDING hoặc APPROVED, và có PENDING hoặc APPROVED đang tồn tại, disable tất cả button
+                                if (shouldDisableOthers && !['REJECTED', 'EXPIRED', 'CANCELLED'].includes(row.status)) {
+                                    buttons = `<button class="btn btn-sm btn-secondary" disabled><i class="bi bi-ban"></i> Tạm khóa</button>`;
+                                }
+
+                                return buttons;
+                            }
+
+                            const buttons = renderApplicationButtons(row);
+                            return `<div class="d-flex justify-content-center gap-1 flex-wrap">${buttons}</div>`;
+                        }
+                    }
+                ],
+
+                initComplete: function () {
+                    const statusFilter = $('#statusFilter');
+
+                    // Gán sự kiện change
+                    statusFilter.on('change', function () {
+                        const selected = $(this).val();
+                        table.column(5).search(selected === 'Tất cả' ? '' : selected).draw();
+                    });
+
+                    // Lọc theo giá trị lưu trong localStorage (nếu có)
+                    const defaultStatusFilter = localStorage.getItem("applicationStatusFilter") || "";
+                    statusFilter.val(defaultStatusFilter).trigger("change");
+                    localStorage.removeItem("applicationStatusFilter");
+                }
+            });
+        }
+
+    });
+
+    function cancelApplication(applicationId) {
+        Swal.fire({
+            title: 'Bạn có chắc muốn hủy đơn?',
+            text: 'Nếu hủy đơn, bạn sẽ chỉ được hoàn lại 50% số tiền trước đó đã đăng ký',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '<i class="bi bi-x-circle"></i> Hủy đơn',
+            cancelButtonText: 'Không',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.put(`/AgriculturalWarehouseManagementApplication/api/seller/applications/${applicationId}/cancel`, {}, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true
+                })
+                    .then(res => {
+                        Swal.fire({
+                            title: 'Hủy đơn thành công!',
+                            text: res.data.message || 'Bạn muốn làm gì tiếp theo?',
+                            icon: 'success',
+                            showCancelButton: true,
+                            confirmButtonText: '💰 Xem ví',
+                            cancelButtonText: 'Ở lại trang này',
+                        }).then((next) => {
+                            if (next.isConfirmed) {
+                                // Chuyển sang trang ví
+                                window.location.href = '/AgriculturalWarehouseManagementApplication/profileUser';
+                            } else {
+                                // Ở lại: reload bảng
+                                location.reload();
+                            }
+                        });
+                    })
+                    .catch(err => {
+                        let msg = "Đã xảy ra lỗi khi hủy đơn.";
+                        if (err.response) {
+                            if (err.response.status === 401) {
+                                msg = "Bạn chưa đăng nhập. Vui lòng đăng nhập lại.";
+                            } else if (err.response.status === 400) {
+                                msg = err.response.data.error || "Yêu cầu không hợp lệ.";
+                            } else if (err.response.status === 500) {
+                                msg = err.response.data.error || "Lỗi hệ thống. Vui lòng thử lại sau.";
+                            }
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: msg
+                        });
+                    });
+            }
+        });
+    }
+
+    function restoreApplication(applicationId) {
+        const PREMIUM_PRICE = 100000; // Giá mỗi tháng (hoặc lấy từ biến chung nếu có)
+        const walletBalance = parseInt(document.getElementById("wallet-balance-value").value || "0");
+
+        const table = $('#applicationTable').DataTable();
+        const rowData = table.rows().data().toArray().find(row => row.id === applicationId);
+        const months = parseInt(rowData.contractMonths || 0);
+
+        // Tính số tiền thực tế phải trừ (có giảm giá)
+        let discountRate = 0;
+        if (months >= 12) {
+            discountRate = 0.25;
+        } else if (months >= 6) {
+            discountRate = 0.15;
+        } else if (months >= 3) {
+            discountRate = 0.10;
+        }
+
+        const originalTotal = months * PREMIUM_PRICE;
+        const discountedTotal = originalTotal * (1 - discountRate);
+
+        // Nếu không đủ tiền thì không cho khôi phục
+        if (walletBalance < discountedTotal) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Số dư không đủ!',
+                html: `
+        <p>Bạn cần ${discountedTotal.toLocaleString()} VNĐ để khôi phục đơn (${months} tháng), nhưng số dư hiện tại là ${walletBalance.toLocaleString()} VNĐ. Vui lòng nạp thêm ${(discountedTotal - walletBalance).toLocaleString()} VNĐ</p>
+        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+            <a href="/AgriculturalWarehouseManagementApplication/profileUser"
+               style="padding: 8px 16px; background-color: #007bff; color: white; border-radius: 5px; text-decoration: none;">
+               💰 Nạp tiền ngay
+            </a>
+            <button id="stayHereBtn"
+                    style="padding: 8px 16px; background-color: #6c757d; color: white; border: none; border-radius: 5px;">
+                Ở lại trang này
+            </button>
+        </div>
+    `,
+                showConfirmButton: false,
+                showCancelButton: false,
+                didOpen: () => {
+                    document.getElementById("stayHereBtn").addEventListener("click", () => {
+                        location.reload();
+                    });
+                }
+            });
+            return;
+        }
+
+        // Nếu đủ thì tiếp tục confirm
+        Swal.fire({
+            title: 'Bạn có chắc muốn khôi phục đơn?',
+            text: `Nếu khôi phục đơn, bạn sẽ mất ${discountedTotal.toLocaleString('vi-VN')}₫ (${months} tháng, đã áp dụng giảm giá). Bạn chắc chắn chứ?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: '<i class="fa fa-undo"></i> Khôi phục',
+            cancelButtonText: 'Suy nghĩ lại',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.put(`/AgriculturalWarehouseManagementApplication/api/seller/applications/${applicationId}/restore`, {}, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    withCredentials: true
+                })
+                    .then(res => {
+                        Swal.fire({
+                            title: 'Khôi phục đơn thành công!',
+                            text: res.data.message || 'Bạn muốn làm gì tiếp theo?',
+                            icon: 'success',
+                            showCancelButton: true,
+                            confirmButtonText: '💰 Xem ví',
+                            cancelButtonText: 'Ở lại trang này',
+                        }).then((next) => {
+                            if (next.isConfirmed) {
+                                window.location.href = '/AgriculturalWarehouseManagementApplication/profileUser';
+                            } else {
+                                location.reload();
+                            }
+                        });
+                    })
+                    .catch(err => {
+                        let msg = "Đã xảy ra lỗi khi khôi phục đơn.";
+                        if (err.response) {
+                            if (err.response.status === 401) {
+                                msg = "Bạn chưa đăng nhập. Vui lòng đăng nhập lại.";
+                            } else if (err.response.status === 400) {
+                                msg = err.response.data.error || "Yêu cầu không hợp lệ.";
+                            } else if (err.response.status === 500) {
+                                msg = err.response.data.error || "Lỗi hệ thống. Vui lòng thử lại sau.";
+                            }
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: msg
+                        });
+                    });
+            }
+        });
+    }
+
+    function redirectToLogout(cancelDeadline) {
+        const deadlineDate = new Date(cancelDeadline);
+        const now = new Date();
+        const diffMs = deadlineDate - now;
+        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+        // Thêm thẻ audio vào body nếu chưa có
+        let audio = document.getElementById("audioLaunch");
+        if (!audio) {
+            audio = document.createElement("audio");
+            audio.id = "audioLaunch";
+            audio.src = "/AgriculturalWarehouseManagementApplication/Backend/assets/images/user/Oi_ban_oi.mp3";
+            audio.style.display = "none";
+            document.body.appendChild(audio);
+        }
+
+        Swal.fire({
+            title: '🎉 Chúc mừng bạn! 🎉',
+            html: `
+    <div style="font-size: 16px; color: #333; text-align: center; line-height: 1.6;">
+        <video id="swalVideo" width="100%" autoplay muted style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); margin-bottom: 20px;">
+            <source src="/AgriculturalWarehouseManagementApplication/Backend/assets/images/user/Oi_ban_oi.mp4" type="video/mp4">
+            Trình duyệt không hỗ trợ video.
+        </video>
+
+        <div style="margin: 0 auto; max-width: 420px;">
+            <p style="margin-bottom: 12px;">
+                Bạn có thể trở thành <b style="color: #28a745;">Người Bán Hàng</b> ngay bây giờ!<br/>
+                Hệ thống sẽ <b>đăng xuất</b> để cập nhật<br/>quyền truy cập mới cho bạn.
+            </p>
+
+            <p style="font-size: 13px; color: #888; margin-top: 20px;">
+                Nếu bạn không xác nhận trong vòng <b id="swalCountdown" class="text-danger">...</b>,<br/>
+                hồ sơ đăng ký sẽ tự động hết hiệu lực và hoàn lại 100% tiền cho bạn.
+            </p>
+        </div>
+    </div>
+`,
+            iconHtml: '<i class="bi bi-rocket-takeoff-fill" style="font-size: 3rem; color: #e74c3c;"></i>',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '🚀 Lên đường thôi!',
+            cancelButtonText: '⏳ Để sau',
+            backdrop: `
+            rgba(0,0,123,0.4)
+            // url("https://media.giphy.com/media/3o7abldj0b3rxrZUxW/giphy.gif")
+            left top
+            no-repeat
+        `,
+            didOpen: () => {
+                startCountdown(cancelDeadline, "swalCountdown");
+                audio.play().catch(err => console.log("Không thể phát nhạc:", err));
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.put('/AgriculturalWarehouseManagementApplication/api/user/upgrade-to-seller', {}, {
+                    withCredentials: true
+                }).then(res => {
+                    Swal.fire({
+                        title: '🚀 Thành công!',
+                        text: res.data.message || 'Bạn sẽ được chuyển đến trang đăng nhập.',
+                        icon: 'success',
+                        timer: 2500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = "/AgriculturalWarehouseManagementApplication/logoutUser";
+                    });
+                }).catch(err => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '💥 Lỗi rồi!',
+                        text: err.response?.data?.error || 'Không thể đổi vai trò. Vui lòng thử lại sau.'
+                    });
+                });
+            }
+            else {
+                // Nếu nhấn "Để sau" thì reload lại trang
+                location.reload();
+            }
+        });
+    }
+
+    function startCountdown(deadlineString, elementId) {
+        const deadline = new Date(deadlineString);
+        const element = document.getElementById(elementId);
+
+        if (!element || isNaN(deadline)) return;
+
+        function updateCountdown() {
+            const now = new Date();
+            const distance = deadline - now;
+
+            if (distance <= 0) {
+                element.textContent = "⏰ Hết hạn";
+                element.classList.remove("text-danger");
+                element.classList.add("text-muted");
+                clearInterval(timer);
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((distance / (1000 * 60)) % 60);
+            const seconds = Math.floor((distance / 1000) % 60);
+
+            element.textContent = `${days} ngày ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        updateCountdown();
+        const timer = setInterval(updateCountdown, 1000);
+    }
+
+    function triggerCvUpload(applicationId) {
+        document.getElementById(`cvInput${applicationId}`).click();
+    }
+
+    function uploadCv(applicationId) {
+        const fileInput = document.getElementById(`cvInput${applicationId}`);
+        const file = fileInput.files[0];
+
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("cvFile", file);
+
+        axios.put(`/AgriculturalWarehouseManagementApplication/api/seller/applications/${applicationId}/cv`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        })
+            .then(response => {
+                alert("Cập nhật CV thành công!");
+                // Reload lại bảng nếu cần
+                loadApplicationTable(); // hoặc tên hàm bạn đang dùng
+            })
+            .catch(error => {
+                alert("Có lỗi khi cập nhật CV");
+                console.error(error);
+            });
+    }
+
+
+</script>
+<input type="hidden" id="wallet-balance-value" th:value="${walletsResponse.getBalance()}"/>
+
+<!--CSS-->
+<style>
+    .wallet-balance-box {
+        background-color: #f0f9ff;
+        border: 1px solid #cce5ff;
+        border-radius: 10px;
+        padding: 10px 15px;
+        display: inline-block;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #333;
+        box-shadow: 0 2px 5px rgba(0, 123, 255, 0.1);
+    }
+
+    .wallet-balance {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-left: 5px;
+    }
+
+    @media (max-width: 576px) {
+        .wallet-balance-box {
+            font-size: 0.95rem;
+            padding: 8px 12px;
+        }
+
+        .wallet-balance {
+            font-size: 1.1rem;
+        }
+    }
+
+    /* Base styles for all action buttons */
+    .action-button {
+        border: none;
+        background-color: #7171d6;
+        color: #ffff00;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        border-radius: 0.2rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s ease;
+    }
+
+    /* Specific styles for each button type */
+    .action-button-danger {
+        background-color: #dc3545; /* Red for cancel */
+    }
+
+    .action-button-danger:hover {
+        background-color: #c82333; /* Darker red on hover */
+    }
+
+    .action-button-primary {
+        background-color: #007bff; /* Blue for edit/upload */
+    }
+
+    .action-button-primary:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+    }
+
+    .action-button-success {
+        background-color: #28a745; /* Green for success */
+    }
+
+    .action-button-success:hover {
+        background-color: #218838; /* Darker green on hover */
+    }
+
+    .action-button-warning {
+        background-color: #ffc107; /* Yellow for warning */
+    }
+
+    .action-button-warning:hover {
+        background-color: #e0a800; /* Darker yellow on hover */
+    }
+
+    .action-button-secondary {
+        background-color: #6c757d; /* Gray for secondary */
+    }
+
+    .action-button-secondary:hover {
+        background-color: #5a6268; /* Darker gray on hover */
+    }
+
+    /* Style for text-muted (no action) */
+    .text-muted.action-button {
+        color: #6c757d;
+        cursor: default;
+        background: none; /* Explicitly no background */
+    }
+
+    /* Tạo khoảng cách và viền nhẹ cho container */
+    #statusFilterContainer {
+        width: 300px;
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        background-color: #f8f9fa;
+    }
+
+    /* Viền và style cho dropdown */
+    #statusFilter {
+        width: 200px;
+        padding: 0.4rem 0.75rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+        background-color: #fff;
+    }
+
+    /* Bảng có viền rõ ràng và header nổi bật */
+    #applicationTable {
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        overflow: hidden;
+        background-color: #fff;
+    }
+
+    #applicationTable th {
+        background-color: #e9ecef;
+        border: 1px solid #dee2e6;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    #applicationTable td {
+        border: 1px solid #dee2e6;
+        vertical-align: middle;
+    }
+
+    /* Container của dropdown filter */
+    #statusFilterContainer {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    #statusFilterContainer label {
+        margin: 0;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    #statusFilter {
+        width: 200px;
+        padding: 6px 10px;
+        font-size: 14px;
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+    }
+
+    /* Tối ưu lại phần tìm kiếm và phân trang của DataTables */
+    div.dataTables_filter input {
+        margin-left: 0.5em;
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+    }
+
+    div.dataTables_paginate {
+        margin-top: 10px;
+    }
+
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_paginate {
+        padding-top: 10px;
+    }
+
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        margin-bottom: 10px;
+    }
+
+    /* Căn chỉnh bảng không bị dính vào các controls */
+    .dataTables_wrapper {
+        padding: 10px;
+    }
+
+    /* Căn giữa và đồng bộ chiều cao hàng */
+    #applicationTable th,
+    #applicationTable td {
+        vertical-align: middle;
+        text-align: center;
+        padding: 12px 10px;
+    }
+
+    /* Nút thao tác: nhỏ gọn, khoảng cách đều, icon căn chỉnh */
+    #applicationTable td .btn {
+        padding: 5px 10px;
+        font-size: 0.85rem;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #applicationTable td .btn i {
+        font-size: 1rem;
+    }
+
+    /* Huy hiệu trạng thái */
+    #applicationTable .badge {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        border-radius: 12px;
+        font-weight: 500;
+    }
+
+    /* Cột thao tác không bị vỡ hàng */
+    #applicationTable th:last-child,
+    #applicationTable td:last-child {
+        white-space: nowrap;
+        width: 160px;
+    }
+
+    /* Hover dòng: nhẹ nhàng, dễ nhìn */
+    #applicationTable tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* Responsive: thu gọn hợp lý */
+    @media (max-width: 768px) {
+        #applicationTable th, #applicationTable td {
+            font-size: 0.8rem;
+            padding: 8px 6px;
+        }
+
+        #applicationTable td .btn {
+            font-size: 0.75rem;
+            padding: 4px 6px;
+        }
+    }
+
+    /* Tuỳ chỉnh khối tìm kiếm và phân trang */
+    .dataTables_wrapper .dataTables_filter input {
+        margin-left: 0.5em;
+        padding: 6px 10px;
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+        font-size: 0.875rem;
+    }
+
+    .dataTables_wrapper .dataTables_length select {
+        padding: 6px 8px;
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+        font-size: 0.875rem;
+    }
+
+    /* Phân trang gọn đẹp */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 6px 10px;
+        margin: 2px;
+        border-radius: 5px;
+        border: 1px solid #dee2e6;
+        background: #f8f9fa;
+        color: #333 !important;
+        font-size: 0.85rem;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: #0d6efd;
+        color: #fff !important;
+        border-color: #0d6efd;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: #e2e6ea;
+        color: #000 !important;
+    }
+
+</style>
+
+<!-- Newsletter Section Start -->
+<section class="newsletter-section section-b-space">
+    <div class="container-fluid-lg">
+        <div class="newsletter-box newsletter-box-2">
+            <div class="newsletter-contain py-5">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xxl-4 col-lg-5 col-md-7 col-sm-9 offset-xxl-2 offset-md-1">
+                            <div class="newsletter-detail">
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+
+                                <!--                                <h2>Join our newsletter and get...</h2>-->
+                                <!--                                <h5>$20 discount for your first order</h5>-->
+                                <!--                                <div class="input-box">-->
+                                <!--                                    <input type="email" class="form-control" id="exampleFormControlInput1"-->
+                                <!--                                           placeholder="Enter Your Email">-->
+                                <!--                                    <i class="fa-solid fa-envelope arrow"></i>-->
+                                <!--                                    <button class="sub-btn  btn-animation">-->
+                                <!--                                        <span class="d-sm-block d-none">Subscribe</span>-->
+                                <!--                                        <i class="fa-solid fa-arrow-right icon"></i>-->
+                                <!--                                    </button>-->
+                                <!--                                </div>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Newsletter Section End -->
+
+<!-- Footer Section Start -->
+<footer th:replace="FrontEnd/fragments/footer::footer"></footer>
+<!-- Footer Section End -->
+
+<!-- Tap to top and theme setting button start -->
+<div class="theme-option">
+    <!--    <div class="setting-box">-->
+    <!--        <button class="btn setting-button">-->
+    <!--            <i class="fa-solid fa-gear"></i>-->
+    <!--        </button>-->
+
+    <!--        <div class="theme-setting-2">-->
+    <!--            <div class="theme-box">-->
+    <!--                <ul>-->
+    <!--                    <li>-->
+    <!--                        <div class="setting-name">-->
+    <!--                            <h4>Color</h4>-->
+    <!--                        </div>-->
+    <!--                        <div class="theme-setting-button color-picker">-->
+    <!--                            <form class="form-control">-->
+    <!--                                <label for="colorPick" class="form-label mb-0">Theme Color</label>-->
+    <!--                                <input type="color" class="form-control form-control-color" id="colorPick"-->
+    <!--                                       value="#0da487" title="Choose your color">-->
+    <!--                            </form>-->
+    <!--                        </div>-->
+    <!--                    </li>-->
+
+    <!--                    <li>-->
+    <!--                        <div class="setting-name">-->
+    <!--                            <h4>Dark</h4>-->
+    <!--                        </div>-->
+    <!--                        <div class="theme-setting-button">-->
+    <!--                            <button class="btn btn-2 outline" id="darkButton">Dark</button>-->
+    <!--                            <button class="btn btn-2 unline" id="lightButton">Light</button>-->
+    <!--                        </div>-->
+    <!--                    </li>-->
+
+    <!--                    <li>-->
+    <!--                        <div class="setting-name">-->
+    <!--                            <h4>RTL</h4>-->
+    <!--                        </div>-->
+    <!--                        <div class="theme-setting-button rtl">-->
+    <!--                            <button class="btn btn-2 rtl-unline">LTR</button>-->
+    <!--                            <button class="btn btn-2 rtl-outline">RTL</button>-->
+    <!--                        </div>-->
+    <!--                    </li>-->
+    <!--                </ul>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
+
+    <div class="back-to-top">
+        <a id="back-to-top" href="#">
+            <i class="fas fa-chevron-up"></i>
+        </a>
+    </div>
+</div>
+<!-- Tap to top and theme setting button end -->
+
+<!-- Bg overlay Start -->
+<div class="bg-overlay"></div>
+<!-- Bg overlay End -->
+
+<!-- latest jquery-->
+<script th:src="@{/Frontend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- jquery ui-->
+<script th:src="@{/Frontend/assets/js/jquery-ui.min.js}"></script>
+
+<!-- Bootstrap js-->
+<script th:src="@{/Frontend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/bootstrap/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/bootstrap/popper.min.js}"></script>
+
+<!-- feather icon js-->
+<script th:src="@{/Frontend/assets/js/feather/feather.min.js}"></script>
+<script th:src="@{/Frontend/assets/js/feather/feather-icon.js}"></script>
+
+<!-- Lazyload Js -->
+<script th:src="@{/Frontend/assets/js/lazysizes.min.js}"></script>
+
+<!-- Slick js-->
+<script th:src="@{/Frontend/assets/js/slick/slick.js}"></script>
+<script th:src="@{/Frontend/assets/js/slick/custom_slick.js}"></script>
+
+<!-- Apexcharts Js -->
+<script th:src="@{/Frontend/assets/js/apexchart.js}"></script>
+<script th:src="@{/Frontend/assets/js/custom-chart.js}"></script>
+
+<!-- Nav & tab upside js -->
+<script th:src="@{/Frontend/assets/js/nav-tab.js}"></script>
+
+<!-- script js -->
+<script th:src="@{/Frontend/assets/js/script.js}"></script>
+
+<!-- CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<!-- JS -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- theme setting js -->
+<script th:src="@{/Frontend/assets/js/theme-setting.js}"></script>
+</body>
+
+</html>

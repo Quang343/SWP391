@@ -72,10 +72,14 @@
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item">
                                 <a href="home">
-                                    <i class="fa-solid fa-house"></i>
+                                    <i class="fa-solid fa-house" title="Trang chủ"></i>
                                 </a>
                             </li>
-                            <li class="breadcrumb-item active">Trở thành người bán hàng</li>
+                            <li class="breadcrumb-item active">
+                                <a href="seller-become">
+                                    Trở thành người bán hàng
+                                </a>
+                            </li>
                         </ol>
                     </nav>
                 </div>
@@ -280,7 +284,7 @@
         <div class="seller-title h-100">
             <div class="row g-0"> <!-- g-0 để loại bỏ khoảng cách giữa cột -->
                 <div class="col-lg-6 p-4">
-                    <div class="seller-benefit-section h-100">
+                    <div class="seller-benefit-section h-60">
                         <h3 style="font-weight: bold; font-size: 25px">Quyền lợi</h3>
                         <p>
                             Khi bạn <strong>trở thành người bán hàng</strong> trên nền tảng AgriKho, bạn sẽ được
@@ -304,7 +308,7 @@
                                 <span><strong>Hỗ trợ kỹ thuật</strong>, quảng bá sản phẩm và ưu tiên hiển thị</span>
                             </li>
                         </ul>
-                        <div class="seller-benefit-note">
+                        <div class="seller-benefit-note" style="margin-bottom: 100%">
                             <strong>Lưu ý:</strong> Khi xác nhận trở thành người bán hàng, hệ thống sẽ <u>tạm
                             giữ 100.000₫ trong ví</u>. Trong thời gian hiệu lực hợp đồng, <u>bạn sẽ không thể
                             dùng ví để mua hàng</u> như tài khoản người dùng thông thường. Sau khi kết thúc hợp
@@ -314,11 +318,56 @@
                 </div>
                 <div class="col-lg-6 p-4">
                     <div class="seller-benefit-section h-100">
-                        <h3 style="font-weight: bold; font-size: 25px">Đăng ký bán hàng</h3>
+                        <div style="display: flex">
+                            <h3 style="font-weight: bold; font-size: 25px">Đăng ký bán hàng</h3>
 
-                        <!-- Bước 1: Đăng ký thời gian hợp đồng -->
+                            <!-- Nút Nạp tiền -->
+                            <a href="/AgriculturalWarehouseManagementApplication/profileUser"
+                               class="btn btn-outline-success shadow-sm"
+                               style="width: 70px; height: 40px; margin-left: auto; margin-right: 10px; position: sticky; top: 0; z-index: 1050; background-color: #a1b4bf;"
+                               title="Nạp tiền">
+                                <i class="bi-currency-exchange"></i>
+                            </a>
+
+                            <!-- Nút quản lý đơn -->
+                            <a href="/AgriculturalWarehouseManagementApplication/seller-application"
+                               id="sellerApplicationBtn"
+                               class="btn btn-outline-secondary shadow-sm position-relative"
+                               style="width: 70px; height: 40px; background-color: #a1b4bf;"
+                               title="Quản lý đơn đăng ký">
+                                <i class="bi bi-gear-fill"></i>
+
+                                <!-- Dot đỏ -->
+                                <span id="notificationDot"
+                                      class="position-absolute"
+                                      style="
+              top: 4px;
+              right: 4px;
+              width: 12px;
+              height: 12px;
+              background-color: red;
+              border-radius: 50%;
+              display: none;
+              box-shadow: 0 0 4px rgba(0,0,0,0.3);">
+    </span>
+
+                                <!-- Hộp thông báo nổi ở góc trên -->
+                                <span id="pendingNotification"
+                                      class="position-absolute notification-toast-top d-none shake-animation">
+        <i class="bi bi-chat-left-dots-fill me-1"></i>
+        Bạn có 1 đơn đang chờ phê duyệt
+    </span>
+                                <span id="approvedNotification"
+                                      class="position-absolute notification-toast-top d-none shake-animation">
+    <i class="bi bi-patch-check-fill me-1 text-success"></i>
+    Đơn đăng ký của bạn đã được phê duyệt!
+</span>
+                            </a>
+
+                        </div>
+                        <!-- Bước 1: Đăng ký thời hạn hợp đồng -->
                         <div class="card mb-3">
-                            <div class="card-header bg-light fw-bold">Bước 1: Đăng ký thời gian hợp đồng</div>
+                            <div class="card-header bg-light fw-bold">Bước 1: Đăng ký thời hạn hợp đồng</div>
                             <div class="card-body">
                                 <div class="mb-3">
                                     <label class="form-label">Loại hợp đồng</label>
@@ -327,21 +376,25 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="contractMonths" class="form-label">Chọn thời gian đăng ký <span
+                                    <label for="contractMonths" class="form-label">Thời hạn hợp đồng<span
                                             class="text-danger">*</span></label>
                                     <select id="contractMonths" class="form-select">
                                         <option value="">-- Chọn thời gian --</option>
                                         <option value="1">1 tháng</option>
-                                        <option value="3">3 tháng</option>
+                                        <option value="2">2 tháng</option>
+                                        <option value="4">4 tháng</option>
                                         <option value="6">6 tháng</option>
+                                        <option value="8">8 tháng</option>
+                                        <option value="10">10 tháng</option>
                                         <option value="12">12 tháng</option>
+                                        <option value="15">15 tháng</option>
                                         <option value="24">24 tháng</option>
                                     </select>
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label">Tổng tiền cần thanh toán</label>
-                                    <p id="totalAmount" class="fw-bold text-primary">0đ</p>
+                                    <p id="totalAmount" class="fw-bold text-danger">0₫</p>
                                 </div>
                             </div>
                         </div>
@@ -364,10 +417,26 @@
                             <div class="card-body">
                                 <p>Số dư ví hiện tại: <strong id="walletBalance" class="text-primary"
                                                               th:text="${#numbers.formatInteger(walletsResponse.getBalance(), 0, 'POINT') + '₫'}"
-                                >đ</strong>
+                                >₫</strong>
                                 </p>
-                                <p>Chi phí đăng ký: <strong id="contractFee" class="text-danger">0đ</strong></p>
-                                <button class="btn btn-outline-primary" id="btnPay" disabled>Đóng phí</button>
+                                <p>Chi phí đăng ký: <strong id="contractFee" class="text-danger">0₫</strong></p>
+                                <button class="btn shadow-sm"
+                                        id="btnPay"
+                                        style="
+            position: sticky;
+            top: 0;
+            z-index: 1050;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        "
+                                        disabled>
+                                    Xác nhận thanh toán
+                                </button>
                             </div>
                         </div>
 
@@ -392,13 +461,86 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
+
 </section>
 <!-- About Section End -->
 
 <style>
+    #approvedNotification {
+        background-color: #e6ffed; /* xanh nhạt */
+        color: #155724; /* xanh lá đậm */
+        border: 1px solid #c3e6cb;
+    }
+
+    #approvedNotification::after {
+        border-color: #e6ffed transparent transparent transparent;
+    }
+
+    /* Chấm đỏ */
+    .notification-dot {
+        top: 4px;
+        right: 4px;
+        width: 12px;
+        height: 12px;
+        background-color: red;
+        border-radius: 50%;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+        display: block;
+    }
+
+    /* Hộp thông báo */
+    .notification-toast-top {
+        top: -45px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #fff8e1;
+        color: #856404;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        white-space: nowrap;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        border: 1px solid #ffeeba;
+        z-index: 1051;
+        position: absolute;
+    }
+
+    /* Tam giác nhọn chỉ xuống */
+    .notification-toast-top::after {
+        content: "";
+        position: absolute;
+        bottom: -6px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 6px 6px 0 6px;
+        border-style: solid;
+        border-color: #fff8e1 transparent transparent transparent;
+    }
+
+    /* Hiệu ứng rung */
+    @keyframes shake {
+        0%, 100% {
+            transform: translateX(-50%) translateY(0);
+        }
+        25% {
+            transform: translateX(-50%) translateY(-2px);
+        }
+        50% {
+            transform: translateX(-50%) translateY(2px);
+        }
+        75% {
+            transform: translateX(-50%) translateY(-2px);
+        }
+    }
+
+    .shake-animation {
+        animation: shake 0.6s infinite;
+    }
+
     .seller-benefit-section {
         background: linear-gradient(135deg, #ffffff, #f9f9f9);
         padding: 30px;
@@ -538,7 +680,7 @@
     }
 </style>
 
-<!-- Modal -->
+<!-- Modal điều khoản-->
 <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
@@ -550,7 +692,7 @@
             <div class="modal-body">
                 <h6>1. Mục đích sử dụng</h6>
                 <p>
-                    Bạn đồng ý đăng ký trở thành người bán (Seller) để tham gia đăng và quản lý sản phẩm nông sản trên
+                    Bạn đồng ý đăng ký trở thành Người Bán Hàng để tham gia đăng và quản lý sản phẩm nông sản trên
                     hệ thống.
                 </p>
 
@@ -562,32 +704,37 @@
 
                 <h6>3. Về số dư ví</h6>
                 <p>
-                    Khi trở thành Seller, bạn sẽ <span class="highlight">không thể sử dụng ví</span> để mua hàng, nạp
+                    Khi trở thành Người Bán Hàng, bạn sẽ <span class="highlight">không thể sử dụng ví</span> để mua
+                    hàng, nạp
                     hoặc rút tiền. Ví của bạn sẽ
                     <span class="highlight">tạm khóa hoàn toàn</span> cho đến khi kết thúc hợp đồng và quay lại trạng
-                    thái User.
+                    thái Khách Hàng.
                 </p>
 
                 <h6>4. Quy trình xét duyệt</h6>
                 <ul>
-                    <li>Yêu cầu đăng ký chỉ hợp lệ khi bạn đã <span class="highlight">tải CV, chọn hợp đồng và đồng ý điều khoản</span>.
+                    <li>- Yêu cầu đăng ký chỉ hợp lệ khi bạn đã <span class="highlight">tải CV, chọn hợp đồng và đồng ý điều khoản</span>.
                     </li>
-                    <li>Admin sẽ <span class="highlight">xét duyệt hồ sơ</span> và kích hoạt quyền Seller nếu đủ điều
+                    <li>- Quản Trị Viên sẽ <span class="highlight">xét duyệt hồ sơ</span> và kích hoạt quyền Người Bán
+                        Hàng nếu
+                        đủ điều
                         kiện.
                     </li>
                 </ul>
 
                 <h6>5. Trách nhiệm và giới hạn</h6>
                 <ul>
-                    <li>Cam kết <span class="highlight">thông tin sản phẩm chính xác, minh bạch</span>.</li>
-                    <li>Không sử dụng tài khoản Seller để <span class="highlight">gian lận hoặc gây hại</span> cho người
+                    <li>- Cam kết <span class="highlight">thông tin sản phẩm chính xác, minh bạch</span>.</li>
+                    <li>- Không sử dụng tài khoản Bán Hàng để <span class="highlight">gian lận hoặc gây hại</span> cho
+                        người
                         dùng khác hoặc hệ thống.
                     </li>
                 </ul>
 
                 <h6>6. Kết thúc hợp đồng</h6>
                 <p>
-                    Khi kết thúc hợp đồng, tài khoản của bạn sẽ trở lại trạng thái User và <span class="highlight">ví sẽ được mở khóa để sử dụng bình thường</span>.
+                    Khi kết thúc hợp đồng, tài khoản của bạn sẽ trở lại trạng thái Khách hàng và <span
+                        class="highlight">ví sẽ được mở khóa để sử dụng bình thường</span>.
                 </p>
             </div>
             <div class="modal-footer">
@@ -600,38 +747,56 @@
 <!--Logic Đăng Ký-->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        const PREMIUM_PRICE = 100000; // 100.000đ / tháng
+
         const contractMonths = document.getElementById("contractMonths");
         const cvUpload = document.getElementById("cvUpload");
         const agreeTerms = document.getElementById("agreeTerms");
         const btnSubmit = document.getElementById("btnSubmit");
         const btnPay = document.getElementById("btnPay");
-
         const contractFee = document.getElementById("contractFee");
         const totalAmount = document.getElementById("totalAmount");
 
-        const PREMIUM_PRICE = 100000; // 100.000đ / tháng
-
-        // Theo dõi trạng thái các bước
         let isContractSelected = false;
         let isCVUploaded = false;
         let isAgreed = false;
         let isPaid = false;
 
+        // Kiểm tra điều kiện để bật nút Submit
+        function checkAllConditions() {
+            btnSubmit.disabled = !(isContractSelected && isCVUploaded && isAgreed && isPaid);
+        }
+
         // Bước 1: Chọn thời gian hợp đồng
         contractMonths.addEventListener("change", function () {
             const months = parseInt(contractMonths.value);
+            let discountRate = 0;
+
             if (!isNaN(months)) {
-                const amount = months * PREMIUM_PRICE;
-                totalAmount.innerText = amount.toLocaleString() + "đ";
-                contractFee.innerText = amount.toLocaleString() + "đ";
+                // Tính giảm giá theo số tháng
+                if (months >= 12) {
+                    discountRate = 0.25; // 25%
+                } else if (months >= 6) {
+                    discountRate = 0.15; // 15%
+                } else if (months >= 3) {
+                    discountRate = 0.10; // 10%
+                }
+
+                const originalTotal = months * PREMIUM_PRICE;
+                const discountedTotal = originalTotal * (1 - discountRate);
+
+                const formatted = discountedTotal.toLocaleString("vi-VN") + "₫";
+                totalAmount.textContent = formatted;
+                contractFee.textContent = formatted;
                 isContractSelected = true;
                 btnPay.disabled = false;
             } else {
-                totalAmount.innerText = "0đ";
-                contractFee.innerText = "0đ";
+                totalAmount.textContent = "0₫";
+                contractFee.textContent = "0₫";
                 isContractSelected = false;
                 btnPay.disabled = true;
             }
+
             checkAllConditions();
         });
 
@@ -639,7 +804,13 @@
         cvUpload.addEventListener("change", function () {
             const file = cvUpload.files[0];
             if (file) {
-                const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png'];
+                const allowedTypes = [
+                    'application/pdf',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'image/jpeg',
+                    'image/png'
+                ];
                 const maxSize = 5 * 1024 * 1024; // 5MB
 
                 if (allowedTypes.includes(file.type) && file.size <= maxSize) {
@@ -663,77 +834,71 @@
             checkAllConditions();
         });
 
-        // Bước 3: Đóng phí
-        btnPay.addEventListener("click", function () {
-            // Giả lập thanh toán thành công
-            btnPay.disabled = true;
-            btnPay.classList.remove("btn-outline-primary");
-            btnPay.classList.add("btn-success");
-            btnPay.innerText = "Đã thanh toán";
-            isPaid = true;
-            checkAllConditions();
-        });
-
-        // Bước 4: Đồng ý điều khoản
+        // Bước 3: Đồng ý điều khoản
         agreeTerms.addEventListener("change", function () {
             isAgreed = agreeTerms.checked;
             checkAllConditions();
         });
 
-        // Kiểm tra điều kiện để bật nút Submit
-        function checkAllConditions() {
-            btnSubmit.disabled = !(isContractSelected && isCVUploaded && isAgreed && isPaid);
-        }
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const contractMonths = document.getElementById("contractMonths");
-        const cvUpload = document.getElementById("cvUpload");
-        const agreeTerms = document.getElementById("agreeTerms");
-        const btnSubmit = document.getElementById("btnSubmit");
+        // Bước 4: Đóng phí
+        btnPay.addEventListener("click", function () {
+            const walletBalance = parseInt(document.getElementById("walletBalance").innerText.replace(/[^\d]/g, ''));
+            const contractAmount = parseInt(contractFee.innerText.replace(/[^\d]/g, ''));
 
-        function checkEnableSubmit() {
-            const hasMonths = contractMonths.value !== "";
-            const hasFile = cvUpload.files.length > 0;
-            const agreed = agreeTerms.checked;
-            btnSubmit.disabled = !(hasMonths && hasFile && agreed);
-        }
-
-        contractMonths.addEventListener("change", checkEnableSubmit);
-        cvUpload.addEventListener("change", checkEnableSubmit);
-        agreeTerms.addEventListener("change", checkEnableSubmit);
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const contractMonths = document.getElementById("contractMonths");
-        const totalAmount = document.getElementById("totalAmount");
-        const contractFee = document.getElementById("contractFee");
-        const btnPay = document.getElementById("btnPay");
-
-        contractMonths.addEventListener("change", function () {
-            const months = parseInt(this.value);
-            if (!isNaN(months)) {
-                const total = months * 100000;
-                const formatted = total.toLocaleString("vi-VN") + "đ";
-                totalAmount.textContent = formatted;
-                contractFee.textContent = formatted;
-                btnPay.disabled = false;
-            } else {
-                totalAmount.textContent = "0đ";
-                contractFee.textContent = "0đ";
-                btnPay.disabled = true;
+            if (walletBalance < contractAmount) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Số dư không đủ',
+                    html: `
+        <p>Bạn cần nạp thêm tiền vào ví để đăng ký.</p>
+        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+            <a href="/AgriculturalWarehouseManagementApplication/profileUser"
+               style="padding: 8px 16px; background-color: #007bff; color: white; border-radius: 5px; text-decoration: none;">
+               💰 Nạp tiền ngay
+            </a>
+            <button id="stayHereBtn"
+                    style="padding: 8px 16px; background-color: #6c757d; color: white; border: none; border-radius: 5px;">
+                Ở lại trang này
+            </button>
+        </div>
+    `,
+                    showConfirmButton: false,
+                    showCancelButton: false,
+                    didOpen: () => {
+                        document.getElementById("stayHereBtn").addEventListener("click", () => {
+                            Swal.close();
+                        });
+                    }
+                });
+                return;
             }
-        });
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const btnSubmit = document.getElementById("btnSubmit");
-        const contractMonths = document.getElementById("contractMonths");
-        const cvUpload = document.getElementById("cvUpload");
 
+            Swal.fire({
+                title: 'Xác nhận thanh toán',
+                text: 'Khi đơn được gửi đi, bạn sẽ mất phí. Bạn đã chắc chắn chưa?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    btnPay.disabled = true;
+                    btnPay.classList.remove("btn-outline-primary");
+                    isPaid = true;
+                    checkAllConditions();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã xác nhận',
+                        // text: 'Bạn đã đóng phí thành công.'
+                    });
+                    btnPay.classList.add("btn-success");
+                    btnPay.innerText = "Đã xác nhận";
+                }
+            });
+        });
+
+        // Bước 5: Gửi form đăng ký
         btnSubmit.addEventListener("click", async function () {
             const file = cvUpload.files[0];
             const months = contractMonths.value;
@@ -747,7 +912,6 @@
                 });
                 return;
             }
-
 
             const formData = new FormData();
             formData.append("contractMonths", months);
@@ -778,9 +942,8 @@
                     text: 'Gửi đơn đăng ký thành công!',
                     confirmButtonText: 'OK'
                 }).then(() => {
-                    location.reload(); // ✅ Reload lại trang sau khi bấm OK
+                    location.reload();
                 });
-                // redirect hoặc cập nhật giao diện ở đây nếu cần
             } catch (err) {
                 console.error("Lỗi khi gửi đơn:", err);
                 Swal.fire({
@@ -790,322 +953,85 @@
                     confirmButtonText: 'Đóng'
                 });
             }
-
         });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const userId = '[[${session.accountId}]]';
+        if (!userId) return;
+
+        fetch(`/AgriculturalWarehouseManagementApplication/api/seller/applications/check-status?userId=${userId}`)
+            .then(response => {
+                if (!response.ok) throw new Error("Network response was not ok");
+                return response.json();
+            })
+            .then(data => {
+                const dot = document.getElementById("notificationDot");
+                const pendingToast = document.getElementById("pendingNotification");
+                const approvedToast = document.getElementById("approvedNotification");
+
+                if (data.hasPending) {
+                    dot.style.display = "block";
+                    pendingToast.classList.remove("d-none");
+                    localStorage.setItem("applicationStatusFilter", "PENDING");
+                } else if (data.isApproved) {
+                    dot.style.display = "block";
+                    approvedToast.classList.remove("d-none");
+                    localStorage.setItem("applicationStatusFilter", "APPROVED");
+                } else {
+                    localStorage.setItem("applicationStatusFilter", "");
+                }
+            })
+            .catch(error => {
+                console.error("Lỗi khi kiểm tra trạng thái đơn đăng ký:", error);
+                localStorage.setItem("applicationStatusFilter", "");
+            });
     });
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<!-- Newsletter Section Start -->
+<section class="newsletter-section section-b-space">
+    <div class="container-fluid-lg">
+        <div class="newsletter-box newsletter-box-2">
+            <div class="newsletter-contain py-5">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xxl-4 col-lg-5 col-md-7 col-sm-9 offset-xxl-2 offset-md-1">
+                            <div class="newsletter-detail">
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+
+                                <!--                                <h2>Join our newsletter and get...</h2>-->
+                                <!--                                <h5>$20 discount for your first order</h5>-->
+                                <!--                                <div class="input-box">-->
+                                <!--                                    <input type="email" class="form-control" id="exampleFormControlInput1"-->
+                                <!--                                           placeholder="Enter Your Email">-->
+                                <!--                                    <i class="fa-solid fa-envelope arrow"></i>-->
+                                <!--                                    <button class="sub-btn  btn-animation">-->
+                                <!--                                        <span class="d-sm-block d-none">Subscribe</span>-->
+                                <!--                                        <i class="fa-solid fa-arrow-right icon"></i>-->
+                                <!--                                    </button>-->
+                                <!--                                </div>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Newsletter Section End -->
 
 <!-- Footer Section Start -->
 <footer th:replace="FrontEnd/fragments/footer::footer"></footer>
 <!-- Footer Section End -->
 
-<!-- Quick View Modal Box Start -->
-<div class="modal fade theme-modal view-modal" id="view" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-xl modal-fullscreen-sm-down">
-        <div class="modal-content">
-            <div class="modal-header p-0">
-                <button type="button" class="btn-close" data-bs-dismiss="modal">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row g-sm-4 g-2">
-                    <div class="col-lg-6">
-                        <div class="slider-image">
-                            <img src="../assets/images/product/category/1.jpg" class="img-fluid blur-up lazyload"
-                                 alt="">
-                        </div>
-                    </div>
-
-                    <div class="col-lg-6">
-                        <div class="right-sidebar-modal">
-                            <h4 class="title-name">Peanut Butter Bite Premium Butter Cookies 600 g</h4>
-                            <h4 class="price">$36.99</h4>
-                            <div class="product-rating">
-                                <ul class="rating">
-                                    <li>
-                                        <i data-feather="star" class="fill"></i>
-                                    </li>
-                                    <li>
-                                        <i data-feather="star" class="fill"></i>
-                                    </li>
-                                    <li>
-                                        <i data-feather="star" class="fill"></i>
-                                    </li>
-                                    <li>
-                                        <i data-feather="star" class="fill"></i>
-                                    </li>
-                                    <li>
-                                        <i data-feather="star"></i>
-                                    </li>
-                                </ul>
-                                <span class="ms-2">8 Reviews</span>
-                                <span class="ms-2 text-danger">6 sold in last 16 hours</span>
-                            </div>
-
-                            <div class="product-detail">
-                                <h4>Product Details :</h4>
-                                <p>Candy canes sugar plum tart cotton candy chupa chups sugar plum chocolate I love.
-                                    Caramels marshmallow icing dessert candy canes I love soufflé I love toffee.
-                                    Marshmallow pie sweet sweet roll sesame snaps tiramisu jelly bear claw. Bonbon
-                                    muffin I love carrot cake sugar plum dessert bonbon.</p>
-                            </div>
-
-                            <ul class="brand-list">
-                                <li>
-                                    <div class="brand-box">
-                                        <h5>Brand Name:</h5>
-                                        <h6>Black Forest</h6>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="brand-box">
-                                        <h5>Product Code:</h5>
-                                        <h6>W0690034</h6>
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <div class="brand-box">
-                                        <h5>Product Type:</h5>
-                                        <h6>White Cream Cake</h6>
-                                    </div>
-                                </li>
-                            </ul>
-
-                            <div class="select-size">
-                                <h4>Cake Size :</h4>
-                                <select class="form-select select-form-size">
-                                    <option selected>Select Size</option>
-                                    <option value="1.2">1/2 KG</option>
-                                    <option value="0">1 KG</option>
-                                    <option value="1.5">1/5 KG</option>
-                                    <option value="red">Red Roses</option>
-                                    <option value="pink">With Pink Roses</option>
-                                </select>
-                            </div>
-
-                            <div class="modal-button">
-                                <button onclick="location.href = 'cart.html';"
-                                        class="btn btn-md add-cart-button icon">Add
-                                    To Cart
-                                </button>
-                                <button onclick="location.href = 'product-left-thumbnail.html';"
-                                        class="btn theme-bg-color view-button icon text-white fw-bold btn-md">
-                                    View More Details
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Quick View Modal Box End -->
-
-<!-- Location Modal Start -->
-<div class="modal location-modal fade theme-modal" id="locationModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Choose your Delivery Location</h5>
-                <p class="mt-1 text-content">Enter your address and we will specify the offer for your area.</p>
-                <button type="button" class="btn-close" data-bs-dismiss="modal">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="location-list">
-                    <div class="search-input">
-                        <input type="search" class="form-control" placeholder="Search Your Area">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </div>
-
-                    <div class="disabled-box">
-                        <h6>Select a Location</h6>
-                    </div>
-
-                    <ul class="location-select custom-height">
-                        <li>
-                            <a href="javascript:void(0)">
-                                <h6>Alabama</h6>
-                                <span>Min: $130</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="javascript:void(0)">
-                                <h6>Arizona</h6>
-                                <span>Min: $150</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="javascript:void(0)">
-                                <h6>California</h6>
-                                <span>Min: $110</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="javascript:void(0)">
-                                <h6>Colorado</h6>
-                                <span>Min: $140</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="javascript:void(0)">
-                                <h6>Florida</h6>
-                                <span>Min: $160</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="javascript:void(0)">
-                                <h6>Georgia</h6>
-                                <span>Min: $120</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="javascript:void(0)">
-                                <h6>Kansas</h6>
-                                <span>Min: $170</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="javascript:void(0)">
-                                <h6>Minnesota</h6>
-                                <span>Min: $120</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="javascript:void(0)">
-                                <h6>New York</h6>
-                                <span>Min: $110</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="javascript:void(0)">
-                                <h6>Washington</h6>
-                                <span>Min: $130</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Location Modal End -->
-
-<!-- Deal Box Modal Start -->
-<div class="modal fade theme-modal deal-modal" id="deal-box" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div>
-                    <h5 class="modal-title w-100" id="deal_today">Deal Today</h5>
-                    <p class="mt-1 text-content">Recommended deals for you.</p>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="deal-offer-box">
-                    <ul class="deal-offer-list">
-                        <li class="list-1">
-                            <div class="deal-offer-contain">
-                                <a href="shop-left-sidebar.html" class="deal-image">
-                                    <img src="../assets/images/vegetable/product/10.png" class="blur-up lazyload"
-                                         alt="">
-                                </a>
-
-                                <a href="shop-left-sidebar.html" class="deal-contain">
-                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57
-                                        <del>57.62</del>
-                                        <span>500 G</span></h6>
-                                </a>
-                            </div>
-                        </li>
-
-                        <li class="list-2">
-                            <div class="deal-offer-contain">
-                                <a href="shop-left-sidebar.html" class="deal-image">
-                                    <img src="../assets/images/vegetable/product/11.png" class="blur-up lazyload"
-                                         alt="">
-                                </a>
-
-                                <a href="shop-left-sidebar.html" class="deal-contain">
-                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57
-                                        <del>57.62</del>
-                                        <span>500 G</span></h6>
-                                </a>
-                            </div>
-                        </li>
-
-                        <li class="list-3">
-                            <div class="deal-offer-contain">
-                                <a href="shop-left-sidebar.html" class="deal-image">
-                                    <img src="../assets/images/vegetable/product/12.png" class="blur-up lazyload"
-                                         alt="">
-                                </a>
-
-                                <a href="shop-left-sidebar.html" class="deal-contain">
-                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57
-                                        <del>57.62</del>
-                                        <span>500 G</span></h6>
-                                </a>
-                            </div>
-                        </li>
-
-                        <li class="list-1">
-                            <div class="deal-offer-contain">
-                                <a href="shop-left-sidebar.html" class="deal-image">
-                                    <img src="../assets/images/vegetable/product/13.png" class="blur-up lazyload"
-                                         alt="">
-                                </a>
-
-                                <a href="shop-left-sidebar.html" class="deal-contain">
-                                    <h5>Blended Instant Coffee 50 g Buy 1 Get 1 Free</h5>
-                                    <h6>$52.57
-                                        <del>57.62</del>
-                                        <span>500 G</span></h6>
-                                </a>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Deal Box Modal End -->
-
-<!-- Add to cart Modal Start -->
-<div class="add-cart-box">
-    <div class="add-image">
-        <img src="../assets/images/cake/pro/1.jpg" class="img-fluid" alt="">
-    </div>
-
-    <div class="add-contain">
-        <h6>Added to Cart</h6>
-    </div>
-</div>
-<!-- Add to cart Modal End -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <!-- Tap to top and theme setting button start -->
 <div class="theme-option">
