@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="FrontEnd/fragments/head::head"></head>
+
+
+<!--    shipper.html-->
+
+<body>
+
+<!-- Loader Start -->
+<div class="fullpage-loader">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+<!-- Loader End -->
+
+<!-- Header Start -->
+<head th:replace="FrontEnd/fragments/header::header"></head>
+<!-- Header End -->
+
+<!-- mobile fix menu start -->
+<div class="mobile-menu d-md-none d-block mobile-cart">
+    <ul>
+        <li class="active">
+            <a href="index.html">
+                <i class="iconly-Home icli"></i>
+                <span>Home</span>
+            </a>
+        </li>
+
+        <li class="mobile-category">
+            <a href="javascript:void(0)">
+                <i class="iconly-Category icli js-link"></i>
+                <span>Category</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="search.html" class="search-box">
+                <i class="iconly-Search icli"></i>
+                <span>Search</span>
+            </a>
+        </li>
+
+
+        <li>
+            <a href="cart.html">
+                <i class="iconly-Bag-2 icli fly-cate"></i>
+                <span>Cart</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- mobile fix menu end -->
+
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-0">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-contain">
+                    <h2>Shipper Dashboard</h2>
+                    <nav>
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item">
+                                <a href="home">
+                                    <i class="fa-solid fa-house"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active">Shipper Dashboard</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- User Dashboard Section Start -->
+<section class="user-dashboard-section section-b-space">
+    <div class="container-fluid-lg">
+        <div class="row">
+            <div class="col-xxl-3 col-lg-4">
+                <div class="dashboard-left-sidebar">
+                    <div class="close-button d-flex d-lg-none">
+                        <button class="close-sidebar">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="profile-box">
+                        <div class="cover-image position-relative">
+                            <img id="coverImage"
+                                 src="/AgriculturalWarehouseManagementApplication/Backend/assets/images/user/default-cover.jpg"
+                                 class="img-fluid blur-up lazyload" alt="">
+
+                            <!-- Nút chỉnh sửa ảnh bìa (sau này dùng tiếp được) -->
+                            <!--                            <button class="btn btn-sm btn-light position-absolute top-0 end-0 m-2 edit-cover-btn" title="Đổi ảnh bìa">-->
+                            <!--                                <i class="fa-solid fa-pen"></i>-->
+                            <!--                            </button>-->
+                        </div>
+
+
+                        <div class="profile-contain">
+                            <div class="profile-image">
+                                <div class="position-relative avatar-wrapper">
+                                    <img id="avatarImage"
+                                         src="/AgriculturalWarehouseManagementApplication/Backend/assets/images/user/default-avatar.png"
+                                         class="avatar-img" alt="">
+
+                                    <!-- Nút chỉnh sửa ảnh avatar -->
+                                    <button class="btn btn-sm btn-light position-absolute edit-avatar-btn"
+                                            title="Đổi ảnh đại diện">
+                                        <i class="fa-solid fa-camera"></i>
+                                    </button>
+
+
+                                    <!-- 🔍 Nút zoom -->
+                                    <button class="btn btn-sm btn-light position-absolute zoom-avatar-btn"
+                                            title="Phóng to ảnh">
+                                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                    </button>
+
+                                    <!-- File input -->
+                                    <input type="file" id="avatarInput" style="display: none;" accept="image/*">
+                                </div>
+                            </div>
+
+
+                            <div class="profile-name">
+                                <h3 id="usernameDisplay">username mặc định</h3>
+                                <h6 class="text-content" id="emailDisplay">email@example.com</h6>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <ul class="nav nav-pills user-nav-pills" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-profile" type="button" role="tab">
+                                <i data-feather="user"></i> Hồ sơ
+                            </button>
+                        </li>
+
+
+<!--                        <li class="nav-item" role="presentation">-->
+<!--                            <button class="nav-link" id="pills-product-tab" data-bs-toggle="pill"-->
+<!--                                    data-bs-target="#pills-product" type="button" role="tab">-->
+<!--                                <i data-feather="package"></i> Sản phẩm-->
+<!--                            </button>-->
+<!--                        </li>-->
+
+<!--                        <li class="nav-item" role="presentation">-->
+<!--                            <button class="nav-link" id="pills-product-detail-tab" data-bs-toggle="pill"-->
+<!--                                    data-bs-target="#pills-product-detail" type="button" role="tab">-->
+<!--                                <i data-feather="file-text"></i> Chi tiết sản phẩm-->
+<!--                            </button>-->
+<!--                        </li>-->
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pills-order-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-order" type="button" role="tab">
+                                <i data-feather="clipboard"></i> Đơn hàng
+                            </button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="pills-out-tab"
+                               href="http://localhost:8080/AgriculturalWarehouseManagementApplication/logoutUser" role="tab">
+                                <i data-feather="log-out"></i> Đăng xuất
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-xxl-9 col-lg-8">
+                <button class="btn left-dashboard-show btn-animation btn-md fw-bold d-block mb-4 d-lg-none">Show
+                    Menu
+                </button>
+                <div class="dashboard-right-sidebar">
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-dashboard" role="tabpanel">
+                            <div class="dashboard-home">
+                                <div class="title">
+                                    <h2>My Dashboard</h2>
+                                    <span class="title-leaf">
+                                            <svg class="icon-width bg-gray">
+                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                                            </svg>
+                                        </span>
+                                </div>
+
+                                <div class="dashboard-user-name">
+                                    <h6 class="text-content">Hello, <b class="text-title">Vicki E. Pope</b></h6>
+                                    <p class="text-content">From your My Account Dashboard you have the ability to
+                                        view a snapshot of your recent account activity and update your account
+                                        information. Select a link below to view or edit information.</p>
+                                </div>
+
+                                <div class="total-box">
+                                    <div class="row g-sm-4 g-3">
+                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
+                                            <div class="total-contain">
+                                                <img src="../assets/images/svg/order.svg"
+                                                     class="img-1 blur-up lazyload" alt="">
+                                                <img src="../assets/images/svg/order.svg" class="blur-up lazyload"
+                                                     alt="">
+                                                <div class="total-detail">
+                                                    <h5>Total Order</h5>
+                                                    <h3>3658</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
+                                            <div class="total-contain">
+                                                <img src="../assets/images/svg/pending.svg"
+                                                     class="img-1 blur-up lazyload" alt="">
+                                                <img src="../assets/images/svg/pending.svg" class="blur-up lazyload"
+                                                     alt="">
+                                                <div class="total-detail">
+                                                    <h5>Total Pending Order</h5>
+                                                    <h3>254</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
+                                            <div class="total-contain">
+                                                <img src="../assets/images/svg/wishlist.svg"
+                                                     class="img-1 blur-up lazyload" alt="">
+                                                <img src="../assets/images/svg/wishlist.svg"
+                                                     class="blur-up lazyload" alt="">
+                                                <div class="total-detail">
+                                                    <h5>Total Wishlist</h5>
+                                                    <h3>32158</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="dashboard-title">
+                                    <h3>Account Information</h3>
+                                </div>
+
+                                <div class="row g-4">
+                                    <div class="col-xxl-6">
+                                        <div class="dashboard-content-title">
+                                            <h4>Contact Information <a href="javascript:void(0)"
+                                                                       data-bs-toggle="modal"
+                                                                       data-bs-target="#editProfile">Edit</a>
+                                            </h4>
+                                        </div>
+                                        <div class="dashboard-detail">
+                                            <h6 class="text-content">MARK JECNO</h6>
+                                            <h6 class="text-content">vicki.pope@gmail.com</h6>
+                                            <a href="javascript:void(0)">Change Password</a>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xxl-6">
+                                        <div class="dashboard-content-title">
+                                            <h4>Newsletters <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                               data-bs-target="#editProfile">Edit</a></h4>
+                                        </div>
+                                        <div class="dashboard-detail">
+                                            <h6 class="text-content">You are currently not subscribed to any
+                                                newsletter</h6>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="dashboard-content-title">
+                                            <h4>Address Book <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                                data-bs-target="#editProfile">Edit</a></h4>
+                                        </div>
+
+                                        <div class="row g-4">
+                                            <div class="col-xxl-6">
+                                                <div class="dashboard-detail">
+                                                    <h6 class="text-content">Default Billing Address</h6>
+                                                    <h6 class="text-content">You have not set a default billing
+                                                        address.</h6>
+                                                    <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                       data-bs-target="#editProfile">Edit Address</a>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xxl-6">
+                                                <div class="dashboard-detail">
+                                                    <h6 class="text-content">Default Shipping Address</h6>
+                                                    <h6 class="text-content">You have not set a default shipping
+                                                        address.</h6>
+                                                    <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                       data-bs-target="#editProfile">Edit Address</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="tab-pane fade" id="pills-order" role="tabpanel">
+                            <div class="dashboard-order">
+                                <div class="title">
+                                    <h2>My Orders History</h2>
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Mã Đơn</th>
+                                        <th>Khách Hàng</th>
+                                        <th>Địa chỉ</th>
+                                        <th>SĐT</th>
+                                        <th>Ngày đặt</th>
+                                        <th>Thành tiền</th>
+                                        <th>Trạng thái</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="shipper-orders-tbody">
+                                    <!-- Dữ liệu sẽ render tại đây -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-profile" role="tabpanel">
+                            <div class="dashboard-profile">
+                                <div class="title d-flex justify-content-between align-items-center">
+                                    <h2>Hồ sơ</h2>
+                                </div>
+
+                                <!-- Thông tin cơ bản -->
+                                <div class="profile-tab dashboard-bg-box mb-3">
+                                    <h4 class="mb-3">🔹 Thông tin cơ bản</h4>
+                                    <ul>
+                                        <li class="editable-row" data-key="userId">
+                                            <h5>ID người dùng:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <span class="field-value"></span>
+                                                <input class="form-control form-control-sm d-none field-input"
+                                                       type="text" readonly>
+                                                <i class="bi bi-lock-fill text-muted ms-3"
+                                                   title="Không thể chỉnh sửa"></i>
+                                            </div>
+                                        </li>
+
+                                        <li class="editable-row" data-key="username">
+                                            <h5>Tên người dùng:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <span class="field-value"></span>
+                                                <input class="form-control form-control-sm d-none field-input"
+                                                       type="text">
+                                                <button class="btn btn-sm btn-outline-secondary ms-2 btn-edit"
+                                                        title="Chỉnh sửa">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            </div>
+                                            <small class="form-text text-muted d-none field-hint">Tên người dùng phải có
+                                                từ 3 đến 20 ký tự.</small>
+                                        </li>
+
+                                        <li class="editable-row" data-key="fullName">
+                                            <h5>Họ và tên:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <span class="field-value"></span>
+                                                <input class="form-control form-control-sm d-none field-input"
+                                                       type="text">
+                                                <button class="btn btn-sm btn-outline-secondary ms-2 btn-edit"
+                                                        title="Chỉnh sửa">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            </div>
+                                            <small class="form-text text-muted d-none field-hint">Họ và tên không được
+                                                để trống.</small>
+                                        </li>
+
+                                        <li class="editable-row" data-key="gender">
+                                            <h5>Giới tính:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <span class="field-value"></span>
+                                                <select class="form-select form-select-sm d-none field-input">
+                                                    <option>Nam</option>
+                                                    <option>Nữ</option>
+                                                    <option>Khác</option>
+                                                </select>
+                                                <button class="btn btn-sm btn-outline-secondary ms-2 btn-edit"
+                                                        title="Chỉnh sửa">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            </div>
+                                            <small class="form-text text-muted d-none field-hint">Chọn giới tính phù
+                                                hợp.</small>
+                                        </li>
+
+                                        <li class="editable-row" data-key="dob">
+                                            <h5>Ngày sinh:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <span class="field-value"></span>
+                                                <input class="form-control form-control-sm d-none field-input"
+                                                       type="date">
+                                                <button class="btn btn-sm btn-outline-secondary ms-2 btn-edit"
+                                                        title="Chỉnh sửa">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            </div>
+                                            <small class="form-text text-muted d-none field-hint">Vui lòng chọn ngày
+                                                sinh hợp lệ. Tuổi phải từ 10 đến 100</small>
+                                        </li>
+
+                                        <li>
+                                            <h5>Ngày tạo tài khoản:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <h5 class="createdAt mb-0">--/--/----</h5>
+                                                <i class="bi bi-lock-fill text-muted ms-3"
+                                                   title="Không thể chỉnh sửa"></i>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Thông tin liên lạc -->
+                                <div class="profile-tab dashboard-bg-box mb-3">
+                                    <h4 class="mb-3">🔹 Thông tin liên lạc</h4>
+                                    <ul>
+                                        <li>
+                                            <h5>Email:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <h5 class="email mb-0">example@email.com</h5>
+                                                <i class="bi bi-lock-fill text-muted ms-3"
+                                                   title="Không thể chỉnh sửa"></i>
+                                            </div>
+                                        </li>
+
+                                        <li class="editable-row" data-key="phone">
+                                            <h5>Số điện thoại:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <span class="field-value"></span>
+                                                <input class="form-control form-control-sm d-none field-input"
+                                                       type="text">
+                                                <button class="btn btn-sm btn-outline-secondary ms-2 btn-edit"
+                                                        title="Chỉnh sửa">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            </div>
+                                            <small class="form-text text-muted d-none field-hint">Số điện thoại gồm 10
+                                                chữ số, bắt đầu bằng 0.</small>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Thông tin đăng nhập -->
+                                <div class="profile-tab dashboard-bg-box">
+                                    <h4 class="mb-3">🔹 Thông tin đăng nhập</h4>
+                                    <ul>
+                                        <li>
+                                            <h5>Tài khoản (Email):</h5>
+                                            <div class="d-flex align-items-center">
+                                                <h5 class="account-email mb-0">--</h5>
+                                                <i class="bi bi-lock-fill text-muted ms-2"
+                                                   title="Không thể chỉnh sửa"></i>
+                                            </div>
+                                        </li>
+
+                                        <li class="editable-row" data-key="password">
+                                            <h5>Mật khẩu:</h5>
+                                            <div class="d-flex align-items-center">
+                                                <span class="field-value">******</span>
+
+                                                <!-- 🔒 Không cho chỉnh sửa trực tiếp -->
+                                                <!-- Có thể giữ input nếu bạn cần logic backend, nhưng nên disabled -->
+                                                <input type="password"
+                                                       class="form-control form-control-sm field-input d-none"
+                                                       disabled/>
+
+                                                <!-- 🔗 Nút đổi mật khẩu -->
+                                                <button type="button" id="btnEditPassword"
+                                                        class="btn btn-sm btn-outline-secondary ms-2"
+                                                        title="Đổi mật khẩu">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+
+                                <!-- Nút Huỷ & Lưu -->
+                                <div class="d-flex justify-content-end mt-4 gap-2">
+                                    <button id="cancel-edit" class="btn btn-outline-secondary" title="Huỷ các thay đổi">
+                                        <i class="bi bi-x-circle me-1"></i> Huỷ
+                                    </button>
+                                    <button id="save-edit" class="btn btn-primary" title="Lưu các thay đổi">
+                                        <i class="bi bi-save me-1"></i> Lưu thay đổi
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- User Dashboard Section End -->
+
+<!-- Footer Section Start -->
+<footer class="section-t-space">
+    <div th:replace="FrontEnd/fragments/footer :: footer"></div>
+</footer>
+<!-- Footer Section End -->
+
+
+<!-- Tap to top and theme setting button start -->
+<div class="theme-option">
+    <div class="setting-box">
+        <button class="btn setting-button">
+            <i class="fa-solid fa-gear"></i>
+        </button>
+
+        <div class="theme-setting-2">
+            <div class="theme-box">
+                <ul>
+                    <li>
+                        <div class="setting-name">
+                            <h4>Color</h4>
+                        </div>
+                        <div class="theme-setting-button color-picker">
+                            <form class="form-control">
+                                <label for="colorPick" class="form-label mb-0">Theme Color</label>
+                                <input type="color" class="form-control form-control-color" id="colorPick"
+                                       value="#0da487" title="Choose your color">
+                            </form>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>Dark</h4>
+                        </div>
+                        <div class="theme-setting-button">
+                            <button class="btn btn-2 outline" id="darkButton">Dark</button>
+                            <button class="btn btn-2 unline" id="lightButton">Light</button>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="setting-name">
+                            <h4>RTL</h4>
+                        </div>
+                        <div class="theme-setting-button rtl">
+                            <button class="btn btn-2 rtl-unline">LTR</button>
+                            <button class="btn btn-2 rtl-outline">RTL</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-to-top">
+        <a id="back-to-top" href="#">
+            <i class="fas fa-chevron-up"></i>
+        </a>
+    </div>
+</div>
+<!-- Tap to top and theme setting button end -->
+
+<!-- Bg overlay Start -->
+<div class="bg-overlay"></div>
+<!-- Bg overlay End -->
+
+
+<!-- latest jquery-->
+<script th:src="@{FrontEnd/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- jquery ui-->
+<script th:src="@{FrontEnd/assets/js/jquery-ui.min.js}"></script>
+
+<!-- Bootstrap js-->
+<script th:src="@{FrontEnd/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/bootstrap/bootstrap-notify.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/bootstrap/popper.min.js}"></script>
+
+<!-- feather icon js-->
+<script th:src="@{FrontEnd/assets/js/feather/feather.min.js}"></script>
+<script th:src="@{FrontEnd/assets/js/feather/feather-icon.js}"></script>
+
+<!-- Lazyload Js -->
+<script th:src="@{FrontEnd/assets/js/lazysizes.min.js}"></script>
+
+<!-- Slick js-->
+<script th:src="@{FrontEnd/assets/js/slick/slick.js}"></script>
+<script th:src="@{FrontEnd/assets/js/slick/custom_slick.js}"></script>
+
+<!-- Quantity js -->
+<script th:src="@{FrontEnd/assets/js/quantity-2.js}"></script>
+
+<!-- Nav & tab upside js -->
+<script th:src="@{FrontEnd/assets/js/nav-tab.js}"></script>
+
+<!-- script js -->
+<script th:src="@{FrontEnd/assets/js/script.js}"></script>
+
+<!-- theme setting js -->
+<script th:src="@{/FrontEnd/assets/js/theme-setting.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<!--Thêm thư viện-->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<!--Thêm thư viện End-->
+
+<!-- Modal đổi mật khẩu -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="changePasswordForm" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">Đổi mật khẩu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="currentPassword" class="form-label">Mật khẩu hiện tại</label>
+                    <input type="password" class="form-control" id="currentPassword" required minlength="6"/>
+                </div>
+                <div class="mb-3">
+                    <label for="newPassword" class="form-label">Mật khẩu mới</label>
+                    <input type="password" class="form-control" id="newPassword" required minlength="6"/>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới</label>
+                    <input type="password" class="form-control" id="confirmPassword" required minlength="6"/>
+                </div>
+                <div id="passwordError" class="text-danger d-none"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Huỷ</button>
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal xem ảnh -->
+<div class="modal fade" id="zoomAvatarModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3">
+            <img id="zoomAvatarImg" src="" alt="Zoomed Avatar" class="img-fluid rounded">
+        </div>
+    </div>
+</div>
+
+<!--1. Tab Profile-->
+<!--CSS Profile-->
+<style>
+    .zoom-avatar-btn {
+        bottom: 8px;
+        left: 8px;
+        border-radius: 50%;
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+
+    .avatar-wrapper {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        position: relative;
+        margin: auto;
+    }
+
+    .avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* 🔹 Đảm bảo ảnh lấp đầy khung */
+        object-position: center; /* 🔹 Lấy phần giữa ảnh */
+        border-radius: 50%;
+        display: block;
+    }
+
+
+    .edit-avatar-btn {
+        bottom: 8px;
+        right: 8px;
+        border-radius: 50%;
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+
+    .edit-avatar-btn, .edit-cover-btn {
+        border-radius: 50%;
+        padding: 5px 7px;
+    }
+
+    /* 🔹 Nút Hủy */
+    #cancel-edit {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #ced4da;
+        transition: all 0.2s ease-in-out;
+    }
+
+    #cancel-edit:hover {
+        background-color: #e2e6ea;
+        color: #495057;
+        border-color: #adb5bd;
+    }
+
+    /* 🔹 Nút Lưu */
+    #save-edit {
+        background-color: #198754;
+        color: #fff;
+        border: none;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+
+    #save-edit:hover {
+        background-color: #157347;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    #save-edit:active {
+        transform: scale(0.98);
+    }
+
+    /* 🔸 Responsive spacing nếu cần */
+    .profile-tab .btn {
+        min-width: 110px;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+    }
+</style>
+
+<!--CRUD profile-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const BASE_URL = "/AgriculturalWarehouseManagementApplication/api/shipper/user";
+        const originalValues = {};
+        let isEditing = false;
+        const userId = "[[${session.accountIdSeller}]]";
+        function loadUserData() {
+            fetch(`${BASE_URL}/by-id/${userId}`)
+                .then(res => res.json())
+                .then(data => {
+                    setField("userId", data.userId, true);
+                    setField("fullName", data.fullName);
+                    setField("gender", data.gender);
+                    setField("dob", data.dob);
+                    setField("phone", data.phone);
+                    setField("password", data.password);
+                    setField("username", data.username);
+
+                    document.querySelector(".createdAt").textContent = data.createdAt;
+                    document.querySelector(".email").textContent = data.email;
+                    document.querySelector(".account-email").textContent = data.email;
+                    document.getElementById('usernameDisplay').textContent = data.username;
+                    document.getElementById('emailDisplay').textContent = data.email;
+
+                    document.querySelectorAll(".editable-row").forEach(row => {
+                        const key = row.dataset.key;
+                        originalValues[key] = row.querySelector(".field-value").textContent.trim();
+                    });
+
+                    // ✅ Lưu userId vào localStorage
+                    localStorage.setItem("userId", data.userId);
+
+                    updateActionButtons();
+                })
+                .catch(err => {
+                    console.error("Lỗi khi lấy dữ liệu:", err);
+                    showAlert("Bạn cần cập nhât đầy đủ thông tin người dùng!", "info");
+                });
+        }
+
+        function setField(key, value, readOnly = false) {
+            const row = document.querySelector(`.editable-row[data-key="${key}"]`);
+            if (!row) return;
+
+            const span = row.querySelector(".field-value");
+            const input = row.querySelector(".field-input");
+
+            if (key === "dob") {
+                span.textContent = value;
+                input.value = convertToInputDate(value);
+            } else if (key === "password") {
+                span.textContent = "*".repeat(value.length);
+                input.value = value;
+            } else {
+                span.textContent = value;
+                input.value = value;
+            }
+
+            if (readOnly) {
+                const btn = row.querySelector(".btn-edit");
+                if (btn) btn.disabled = true;
+            }
+        }
+
+        function toggleEdit(button) {
+            const row = button.closest(".editable-row");
+            const key = row.dataset.key;
+            const span = row.querySelector(".field-value");
+            const input = row.querySelector(".field-input");
+            const hint = row.querySelector(".field-hint");
+
+            const isViewing = !span.classList.contains("d-none");
+
+            if (isViewing) {
+                span.classList.add("d-none");
+                input.classList.remove("d-none");
+                if (hint) hint.classList.remove("d-none");
+                button.innerHTML = '<i class="bi bi-check-lg"></i>';
+                input.focus();
+
+                // Đã bắt đầu chỉnh sửa
+                isEditing = true;
+                updateActionButtons();
+            } else {
+                let value = input.value.trim();
+                if (input.tagName === "SELECT") {
+                    value = input.options[input.selectedIndex].text;
+                }
+
+                if (key === "dob") {
+                    span.textContent = convertToDisplayDate(value);
+                } else if (key === "password") {
+                    span.textContent = "*".repeat(value.length);
+                } else {
+                    span.textContent = value;
+                }
+
+                span.classList.remove("d-none");
+                input.classList.add("d-none");
+                if (hint) hint.classList.add("d-none");
+                button.innerHTML = '<i class="bi bi-pencil-square"></i>';
+            }
+        }
+
+        document.getElementById("cancel-edit").addEventListener("click", () => {
+            for (const key in originalValues) {
+                const row = document.querySelector(`.editable-row[data-key="${key}"]`);
+                const span = row.querySelector(".field-value");
+                const input = row.querySelector(".field-input");
+                const hint = row.querySelector(".field-hint");
+
+                span.classList.remove("d-none");
+                input.classList.add("d-none");
+                if (hint) hint.classList.add("d-none");
+
+                const value = originalValues[key];
+                input.value = (key === "dob") ? convertToInputDate(value) : value;
+                span.textContent = (key === "password") ? "*".repeat(value.length) : value;
+
+                const btn = row.querySelector(".btn-edit");
+                if (btn && !btn.disabled) btn.innerHTML = '<i class="bi bi-pencil-square"></i>';
+            }
+
+            isEditing = false;
+            updateActionButtons();
+            // showAlert("Đã huỷ chỉnh sửa!", "info");
+        });
+
+        document.getElementById("save-edit").addEventListener("click", () => {
+            const updatedData = {};
+            let isValid = true;
+            let errorMessage = "";
+
+            document.querySelectorAll(".editable-row").forEach(row => {
+                const key = row.dataset.key;
+                const input = row.querySelector(".field-input");
+                let value = input.value.trim();
+
+                if (input.tagName === "SELECT") {
+                    value = input.options[input.selectedIndex].text;
+                }
+
+                switch (key) {
+                    case "fullName":
+                        if (!value.match(/^[A-Za-zÀ-ỹ\s]+$/)) {
+                            isValid = false;
+                            errorMessage = "Họ và tên không hợp lệ.";
+                        }
+                        break;
+                    case "gender":
+                        if (!["Nam", "Nữ", "Khác"].includes(value)) {
+                            isValid = false;
+                            errorMessage = "Giới tính không hợp lệ.";
+                        }
+                        break;
+                    case "dob":
+                        if (!value) {
+                            isValid = false;
+                            errorMessage = "Ngày sinh không được để trống.";
+                        } else {
+                            const today = new Date();
+                            const dob = new Date(value);
+                            const age = today.getFullYear() - dob.getFullYear();
+                            if (dob > today) {
+                                isValid = false;
+                                errorMessage = "Ngày sinh không được lớn hơn ngày hiện tại.";
+                            } else if (age < 10 || age > 100) {
+                                isValid = false;
+                                errorMessage = "Tuổi phải từ 10 đến 100.";
+                            }
+                        }
+                        break;
+                    case "phone":
+                        if (!value.match(/^0\d{9}$/)) {
+                            isValid = false;
+                            errorMessage = "Số điện thoại không hợp lệ.";
+                        }
+                        break;
+                    case "username":
+                        if (value.length < 4 || /\s/.test(value)) {
+                            isValid = false;
+                            errorMessage = "Tên đăng nhập phải tối thiểu 4 ký tự và không có khoảng trắng.";
+                        }
+                        break;
+                    case "password":
+                        if (value.length < 6) {
+                            isValid = false;
+                            errorMessage = "Mật khẩu phải có ít nhất 6 ký tự.";
+                        }
+                        break;
+                }
+
+                if (!isValid) return;
+
+                updatedData[key] = (key === "dob") ? convertToDisplayDate(value) : value;
+            });
+
+            if (!isValid) {
+                showAlert(errorMessage, "error");
+                return;
+            }
+
+            fetch(BASE_URL, {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(updatedData)
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error("Lỗi khi lưu");
+                    return res.json();
+                })
+                .then(() => {
+                    showAlert("Lưu thay đổi thành công!", "success");
+                    isEditing = false;
+                    updateActionButtons();
+                    setTimeout(() => location.reload(), 1500);
+                })
+                .catch(err => {
+                    console.error(err);
+                    showAlert("Đã xảy ra lỗi khi lưu!", "error");
+                });
+        });
+
+        document.addEventListener("keypress", function (e) {
+            if (e.key === "Enter" && e.target.classList.contains("field-input")) {
+                const row = e.target.closest(".editable-row");
+                toggleEdit(row.querySelector(".btn-edit"));
+            }
+        });
+
+        document.addEventListener("click", function (e) {
+            const btn = e.target.closest(".btn-edit");
+            if (btn) toggleEdit(btn);
+        });
+
+        function convertToInputDate(str) {
+            const [d, m, y] = str.split("/");
+            return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+        }
+
+        function convertToDisplayDate(str) {
+            const [y, m, d] = str.split("-");
+            return `${d}/${m}/${y}`;
+        }
+
+        function updateActionButtons() {
+            const saveBtn = document.getElementById("save-edit");
+            const cancelBtn = document.getElementById("cancel-edit");
+
+            if (isEditing) {
+                saveBtn.removeAttribute("disabled");
+                cancelBtn.removeAttribute("disabled");
+                saveBtn.classList.remove("btn-outline-secondary");
+                saveBtn.classList.add("btn-primary");
+            } else {
+                saveBtn.setAttribute("disabled", true);
+                cancelBtn.setAttribute("disabled", true);
+                saveBtn.classList.remove("btn-primary");
+                saveBtn.classList.add("btn-outline-secondary");
+            }
+        }
+
+        function showAlert(message, type = 'success') {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: type,
+                title: message,
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                background: '#fefefe',
+                color: '#333'
+            });
+        }
+
+        const changePasswordModal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+        const changePasswordForm = document.getElementById('changePasswordForm');
+        const passwordErrorDiv = document.getElementById('passwordError');
+
+        document.getElementById('btnEditPassword').addEventListener('click', () => {
+            changePasswordForm.reset();
+            passwordErrorDiv.classList.add('d-none');
+            passwordErrorDiv.textContent = '';
+            changePasswordModal.show();
+        });
+
+        changePasswordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const userId = "[[${session.accountIdSeller}]]";
+            ; // thay thành ID user thực tế
+            const currentPassword = document.getElementById('currentPassword').value.trim();
+            const newPassword = document.getElementById('newPassword').value.trim();
+            const confirmPassword = document.getElementById('confirmPassword').value.trim();
+
+            if (newPassword !== confirmPassword) {
+                passwordErrorDiv.textContent = "Mật khẩu mới và xác nhận không khớp.";
+                passwordErrorDiv.classList.remove('d-none');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                passwordErrorDiv.textContent = "Mật khẩu mới phải có ít nhất 6 ký tự.";
+                passwordErrorDiv.classList.remove('d-none');
+                return;
+            }
+
+            if (newPassword === currentPassword) {
+                passwordErrorDiv.textContent = "Mật khẩu mới không được trùng mật khẩu hiện tại.";
+                passwordErrorDiv.classList.remove('d-none');
+                return;
+            }
+
+
+            fetch('/AgriculturalWarehouseManagementApplication/api/seller/user/change-password', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    userId: userId,
+                    currentPassword: currentPassword,
+                    newPassword: newPassword
+                })
+            })
+                .then(async res => {
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                        const errorMessage = data.error || 'Lỗi khi đổi mật khẩu';
+                        throw new Error(errorMessage);
+                    }
+
+                    // ✅ Hiển thị alert thành công
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đổi mật khẩu thành công!',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        willClose: () => {
+                            // ✅ Reload sau khi alert đóng
+                            location.reload();
+                        }
+                    });
+
+                    changePasswordModal.hide();
+                })
+                .catch(err => {
+                    passwordErrorDiv.textContent = err.message || "Lỗi không xác định.";
+                    passwordErrorDiv.classList.remove('d-none');
+                });
+
+        });
+
+        loadUserData();
+    });
+</script>
+
+<!--Avatar-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const userId = "[[${session.accountIdSeller}]]"; // ⚠️ Replace with dynamic userId if needed
+        const BASE = "/AgriculturalWarehouseManagementApplication";
+
+        const avatarImg = document.getElementById("avatarImage");
+        const input = document.getElementById("avatarInput");
+        const editBtn = document.querySelector(".edit-avatar-btn");
+
+        // 📌 Gắn sự kiện click để mở input
+        if (editBtn && input) {
+            editBtn.addEventListener("click", () => input.click());
+        }
+
+        // 📌 Gắn sự kiện change để upload
+        input.addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            fetch(`${BASE}/api/seller/user/${userId}/avatar`, {
+                method: "POST",
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.avatarUrl) {
+                        // ✅ Cập nhật src avatar và thêm timestamp để tránh cache
+                        avatarImg.src = BASE + data.avatarUrl + "?t=" + new Date().getTime();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: 'Cập nhật ảnh đại diện thành công!',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi hiển thị ảnh',
+                            text: 'Định dạng ảnh có thể không được hỗ trợ.'
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error("Lỗi khi upload ảnh:", err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi upload',
+                        text: 'Không thể upload ảnh.'
+                    });
+                });
+
+        });
+
+        // 📌 Load avatar ban đầu
+        fetch(`${BASE}/api/seller/user/by-id/${userId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.image) {
+                    avatarImg.src = BASE + `/seller/${data.userId}/${data.image}?t=` + new Date().getTime();
+                } else {
+                    avatarImg.src = BASE + `/Backend/assets/images/user/default-avatar.png?t=` + new Date().getTime();
+                    // avatarImg.src = data.image
+                }
+
+            });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const zoomBtn = document.querySelector(".zoom-avatar-btn");
+        const zoomImg = document.getElementById("zoomAvatarImg");
+        const avatarImg = document.getElementById("avatarImage");
+
+        if (zoomBtn && zoomImg && avatarImg) {
+            zoomBtn.addEventListener("click", () => {
+                zoomImg.src = avatarImg.src;
+                new bootstrap.Modal(document.getElementById("zoomAvatarModal")).show();
+            });
+        }
+    });
+
+</script>
+<!--Tab Profile End-->
+
+<!--Reload giữ nguyên tab-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tabLinks = document.querySelectorAll('.user-nav-pills .nav-link');
+
+        // Gỡ class active/show để đảm bảo reset trước
+        document.querySelectorAll('.user-nav-pills .nav-link, .tab-pane').forEach(el => {
+            el.classList.remove("active", "show");
+        });
+
+        // Kích hoạt tab đã lưu
+        const savedTabId = localStorage.getItem("activeSidebarTab");
+        const savedTab = savedTabId ? document.getElementById(savedTabId) : null;
+
+        if (savedTab) {
+            new bootstrap.Tab(savedTab).show(); // Bootstrap tự xử lý class active/show
+        } else {
+            const defaultTab = document.querySelector('.user-nav-pills .nav-link');
+            if (defaultTab) new bootstrap.Tab(defaultTab).show();
+        }
+
+        // Ghi lại khi chuyển tab
+        tabLinks.forEach(tab => {
+            tab.addEventListener("shown.bs.tab", function (e) {
+                localStorage.setItem("activeSidebarTab", e.target.getAttribute("id"));
+            });
+        });
+    });
+</script>
+
+</body>
+
+</html>
