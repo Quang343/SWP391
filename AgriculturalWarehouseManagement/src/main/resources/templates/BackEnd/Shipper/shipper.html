@@ -221,7 +221,14 @@
                                     <tr>
                                         <th>STT</th>
                                         <th>Mã đơn hàng</th>
-                                        <th>Ngày đặt</th>
+                                        <th style="white-space: nowrap;">
+                                            <div class="d-flex align-items-center">
+                                                <span>Ngày đặt</span>
+                                                <button id="sortDateBtn" class="btn btn-sm ms-1 p-0 border-0 bg-transparent">
+                                                    <i class="fa-solid fa-sort text-success"></i>
+                                                </button>
+                                            </div>
+                                        </th>
                                         <th>SĐT</th>
                                         <th>Địa chỉ</th>
                                         <th>Tổng tiền (VNĐ)</th>
@@ -585,6 +592,17 @@
 <!--1. Tab Profile-->
 <!--CSS Profile-->
 <style>
+
+    #sortDateBtn {
+        color: #19a877;
+        padding: 2px 6px;
+    }
+
+    #sortDateBtn:hover {
+        background-color: #e5f6ee;
+        border-radius: 4px;
+    }
+
     .zoom-avatar-btn {
         bottom: 8px;
         left: 8px;
@@ -665,7 +683,64 @@
     }
 </style>
 
+<style>
+    .img-fluid {
+        width: 250px;
+        height: auto;
+        object-fit: cover; /* hoặc 'contain' tuỳ theo nhu cầu */
+        border-radius: 10px;
+    }
 
+    .progtrckr li {
+        margin-top: 10px;
+    }
+
+    .progtrckr {
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        padding: 0;
+        margin: 20px 0;
+    }
+
+    .progtrckr li {
+        width: 100%;
+        text-align: center;
+        position: relative;
+    }
+
+    .progtrckr li::before {
+        content: '●';
+        display: block;
+        margin: 0 auto 10px;
+        font-size: 20px;
+    }
+
+    .progtrckr-done::before {
+        color: green;
+    }
+
+    .progtrckr-todo::before {
+        color: lightgray;
+    }
+
+    .progtrckr li:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        height: 2px;
+        width: 100%;
+        background-color: lightgray;
+        z-index: -1;
+    }
+
+    .progtrckr-done + li::after {
+        background-color: green;
+    }
+
+
+</style>
 
 <!--CRUD profile-->
 <script>
@@ -983,7 +1058,7 @@
             }
 
 
-            fetch('/AgriculturalWarehouseManagementApplication/api/seller/user/change-password', {
+            fetch('/AgriculturalWarehouseManagementApplication/api/shipper/user/change-password', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -1028,7 +1103,7 @@
 <!--Avatar-->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const userId = "[[${session.accountIdSeller}]]"; // ⚠️ Replace with dynamic userId if needed
+        const userId = "[[${session.accountIdShipper}]]"; // ⚠️ Replace with dynamic userId if needed
         const BASE = "/AgriculturalWarehouseManagementApplication";
 
         const avatarImg = document.getElementById("avatarImage");
@@ -1084,7 +1159,7 @@
         });
 
         // 📌 Load avatar ban đầu
-        fetch(`${BASE}/api/seller/user/by-id/${userId}`)
+        fetch(`${BASE}/api/shipper/user/by-id/${userId}`)
             .then(res => res.json())
             .then(data => {
                 if (data.image) {
@@ -1112,6 +1187,21 @@
 
 </script>
 <!--Tab Profile End-->
+
+<script>
+    let sortAsc = true;
+
+    document.getElementById("sortDateBtn").addEventListener("click", function () {
+        allOrders.sort((a, b) => {
+            const dateA = new Date(a.orderDate);
+            const dateB = new Date(b.orderDate);
+            return sortAsc ? dateA - dateB : dateB - dateA;
+        });
+
+        sortAsc = !sortAsc;
+        gotoPage(1); // render lại trang đầu tiên sau khi sort
+    });
+</script>
 
 
 <!-- Đơn Hàng-->

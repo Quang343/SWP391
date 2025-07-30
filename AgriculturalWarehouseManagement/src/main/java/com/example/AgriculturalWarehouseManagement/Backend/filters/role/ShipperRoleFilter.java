@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
+//@author: Đào Huy Hoàng
+
 @WebFilter("/shipper/*") // Áp dụng filter cho tất cả các trang
 public class ShipperRoleFilter implements Filter {
 
@@ -32,7 +34,7 @@ public class ShipperRoleFilter implements Filter {
         // Lấy đối tượng User từ session (account)
         UserResponse account = (UserResponse) session.getAttribute("accountShipper");
 
-        // Kiểm tra nếu không có tài khoản hoặc tài khoản không có quyền ADMIN
+        // Kiểm tra nếu không có tài khoản hoặc tài khoản không có quyền SHIPPER
         if (account == null || !account.getRole().getRoleName().equalsIgnoreCase("SHIPPER")) {
 
             session.invalidate();
@@ -40,7 +42,6 @@ public class ShipperRoleFilter implements Filter {
             return;
         }
 
-        // Nếu có quyền ADMIN hoặc SELLER, tiếp tục cho phép yêu cầu đi qua
         chain.doFilter(request, response);
     }
 
