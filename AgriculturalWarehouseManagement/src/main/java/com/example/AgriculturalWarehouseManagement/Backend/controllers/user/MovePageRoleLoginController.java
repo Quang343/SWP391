@@ -72,7 +72,14 @@ public class MovePageRoleLoginController {
                 UserResponse userResponse = userCustomerService.getUser(userEntity);
                 session.setAttribute("accountWarehouse", userResponse);
                 return "redirect:/warehouse";
+            }else if (userEntity.getRole().getRoleName().equalsIgnoreCase("SHIPPER")) {
+                // Hoàng thêm
+                UserResponse userResponse = userCustomerService.getUser(userEntity);
+                session.setAttribute("accountShipper", userResponse);
+                session.setAttribute("accountIdShipper", userResponse.getUserID());
+                return "redirect:/shipper";
             }
+
 
             session.invalidate();
             return "redirect:/login";
