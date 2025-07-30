@@ -275,8 +275,7 @@
                                   enctype="multipart/form-data"
                                   class="profile-image">
                                 <div class="position-relative">
-                                    <img th:if="${session.account.imageUrl != null and session.account.getImageUrl !='' and !#strings.startsWith(session.account.getImageUrl, '/')}"
-                                         }
+                                    <img th:if="${session.account.imageUrl != null and session.account.getImageUrl !='' and !#strings.startsWith(session.account.getImageUrl, 'https://lh3.googleusercontent.com/')}"
                                          th:src="${'seller/'+session.account.getUserID +'/'+session.account.imageUrl}"
                                          class="blur-up lazyload update_img" alt="more image"
                                          accept=".jpg,.jpeg,.png,.gif,image/*">

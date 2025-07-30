@@ -45,10 +45,25 @@
                 </li>
                 <li class="profile-nav onhover-dropdown pe-0 me-0">
                     <div class="media profile-media">
-                        <img class="user-profile rounded-circle" th:src="@{/Backend/assets/images/avatar.png}" alt="">
+                        <img th:if="${session.accountWarehouse.imageUrl != null and session.accountWarehouse.getImageUrl !='' and !#strings.startsWith(session.accountWarehouse.getImageUrl, 'https://lh3.googleusercontent.com/')}"
+                             th:src="${'seller/'+session.accountWarehouse.getUserID +'/'+session.accountWarehouse.imageUrl}"
+                             class="user-profile rounded-circle" alt="more image"
+                             accept=".jpg,.jpeg,.png,.gif,image/*">
+
+                        <img th:if="${session.accountWarehouse.imageUrl != null and #strings.startsWith(session.accountWarehouse.imageUrl, 'https://lh3.googleusercontent.com/')}"
+                             th:src="${session.accountWarehouse.imageUrl}"
+                             class="user-profile rounded-circle" alt="more image"
+                             accept=".jpg,.jpeg,.png,.gif,image/*">
+
+
+                        <img th:if="${session.accountWarehouse.imageUrl != null and session.accountWarehouse.getImageUrl == ''}"
+                             th:src="@{/Backend/assets/images/avatar.png}"
+                             class="user-profile rounded-circle" alt="more image"
+                             accept=".jpg,.jpeg,.png,.gif,image/*">
+<!--                        <img class="user-profile rounded-circle" th:src="@{/Backend/assets/images/avatar.png}" alt="">-->
                         <div class="user-name-hide media-body">
-                            <span>Quản kho</span>
-                            <p class="mb-0 font-roboto">Quản Kho<i class="middle ri-arrow-down-s-line"></i></p>
+                            <span th:if="${session.accountWarehouse != null}"  th:text="${session.accountWarehouse.getUserName}">Tên Quản kho</span>
+                            <p  th:if="${session.accountWarehouse != null}"  th:text="${session.accountWarehouse.getEmail}" class="mb-0 font-roboto">Email Quản Kho<i class="middle ri-arrow-down-s-line"></i></p>
                         </div>
                     </div>
                     <ul class="profile-dropdown onhover-show-div">
