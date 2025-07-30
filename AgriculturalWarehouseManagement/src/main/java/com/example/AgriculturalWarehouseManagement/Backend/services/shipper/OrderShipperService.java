@@ -15,10 +15,10 @@ public class OrderShipperService {
     private final OrderShipperRepository orderRepository;
 
     /**
-     * Lấy tất cả đơn hàng đang ở trạng thái DELIVERED (đang được giao bởi shipper)
+     * Lấy tất cả đơn hàng trạng thái STOCKOUT (đang chờ shipper giao)
      */
     public List<Order_SellerDTO> getDeliveredOrdersForShipper() {
-        List<Order> orders = orderRepository.findByStatus("DELIVERED");
+        List<Order> orders = orderRepository.findByStatus("STOCKOUT");
         return orders.stream()
                 .map(this::convertToDTO)
                 .toList();
@@ -34,32 +34,32 @@ public class OrderShipperService {
     }
 
     /**
-     * Xác nhận đơn hàng đã giao thành công → chuyển trạng thái sang COMPLETED
+     * Xác nhận đơn hàng đã giao thành công → STOCKOUT → DELIVERED
      */
     public void confirmDelivered(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
 
-        if (!"DELIVERED".equals(order.getStatus())) {
-            throw new IllegalStateException("Chỉ có thể xác nhận đơn hàng đang ở trạng thái DELIVERED");
+        if (!"STOCKOUT".equals(order.getStatus())) {
+            throw new IllegalStateException("Chỉ có thể xác nhận đơn hàng đang ở trạng thái STOCKOUT");
         }
 
-        order.setStatus("COMPLETED");
+        order.setStatus("DELIVERED");
         orderRepository.save(order);
     }
 
     /**
-     * Huỷ đơn hàng vì lý do giao không thành công (bị bom hàng) → CANCELLED
+     * Huỷ đơn hàng (bom hàng) → giữ nguyên STOCKOUT
      */
     public void cancelDelivery(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
 
-        if (!"DELIVERED".equals(order.getStatus())) {
-            throw new IllegalStateException("Chỉ có thể huỷ đơn hàng đang ở trạng thái DELIVERED");
+        if (!"STOCKOUT".equals(order.getStatus())) {
+            throw new IllegalStateException("Chỉ có thể huỷ đơn hàng đang ở trạng thái STOCKOUT");
         }
 
-        order.setStatus("CANCELLED");
+        // Không thay đổi trạng thái, giữ nguyên STOCKOUT
         orderRepository.save(order);
     }
 
