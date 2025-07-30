@@ -392,7 +392,7 @@
 
         // Hiện PREVIOUS nếu không phải trang 1
         if (currentPage > 1) {
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage - 1});return false;">PREVIOUS</a></li>`;
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage - 1});return false;"> &lt; TRANG TRƯỚC</a></li>`;
         }
 
         // Luôn hiện trang 1
@@ -420,7 +420,7 @@
 
         // Hiện NEXT nếu không phải trang cuối
         if (currentPage < totalPages) {
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage + 1});return false;">NEXT</a></li>`;
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage + 1});return false;">TRANG SAU &gt;</a></li>`;
         }
 
         document.getElementById("pagination").innerHTML = html;

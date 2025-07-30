@@ -12,3 +12,6 @@ public class ShipperController {
     }
 
 }
+
+//INSERT INTO managerwarehouse.role (RoleID, RoleName, Status, description)
+//VALUES (6, 'SHIPPER', 'Active', 'Người giao hàng');

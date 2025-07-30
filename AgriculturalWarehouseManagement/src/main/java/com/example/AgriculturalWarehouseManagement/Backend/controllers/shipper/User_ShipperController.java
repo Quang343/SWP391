@@ -37,7 +37,7 @@ public class User_ShipperController {
     // 🔹 Tạm thời: Lấy thông tin user theo userId (do chưa có session)
     @GetMapping("/by-id/{id}")
     public ResponseEntity<User_SellerDTO> getUserProfileById(@PathVariable Long id) {
-        return userService.getUserById(40L) // truyền tạm 40L sau truyền lại id
+        return userService.getUserById(id) // truyền tạm 40L sau truyền lại id
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
