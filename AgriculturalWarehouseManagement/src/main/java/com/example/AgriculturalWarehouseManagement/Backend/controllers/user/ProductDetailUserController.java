@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -54,6 +55,16 @@ public class ProductDetailUserController {
 
         // View gallery
         List<GalleryUserResponse> galleryUserResponses = shopDetailService.getGalleryUsers(productId);
+        if (galleryUserResponses == null || galleryUserResponses.isEmpty()) {
+            galleryUserResponses = new ArrayList<>();
+
+            GalleryUserResponse galleryUserResponse = new GalleryUserResponse();
+            galleryUserResponse.setProductId(0);
+            galleryUserResponse.setGalleryId(0);
+            galleryUserResponse.setImageUrl("");
+
+            galleryUserResponses.add(galleryUserResponse);
+        }
         model.addAttribute("galleryUserResponses", galleryUserResponses);
 
         // View Description
@@ -79,7 +90,7 @@ public class ProductDetailUserController {
         String productName = shopDetailService.getProductNameUser(productId);
         model.addAttribute("imageUrl", imageUrl);
         for (ProductDetailUserResponse productDetailUserResponse : productDetailUserResponses) {
-            System.out.println("hello2"+productDetailUserResponse);
+            System.out.println("hello2" + productDetailUserResponse);
         }
         model.addAttribute("productName", productName);
         model.addAttribute("productId", productId);
@@ -88,21 +99,36 @@ public class ProductDetailUserController {
         List<ViewCommentProductUserResponse> viewCommentProductUserResponses = commentProductUserService.getViewCommentProuducts(productId);
         model.addAttribute("viewCommentProductUserResponses", viewCommentProductUserResponses);
 
+        // View seller
+        if (productDetailUserResponses == null || productDetailUserResponses.isEmpty()) {
+            model.addAttribute("emailSeller", "Chưa có người bán");
+        } else {
+            if (productDetailId  == 0){
+                int productDetailNewId = productDetailUserResponses.get(0).getProductDetailId();
+                ViewSellerResponse viewSellerResponse = productDetailUserService.getViewSellerProductDetailObject(productDetailNewId);
+                model.addAttribute("emailSeller", viewSellerResponse.getEmailSeller());
+            } else {
+                ViewSellerResponse viewSellerResponse = productDetailUserService.getViewSellerProductDetailObject(productDetailId);
+                model.addAttribute("emailSeller", viewSellerResponse.getEmailSeller());
+            }
+        }
+
+
         // View Weights
         List<WeightCompareProductDetailsResponse> weightProductDetailsResponses = productDetailUserService.getcompareProductDetails(productId);
         model.addAttribute("weightProductDetailsResponses", weightProductDetailsResponses);
-        if (productDetailId == 0){
+        if (productDetailId == 0) {
             model.addAttribute("productDetailId", weightProductDetailsResponses.isEmpty() ? 0 : weightProductDetailsResponses.get(0).getProductDetailId());
             model.addAttribute("categoryWeightId", weightProductDetailsResponses.isEmpty() ? 0 : weightProductDetailsResponses.get(0).getCategoryWeightId());
             model.addAttribute("priceProductDetail", weightProductDetailsResponses.isEmpty() ? 0 : weightProductDetailsResponses.get(0).getPrice());
 
-            if (!weightProductDetailsResponses.isEmpty()){
+            if (!weightProductDetailsResponses.isEmpty()) {
                 ProductDetailUserResponse productDetailUserResponse = productDetailUserService.getProductDetailUsers(weightProductDetailsResponses.get(0).getProductDetailId());
                 model.addAttribute("productDetailUserResponse", productDetailUserResponse);
             }
 
             session.setAttribute("productId", productId);
-            session.setAttribute("productDetailId",  weightProductDetailsResponses.isEmpty() ? 0 : weightProductDetailsResponses.get(0).getProductDetailId());
+            session.setAttribute("productDetailId", weightProductDetailsResponses.isEmpty() ? 0 : weightProductDetailsResponses.get(0).getProductDetailId());
 
 
         } else {
@@ -119,24 +145,24 @@ public class ProductDetailUserController {
             model.addAttribute("productDetailUserResponse", productDetailUserResponse);
 
             session.setAttribute("productId", productId);
-            session.setAttribute("productDetailId",  productDetailId);
+            session.setAttribute("productDetailId", productDetailId);
 
-            if (quantity > 0){
-                ResponseResult<ProductDetailUserResponse> result = productDetailUserService.checkQuantityProduct(quantity,productDetailId);
-                if (result.isActive()){
+            if (quantity > 0) {
+                ResponseResult<ProductDetailUserResponse> result = productDetailUserService.checkQuantityProduct(quantity, productDetailId);
+                if (result.isActive()) {
                     session.removeAttribute("productId");
                     session.removeAttribute("productDetailId");
 
-                    session.setAttribute("productDetailIdCart",  productDetailId);
-                    session.setAttribute("quantityCart",  quantity);
+                    session.setAttribute("productDetailIdCart", productDetailId);
+                    session.setAttribute("quantityCart", quantity);
 
                     return "redirect:/cart";
                 } else {
                     model.addAttribute("quantityError", result.getMessage());
                 }
-            } else if( quantity == 0) {
+            } else if (quantity == 0) {
                 model.addAttribute("quantityError", "Số lượng bạn nhập không được bằng 0");
-            } else if (quantity < -1 ){
+            } else if (quantity < -1) {
                 model.addAttribute("quantityError", "Số lượng bạn nhập không được nhỏ hơn 0");
             }
 
@@ -166,7 +192,7 @@ public class ProductDetailUserController {
             model.addAttribute("totalCart", totalCart);
         }
 
-        return"FrontEnd/Home/productDetail";
+        return "FrontEnd/Home/productDetail";
     }
 
     @PostMapping("/commentProduct")

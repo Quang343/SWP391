@@ -174,7 +174,7 @@
                             <h6 th:text="${'Order code: ' + rightNavOrderDetailUserResponses.orderCode}">Order code</h6>
                         </div>
 
-                        <div class="order-contain">
+                        <div th:if="${session.account != null and rightNavOrderDetailUserResponses.getUserEmail == session.account.getEmail}" class="order-contain">
                             <form th:action="@{/order/orderTracking}" method="get">
                                 <input name="orderId" type="number" th:value="${orderDetailUserResponses.get(0).orderId}" hidden/>
                                 <button class="btn-outline-success glow-btn" style="padding: 20px; border: none;font-size: 16px; margin-top: 22px">Theo dõi đơn hàng</button>
