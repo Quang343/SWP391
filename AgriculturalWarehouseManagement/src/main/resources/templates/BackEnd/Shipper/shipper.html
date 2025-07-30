@@ -313,24 +313,28 @@
                         <div class="tab-pane fade" id="pills-order" role="tabpanel">
                             <div class="dashboard-order">
                                 <div class="title">
-                                    <h2>My Orders History</h2>
+                                    <h2>Tất Cả Đơn Hàng</h2>
                                 </div>
-                                <table class="table">
+                                <table class="table" id="shipper-order-table">
                                     <thead>
                                     <tr>
-                                        <th>Mã Đơn</th>
-                                        <th>Khách Hàng</th>
-                                        <th>Địa chỉ</th>
-                                        <th>SĐT</th>
+                                        <th>STT</th>
+                                        <th>Mã đơn hàng</th>
                                         <th>Ngày đặt</th>
-                                        <th>Thành tiền</th>
+                                        <th>SĐT</th>
+                                        <th>Địa chỉ</th>
+                                        <th>Tổng tiền (VNĐ)</th>
+                                        <th>Thành tiền (VNĐ)</th>
                                         <th>Trạng thái</th>
+                                        <th>Thao tác</th>
                                     </tr>
                                     </thead>
                                     <tbody id="shipper-orders-tbody">
-                                    <!-- Dữ liệu sẽ render tại đây -->
+                                    <!-- Dữ liệu sẽ render tại đây bằng JavaScript -->
                                     </tbody>
                                 </table>
+
+
                             </div>
 
                         </div>
@@ -615,8 +619,9 @@
 
 <!-- theme setting js -->
 <script th:src="@{/FrontEnd/assets/js/theme-setting.js}"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 <!--Thêm thư viện-->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <!--Thêm thư viện End-->
@@ -1190,6 +1195,91 @@
 
 </script>
 <!--Tab Profile End-->
+
+
+<!-- Đơn Hàng-->
+<script>
+    const CONTEXT_PATH = "/AgriculturalWarehouseManagementApplication";
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const tbody = document.getElementById("shipper-orders-tbody");
+
+        fetch(`${CONTEXT_PATH}/api/shipper/orders`)
+            .then(res => {
+                if (!res.ok) throw new Error("Không thể tải dữ liệu");
+                return res.json();
+            })
+            .then(data => {
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted">Không có đơn hàng nào.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = ""; // Xóa nội dung cũ
+                data.forEach((order, index) => {
+                    const row = document.createElement("tr");
+
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${order.orderCode || "N/A"}</td>
+                        <td>${order.orderDate || "N/A"}</td>
+                        <td>${order.phone || "N/A"}</td>
+                        <td>${order.address || "N/A"}</td>
+                        <td class="text-success">${order.totalAmount?.toLocaleString() || 0} VND</td>
+                        <td class="text-danger">${order.finalAmount?.toLocaleString() || 0} VND</td>
+                        <td><span class="badge bg-info">${order.status}</span></td>
+                        <td>
+                            <button class="btn btn-success btn-sm me-1" onclick="confirmDelivered(${order.orderId})">✔️ Giao thành công</button>
+                            <button class="btn btn-danger btn-sm" onclick="cancelDelivery(${order.orderId})">❌ Hủy đơn</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error("Lỗi khi tải dữ liệu:", error);
+                tbody.innerHTML = `<tr><td colspan="9" class="text-danger text-center">Lỗi khi tải dữ liệu.</td></tr>`;
+            });
+    });
+
+    function confirmDelivered(orderId) {
+        if (!confirm("Xác nhận đơn hàng đã giao thành công?")) return;
+
+        fetch(`${CONTEXT_PATH}/api/shipper/orders/${orderId}/confirm`, {
+            method: 'PUT'
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Lỗi khi xác nhận giao hàng");
+                return res.text();
+            })
+            .then(msg => {
+                alert(msg);
+                location.reload();
+            })
+            .catch(err => alert("❌ " + err.message));
+    }
+
+    function cancelDelivery(orderId) {
+        if (!confirm("Bạn có chắc muốn hủy đơn hàng này không?")) return;
+
+        fetch(`${CONTEXT_PATH}/api/shipper/orders/${orderId}/cancel`, {
+            method: 'PUT'
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Lỗi khi hủy đơn hàng");
+                return res.text();
+            })
+            .then(msg => {
+                alert(msg);
+                location.reload();
+            })
+            .catch(err => alert("❌ " + err.message));
+    }
+</script>
+
+
+
+
 
 <!--Reload giữ nguyên tab-->
 <script>
