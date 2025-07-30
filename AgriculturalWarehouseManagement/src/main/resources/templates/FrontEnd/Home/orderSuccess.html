@@ -110,14 +110,14 @@
                             </div>
 
                             <div class="order-contain">
-                                <h3 class="theme-color">Order Thành công</h3>
+                                <h3 class="theme-color">Thanh toán thành công</h3>
                                 <h5 class="text-content">Thanh toán của bạn đã thành công! Cảm ơn bạn đã mua sắm tại chúng tôi. Đơn hàng của bạn hiện đã được xác nhận và đang trên đường giao đến bạn. Chúc bạn có trải nghiệm tuyệt vời với sản phẩm của chúng tôi!</h5>
-                                <h6 th:if="${orderCode != 0}" th:text="${'Order Code: ' + orderCode}">Order Code</h6>
+                                <h6 th:if="${orderCode != 0}" th:text="${'Mã đơn hàng: ' + orderCode}">Mã đơn hàng</h6>
                             </div>
 
                             <form th:action="@{/orderDetailsUser}" method="get">
                                 <input type="text" name="orderCode" th:value="${orderCode}" hidden>
-                                <button type="submit" class="btn-outline-success btn-lg" style="margin-top: 10px;color: #50dd92; border: 1px solid #43ca85">xem chi tiết của order</button>
+                                <button type="submit" class="btn-outline-success btn-lg" style="margin-top: 10px;color: #50dd92; border: 1px solid #43ca85">Xem chi tiết của đơn hàng</button>
 
                             </form>
                         </div>

@@ -198,7 +198,7 @@
                                 <div class="checkout-box">
 
                                     <div class="checkout-title">
-                                        <h4>Địa chỉ gia hàng</h4>
+                                        <h4>Địa chỉ giao hàng</h4>
                                         <form th:action="@{/profileUser}" method="get">
                                             <button class="btn theme-bg-color text-white btn-sm fw-bold mt-lg-0 mt-3">
                                                 Đến hồ sơ để thêm địa chỉ
@@ -221,9 +221,13 @@
                                                             >
                                                         </div>
 
-                                                        <div class="label">
+                                                        <div class="label" style="margin-top: -22px">
                                                             <label id="userSetToAddress" contenteditable="false"
                                                                    th:text="${address.setToAddress}">home</label>
+                                                            <form th:action="@{/checkMap}" method="post">
+                                                                <input type="text" name="address" th:value="${address.address}" hidden>
+                                                                <button type="submit" style="font-size: 139%; cursor: pointer; background: none; border: none; display: inline">🚚</button>
+                                                            </form>
                                                         </div>
 
                                                         <ul class="delivery-address-detail">
@@ -355,7 +359,7 @@
 
                         <ul class="summery-contain">
                             <li th:each="checkOut : ${checkOutProductsResponses}">
-                                <img th:src="${checkOut.imageUrl}"
+                                <img th:src="${'seller/'+checkOut.imageUrl}"
                                      class="img-fluid blur-up lazyloaded checkout-image" alt="">
                                 <h4>
                                     <span th:text="${checkOut.productName} + ' X ' + ${checkOut.totalQuantityProductDetail}"></span>

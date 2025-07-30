@@ -49,7 +49,7 @@ public class MovePageRoleLoginController {
         } else {
             if (userEntity.getRole().getRoleName().equalsIgnoreCase("admin")) {
                 UserResponse userResponse = userCustomerService.getUser(userEntity);
-                session.setAttribute("account", userResponse);
+                session.setAttribute("accountAdmin", userResponse);
                 return "redirect:/admin";
             } else if (userEntity.getRole().getRoleName().equalsIgnoreCase("USER")) {
 

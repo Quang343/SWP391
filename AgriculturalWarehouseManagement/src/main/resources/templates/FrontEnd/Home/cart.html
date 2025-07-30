@@ -35,7 +35,7 @@
                                     <div class="product border-0">
                                         <a th:href="@{/productDetail(productId=${cart.productId})}"
                                            class="product-image">
-                                            <img th:src="${cart.imageUrl}"
+                                            <img th:src="${'seller/'+cart.imageUrl}"
                                                  class="img-fluid blur-up lazyload" alt="">
                                         </a>
                                         <div class="product-detail">
@@ -261,7 +261,7 @@
                             <li>
                                 <form th:action="@{/checkOut}" method="get">
                                     <button type="submit"
-                                            class="btn btn-animation proceed-btn fw-bold">Process To Checkout
+                                            class="btn btn-animation proceed-btn fw-bold">Quy trình thanh toán
                                     </button>
                                 </form>
                             </li>
@@ -269,7 +269,7 @@
                             <li style="border: 2px solid black; border-radius: 10px">
                                 <a href="home"
                                    class="btn btn-light shopping-button text-dark">
-                                    <i class="fa-solid fa-arrow-left-long"></i> Return To Shopping
+                                    <i class="fa-solid fa-arrow-left-long"></i> Trở về trang chủ
                                 </a>
 
                             </li>

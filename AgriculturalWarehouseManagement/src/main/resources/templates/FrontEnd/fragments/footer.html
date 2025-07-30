@@ -273,9 +273,10 @@
                 // Add message to chat
                 function addMessage(message, isUser, isTemp = false) {
                     const userImage = "[[${session.accountImage}]]";
+                    const accountId = "[[${session.accountId}]]";
                     let image = ""
                     if (userImage){
-                        image = userImage;
+                        image = 'seller/'+ accountId + '/'+ userImage;
                     } else {
                         image = 'FrontEnd/assets/images/orderReview.png'
                     }

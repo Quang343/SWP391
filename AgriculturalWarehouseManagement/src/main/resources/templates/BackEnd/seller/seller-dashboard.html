@@ -2361,6 +2361,17 @@
             const description = document.getElementById('description').value.trim();
             const categoryId = document.getElementById('categoryId').value;
             const status = document.getElementById('status').value;
+            if (!selectedFiles || selectedFiles.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Thiếu ảnh sản phẩm',
+                    text: 'Vui lòng chọn ít nhất một ảnh cho sản phẩm.'
+                });
+                btn.disabled = false;
+                btn.innerText = "Đồng ý";
+                return;
+            }
+
 
             axios.get('/AgriculturalWarehouseManagementApplication/api/seller/products')
                 .then(res => {
@@ -2619,7 +2630,11 @@
                             fileInput.value = "";
                         };
 
-                        new bootstrap.Modal(document.getElementById('viewImageModal')).show();
+                        const modalInstance = new bootstrap.Modal(document.getElementById('viewImageModal'), {
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                        modalInstance.show();
                     });
             });
         });
@@ -2710,9 +2725,35 @@
             }
         }
 
+        // ✅ Gắn sự kiện ngăn modal đóng nếu không có ảnh
+        document.getElementById('viewImageModal').addEventListener('hide.bs.modal', function (e) {
+            const imageContainer = document.getElementById("imageContainer");
+            const imageCount = imageContainer.querySelectorAll(".image-box:not(.add-btn)").length;
 
+            if (imageCount === 0) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Cần ít nhất một ảnh',
+                    text: 'Bạn phải thêm ít nhất một ảnh cho sản phẩm trước khi đóng.'
+                });
+            }
+        });
     }
 
+    window.addEventListener("beforeunload", function (e) {
+        const imageContainer = document.getElementById("imageContainer");
+        const modal = document.getElementById("viewImageModal");
+        const isOpen = modal.classList.contains("show");
+
+        if (isOpen && imageContainer) {
+            const imageCount = imageContainer.querySelectorAll(".image-box:not(.add-btn)").length;
+            if (imageCount === 0) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        }
+    });
 
 </script>
 

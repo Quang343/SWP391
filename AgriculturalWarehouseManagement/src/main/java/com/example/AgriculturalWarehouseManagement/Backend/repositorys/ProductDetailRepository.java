@@ -349,4 +349,13 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, In
                             LIMIT 5
             """, nativeQuery = true)
     List<Object[]> rawgetTrendingProduct();
+
+    @Query(value = """
+        SELECT sbs.id , sbs.productdetailid, u.Email
+        FROM soldbyseller sbs
+        JOIN user u on sbs.userid = u.UserID
+        WHERE sbs.productdetailid = :productDetailId
+    """, nativeQuery = true)
+    List<Object[]> rawGetViewSellerProductDetail(int productDetailId);
+
 }

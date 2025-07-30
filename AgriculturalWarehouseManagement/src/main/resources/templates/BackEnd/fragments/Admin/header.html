@@ -138,7 +138,7 @@
                     </ul>
                 </li>
                 -->
-                <li class="profile-nav onhover-dropdown pe-0 me-0" th:if="${session.account != null}">
+                <li class="profile-nav onhover-dropdown pe-0 me-0" th:if="${session.accountAdmin != null}">
                     <div class="media profile-media align-items-center">
                         <!--                        th:src="@{'/admin/' + ${session.account.imageUrl}}"-->
                         <img class="user-profile rounded-circle me-2"
@@ -166,8 +166,8 @@
                                  alt="User Avatar"
                                  style="width: 60px; object-fit: cover; border: 2px solid #e0e0e0;">
                             <div class="d-inline-block">
-                                <a th:text="${session.account.fullName}"></a>
-                                <small th:text="${session.account.email}"></small>
+                                <a th:text="${session.accountAdmin.fullName}"></a>
+                                <small th:text="${session.accountAdmin.email}"></small>
                             </div>
                         </li>
                         <li>

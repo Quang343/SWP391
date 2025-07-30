@@ -206,6 +206,30 @@ public class ProductDetailUserService {
 
     }
 
+    //
+    public List<ViewSellerResponse> getViewSellerProductDetails(int productDetailId) {
+        List<Object[]> raw = productDetailRepository.rawGetViewSellerProductDetail(productDetailId);
+
+        return raw.stream().map(row -> new ViewSellerResponse(
+                ((Number) row[0]).intValue(),                // categoryId
+                ((Number) row[1]).intValue(),               // productId
+                (String) row[2]                          // productName
+        )).toList();
+
+    }
+
+    public ViewSellerResponse getViewSellerProductDetailObject(int productDetailId) {
+
+        if (getViewSellerProductDetails((productDetailId)).isEmpty()) {
+            return new ViewSellerResponse(0, 0, "Chưa có người bán");
+        } else {
+            List<ViewSellerResponse> viewSellerResponsesLists = getViewSellerProductDetails( productDetailId);
+            ViewSellerResponse viewSellerResponse = viewSellerResponsesLists.get(0);
+            return viewSellerResponse;
+        }
+    }
+
+
     public List<ProductDetailUserResponse> getTrendingProducts() {
 
         if (getTrendingProduct().isEmpty()) {

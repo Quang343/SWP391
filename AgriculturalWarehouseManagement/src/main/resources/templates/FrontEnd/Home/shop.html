@@ -26,7 +26,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="breadcrumb-contain">
-                    <h2>Shop Top Filter</h2>
+                    <h2>Cửa hàng</h2>
                     <nav>
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item">
@@ -34,7 +34,7 @@
                                     <i class="fa-solid fa-house"></i>
                                 </a>
                             </li>
-                            <li class="breadcrumb-item active">Shop Top Filter</li>
+                            <li class="breadcrumb-item active">Cửa hàng</li>
                         </ol>
                     </nav>
                 </div>
@@ -58,7 +58,7 @@
                 <form th:action="@{/deleteFilterProduct}" method="post">
                     <button type="submit"
                             style="background: #0da487; color: aliceblue; margin-left: 19px; border: none; padding: 8px">
-                        Delete Filter
+                        Xóa bộ lọc
                     </button>
                 </form>
 
@@ -70,31 +70,30 @@
                         <div class="top-filter-menu-2">
                             <div class="sidebar-filter-menu" data-bs-toggle="collapse"
                                  data-bs-target="#collapseExample">
-                                <a href="javascript:void(0)"><i class="fa-solid fa-filter"></i> Filter Menu</a>
+                                <a href="javascript:void(0)"><i class="fa-solid fa-filter"></i> Lọc Filter</a>
                             </div>
 
                             <div class="ms-auto d-flex align-items-center">
                                 <div class="category-dropdown me-md-3">
-                                    <h5 class="text-content">Sort By :</h5>
+                                    <h5 class="text-content">Sắp xếp theo:</h5>
                                     <div class="dropdown">
                                         <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                            <span th:text="${selectedSort ?: 'Default'}">Default</span>
+                                            <span th:text="${selectedSort ?: 'Mặc định'}">Default</span>
                                             <!--                                           “Elvis operator”  (A = null hoặc chuỗi rỗng) ⇒ kết quả là B.-->
                                             <i class="fa-solid fa-angle-down"></i>
                                         </button>
                                         <ul class="dropdown-menu">
-                                            <li><a href="#" class="dropdown-item sort-option" data-sort="popularity">Popularity</a>
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="popularity">Phổ biến</a>
                                             </li>
-                                            <li><a href="#" class="dropdown-item sort-option" data-sort="priceLowHigh">Low
-                                                - High Price</a></li>
-                                            <li><a href="#" class="dropdown-item sort-option" data-sort="priceHighLow">High
-                                                - Low Price</a></li>
-                                            <li><a href="#" class="dropdown-item sort-option" data-sort="rating">Average
-                                                Rating</a></li>
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="priceLowHigh">Thấp
+                                                - Cao giá</a></li>
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="priceHighLow">Cao
+                                                - Thấp giá</a></li>
+                                            <li><a href="#" class="dropdown-item sort-option" data-sort="rating">Xếp hạng trung bình</a></li>
                                             <li><a href="#" class="dropdown-item sort-option" data-sort="aToZ">A - Z
-                                                Order</a></li>
+                                                </a></li>
                                             <li><a href="#" class="dropdown-item sort-option" data-sort="zToA">Z - A
-                                                Order</a></li>
+                                                </a></li>
                                         </ul>
                                     </div>
 
@@ -191,7 +190,7 @@
                         <div class="row g-sm-4 g-3">
                             <div class="col-xl-3 col-md-6">
                                 <div class="category-title">
-                                    <h3>Category</h3>
+                                    <h3>Loại</h3>
                                 </div>
 
                                 <ul class="category-list custom-padding custom-height">
@@ -219,7 +218,7 @@
 
                             <div class="col-xl-3 col-md-6">
                                 <div class="category-title">
-                                    <h3>Rating</h3>
+                                    <h3>Xếp hạng</h3>
                                 </div>
 
                                 <ul class="category-list" th:each="r : ${#numbers.sequence(5,1,-1)}">
@@ -249,7 +248,7 @@
 
                             <div class="col-xl-3 col-md-6">
                                 <div class="category-title">
-                                    <h3>Price</h3>
+                                    <h3>Giá</h3>
                                 </div>
                                 <div class="range-slider">
                                     <input type="text" class="js-range-slider" value="">
@@ -277,7 +276,7 @@
                             <div class="product-header">
                                 <div class="product-image">
                                     <a th:href="@{/productDetail(productId=${product.productId})}">
-                                        <img th:src="@{${product.imageUrlGallery}}"
+                                        <img th:src="@{${'seller/' + product.imageUrlGallery}}"
                                              class="img-fluid blur-up lazyload" alt="">
                                     </a>
 
@@ -827,7 +826,7 @@
     <ul class="items-image">
 
         <li id="image" th:each="cart : ${cartUserResponses}">
-            <img th:src="${cart.imageUrl}" alt="">
+            <img th:src="${'seller/'+cart.imageUrl}" alt="">
         </li>
         <h6>
             <span th:if="${sizeCart > 3}">...</span>
@@ -891,7 +890,7 @@
                     firstThreeItems.forEach((cart, index) => {
                         const liElement = document.createElement('li');
                         liElement.setAttribute('data-index', index);  // Gán data-index mới
-                        liElement.innerHTML = `<img src="${cart.imageUrl}" alt="Product Image ${index}">`;
+                        liElement.innerHTML = `<img src="${'seller/' + cart.imageUrl}" alt="Product Image ${index}">`;
                         ulElement.appendChild(liElement);
                     });
 

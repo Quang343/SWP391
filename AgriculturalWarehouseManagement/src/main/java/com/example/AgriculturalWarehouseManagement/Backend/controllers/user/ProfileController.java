@@ -184,8 +184,6 @@ public class ProfileController {
 
         UserResponse userResponseSession = (UserResponse) session.getAttribute("account");
 
-        String imagePath = userResponseSession.getImageUrl(); // giữ ảnh cũ
-
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         String extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
 
@@ -204,7 +202,8 @@ public class ProfileController {
             // Đọc ảnh gốc và crop
             BufferedImage originalImage = ImageIO.read(file.getInputStream());
             if (originalImage == null) {
-                throw new IllegalArgumentException("File không phải là ảnh hợp lệ.");
+                session.setAttribute("errorUpdateImage", "File không phải là ảnh hợp lệ.");
+                return "redirect:/profileUser";
             }
 
             int width = originalImage.getWidth();

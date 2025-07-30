@@ -105,15 +105,15 @@
         <div class="row">
             <div class="col-12">
                 <div class="breadcrumb-contain">
-                    <h2>User Dashboard</h2>
+                    <h2>Quản lý bài đăng</h2>
                     <nav>
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item">
-                                <a href="index.html">
+                                <a href="home">
                                     <i class="fa-solid fa-house"></i>
                                 </a>
                             </li>
-                            <li class="breadcrumb-item active">User Dashboard</li>
+                            <li class="breadcrumb-item active">Quản lý bài đăng</li>
                         </ol>
                     </nav>
                 </div>
@@ -136,22 +136,24 @@
                     </div>
                     <div class="profile-box">
                         <div class="cover-image">
-                            <img th:src="@{FrontEnd/assets/images/inner-page/cover-img.jpg}"
+                            <img th:src="@{/Backend/assets/images/user/default-cover.jpg}"
                                  class="img-fluid blur-up lazyload"
                                  alt="">
                         </div>
 
                         <div class="profile-contain">
                             <div class="profile-image">
-                                <div class="position-relative" style="display: flex;justify-content: center; padding-left: 9px">
-                                    <img th:src="${'user/' + session.account.getImageUrl}"
+                                <div class="position-relative"
+                                     style="display: flex;justify-content: center; padding-left: 9px">
+                                    <img th:src="${'seller/' + session.accountId +  '/' +  session.account.getImageUrl}"
                                          class="blur-up lazyload update_img" alt="more image"
-                                         accept=".jpg,.jpeg,.png,.gif,.webp,image/*" style="position: absolute;margin-top: -65px">
+                                         accept=".jpg,.jpeg,.png,.gif,.webp,image/*"
+                                         style="position: absolute;margin-top: -65px">
 
 
                                 </div>
                             </div>
-
+                            <br>
                             <div class="profile-name">
                                 <h3 th:text="${session.account.getUserName}">Your username</h3>
                                 <h6 class="text-content" th:text="${session.account.getEmail}">Your email</h6>
@@ -167,17 +169,15 @@
                             <a href="#pills-tabContent" class="nav-link active" id="pills-dashboard-tab"
                                data-bs-toggle="pill" data-bs-target="#pills-dashboard" role="tab"><i
                                     data-feather="home"></i>
-                                DashBoard</a>
+                                Tổng quan</a>
                         </li>
 
                         <li class="nav-item" role="presentation">
                             <button class="nav-link " id="pills-product-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-product" type="button" role="tab"><i
-                                    data-feather="shopping-bag"></i>My Blog
+                                    data-feather="shopping-bag"></i>Tất cả bài đăng
                             </button>
                         </li>
-
-
 
 
                     </ul>
@@ -193,7 +193,7 @@
                         <div class="tab-pane fade show active" id="pills-dashboard" role="tabpanel">
                             <div class="dashboard-home">
                                 <div class="title">
-                                    <h2>Trang tổng quan của tôi</h2>
+                                    <h2>Tổng Quan</h2>
                                     <span class="title-leaf">
                                             <svg class="icon-width bg-gray">
                                                 <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
@@ -202,29 +202,25 @@
                                 </div>
 
                                 <div class="dashboard-user-name">
-                                    <h6 class="text-content">Xin chào,<b class="text-title"
-                                                                         th:text="${session.account.getUserName}">Your
+                                    <h6 class="text-content">Xin chào, <b class="text-title"
+                                                                          th:text="${session.account.getUserName}">Your
                                         username</b></h6>
-                                    <p class="text-content">Từ tài khoản Dashboard, bạn có thể xem hoạt động gần đây và
-                                        cập nhật thông tin tài khoản..</p>
+                                    <!--                                    <p class="text-content">Từ tài khoản Dashboard, bạn có thể xem hoạt động gần đây và-->
+                                    <!--                                        cập nhật thông tin tài khoản..</p>-->
                                 </div>
 
                                 <div class="total-box">
                                     <div class="row g-sm-4 g-3">
-                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
-                                            <div class="total-contain">
-                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}"
-                                                     class="img-1 blur-up lazyload" alt="">
-                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}"
-                                                     class="blur-up lazyload"
-                                                     alt="">
-                                                <div class="total-detail">
-                                                    <h5>Tổng số Blog</h5>
-                                                    <h3 id="totalBlogsCount">0</h3>
-                                                    <!-- Số lượng blog sẽ được cập nhật ở đây -->
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <!--                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">-->
+                                        <!--                                            <div class="total-contain">-->
+                                        <!--                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}"-->
+                                        <!--                                                     class="img-1 blur-up lazyload" alt="">-->
+                                        <!--                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}"-->
+                                        <!--                                                     class="blur-up lazyload"-->
+                                        <!--                                                     alt="">-->
+                                        <!--                                                -->
+                                        <!--                                            </div>-->
+                                        <!--                                        </div>-->
 
                                         <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
                                             <div class="total-contain">
@@ -232,7 +228,11 @@
                                                      class="img-1 blur-up lazyload" alt="">
                                                 <img th:src="@{FrontEnd/assets/images/svg/wishlist.svg}"
                                                      class="blur-up lazyload" alt="">
-
+                                                <div class="total-detail">
+                                                    <h5>Tổng số bài đăng</h5>
+                                                    <h3 id="totalBlogsCount">0</h3>
+                                                    <!-- Số lượng blog sẽ được cập nhật ở đây -->
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -245,10 +245,11 @@
                                             </h4>
                                         </div>
                                         <div class="dashboard-detail">
-                                            <h6 class="text-content" th:text="${session.account.getFullName}">Your
-                                                fullname</h6>
-                                            <h6 class="text-content" th:text="${session.account.getEmail}">Your
-                                                email</h6>
+                                            Tên người dùng: <h6 class="text-content"
+                                                                th:text="${session.account.getUserName()}">Your
+                                            fullname</h6>
+                                            Email: <h6 class="text-content" th:text="${session.account.getEmail}">Your
+                                            email</h6>
                                         </div>
                                     </div>
 
@@ -259,7 +260,7 @@
                         <div class="tab-pane fade " id="pills-product" role="tabpanel">
                             <div class="product-tab">
                                 <div class="title">
-                                    <h2>Blog của tôi</h2>
+                                    <h2>Tất Cả Bài Đăng</h2>
                                     <span class="title-leaf">
                 <svg class="icon-width bg-gray">
                     <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
@@ -270,7 +271,7 @@
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#addProductModal"
                                                 style="width:100%; background-color: #198754; color: white; border: none; padding: 8px 16px; font-weight: 500; border-radius: 4px">
-                                            + Thêm Blog
+                                            + Thêm bài đăng
                                         </button>
                                     </div>
                                 </div>
@@ -283,9 +284,9 @@
                                             <th scope="col">STT</th>
                                             <th scope="col">Hình ảnh</th>
                                             <th scope="col">Nội dung</th>
-                                            <th scope="col">Tiêu đề </th>
+                                            <th scope="col">Tiêu đề</th>
                                             <th scope="col">Tác giả</th>
-                                            <th scope="col">Trạng thái </th>
+                                            <th scope="col">Trạng thái</th>
                                             <th scope="col">Ngày tạo</th>
                                             <th scope="col">Sửa / Xóa</th>
 
@@ -401,7 +402,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addBlogLabel">Thêm Blog mới</h5>
+                <h5 class="modal-title" id="addBlogLabel">Thêm bài đăng mới</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -430,7 +431,7 @@
                         <select class="form-control" id="input-status" required></select>
                     </div>
                     <div class="mb-3">
-                        <label for="input-thumbnail" class="form-label">Ảnh Thumbnail</label>
+                        <label for="input-thumbnail" class="form-label">Ảnh bài viết</label>
                         <input type="file" class="form-control" id="input-thumbnail" accept="image/*"
                                onchange="previewImage(event)">
                         <img id="thumbnailPreview" style="max-width: 100%; margin-top: 10px; display: none;"
@@ -582,7 +583,7 @@
 
         // Hiện PREVIOUS nếu không phải trang 1
         if (currentPage > 1) {
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage - 1});return false;">PREVIOUS</a></li>`;
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage - 1});return false;">Trước</a></li>`;
         }
 
         // Luôn hiện trang 1
@@ -610,7 +611,7 @@
 
         // Hiện NEXT nếu không phải trang cuối
         if (currentPage < totalPages) {
-            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage + 1});return false;">NEXT</a></li>`;
+            html += `<li class="page-item"><a class="page-link" href="#" onclick="gotoPage(${currentPage + 1});return false;">Sau</a></li>`;
         }
 
         document.getElementById("pagination").innerHTML = html;
@@ -917,7 +918,7 @@
         axios.get(`${CONTEXT_PATH}/api/my-blog/total-blogs/${userID}`)
             .then(res => {
                 const totalBlogs = res.data;
-                console.log("hello"+totalBlogs)
+                console.log("hello" + totalBlogs)
                 document.querySelector("#totalBlogsCount").textContent = totalBlogs;
             })
             .catch(err => {

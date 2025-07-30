@@ -275,31 +275,30 @@
                                   enctype="multipart/form-data"
                                   class="profile-image">
                                 <div class="position-relative">
-                                    <img th:if="${session.account.imageUrl != null and session.account.getImageUrl !='' and !#strings.startsWith(session.account.getImageUrl, '/')}"
-                                         }
+                                    <img th:if="${session.account.imageUrl != null and session.account.getImageUrl !='' and !#strings.startsWith(session.account.getImageUrl, 'https://lh3.googleusercontent.com/')}"
                                          th:src="${'seller/'+session.account.getUserID +'/'+session.account.imageUrl}"
                                          class="blur-up lazyload update_img" alt="more image"
-                                         accept=".jpg,.png,.gif,image/*">
+                                         accept=".jpg,.jpeg,.png,.gif,image/*">
 
                                     <img th:if="${session.account.imageUrl != null and #strings.startsWith(session.account.imageUrl, 'https://lh3.googleusercontent.com/')}"
                                          th:src="${session.account.imageUrl}"
                                          class="blur-up lazyload update_img" alt="more image"
-                                         accept=".jpg,.png,.gif,image/*">
+                                         accept=".jpg,.jpeg,.png,.gif,image/*">
 
 
                                     <img th:if="${session.account.imageUrl != null and session.account.getImageUrl == ''}"
                                          th:src="@{Backend/assets/images/user/default-avatar.png}"
                                          class="blur-up lazyload update_img" alt="more image"
-                                         accept=".jpg,.png,.gif,image/*">
+                                         accept=".jpg,.jpeg,.png,.gif,image/*">
 
                                     <div class="cover-icon">
                                         <i class="fa-solid fa-pen">
                                             <input type="file" name="image" onchange="readURL(this,0)"
-                                                   accept=".jpg,.png,.gif,image/*">
+                                                   accept=".jpg,.jpeg,.png,.gif,image/*">
                                         </i>
                                     </div>
 
-                                    <button type="submit" class="btn btn-outline-primary btn-sm glow-btn">Lưu</button>
+                                    <button type="submit" class="btn btn-sm glow-btn" style="color: yellow">Lưu</button>
                                 </div>
                             </form>
 
@@ -335,20 +334,20 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="pills-dashboard-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-dashboard" type="button"><i data-feather="home"></i>
-                                Trang tổng quản
+                                Trang tổng quan
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-order-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-order" type="button"><i
-                                    data-feather="shopping-bag"></i>Order
+                                    data-feather="shopping-bag"></i>Đơn hàng
                             </button>
                         </li>
 
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-address-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-address" type="button" role="tab"><i
-                                    data-feather="map-pin"></i>Địa chị Order
+                                    data-feather="map-pin"></i>Địa chỉ nhận hàng
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
@@ -379,12 +378,7 @@
                             <div class="dashboard-home">
                                 <div class="title">
                                     <h2>Trang tổng quan của tôi</h2>
-                                    <span class="title-leaf">
-                                            <svg class="icon-width bg-gray">
-                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
-                                            </svg>
-                                        </span>
-                                    <h5 class="glow-btn" style="margin-top: 10px"
+                                    <h5 class="glow-btn" style="margin-top: 25px; width: 170px; height: 37px"
                                         th:text="${'Ví tiền: ' + #numbers.formatInteger(walletsResponse.getBalance(), 0, 'POINT') + '₫'}"></h5>
                                     <div class="payment-container">
                                         <form th:action="@{/depositWalletProfile}" method="post">
@@ -419,8 +413,8 @@
                                     <h6 class="text-content">Xin chào,<b class="text-title"
                                                                          th:text="${session.account.getUserName}">Your
                                         username</b></h6>
-                                    <p class="text-content">Từ tài khoản Dashboard, bạn có thể xem hoạt động gần đây và
-                                        cập nhật thông tin tài khoản..</p>
+                                    <p class="text-content">Từ trang tổng quan, bạn có thể xem hoạt động gần đây và
+                                        cập nhật thông tin tài khoản.</p>
                                 </div>
 
                                 <div class="total-box">
@@ -477,109 +471,58 @@
                             <div class="dashboard-order">
                                 <div class="title">
                                     <h2>Lịch sử đơn hàng của tôi</h2>
-                                    <h2>(Chỉ được hủy đơn hàng trong 24 giờ đã Order, khi hủy sẽ hoàn tiền)</h2>
-                                    <span class="title-leaf title-leaf-gray">
-                                            <svg class="icon-width bg-gray">
-                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
-                                            </svg>
-                                        </span>
+                                    <span style="margin-top: 10px">(Chỉ được hủy đơn hàng trong vòng 24 giờ sau khi đặt hàng, khi hủy sẽ hoàn tiền)</span>
                                 </div>
 
-                                <div class="order-contain">
-                                    <div th:each="order : ${orderUserResponses}" class="order-box dashboard-bg-box">
-                                        <div class="order-container">
-                                            <div class="order-icon">
-                                                <i data-feather="box"></i>
-                                            </div>
+                                <table id="orderTable" class="table table-bordered table-striped table-hover align-middle text-center">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th>Mã đơn hàng</th>
+                                        <th>Email đặt hàng</th>
+                                        <th>Ngày đặt</th>
+                                        <th>Tổng số lượng</th>
+                                        <th>Tổng giá</th>
+                                        <th>Trạng thái</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="order : ${orderUserResponses}">
+                                        <td th:text="${order.orderCode}"></td>
+                                        <td th:text="${order.email}"></td>
+                                        <td th:text="${order.formatOrderDate()}"></td>
+                                        <td th:text="${order.totalQuantity}"></td>
+                                        <td th:text="${#numbers.formatInteger(order.totalPrice, 0, 'POINT') + '₫'}"></td>
+                                        <td>
+                                            <span th:if="${order.status == 'PENDING'}" class="badge bg-warning">Đang chờ</span>
+                                            <span th:if="${order.status == 'CONFIRMED'}" class="badge bg-success">Đã xác nhận</span>
+                                            <span th:if="${order.status == 'DELIVERED'}" class="badge bg-info">Đang giao</span>
+                                            <span th:if="${order.status == 'CANCELLED'}" class="badge bg-danger">Đã hủy</span>
+                                            <span th:if="${order.status == 'COMPLETED'}" class="badge bg-primary">Hoàn thành</span>
+                                            <span th:if="${order.status == 'STOCKOUT'}" class="badge bg-secondary">Xuất kho</span>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-sm btn-outline-primary mb-1"
+                                               th:href="@{/orderDetailsUser(orderCode=${order.orderCode})}">
+                                                Xem chi tiết
+                                            </a>
 
-                                            <div class="order-detail">
-                                                <h4>
-                                                    Trạng thái Order
-                                                    <div th:if="${order.status == 'PENDING'}" th:text="${'Đang chờ'}"
-                                                         class="div1">Đang chờ
-                                                    </div>
-                                                    <div th:if="${order.status == 'PENDING' and T(java.time.Duration).between(order.orderDate, T(java.time.LocalDateTime).now()).toHours() < 24}">
-                                                        <form th:action="@{/cancellOrder}" method="post">
-                                                            <input name="orderId" type="text"
-                                                                   th:value="${order.orderId}" hidden=""/>
+                                            <form th:if="${order.status == 'PENDING' and T(java.time.Duration).between(order.orderDate, T(java.time.LocalDateTime).now()).toHours() < 24}"
+                                                  th:action="@{/cancellOrder}" method="post"
+                                                  class="cancel-order-form" style="display:inline;">
+                                                <input type="hidden" name="orderId" th:value="${order.orderId}" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger btn-cancel-order">
+                                                    Hủy
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger btn-cancel-order" disabled>
+                                                    Đã nhận hàng
+                                                </button>
+                                            </form>
+                                        </td>
 
-                                                            <button type="submit" class="div2"
-                                                                    style="cursor: pointer; border: none">
-                                                                Hủy
-                                                            </button>
-
-
-                                                        </form>
-
-
-                                                    </div>
-
-
-                                                    <span th:if="${order.status == 'CONFIRMED'}"
-                                                          th:text="${'Đã xác nhận'}"
-                                                          class="success-bg">Đã xác nhận</span>
-                                                    <div th:if="${order.status == 'DELIVERED'}"
-                                                         th:text="${'Đang giao hàng'}"
-                                                         class="div1">Đang giao hàng
-                                                    </div>
-                                                    <span th:if="${order.status == 'CANCELLED'}"
-                                                          th:text="${'Đã hủy'}" class="danger-bg">Đã hủy</span>
-                                                    <span th:if="${order.status == 'COMPLETED'}"
-                                                          th:text="${'Hoàn thành'}"
-                                                          class="success-bg">Hoàn thành
-                                                    </span>
-                                                    <div th:if="${order.status == 'STOCKOUT'}"
-                                                         th:text="${'Xuất kho'}"
-                                                         class="div1">Xuất kho
-                                                    </div>
-                                                    <span class="success-bg" style="margin-left: 30px">
-                                                        <a th:href="@{/orderDetailsUser(orderCode=${order.orderCode})}"
-                                                           style="color:white;">Chi tiết Order</a>
-                                                    </span>
-                                                </h4>
-                                            </div>
-                                        </div>
-
-                                        <div class="product-order-detail">
-
-                                            <div class="order-wrap">
-
-                                                <ul class="product-size">
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Email order: </h6>
-                                                            <h5 th:text="${order.email}">
-                                                                nguyenhoanganh712004qp@gamil.com</h5>
-                                                        </div>
-                                                    </li>
-
-
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Tổng số lượng : </h6>
-                                                            <h5 th:text="${order.totalQuantity}">100</h5>
-                                                        </div>
-                                                    </li>
-
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Tổng giá tiền : </h6>
-                                                            <h5 th:text="${#numbers.formatInteger(order.totalPrice, 0, 'POINT') + '₫'}"
-                                                                class="price theme-color">200.000đ</h5>
-                                                        </div>
-                                                    </li>
-
-                                                    <li>
-                                                        <div class="size-box">
-                                                            <h6 class="text-content">Ngày Order : </h6>
-                                                            <h5 th:text="${order.formatOrderDate()}">2025-7-05</h5>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
@@ -593,7 +536,7 @@
                             <div class="dashboard-address">
                                 <div class="title title-flex">
                                     <div>
-                                        <h2>Sổ địa chỉ của tôi</h2>
+                                        <h2>Địa Chỉ Nhận Hàng</h2>
                                         <span class="title-leaf">
                                                 <svg class="icon-width bg-gray">
                                                     <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
@@ -653,18 +596,18 @@
                                                                                             <td id="userFullName" colspan="2" >${address.fullName}</td>
                                                                                         </tr>
                                                                                         <tr>
-                                                                                            <td>Address :</td>
+                                                                                            <td>Địa chỉ :</td>
                                                                                             <td id="userAddress">${address.address}
                                                                                             </td>
                                                                                         </tr>
 
                                                                                         <tr>
-                                                                                            <td>Phone :</td>
+                                                                                            <td>SĐT :</td>
                                                                                             <td id="userPhone" >${address.phone || 'N/A'}</td>
                                                                                         </tr>
 
                                                                                         <tr>
-                                                                                            <td>Note :</td>
+                                                                                            <td>Ghi chú :</td>
                                                                                             <td id="userNote">${address.note || 'N/A'}</td>
                                                                                         </tr>
 
@@ -814,7 +757,7 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Địa ch :</td>
+                                                        <td>Địa chỉ :</td>
                                                         <td th:text="${session.account.getAddress}">549 Sulphur Springs
                                                             Road, Downers, IL
                                                         </td>
@@ -1076,8 +1019,32 @@
                 </div>
 
                 <div class="form-floating mb-4 theme-form-floating">
-                    <input type="email" class="form-control" id="address" placeholder="Enter Address" required>
+                    <input type="email" class="form-control" id="address" placeholder="Enter Address" readonly>
                     <label for="address">Địa chỉ</label>
+                </div>
+
+                <!-- Province Select -->
+                <div class="form-floating mb-4 theme-form-floating">
+                    <label for="provinceSelect"></label>
+                    <select id="provinceSelect" class="form-select" required>
+                        <option value="">Chọn tỉnh</option>
+                    </select>
+                </div>
+
+                <!-- District Select -->
+                <div class="form-floating mb-4 theme-form-floating">
+                    <label for="districtSelect"></label>
+                    <select id="districtSelect" class="form-select" required disabled>
+                        <option value="">Chọn quận/huyện</option>
+                    </select>
+                </div>
+
+                <!-- Ward Select -->
+                <div class="form-floating mb-4 theme-form-floating">
+                    <label for="wardSelect"></label>
+                    <select id="wardSelect" class="form-select" required disabled>
+                        <option value="">Chọn xã/phường</option>
+                    </select>
                 </div>
 
                 <div class="form-floating mb-4 theme-form-floating">
@@ -1108,6 +1075,92 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Fetch danh sách tỉnh
+    axios.get('https://partner.viettelpost.vn/v2/categories/listProvince')
+        .then(response => {
+            const data = response.data;
+            if (data.status === 200 && !data.error) {
+                const provinceSelect = document.getElementById('provinceSelect');
+                data.data.forEach(province => {
+                    const option = document.createElement('option');
+                    option.value = province.PROVINCE_ID;
+                    option.textContent = province.PROVINCE_NAME;
+                    provinceSelect.appendChild(option);
+                });
+            }
+        })
+        .catch(err => console.error("Lỗi khi fetch danh sách tỉnh:", err));
+
+    // Lắng nghe sự kiện khi chọn tỉnh
+    document.getElementById('provinceSelect').addEventListener('change', function() {
+        const provinceId = this.value;
+        const provinceName = this.options[this.selectedIndex].text; // Lấy tên tỉnh
+        updateAddressInput(); // Cập nhật lại trường địa chỉ
+
+        if (provinceId) {
+            axios.get(`https://partner.viettelpost.vn/v2/categories/listDistrict?provinceId=${provinceId}`)
+                .then(response => {
+                    const data = response.data;
+                    const districtSelect = document.getElementById('districtSelect');
+                    districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                    districtSelect.disabled = false;
+                    data.data.forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district.DISTRICT_ID;
+                        option.textContent = district.DISTRICT_NAME;
+                        districtSelect.appendChild(option);
+                    });
+                })
+                .catch(err => console.error("Lỗi khi fetch danh sách quận huyện:", err));
+        }
+    });
+
+    // Lắng nghe sự kiện khi chọn quận huyện
+    document.getElementById('districtSelect').addEventListener('change', function() {
+        const districtId = this.value;
+        const districtName = this.options[this.selectedIndex].text; // Lấy tên quận
+
+        updateAddressInput(); // Cập nhật lại trường địa chỉ
+
+        if (districtId) {
+            axios.get(`https://partner.viettelpost.vn/v2/categories/listWards?districtId=${districtId}`)
+                .then(response => {
+                    const data = response.data;
+                    const wardSelect = document.getElementById('wardSelect');
+                    wardSelect.innerHTML = '<option value="">Chọn xã/phường</option>';
+                    wardSelect.disabled = false;
+                    data.data.forEach(ward => {
+                        const option = document.createElement('option');
+                        option.value = ward.WARDS_ID;
+                        option.textContent = ward.WARDS_NAME;
+                        wardSelect.appendChild(option);
+                    });
+                })
+                .catch(err => console.error("Lỗi khi fetch danh sách xã/phường:", err));
+        }
+    });
+
+    // Lắng nghe sự kiện khi chọn xã/phường
+    document.getElementById('wardSelect').addEventListener('change', function() {
+        const wardId = this.value;
+        const wardName = this.options[this.selectedIndex].text; // Lấy tên xã/phường
+
+        updateAddressInput(); // Cập nhật lại trường địa chỉ
+    });
+
+    // Cập nhật trường input với id="address" bằng giá trị từ các select
+    function updateAddressInput() {
+        const provinceName = document.getElementById('provinceSelect').options[document.getElementById('provinceSelect').selectedIndex].text;
+        const districtName = document.getElementById('districtSelect').options[document.getElementById('districtSelect').selectedIndex]?.text || '';
+        const wardName = document.getElementById('wardSelect').options[document.getElementById('wardSelect').selectedIndex]?.text || '';
+
+        const addressInput = document.getElementById('address');
+        addressInput.value = `${provinceName}, ${districtName}, ${wardName}`;
+    }
+
+</script>
 
 <script>
     /** Kiểm tra xem str đã viết hoa đúng chưa */
@@ -1197,6 +1250,37 @@
         } else {
             $('#alert-message').hide();
         }
+
+        const provinceSelect = document.getElementById('provinceSelect');
+        const districtSelect = document.getElementById('districtSelect');
+        const wardSelect = document.getElementById('wardSelect');
+        // Kiểm tra xem người dùng đã chọn Tỉnh chưa
+        const provinceName = provinceSelect.options[provinceSelect.selectedIndex]?.text;
+        if (provinceName.toLocaleLowerCase() === 'Chọn tỉnh'.toLocaleLowerCase()) {
+            showAlert('error', 'Vui lòng chọn Tỉnh/Thành phố');
+            return ; // Dừng lại nếu không chọn tỉnh
+        } else {
+            $('#alert-message').hide();
+        }
+
+        // Kiểm tra xem người dùng đã chọn Quận/Huyện chưa
+        const districtName = districtSelect.options[districtSelect.selectedIndex]?.text;
+        if (districtName.toLocaleLowerCase() === 'Chọn quận/huyện'.toLocaleLowerCase()) {
+            showAlert('error', 'Vui lòng chọn Quận/Huyện');
+            return; // Dừng lại nếu không chọn quận/huyện
+        } else {
+            $('#alert-message').hide();
+        }
+
+        // Kiểm tra xem người dùng đã chọn Xã/Phường chưa
+        const wardName = wardSelect.options[wardSelect.selectedIndex]?.text;
+        if (wardName.toLocaleLowerCase() === 'Chọn xã/phường'.toLocaleLowerCase()) {
+            showAlert('error', 'Vui lòng chọn Xã/Phường');
+            return; // Dừng lại nếu không chọn xã/phường
+        } else {
+            $('#alert-message').hide();
+        }
+
 
 
         // Tạo đối tượng dữ liệu gửi lên server
@@ -1377,7 +1461,7 @@
                     </div>
                     <div class="col-xxl-6">
                         <div class="form-floating theme-form-floating">
-                            <input type="text" class="form-control" id="editaddress" value="" required>
+                            <input type="text" class="form-control" id="editaddress" value="" readonly>
                             <label for="editaddress">Địa chỉ</label>
                         </div>
                     </div>
@@ -1813,6 +1897,186 @@
     </div>
 </div>
 
+<script>
+    $(document).ready(function () {
+        $.fn.DataTable.ext.pager.numbers_length = 3;
+
+
+        $('#orderTable').DataTable({
+            pagingType: "full_numbers", // 👈 hiển thị << < 1 2 3 > >>
+            lengthChange: true,         // 👈 bật/tắt dropdown chọn số dòng mỗi trang
+            pageLength: 5,              // 👈 số dòng mặc định mỗi trang
+            lengthMenu: [1, 3, 5, 10],  // 👈 danh sách các tùy chọn
+
+            responsive: true,
+            autoWidth: false,
+            mark: true,
+            language: {
+                search: "🔍 Tìm kiếm:",
+                lengthMenu: "Hiển thị _MENU_ dòng mỗi trang",
+                info: "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
+                infoEmpty: "Không có dữ liệu để hiển thị",
+                zeroRecords: "Không tìm thấy kết quả phù hợp",
+                paginate: {
+                    first: "<<",
+                    previous: "<",
+                    next: ">",
+                    last: ">>"
+                },
+            },
+
+            columnDefs: [
+                { orderable: false, targets: [4, 6] } // 4 = Tổng giá, 6 = Thao tác
+            ]
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".btn-cancel-order").forEach(function (btn) {
+            btn.addEventListener("click", function (e) {
+                e.preventDefault(); // chặn submit mặc định
+
+                const form = this.closest("form");
+
+                Swal.fire({
+                    title: "Bạn có chắc muốn hủy đơn hàng?",
+                    text: "Hủy đơn sẽ được hoàn 100% tiền!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Xác nhận hủy",
+                    cancelButtonText: "Giữ lại đơn"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit(); // submit form sau khi confirm
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+<style>
+    /* Căn cách phần top controls (search + length) với bảng */
+    div.dataTables_wrapper .dataTables_length,
+    div.dataTables_wrapper .dataTables_filter {
+        margin-bottom: 1rem;
+    }
+
+    /* Căn cách phần phân trang với bảng */
+    div.dataTables_wrapper .dataTables_paginate {
+        margin-top: 1rem;
+    }
+
+    /* Căn đều search và dropdown số dòng */
+    div.dataTables_wrapper .dataTables_length,
+    div.dataTables_wrapper .dataTables_filter {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    /* Căn bên phải cho khung search */
+    div.dataTables_wrapper .dataTables_filter {
+        float: right;
+    }
+
+    /* Căn bên trái cho dropdown */
+    div.dataTables_wrapper .dataTables_length {
+        float: left;
+    }
+
+    /* Căn giữa dòng chữ "Hiển thị x đến y của z dòng" */
+    div.dataTables_wrapper .dataTables_info {
+        margin-top: 0.5rem;
+        padding-left: 0.2rem;
+        font-size: 0.9rem;
+    }
+
+    /* Phân trang spacing */
+    div.dataTables_wrapper .dataTables_paginate {
+        text-align: center;
+    }
+
+    /* Tùy chỉnh spacing của các nút phân trang */
+    .dataTables_paginate .paginate_button {
+        margin: 0 4px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        background-color: #f9f9f9;
+    }
+
+    .dataTables_paginate .paginate_button.current {
+        background-color: #0d6efd;
+        color: white !important;
+        font-weight: bold;
+    }
+
+    .dataTables_paginate .paginate_button:hover {
+        background-color: #e9ecef;
+        cursor: pointer;
+    }
+</style>
+
+<style>
+    #orderTable {
+        font-size: 14px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+    }
+
+    #orderTable th,
+    #orderTable td {
+        vertical-align: middle !important;
+        padding: 12px 8px;
+    }
+
+    #orderTable th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+
+    .badge {
+        font-size: 13px;
+        padding: 6px 10px;
+        border-radius: 12px;
+    }
+
+    .btn-outline-primary,
+    .btn-outline-danger {
+        width: 100%;
+        min-width: 100px;
+        font-size: 13px;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        #orderTable td,
+        #orderTable th {
+            font-size: 12px;
+            padding: 8px;
+        }
+
+        .btn {
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+    }
+</style>
+
 <!-- latest jquery-->
 <script th:src="@{FrontEnd/assets/js/jquery-3.6.0.min.js}"></script>
 
@@ -1843,6 +2107,16 @@
 
 <!-- script js -->
 <script th:src="@{FrontEnd/assets/js/script.js}"></script>
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<!-- DataTables CSS + Bootstrap 5 integration -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- theme setting js -->
 <script th:src="@{/FrontEnd/assets/js/theme-setting.js}"></script>

@@ -21,6 +21,9 @@ public class SellerApplication {
     public String sellerBecome(Model model) {
 
         Object account = session.getAttribute("account");
+        if (account == null) {
+            return "redirect:/login";
+        }
 
         UserResponse userResponse = (UserResponse) account;
 

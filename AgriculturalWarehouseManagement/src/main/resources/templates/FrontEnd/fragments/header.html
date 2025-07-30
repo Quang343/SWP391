@@ -283,7 +283,7 @@
                                             <li class="list-group-item p-0" style="width: 39%">
                                               <a href="http://localhost:8080/AgriculturalWarehouseManagementApplication/productDetail?productId=${p.productId}"
                                                  class="d-flex align-items-center gap-2 text-decoration-none text-dark px-2 py-1">
-                                                <img src="${p.imageUrlGallery}" alt="" style="width:40px;height:40px;object-fit:cover;">
+                                                <img src="${'seller/'+p.imageUrlGallery}" alt="" style="width:40px;height:40px;object-fit:cover;">
                                                 <span>${p.productName}</span>
                                                 <span class="ms-auto text-muted">${p.productPrice.toLocaleString('vi-VN')}₫</span>
                                               </a>
@@ -543,7 +543,7 @@
                                                 </li>
 
                                                 <li th:if="${session.account != null}">
-                                                    <a class="dropdown-item" href="my-blog" >My Blog </a>
+                                                    <a class="dropdown-item" href="my-blog" >Quản lý bài đăng</a>
                                                 </li>
                                             </ul>
                                         </li>
@@ -551,8 +551,8 @@
 
                                         <li class="nav-item dropdown new-nav-item">
                                             <a class="nav-link dropdown-toggle" href="javascript:void(0)"
-                                               data-bs-toggle="dropdown">Pages <label
-                                                    class="new-dropdown">New</label></a>
+                                               data-bs-toggle="dropdown">Trang <label
+                                                    class="new-dropdown">Mới</label></a>
                                             <ul class="dropdown-menu">
 
                                                 <li>
