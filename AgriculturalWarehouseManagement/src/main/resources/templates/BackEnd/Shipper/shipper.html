@@ -17,7 +17,7 @@
     }
 
     /* Màu cho các nút phân trang chưa chọn */
-    ul.custom-pagination .page-link {
+    ul.custom-pagination .page-item.active {
         color: #198754 !important; /* Màu chữ xanh đậm */
         border-radius: 6px !important;
         min-width: 38px;
@@ -38,6 +38,21 @@
         color: #fff !important;
         font-weight: 600;
         border-radius: 10px;
+    }
+    #searchRecommendations {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    #searchRecommendations li {
+        cursor: pointer;
+        padding: 8px 10px;
+    }
+
+    #searchRecommendations li:hover {
+        background-color: #e5f6ee;
     }
 
 </style>
@@ -133,7 +148,7 @@
                         <div class="cover-image position-relative">
                             <img id="coverImage"
                                  src="/AgriculturalWarehouseManagementApplication/Backend/assets/images/user/default-cover.jpg"
-                                 class="img-fluid blur-up lazyload" alt="">
+                                 class="img-fluid blur-up lazyload"  alt="Avatar">
 
                             <!-- Nút chỉnh sửa ảnh bìa (sau này dùng tiếp được) -->
                             <!--                            <button class="btn btn-sm btn-light position-absolute top-0 end-0 m-2 edit-cover-btn" title="Đổi ảnh bìa">-->
@@ -213,8 +228,14 @@
 
                         <div class="tab-pane fade" id="pills-order" role="tabpanel">
                             <div class="dashboard-order">
-                                <div class="title">
+                                <div class="title mb-3 d-flex justify-content-between align-items-center">
                                     <h2>Tất Cả Đơn Hàng</h2>
+                                    <div class="input-group" style="width: 300px;">
+                                        <input type="text" id="searchInput" class="form-control" placeholder="Nhập mã đơn hoặc SĐT">
+                                        <button class="btn btn-success" onclick="searchOrder()">Tìm kiếm</button>
+                                    </div>
+                                    <ul id="searchRecommendations" class="list-group position-absolute"
+                                        style="top: 50px; right: 0; width: 300px; z-index: 1000; display:none;"></ul>
                                 </div>
                                 <table class="table" id="shipper-order-table">
                                     <thead>
@@ -1239,6 +1260,19 @@
         renderPagination(pageNumber, Math.ceil(allOrders.length / PAGE_SIZE));
     }
 
+    function translateStatus(status) {
+        const translations = {
+            "PENDING": "CHỜ XÁC NHẬN",
+            "CONFIRMED": "ĐÃ XÁC NHẬN",
+            "CANCELLED": "ĐÃ HUỶ",
+            "STOCKOUT": "ĐÃ XUẤT KHO",
+            "DELIVERED": "ĐANG GIAO",
+            "COMPLETED": "HOÀN THÀNH"
+        };
+        return translations[status] || status;
+    }
+
+
     function renderTable(orders) {
         const tbody = document.getElementById("shipper-orders-tbody");
         tbody.innerHTML = "";
@@ -1251,13 +1285,15 @@
                 <td>${order.orderDate || "N/A"}</td>
                 <td>${order.phone || "N/A"}</td>
                 <td>${order.address || "N/A"}</td>
-                <td class="text-success">${order.totalAmount.toLocaleString()} VND</td>
-                <td class="text-danger">${order.finalAmount.toLocaleString()} VND</td>
-                <td><span class="badge bg-info">${order.status}</span></td>
+                <td class="text-success"><i><b>${order.totalAmount.toLocaleString()} VND</b></i></td>
+                <td class="text-danger"><i><b>${order.finalAmount.toLocaleString()} VND</b></i></td>
+              <td><span class="badge bg-info">${translateStatus(order.status)}</span></td>
                 <td>
                     <button class="btn btn-success btn-sm me-1" onclick="confirmDelivery(${order.orderId})">✔ Giao thành công</button>
                     <button class="btn btn-danger btn-sm" onclick="cancelOrder(${order.orderId})">✖ Huỷ đơn</button>
+
                 </td>
+
             `;
             tbody.appendChild(row);
         });
@@ -1324,6 +1360,129 @@
     }
 </script>
 <!-- Đơn Hàng End-->
+
+<!-- Đơn Hàng Search Recomment End-->
+<script>
+    document.getElementById("searchInput").addEventListener("input", function() {
+        const keyword = this.value.trim().toLowerCase();
+        const recommendationBox = document.getElementById("searchRecommendations");
+
+        if (keyword.length === 0) {
+            recommendationBox.style.display = "none";
+            return;
+        }
+
+        const matchedOrders = allOrders.filter(order =>
+            order.orderCode.toLowerCase().includes(keyword) || order.phone.includes(keyword)
+        );
+
+        if (matchedOrders.length > 0) {
+            recommendationBox.innerHTML = matchedOrders.slice(0, 10).map(order => `
+            <li class="list-group-item" onclick="selectRecommendation('${order.orderCode}')">
+                <strong>${order.orderCode}</strong> - ${order.phone}
+            </li>
+        `).join('');
+            recommendationBox.style.display = "block";
+        } else {
+            recommendationBox.innerHTML = `<li class="list-group-item text-muted">Không tìm thấy kết quả</li>`;
+            recommendationBox.style.display = "block";
+        }
+    });
+
+    function selectRecommendation(orderCode) {
+        document.getElementById("searchInput").value = orderCode;
+        document.getElementById("searchRecommendations").style.display = "none";
+        searchOrder();
+    }
+
+    // Ẩn recommendations khi click ra ngoài
+    document.addEventListener('click', function(event) {
+        const recommendationBox = document.getElementById('searchRecommendations');
+        if (!document.getElementById('searchInput').contains(event.target) &&
+            !recommendationBox.contains(event.target)) {
+            recommendationBox.style.display = 'none';
+        }
+    });
+
+    function renderPaginationSearch(filteredOrders, currentPage) {
+        const totalPages = Math.ceil(filteredOrders.length / PAGE_SIZE);
+        let html = '';
+
+        if (currentPage > 1) {
+            html += `<li class="page-item"><a class="page-link" onclick="changePageSearch(${currentPage - 1}, ${filteredOrders})">Trang trước</a></li>`;
+        }
+
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<li class="page-item${i === currentPage ? " active" : ""}">
+                   <a class="page-link" onclick="changePageSearch(${i}, ${filteredOrders})">${i}</a>
+                 </li>`;
+        }
+
+        if (currentPage < totalPages) {
+            html += `<li class="page-item"><a class="page-link" onclick="changePageSearch(${currentPage + 1}, ${filteredOrders})">Trang sau</a></li>`;
+        }
+
+        document.getElementById("pagination").innerHTML = html;
+    }
+
+    function changePageSearch(pageNumber, filteredOrders) {
+        const startIndex = (pageNumber - 1) * PAGE_SIZE;
+        const pageData = filteredOrders.slice(startIndex, startIndex + PAGE_SIZE);
+        renderTable(pageData);
+        renderPaginationSearch(filteredOrders, pageNumber);
+    }
+
+</script>
+
+<!-- Đơn Hàng Search End-->
+<script>
+    function searchOrder() {
+        const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+        const filteredOrders = allOrders.filter(order =>
+            order.orderCode.toLowerCase().includes(keyword) ||
+            order.phone.includes(keyword)
+        );
+
+        if (filteredOrders.length === 0) {
+            document.getElementById("shipper-orders-tbody").innerHTML =
+                `<tr><td colspan="9" class="text-center text-muted">Không tìm thấy đơn hàng phù hợp.</td></tr>`;
+            document.getElementById("pagination").innerHTML = "";
+            return;
+        }
+
+        renderTable(filteredOrders.slice(0, PAGE_SIZE));
+        renderPaginationSearch(filteredOrders, 1);
+    }
+
+    function renderPaginationSearch(filteredOrders, currentPage) {
+        const totalPages = Math.ceil(filteredOrders.length / PAGE_SIZE);
+        let html = '';
+
+        if (currentPage > 1) {
+            html += `<li class="page-item"><a class="page-link" onclick="changePageSearch(${currentPage - 1}, ${filteredOrders})">Trang trước</a></li>`;
+        }
+
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<li class="page-item${i === currentPage ? " active" : ""}">
+                   <a class="page-link" onclick="changePageSearch(${i}, ${filteredOrders})">${i}</a>
+                 </li>`;
+        }
+
+        if (currentPage < totalPages) {
+            html += `<li class="page-item"><a class="page-link" onclick="changePageSearch(${currentPage + 1}, ${filteredOrders})">Trang sau</a></li>`;
+        }
+
+        document.getElementById("pagination").innerHTML = html;
+    }
+
+    function changePageSearch(pageNumber, filteredOrders) {
+        const startIndex = (pageNumber - 1) * PAGE_SIZE;
+        const pageData = filteredOrders.slice(startIndex, startIndex + PAGE_SIZE);
+        renderTable(pageData);
+        renderPaginationSearch(filteredOrders, pageNumber);
+    }
+
+</script>
 
 <!--Reload giữ nguyên tab-->
 <script>

@@ -18,7 +18,7 @@ public class OrderTrackingShipperAPIController {
     private final OrderShipperService shipperService;
 
     /**
-     * Lấy tất cả đơn hàng có trạng thái DELIVERED
+     * Lấy tất cả đơn hàng có trạng thái STOCKOUT
      */
     @GetMapping
     public ResponseEntity<List<Order_SellerDTO>> getAllDeliveredOrders() {
