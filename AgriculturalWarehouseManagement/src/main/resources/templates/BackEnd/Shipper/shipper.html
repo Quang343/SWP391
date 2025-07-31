@@ -2,11 +2,9 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="FrontEnd/fragments/head::head"></head>
 
-
 <!--    shipper.html-->
 
 <style>
-
 
     /* Màu nền của các trang đã chọn */
     ul.custom-pagination li.page-item.active > a.page-link,
@@ -39,6 +37,7 @@
         font-weight: 600;
         border-radius: 10px;
     }
+
     #searchRecommendations {
         max-height: 200px;
         overflow-y: auto;
@@ -148,7 +147,7 @@
                         <div class="cover-image position-relative">
                             <img id="coverImage"
                                  src="/AgriculturalWarehouseManagementApplication/Backend/assets/images/user/default-cover.jpg"
-                                 class="img-fluid blur-up lazyload"  alt="Avatar">
+                                 class="img-fluid blur-up lazyload" alt="Avatar">
 
                             <!-- Nút chỉnh sửa ảnh bìa (sau này dùng tiếp được) -->
                             <!--                            <button class="btn btn-sm btn-light position-absolute top-0 end-0 m-2 edit-cover-btn" title="Đổi ảnh bìa">-->
@@ -191,7 +190,15 @@
                         </div>
                     </div>
 
+
                     <ul class="nav nav-pills user-nav-pills" id="pills-tab" role="tablist">
+
+                        <li class="nav-item" role="presentation">
+                            <a href="#pills-tabContent" class="nav-link active" id="pills-dashboard-tab"
+                               data-bs-toggle="pill" data-bs-target="#pills-dashboard" role="tab"><i
+                                    data-feather="home"></i>
+                                DashBoard</a>
+                        </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
                                     data-bs-target="#pills-profile" type="button" role="tab">
@@ -209,7 +216,8 @@
 
                         <li class="nav-item" role="presentation">
                             <a class="nav-link" id="pills-out-tab"
-                               href="http://localhost:8080/AgriculturalWarehouseManagementApplication/logoutUser" role="tab">
+                               href="http://localhost:8080/AgriculturalWarehouseManagementApplication/logoutUser"
+                               role="tab">
                                 <i data-feather="log-out"></i> Đăng xuất
                             </a>
                         </li>
@@ -224,6 +232,95 @@
                 </button>
                 <div class="dashboard-right-sidebar">
                     <div class="tab-content" id="pills-tabContent">
+                        <!--                            Trang điều khiển-->
+                        <div class="tab-pane fade show active" id="pills-dashboard" role="tabpanel">
+                            <div class="dashboard-home">
+                                <div class="title">
+                                    <h2>Trang tổng quan của tôi</h2>
+                                    <span class="title-leaf">
+                                            <svg class="icon-width bg-gray">
+                                                <use xlink:href="../assets/svg/leaf.svg#leaf"></use>
+                                            </svg>
+                                        </span>
+                                </div>
+
+                                <div class="dashboard-user-name">
+                                    <h6 class="text-content">
+                                        Xin chào bạn,
+                                        <!--                                        <b class="text-title" th:text="${shipper.username}">username</b>-->
+                                        <i><b> Chúc bạn một buổi sáng vui vẻ và tràn đầy năng lượng !!</b></i>
+                                    </h6>
+                                    <!--                                    <p class="text-content">-->
+                                    <!--                                        Từ tài khoản Dashboard, bạn có thể xem hoạt động gần đây và cập nhật thông tin tài khoản..-->
+                                    <!--                                    </p>-->
+                                </div>
+
+                                <div class="total-box">
+                                    <div class="row g-sm-4 g-3">
+                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
+                                            <div class="total-contain">
+                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}"
+                                                     class="img-1 blur-up lazyload" alt="">
+                                                <img th:src="@{FrontEnd/assets/images/svg/order.svg}"
+                                                     class="blur-up lazyload"
+                                                     alt="">
+                                                <div class="total-detail">
+                                                    <h5>Đơn hàng đã xuất kho</h5>
+                                                    <h3 id="totalSTOCKOUTCount">0</h3>
+                                                    <!-- Số lượng blog sẽ được cập nhật ở đây -->
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xxl-4 col-lg-6 col-md-4 col-sm-6">
+                                            <div class="total-contain">
+                                                <img th:src="@{FrontEnd/assets/images/svg/wishlist.svg}"
+                                                     class="img-1 blur-up lazyload" alt="">
+                                                <img th:src="@{FrontEnd/assets/images/svg/wishlist.svg}"
+                                                     class="blur-up lazyload" alt="">
+                                                <div class="total-detail">
+                                                    <h5>Đơn hàng đã giao</h5>
+                                                    <h3 id="totalDELIVEREDCount">0</h3>
+                                                    <!-- Số lượng blog sẽ được cập nhật ở đây -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-4">
+                                    <div class="col-xxl-6">
+                                        <div class="dashboard-content-title">
+                                            <h4>Thông tin
+                                            </h4>
+                                        </div>
+                                        <div class="dashboard-detail">
+                                            <!--                                            <h6 class="text-content" th:text="${shipper.fullName}">Họ tên</h6>-->
+                                            <!--                                            <h6 class="text-content" th:text="${shipper.email}">Email</h6>-->
+                                            <h3> Việc gì khó đã có ARIKHO</h3>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <script>document.addEventListener("DOMContentLoaded", function () {
+
+                                const CONTEXT_PATH = "/AgriculturalWarehouseManagementApplication";
+
+                                fetch(`${CONTEXT_PATH}/api/shipper/orders/count-stockout`)
+                                    .then(res => res.json())
+                                    .then(count => {
+                                        document.getElementById("totalSTOCKOUTCount").textContent = count;
+                                    });
+
+                                fetch(`${CONTEXT_PATH}/api/shipper/orders/count-delivered`)
+                                    .then(res => res.json())
+                                    .then(count => {
+                                        document.getElementById("totalDELIVEREDCount").textContent = count;
+                                    });
+                            });
+                            </script>
+                        </div>
 
 
                         <div class="tab-pane fade" id="pills-order" role="tabpanel">
@@ -231,7 +328,8 @@
                                 <div class="title mb-3 d-flex justify-content-between align-items-center">
                                     <h2>Tất Cả Đơn Hàng</h2>
                                     <div class="input-group" style="width: 300px;">
-                                        <input type="text" id="searchInput" class="form-control" placeholder="Nhập mã đơn hoặc SĐT">
+                                        <input type="text" id="searchInput" class="form-control"
+                                               placeholder="Nhập mã đơn hoặc SĐT">
                                         <button class="btn btn-success" onclick="searchOrder()">Tìm kiếm</button>
                                     </div>
                                     <ul id="searchRecommendations" class="list-group position-absolute"
@@ -245,7 +343,8 @@
                                         <th style="white-space: nowrap;">
                                             <div class="d-flex align-items-center">
                                                 <span>Ngày đặt</span>
-                                                <button id="sortDateBtn" class="btn btn-sm ms-1 p-0 border-0 bg-transparent">
+                                                <button id="sortDateBtn"
+                                                        class="btn btn-sm ms-1 p-0 border-0 bg-transparent">
                                                     <i class="fa-solid fa-sort text-success"></i>
                                                 </button>
                                             </div>
@@ -276,7 +375,6 @@
                                 <div class="title d-flex justify-content-between align-items-center">
                                     <h2>Hồ sơ người vận chuyển</h2>
                                 </div>
-
                                 <!-- Thông tin cơ bản -->
                                 <div class="profile-tab dashboard-bg-box mb-3">
                                     <h4 class="mb-3">🔹 Thông tin cơ bản</h4>
@@ -413,7 +511,6 @@
                                             <h5>Mật khẩu:</h5>
                                             <div class="d-flex align-items-center">
                                                 <span class="field-value">******</span>
-
                                                 <!-- 🔒 Không cho chỉnh sửa trực tiếp -->
                                                 <!-- Có thể giữ input nếu bạn cần logic backend, nhưng nên disabled -->
                                                 <input type="password"
@@ -430,8 +527,6 @@
                                         </li>
                                     </ul>
                                 </div>
-
-
                                 <!-- Nút Huỷ & Lưu -->
                                 <div class="d-flex justify-content-end mt-4 gap-2">
                                     <button id="cancel-edit" class="btn btn-outline-secondary" title="Huỷ các thay đổi">
@@ -770,6 +865,7 @@
         const originalValues = {};
         let isEditing = false;
         const userId = "[[${session.accountIdShipper}]]";
+
         function loadUserData() {
             fetch(`${BASE_URL}/by-id/${userId}`)
                 .then(res => res.json())
@@ -1363,7 +1459,7 @@
 
 <!-- Đơn Hàng Search Recomment End-->
 <script>
-    document.getElementById("searchInput").addEventListener("input", function() {
+    document.getElementById("searchInput").addEventListener("input", function () {
         const keyword = this.value.trim().toLowerCase();
         const recommendationBox = document.getElementById("searchRecommendations");
 
@@ -1396,7 +1492,7 @@
     }
 
     // Ẩn recommendations khi click ra ngoài
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
         const recommendationBox = document.getElementById('searchRecommendations');
         if (!document.getElementById('searchInput').contains(event.target) &&
             !recommendationBox.contains(event.target)) {

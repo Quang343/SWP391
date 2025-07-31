@@ -14,4 +14,7 @@ public interface OrderShipperRepository extends JpaRepository<Order, Long> {
    // List<Order> findByStatus(OrderStatus status);
 
     List<Order> findByStatus(String status);
+
+    long countByStatus(String status);
+
 }

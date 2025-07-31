@@ -52,4 +52,14 @@ public class OrderTrackingShipperAPIController {
         shipperService.cancelDelivery(orderId);
         return ResponseEntity.ok("Đơn hàng đã được huỷ.");
     }
+
+    @GetMapping("/count-stockout")
+    public long countStockoutOrders() {
+        return shipperService.countStockoutOrders();
+    }
+
+    @GetMapping("/count-delivered")
+    public long countDeliveredOrders() {
+        return shipperService.countDeliveredOrders();
+    }
 }
