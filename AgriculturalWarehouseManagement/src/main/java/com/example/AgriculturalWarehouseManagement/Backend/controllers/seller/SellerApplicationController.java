@@ -120,7 +120,7 @@ public class SellerApplicationController {
 
     @GetMapping("/test-auto-cancel")
     public ResponseEntity<?> testAutoCancelNow() {
-        sellerApplicationService.autoCancelExpiredApplications();
+        sellerApplicationService.autoCancelApplications();
         return ResponseEntity.ok("Đã chạy scheduler thủ công");
     }
 

@@ -13,6 +13,6 @@ public class AutoCancelScheduler {
     // Chạy mỗi ngày lúc 2:00 sáng
     @Scheduled(cron = "0 * * * * ?")
     public void runAutoCancel() {
-        autoCancelService.autoCancelExpiredApplications();
+        autoCancelService.autoCancelApplications();
     }
 }

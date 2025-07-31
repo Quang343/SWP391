@@ -240,12 +240,14 @@
                         data: 'status',
                         render: function (data) {
                             let badgeClass = 'secondary';
-                            if (data === 'PENDING') badgeClass = 'warning';
-                            else if (data === 'APPROVED') badgeClass = 'success';
-                            else if (data === 'REJECTED') badgeClass = 'danger';
-                            else if (data === 'CANCELLED') badgeClass = 'secondary';
-                            else if (data === 'EXPIRED') badgeClass = 'dark';
-                            return `<span class="badge bg-${badgeClass}">${data}</span>`;
+                            if (data === 'PENDING') badgeClass = 'pending';
+                            else if (data === 'APPROVED') badgeClass = 'approved';
+                            else if (data === 'REJECTED') badgeClass = 'rejected';
+                            else if (data === 'CANCELLED') badgeClass = 'cancelled';
+                            else if (data === 'EXPIRED') badgeClass = 'expired';
+                            else if (data === 'COMPLETED') badgeClass = 'completed';
+
+                            return `<span class="badge custom-badge bg-${badgeClass}">${data}</span>`;
                         }
                     },
 
@@ -660,6 +662,53 @@
 
 <!--CSS-->
 <style>
+    .custom-badge {
+        color: #fff !important;
+        padding: 0.45em 0.9em;
+        font-weight: 600;
+        border-radius: 0.6rem;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .custom-badge:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* PENDING – vàng nổi */
+    .bg-pending {
+        background: linear-gradient(135deg, #FACC15, #EAB308);
+    }
+
+    /* APPROVED – xanh nổi */
+    .bg-approved {
+        background: linear-gradient(135deg, #34D399, #059669);
+    }
+
+    /* REJECTED – đỏ cam rực */
+    .bg-rejected {
+        background: linear-gradient(135deg, #F87171, #DC2626);
+    }
+
+    /* CANCELLED – xám tím nhạt */
+    .bg-cancelled {
+        background: linear-gradient(135deg, #9CA3AF, #6B7280);
+    }
+
+    /* EXPIRED – xám đậm chuyển */
+    .bg-expired {
+        background: linear-gradient(135deg, #6B7280, #374151);
+    }
+
+    /* COMPLETED – tím gradient nổi bật */
+    .bg-completed {
+        background: linear-gradient(135deg, #A78BFA, #7C3AED);
+    }
+
     .wallet-balance-box {
         background-color: #f0f9ff;
         border: 1px solid #cce5ff;

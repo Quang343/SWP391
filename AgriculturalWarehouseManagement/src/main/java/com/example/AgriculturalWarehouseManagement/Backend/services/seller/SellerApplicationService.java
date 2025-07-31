@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -239,7 +240,7 @@ public class SellerApplicationService {
     }
 
     @Transactional
-    public void autoCancelExpiredApplications() {
+    public void autoCancelApplications() {
         LocalDate today = LocalDate.now();
         List<SellerApplication> applications = sellerApplicationRepository.findAllApprovedApplications();
 
@@ -249,8 +250,11 @@ public class SellerApplicationService {
 
             if (expiryDate == null || contractMonths == null) continue;
 
+            // Ngày duyệt = ngày hết hạn - số tháng hợp đồng
             LocalDate approvalDate = expiryDate.minusMonths(contractMonths);
-            LocalDate cancelDeadline = approvalDate.plusDays(3);
+
+            // Nếu đã quá 7 ngày từ khi duyệt mà user vẫn chưa hoàn tất, thì huỷ đơn
+            LocalDate cancelDeadline = approvalDate.plusDays(7);
 
             if (today.isAfter(cancelDeadline)) {
                 Long appId = app.getId();
@@ -299,5 +303,14 @@ public class SellerApplicationService {
 
         sellerApplicationRepository.save(app);
     }
+
+    public Optional<SellerApplication> findByUserAndStatus(User user, SellerApplicationStatus status) {
+        return sellerApplicationRepository.findByUserAndStatus(user, status);
+    }
+
+    public SellerApplication save(SellerApplication application) {
+        return sellerApplicationRepository.save(application);
+    }
+
 }
 
