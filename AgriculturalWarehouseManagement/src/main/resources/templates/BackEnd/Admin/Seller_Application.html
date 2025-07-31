@@ -11,42 +11,168 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        
-        body {
-            background-color: #f4f6f9;
+        @import url('https://fonts.googleapis.com/css?family=Mukta:700');
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        button {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            outline: none;
+            border: 0;
+            vertical-align: middle;
+            text-decoration: none;
+            background: transparent;
+            padding: 0;
+            font-size: inherit;
+            font-family: inherit;
+        }
+
+        button.learn-more {
+            width: 10rem;
+            height: auto;
             display: flex;
-            justify-content: center;
+            flex-direction: row-reverse;
+            align-items: center;
+            margin: -1rem 0 2rem 0;
         }
-        .card-header {
-            background-color: #0d6efd;
+
+        button.learn-more .circle {
+            transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+            position: relative;
+            display: block;
+            margin: 0;
+            width: 3rem;
+            height: 3rem;
+            background: #282936;
+            border-radius: 1.625rem;
+        }
+
+        button.learn-more .circle .icon {
+            transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            background: #fff;
+        }
+
+        button.learn-more .circle .icon.arrow {
+            transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+            right: 0.625rem;
+            left: auto;
+            width: 1.125rem;
+            height: 0.125rem;
+            background: none;
+        }
+
+        button.learn-more .circle .icon.arrow::before {
+            position: absolute;
+            content: '';
+            top: -0.25rem;
+            left: 0.0625rem;
+            right: auto;
+            width: 0.625rem;
+            height: 0.625rem;
+            border-top: 0.125rem solid #fff;
+            border-left: 0.125rem solid #fff;
+            border-right: none;
+            transform: rotate(-45deg);
+        }
+
+        button.learn-more .button-text {
+            transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 0.75rem 0;
+            margin: 0 1.85rem 0 0;
+            /* chuyển sang bên trái */
+            color: #282936;
+            font-weight: 700;
+            line-height: 1.6;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        button:hover .circle {
+            width: 100%;
+        }
+
+        button:hover .circle .icon.arrow {
+            background: #fff;
+            transform: translate(-1rem, 0);
+            /* hover sang trái */
+        }
+
+        button:hover .button-text {
             color: #fff;
-            font-weight: 600;
+            z-index: 100;
         }
+
+        @supports (display: grid) {
+            body {
+                display: flex;
+                justify-content: center;
+            }
+
+            #container {
+                grid-area: main;
+                align-self: center;
+                justify-self: center;
+            }
+        }
+
+
+        body {
+            background: #f6f8fa;
+        }
+
+        .section-title {
+            padding: 10px;
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid rgb(23, 165, 137);
+            color: #22223b;
+            background: #fff;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(32, 201, 151, 0.04);
+        }
+
+        .card-header {
+            background: #20c997;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-radius: 6px 6px 0 0;
+            border: none;
+        }
+
         .badge-status {
             font-size: 0.9rem;
             padding: 0.4em 0.7em;
         }
-        .section-title {
-            font-weight: 600;
-            margin-bottom: 1rem;
-            border-left: 4px solid #0d6efd;
-            padding-left: 10px;
-        }
-        .btn {
-            min-width: 140px;
-        }
-        .cv-preview {
-            max-height: 400px;
-            object-fit: contain;
-        }
+
         .card-description {
-            font-size: 0.95rem;
-            color: #6c757d;
+            font-size: 1rem;
+            color: #495057;
             margin-bottom: 1rem;
+            background: #f8f9fa;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            font-style: italic;
         }
 
-        .main-form-se{
-            max-width: 75%;
+        .main-form-se {
+            max-width: 60%;
             background: linear-gradient(135deg, #ffffff, #f9f9f9);
             padding: 30px;
             border-radius: 15px;
@@ -56,6 +182,75 @@
             margin: 20px 0;
         }
 
+        /* Thêm vào cuối phần <style> */
+        .btn-approve,
+        .btn-reject {
+            position: relative;
+            min-width: 150px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            padding: 0.6em 1.5em;
+            border-radius: 8px;
+            transition:
+                    background 0.25s cubic-bezier(.4, 0, .2, 1),
+                    color 0.25s cubic-bezier(.4, 0, .2, 1),
+                    box-shadow 0.25s cubic-bezier(.4, 0, .2, 1),
+                    transform 0.18s cubic-bezier(.4, 0, .2, 1);
+            box-shadow: 0 2px 8px rgba(32, 201, 151, 0.08);
+            letter-spacing: 0.5px;
+            outline: none;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5em;
+        }
+
+        .btn-approve {
+            background: #20c997;
+            color: #fff;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            padding: 0.6em 1.5em;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.18s;
+        }
+
+        .btn-approve:hover,
+        .btn-approve:focus {
+            background: #17a589;
+            box-shadow: 0 4px 18px rgba(32, 201, 151, 0.12);
+            transform: translateY(-2px) scale(1.03);
+        }
+
+        .btn-reject {
+            background: #e63946;
+            color: #fff;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            padding: 0.6em 1.5em;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.18s;
+        }
+
+        .btn-reject:hover,
+        .btn-reject:focus {
+            background: #b71c1c;
+            box-shadow: 0 4px 18px rgba(230, 57, 70, 0.12);
+            transform: translateY(-2px) scale(1.03);
+        }
+
+        .card {
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 2px 12px rgba(32, 201, 151, 0.05);
+            margin-bottom: 2rem;
+            background: #fff;
+            transition: box-shadow 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 24px rgba(32, 201, 151, 0.09);
+        }
     </style>
 </head>
 <body>
@@ -63,11 +258,12 @@
 <div class="container main-form-se py-5" style="max-width: 960px;">
 
     <!-- Nút quay lại -->
-    <div class="mb-3">
-        <a th:href="@{/admin}" class="btn btn-outline-secondary">
-            <i class="fa-solid fa-arrow-left me-1"></i> Quay lại
-        </a>
-    </div>
+    <button class="learn-more">
+        <a th:href="@{/admin}"><span class="button-text">Quay lại</span></a>
+        <span class="circle" aria-hidden="true">
+                <span class="icon arrow"></span>
+            </span>
+    </button>
 
     <!-- Tiêu đề -->
     <h2 class="mb-4 section-title">Chi tiết đơn đăng ký người bán</h2>
@@ -143,12 +339,12 @@
     <div class="card shadow-sm" th:if="${sa.status.name() == 'PENDING'}">
         <div class="card-body text-end">
             <form th:action="@{/admin/seller-applications/{id}/approve(id=${sa.id})}" method="post" class="d-inline">
-                <button type="submit" class="btn btn-success me-2">
+                <button type="submit" class="btn-approve me-2">
                     <i class="fa-solid fa-check-circle me-1"></i> Duyệt đơn
                 </button>
             </form>
             <form th:action="@{/admin/seller-applications/{id}/reject(id=${sa.id})}" method="post" class="d-inline">
-                <button type="submit" class="btn btn-danger">
+                <button type="submit" class="btn-reject">
                     <i class="fa-solid fa-xmark-circle me-1"></i> Từ chối đơn
                 </button>
             </form>
