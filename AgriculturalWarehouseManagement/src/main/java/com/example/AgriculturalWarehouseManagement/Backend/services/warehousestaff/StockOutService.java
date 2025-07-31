@@ -114,9 +114,9 @@ public class StockOutService {
         System.out.println("Debug - Created StockOutDetailDTOs: " + stockOutDetailDTOs.size());
         stockOutDetailService.saveStockOutDetails(stockOutDetailDTOs);
 
-        // Update Order status to STOCK_OUT
-        System.out.println("Debug - Updating Order ID: " + order.getId() + " status to STOCK_OUT");
-        order.setStatus("STOCK_OUT");
+        // Update Order status to STOCKOUT
+        System.out.println("Debug - Updating Order ID: " + order.getId() + " status to STOCKOUT");
+        order.setStatus("STOCKOUT");
         orderRepository.save(order);
         System.out.println("Debug - Order ID: " + order.getId() + " status updated to: " + order.getStatus());
 
