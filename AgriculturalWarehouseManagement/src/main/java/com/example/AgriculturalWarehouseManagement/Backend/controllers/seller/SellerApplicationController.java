@@ -1,10 +1,17 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.seller;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.SellerApplicationRequestDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Notification;
 import com.example.AgriculturalWarehouseManagement.Backend.models.SellerApplication;
+import com.example.AgriculturalWarehouseManagement.Backend.models.User;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.NotificationRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.RoleRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.UserRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.services.admin.NotificationService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.seller.SellerApplicationService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/seller/applications")
@@ -21,6 +29,18 @@ import java.util.Map;
 public class SellerApplicationController {
 
     private final SellerApplicationService sellerApplicationService;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    NotificationService notificationService;
 
 
     @PostMapping(consumes = "multipart/form-data")
@@ -39,6 +59,22 @@ public class SellerApplicationController {
 
         try {
             SellerApplication created = sellerApplicationService.createApplication(userId, contractMonths, cvFile);
+
+            // 2. Tạo Notification
+            // Sau khi user gửi đơn trở thành seller
+            Optional<User> requestingUser = userRepository.findByUserId(userId.intValue()); // user gửi yêu cầu
+            User adminUser = userRepository.findByRole(roleRepository.findByRoleName("ADMIN")).get(0); // lấy admin đầu tiên
+
+            if (requestingUser.isPresent() && adminUser != null) {
+                Notification notification = getNotification(requestingUser, adminUser);
+                notification.setUrl("/admin/seller-applications/" + created.getId() + "/details");
+                notificationRepository.save(notification);
+
+                // 3. Gửi WebSocket message cho admin
+                notificationService.sendNotificationToAdmin(notification);
+            }
+            //
+
             return ResponseEntity.ok(Map.of(
                     "message", "Gửi đơn thành công",
                     "applicationId", created.getId()
@@ -50,6 +86,16 @@ public class SellerApplicationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Lỗi hệ thống: " + e.getMessage()));
         }
+    }
+
+    private static Notification getNotification(Optional<User> requestingUser, User adminUser) {
+        Notification notification = new Notification();
+        notification.setTitle("Yêu cầu trở thành người bán");
+        notification.setContent("Người dùng " + requestingUser.get().getFullName() + " đã gửi yêu cầu trở thành người bán.");
+        notification.setStatus("UNSEEN"); // hoặc "UNREAD"
+//                notification.setUrl("/admin/seller-applications/" + sellerApplication.getId() + "/details");
+        notification.setReceiver(adminUser);
+        return notification;
     }
 
     @GetMapping("/check-status")

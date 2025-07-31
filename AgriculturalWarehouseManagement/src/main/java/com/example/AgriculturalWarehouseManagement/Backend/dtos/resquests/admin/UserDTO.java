@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
-    @NotNull(message = "Role is required")
+//    @NotNull(message = "Role is required")
     private Long roleId;
 
     @NotBlank(message = "Username is required")
@@ -47,7 +47,7 @@ public class UserDTO {
 
     private String gender;
 
-    @NotBlank(message = "Status is required")
+//    @NotBlank(message = "Status is required")
     private String status;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")

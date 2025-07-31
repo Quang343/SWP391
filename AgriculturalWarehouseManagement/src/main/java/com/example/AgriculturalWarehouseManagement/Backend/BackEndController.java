@@ -1,9 +1,14 @@
 package com.example.AgriculturalWarehouseManagement.Backend;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.BestSellerProductDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Category;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Notification;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Order;
+import com.example.AgriculturalWarehouseManagement.Backend.models.User;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.NotificationRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.CategoryService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.admin.NotificationService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.order.OrderService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.product.ProductService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.user.UserService;
@@ -16,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -23,6 +29,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Controller
 public class BackEndController {
+
+    private final NotificationRepository notificationRepository;
 
     private final ProductService productService;
 
@@ -32,8 +40,12 @@ public class BackEndController {
 
     private final UserService userService;
 
+    private final NotificationService notificationService;
+
     @RequestMapping("/admin")
-    public String admin(Model model) {
+    public String admin(Model model, HttpSession session) {
+        UserResponse userResponse = (UserResponse) session.getAttribute("accountAdmin");
+        User currentUser = userService.findById(userResponse.getUserID() * 1L);
         //lấy ra 5 bản ghi đầu tiên
         Pageable pageable = PageRequest.of(0, 5);
         Page<Order> orderPage = orderService.getTopNRecentOrders(pageable);
@@ -41,6 +53,11 @@ public class BackEndController {
 
         List<Category> categories =  categoryService.findAll();
         List<BestSellerProductDTO> bestSeller = productService.getAllBestSellerProductDTO();
+
+        List<Notification> notifications = notificationService.findTop10ByReceiverUserIdOrderByCreatedAtDesc(currentUser.getUserId());
+
+        model.addAttribute("notifications", notifications);
+        model.addAttribute("unreadCount", notificationService.countUnseenNotifications(currentUser.getUserId()));
 
         model.addAttribute("numberOfUsers", userService.getNumberOfUsers());
         model.addAttribute("numberOfOrders", orderService.getToTalOrderQuantity());
@@ -51,6 +68,19 @@ public class BackEndController {
         model.addAttribute("bestSeller", bestSeller);
 
         return "BackEnd/Admin/index";
+    }
+
+    @GetMapping("/admin/loadHeader")
+    public String reloadHeader(Model model, HttpSession session) {
+        UserResponse userResponse = (UserResponse) session.getAttribute("accountAdmin");
+        User currentUser = userService.findById(userResponse.getUserID() * 1L);
+        List<Notification> notifications = notificationService.findTop10ByReceiverUserIdOrderByCreatedAtDesc(currentUser.getUserId());
+
+        model.addAttribute("notifications", notifications);
+        model.addAttribute("unreadCount", notificationService.countUnseenNotifications(currentUser.getUserId()));
+
+        // Trả về fragment
+        return "BackEnd/fragments/Admin/header :: header";
     }
 
 

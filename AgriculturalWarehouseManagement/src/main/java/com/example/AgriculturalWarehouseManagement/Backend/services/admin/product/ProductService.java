@@ -39,7 +39,7 @@ public class ProductService implements IProductService {
                 .name(productDTO.getName().trim())
                 .description(productDTO.getDescription())
                 .category(category)
-                .status(ProductStatus.valueOf(productDTO.getStatus()))
+                .status(ProductStatus.ACTIVE)
                 .build();
         return productRepository.save(product);
     }

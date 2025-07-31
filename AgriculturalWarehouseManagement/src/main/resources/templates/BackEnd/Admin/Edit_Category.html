@@ -93,7 +93,7 @@
                                                         <select class="form-select" id="status" name="status" required>
                                                             <option value="ACTIVE" th:selected="${categoryDTO.getStatus() == 'ACTIVE'}">Đang hoạt động</option>
                                                             <option value="INACTIVE" th:selected="${categoryDTO.getStatus() == 'INACTIVE'}">Ngừng hoạt động</option>
-<!--                                                            <option value="DELETED" th:selected="${categoryDTO.getStatus() == 'DELETED'}">Deleted</option>-->
+                                                            <!--                                                            <option value="DELETED" th:selected="${categoryDTO.getStatus() == 'DELETED'}">Deleted</option>-->
                                                         </select>
                                                     </div>
                                                 </div>
@@ -108,7 +108,7 @@
                                                                 <div id="preview-image-container">
                                                                     <img id="preview-image"
                                                                          th:if="${categoryDTO.getImageUrl() != null}"
-                                                                         th:src="@{'/seller/' + ${categoryDTO.getImageUrl()}}"
+                                                                         th:src="@{'/admin/' + ${categoryDTO.getImageUrl()}}"
                                                                          class="img-thumbnail" alt="Current Image"
                                                                          style="width: 150px; height: 150px; object-fit: cover;">
                                                                 </div>

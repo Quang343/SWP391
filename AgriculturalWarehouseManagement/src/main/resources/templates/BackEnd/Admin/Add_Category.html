@@ -292,8 +292,8 @@
     async function submitCategory(event) {
         event.preventDefault(); // Ngăn form submit mặc định
 
-        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        // const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        // const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
         const formData = new FormData();
         formData.append("name", document.getElementById("name").value);
@@ -313,7 +313,7 @@
             const response = await axios.post("/AgriculturalWarehouseManagementApplication/admin/saveCategory", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    [csrfHeader]: csrfToken
+                    // [csrfHeader]: csrfToken
                 }
             });
 

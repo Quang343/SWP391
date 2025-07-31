@@ -122,41 +122,45 @@
 
                                 <div class="table-responsive category-table">
                                     <div>
+                                        <select id="filterByStatus" class="form-select form-select-sm ms-5" style="width: 250px; display: inline-block;padding: 10px">
+                                            <option value="">Tất cả</option>
+                                            <option value="ĐANG HOẠT ĐỘNG">ĐANG HOẠT ĐỘNG</option>
+                                            <option value="NGỪNG HOẠT ĐỘNG">NGỪNG HOẠT ĐỘNG</option>
+                                        </select>
                                         <table class="table all-package theme-table" id="table_id">
                                             <thead>
-                                                <tr>
-                                                    <th>STT</th>
-                                                    <th>Tên danh mục</th>
-<!--                                                    <th>Description</th>-->
-                                                    <th>Trạng thái</th>
-                                                    <th>Ảnh</th>
-                                                    <th>Thao tác</th>
-                                                </tr>
+                                            <tr>
+                                                <th style="width: 40px;">STT</th>
+                                                <th>Tên</th>
+                                                <th>Trạng thái</th>
+                                                <th>Ảnh</th>
+                                                <th style="width: 100px;">Thao tác</th>
+                                            </tr>
                                             </thead>
 
                                             <tbody>
                                             <tr th:each="category, init : ${categories}">
                                                 <td th:text="${init.count}"></td>
                                                 <td th:text="${category.getName()}"></td>
-<!--                                                <td th:text="${category.getDescription()}"></td>-->
+                                                <!--                                                <td th:text="${category.getDescription()}"></td>-->
                                                 <td th:switch="${category.getStatus()}">
                                                     <span th:case="'ACTIVE'" class="text-success fw-bold">ĐANG HOẠT ĐỘNG</span>
                                                     <span th:case="'INACTIVE'" class="text-danger fw-bold">NGỪNG HOẠT ĐỘNG</span>
                                                 </td>
                                                 <td>
                                                     <div class="category-img">
-<!--                                                        <img th:src="@{'/Backend/assets/images/category/' + ${category.getImageUrl()}}"-->
-<!--                                                             class="img-fluid" alt="">-->
-                                                        <img th:src="@{'/seller/' + ${category.getImageUrl()}}" class="img-fluid" alt="">
+                                                        <!--                                                        <img th:src="@{'/Backend/assets/images/category/' + ${category.getImageUrl()}}"-->
+                                                        <!--                                                             class="img-fluid" alt="">-->
+                                                        <img th:src="@{'/admin/' + ${category.getImageUrl()}}" class="img-fluid" alt="">
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <ul>
-<!--                                                        <li>-->
-<!--                                                            <a href="order-detail.html">-->
-<!--                                                                <i class="ri-eye-line"></i>-->
-<!--                                                            </a>-->
-<!--                                                        </li>-->
+                                                        <!--                                                        <li>-->
+                                                        <!--                                                            <a href="order-detail.html">-->
+                                                        <!--                                                                <i class="ri-eye-line"></i>-->
+                                                        <!--                                                            </a>-->
+                                                        <!--                                                        </li>-->
                                                         <li>
                                                             <a th:href="@{'/admin/edit_category/' + ${category.getCategoryId()}}">
                                                                 <i class="ri-pencil-line"></i>
@@ -165,8 +169,8 @@
 
                                                         <li>
                                                             <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                                data-bs-target="#deleteModalStart"
-                                                                th:attr="data-id=${category.getCategoryId()}">
+                                                               data-bs-target="#deleteModalStart"
+                                                               th:attr="data-id=${category.getCategoryId()}">
                                                                 <i class="ri-delete-bin-line"></i>
                                                             </a>
                                                         </li>
@@ -348,39 +352,89 @@
             //     [csrfHeader]: csrfToken
             // }
         })
-        .then((response) => response.json())
-        .then(data => {
-            document.getElementById('resultModalMessage').innerText = data.message;
-            const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
-            resultModal.show();
+            .then((response) => response.json())
+            .then(data => {
+                document.getElementById('resultModalMessage').innerText = data.message;
+                const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
+                resultModal.show();
 
-            selectedCategoryId = null;
-            setTimeout(() => location.reload(), 1500);
-        })
-        .catch(error => {
-            alert("Lỗi khi xoá category: " + error);
-        });
+                selectedCategoryId = null;
+                setTimeout(() => location.reload(), 1500);
+            })
+            .catch(error => {
+                alert("Lỗi khi xoá category: " + error);
+            });
     }
 </script>
 
+<!--<script>-->
+<!--    $(document).ready(function () {-->
+<!--        if ($.fn.DataTable.isDataTable('#table_id')) {-->
+<!--            $('#table_id').DataTable().destroy(); // huỷ trước nếu đã khởi tạo-->
+<!--        }-->
+<!--        const table = $('#table_id').DataTable({-->
+<!--            paging: false,-->
+<!--            searching: true,-->
+<!--            ordering: true,-->
+<!--            info: false,-->
+<!--            language: {-->
+<!--                search: "", // Xóa label cũ-->
+<!--                searchPlaceholder: "Tìm kiếm..."-->
+<!--            }-->
+<!--        });-->
+<!--    });-->
+
+<!--</script>-->
 <script>
     $(document).ready(function () {
         if ($.fn.DataTable.isDataTable('#table_id')) {
-            $('#table_id').DataTable().destroy(); // huỷ trước nếu đã khởi tạo
+            $('#table_id').DataTable().destroy();
         }
+
         const table = $('#table_id').DataTable({
             paging: false,
             searching: true,
             ordering: true,
             info: false,
             language: {
-                search: "", // Xóa label cũ
+                search: "",
                 searchPlaceholder: "Tìm kiếm..."
+            },
+            initComplete: function () {
+                // Lọc theo vai trò
+                $('#filterByStatus').appendTo('#table_id_filter').on('change', function () {
+                    const value = $(this).val();
+                    table.column(2).search(value).draw();
+                });
+
+                // Lọc theo trạng thái
+                $('#filterStatus').on('change', function () {
+                    const status = $(this).val();
+                    table.column(4).search(status).draw();
+                });
             }
         });
     });
-
 </script>
+
+
+<!--<script>-->
+<!--    $(document).ready(function () {-->
+<!--        var table = $('#example').DataTable();-->
+
+<!--        // Bắt sự kiện thay đổi ở các ô lọc ngoài bảng-->
+<!--        $('#custom-filters input').on('keyup change', function () {-->
+<!--            var colIndex = $(this).data('column'); // Lấy số cột-->
+<!--            var value = $(this).val();-->
+<!--            table.column(colIndex).search(value).draw();-->
+<!--        });-->
+<!--    });-->
+
+
+<!--</script>-->
+
+
+
 
 </body>
 

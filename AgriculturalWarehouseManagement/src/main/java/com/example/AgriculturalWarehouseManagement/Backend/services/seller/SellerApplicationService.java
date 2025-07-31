@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -299,5 +300,16 @@ public class SellerApplicationService {
 
         sellerApplicationRepository.save(app);
     }
+
+
+    ///
+    public Optional<SellerApplication> findSellerApplicationById(Long id){
+        return sellerApplicationRepository.findById(id);
+    }
+
+    public SellerApplication save(SellerApplication sellerApplication) {
+        return sellerApplicationRepository.save(sellerApplication);
+    }
+
 }
 

@@ -10,8 +10,8 @@
     <meta name="keywords"
           content="admin template, Fastkart admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
-<!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
-<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
+    <!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
+    <!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
     <link rel="icon" th:href="@{/BackEnd/assets/images/favicon.png}" type="image/x-icon">
     <link rel="shortcut icon" th:href="@{/BackEnd/assets/images/favicon.png}" type="image/x-icon">
     <title>Fastkart - Currency Rate</title>
@@ -203,8 +203,14 @@
 
     .table td a i.ri-toggle-fill,
     .table td a i.ri-toggle-line {
-        font-size: 1.5rem;
-        color: #56cd1b;
+        font-size: 1.8rem;
+        color: #14b98d;
+    }
+
+    #filterByStatus{
+        width: 250px !important;
+        margin-left: 20px;
+        height: 40px;
     }
 
 </style>
@@ -246,6 +252,15 @@
                                 </div>
                                 <div>
                                     <div class="table-responsive">
+                                        <div class="mb-3">
+                                            <!--                                            <label for="filterByStatus" class="form-label fw-bold me-2">Lọc theo trạng thái:</label>-->
+                                            <select id="filterByStatus" class="form-select w-auto d-inline-block">
+                                                <option value="">Tất cả trạng thái</option>
+                                                <option value="Đang hoạt động">Đang hoạt động</option>
+                                                <option value="Ngưng hoạt động">Ngưng hoạt động</option>
+                                            </select>
+                                        </div>
+
                                         <table id="table_id" class="table role-table all-package theme-table">
                                             <thead>
                                             <tr>
@@ -259,8 +274,8 @@
                                             <tbody>
                                             <tr th:each="role, init : ${roles}">
                                                 <td th:text="${init.count}"></td>
-                                                <td th:text="${role.getRoleName()}"></td>
-                                                <td th:text="${role.getStatus()}"></td>
+                                                <td th:text="${role.roleName}"></td>
+                                                <td th:text="${role.status.equalsIgnoreCase('active') ? 'Đang hoạt động' : 'Ngưng hoạt động'}"></td>
                                                 <td>
                                                     <ul>
                                                         <li>
@@ -270,12 +285,16 @@
                                                         </li>
 
                                                         <li>
-                                                            <a th:if="${role.getStatus().equalsIgnoreCase('Active')}" href="javascript:void(0)"
+                                                            <a th:if="${role.getStatus().equalsIgnoreCase('Active') and !role.getRoleName().equalsIgnoreCase('Admin')}"
+                                                               href="javascript:void(0)"
                                                                th:attr="data-id=${role.getRoleID()}"
                                                                data-bs-toggle="modal"
                                                                data-bs-target="#ModalToggle">
                                                                 <i class="ri-toggle-fill"></i>
                                                             </a>
+                                                            <i th:if="${role.getStatus().equalsIgnoreCase('Active') and role.getRoleName().equalsIgnoreCase('Admin')}"
+                                                               class="ri-toggle-fill"
+                                                               style="pointer-events: none; opacity: 0.5; font-size: 1.8rem; color: #14b98d;"></i>
                                                             <a th:if="${role.getStatus().equalsIgnoreCase('Inactive')}" href="javascript:void(0)"
                                                                th:attr="data-id=${role.getRoleID()}"
                                                                data-bs-toggle="modal"
@@ -509,14 +528,14 @@
         const confirmModalBootstrap = bootstrap.Modal.getInstance(restoreModal);
         confirmModalBootstrap.hide();
 
-        const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+        // const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        // const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
 
         fetch(`/AgriculturalWarehouseManagementApplication/admin/restore_role/${selectedRestoreRoleId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken
+                // [csrfHeader]: csrfToken
             }
         })
             .then(async response => {
@@ -569,7 +588,8 @@
         if ($.fn.DataTable.isDataTable('#table_id')) {
             $('#table_id').DataTable().destroy(); // Hủy bảng cũ nếu đã khởi tạo
         }
-        $('#table_id').DataTable({
+
+        const table = $('#table_id').DataTable({
             paging: true, // Bật phân trang
             searching: true, // Bật tìm kiếm
             ordering: true, // Cho phép sắp xếp
@@ -588,8 +608,14 @@
                 }
             }
         });
+
+        $('#filterByStatus').appendTo('#table_id_filter').on('change', function () {
+            const value = $(this).val();
+            table.column(2).search(value).draw(); // Cần có biến table ở đây
+        });
     });
 </script>
+
 
 <script>
     function customToast({ title = "", message = "", type = "info", duration = 3000 }) {

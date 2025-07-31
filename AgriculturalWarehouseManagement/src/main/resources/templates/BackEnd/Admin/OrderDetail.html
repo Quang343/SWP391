@@ -87,9 +87,7 @@
                                                 </tr>
                                                 <tr th:if="${order.voucher != null}">
                                                     <td colspan="3">Mã giảm giá</td>
-                                                    <td th:text="${#numbers.formatInteger(order.getFinalAmount() - order.getTotalAmount(), 0, 'POINT')} + '₫'"></td>
-<!--                                                    <td th:if="${order.getVoucher().getDiscountType().PERCENT}" th:text="'-' + ${#numbers.formatInteger(order.voucher.getDiscountValue() * order.getTotalAmount() / 100, 0, 'POINT')} + '₫'"></td>-->
-<!--                                                    <td th:if="${order.getVoucher().getDiscountType().PERCENT}" th:text="'-' + ${#numbers.formatInteger(order.voucher.getDiscountValue() * order.getTotalAmount() / 100, 0, 'POINT')} + '₫'"></td>-->
+                                                    <td th:text="'-' + ${#numbers.formatInteger(order.getTotalAmount() - order.getFinalAmount(), 0, 'POINT')} + '₫'"></td>
                                                 </tr>
                                                 <tr>
                                                     <td colspan="3">Final Amount</td>

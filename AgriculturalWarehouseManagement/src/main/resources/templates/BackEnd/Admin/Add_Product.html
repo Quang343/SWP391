@@ -55,6 +55,9 @@
 
     <!-- App css -->
     <link rel="stylesheet" type="text/css" th:href="@{/Backend/assets/css/style.css}">
+
+    <link href="https://cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css" rel="stylesheet" />
+
 </head>
 <style>
     .description-box {
@@ -79,6 +82,20 @@
         background-color: #f5c6cb;
         border-color: #ed969e;
     }
+
+    .btn-cancel{
+        color: #000;
+        font-weight: bold;
+        background: none;
+        border: none;
+    }
+
+    .btn-cancel:hover{
+        background-color: red;
+        border: 1px solid red;
+        color: red;
+    }
+
 </style>
 <body>
 <!-- tap on top start -->
@@ -164,6 +181,7 @@
                                                 </div>
                                             </div>
 
+                                            <!--
                                             <div class="mb-4 row">
                                                 <label class="col-sm-3 col-form-label form-label-title">Trạng thái
                                                 </label>
@@ -177,6 +195,7 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                             -->
                                             <div class="mb-4 row">
                                                 <label class="col-sm-3 col-form-label form-label-title">Ảnh sản phẩm</label>
                                                 <div class="col-sm-9">
@@ -194,8 +213,10 @@
                                             </div>
 
                                             <div class="mb-4 row">
-                                                <div class="card-submit-button">
-                                                    <button class="btn btn-animation ms-auto" type="submit">Lưu
+                                                <div class="card-submit-button d-flex">
+                                                    <button class="btn btn-animation ms-auto btn-cancel" type="button" onclick="window.location.href='/AgriculturalWarehouseManagementApplication/admin/products'">Huỷ
+                                                    </button>
+                                                    <button class="btn btn-animation ms-auto" style="margin-left: 10px !important;" type="submit">Gửi
                                                     </button>
                                                 </div>
                                             </div>

@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 <!--<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">-->
-<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6" lang="">
 <head th:replace="BackEnd/fragments/Admin/head::head"></head>
 
 <style>
@@ -27,6 +27,7 @@
         padding-left: 16px !important;
         padding-right: 16px !important;
     }
+
 </style>
 <body>
 <!-- tap on top start -->
@@ -38,7 +39,8 @@
 <!-- page-wrapper Start-->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
     <!-- Page Header Start-->
-    <div th:replace="BackEnd/fragments/Admin/header::header"></div>
+    <div th:replace="BackEnd/fragments/Admin/header :: header"></div>
+
     <!-- Page Header Ends-->
 
     <!-- Page Body Start-->
@@ -208,7 +210,7 @@
                                                 <td>
                                                     <div class="best-product-box">
                                                         <div class="product-image">
-                                                            <img th:src="@{/Backend/assets/images/product/1.png}"
+                                                            <img th:src="@{'/seller/' + ${product.getImageUrl()}}"
                                                                  class="img-fluid" alt="Product">
                                                         </div>
                                                         <div class="product-name">
@@ -458,7 +460,7 @@
                     <!-- visitors chart end-->
 
 
-                    <!-- To Do List start-->
+                    <!-- To Do List start
                     <div class="col-xxl-4 col-md-6">
                         <div class="card o-hidden card-hover">
                             <div class="card-header border-0">
@@ -526,6 +528,7 @@
                             </div>
                         </div>
                     </div>
+                    -->
                     <!-- To Do List end-->
 
 
@@ -534,21 +537,14 @@
             <!-- Container-fluid Ends-->
 
             <!-- footer start-->
-            <div class="container-fluid">
-                <footer class="footer">
-                    <div class="row">
-                        <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+            <div th:replace="BackEnd/fragments/Admin/footer :: footer"></div>
             <!-- footer End-->
         </div>
         <!-- index body end -->
 
     </div>
     <!-- Page Body End -->
+
 </div>
 <!-- page-wrapper End-->
 
@@ -618,6 +614,127 @@
 
 <!-- Theme js -->
 <script th:src="@{/Backend/assets/js/script.js}"></script>
+
+<!-- Script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+<!-- Toastr CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<!-- Hidden messages -->
+<div th:if="${errorMessage}" id="errorMessage" th:data-msg="${errorMessage}" hidden></div>
+<div th:if="${successMessage}" id="successMessage" th:data-msg="${successMessage}" hidden></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Toastr configuration (set before showing message)
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "3000"
+        };
+
+        const errorDiv = document.getElementById("errorMessage");
+        const successDiv = document.getElementById("successMessage");
+
+        if (errorDiv && errorDiv.dataset.msg) {
+            toastr.error(errorDiv.dataset.msg, 'Error');
+        }
+
+        if (successDiv && successDiv.dataset.msg) {
+            toastr.success(successDiv.dataset.msg, 'Success');
+        }
+    });
+</script>
+
+
+<!--<script>-->
+<!--    document.addEventListener("DOMContentLoaded", function () {-->
+<!--        const toggle = document.getElementById("notificationToggle");-->
+<!--        if (toggle) {-->
+<!--            const socket = new SockJS('/AgriculturalWarehouseManagementApplication/ws');-->
+<!--            const stompClient = Stomp.over(socket);-->
+
+<!--            stompClient.connect({}, function () {-->
+<!--                stompClient.subscribe('/topic/notifications', function (notification) {-->
+<!--                    const data = JSON.parse(notification.body);-->
+<!--                    toastr.info(data.content || "Thông báo mới", "Thông báo");-->
+
+<!--                    // Load lại fragment header để cập nhật số lượng/thông báo-->
+<!--                    $("#header").load("/AgriculturalWarehouseManagementApplication/admin/loadHeader");-->
+<!--                });-->
+<!--            });-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
+
+<!-- Script để kết nối WebSocket nếu có notification toggle -->
+<!--<script>-->
+<!--    document.addEventListener("DOMContentLoaded", function () {-->
+<!--        const toggle = document.getElementById("notificationToggle");-->
+<!--        if (toggle) {-->
+<!--            const socket = new SockJS('/AgriculturalWarehouseManagementApplication/ws');-->
+<!--            const stompClient = Stomp.over(socket);-->
+
+<!--            stompClient.connect({}, function () {-->
+<!--                stompClient.subscribe('/topic/notifications', function (notification) {-->
+<!--                    const data = JSON.parse(notification.body);-->
+<!--                    toastr.info(data.content || "Thông báo mới", "Thông báo");-->
+
+<!--                    // Tải lại fragment header để cập nhật danh sách-->
+<!--                    $("#header").load("/AgriculturalWarehouseManagementApplication/admin/header");-->
+<!--                });-->
+<!--            });-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
+<!--<script>-->
+<!--    // Tùy chỉnh giao diện Toastr-->
+<!--    toastr.options = {-->
+<!--        closeButton: true,-->
+<!--        progressBar: true,-->
+<!--        positionClass: "toast-bottom-right",-->
+<!--        timeOut: "4000",-->
+<!--        preventDuplicates: true-->
+<!--    };-->
+
+<!--    let stompClient = null;-->
+
+<!--    function connect() {-->
+<!--        const socket = new SockJS('/AgriculturalWarehouseManagementApplication/ws');-->
+<!--        stompClient = Stomp.over(socket);-->
+
+
+<!--        stompClient.connect({}, function () {-->
+<!--            stompClient.subscribe('/topic/notifications', function (notification) {-->
+<!--                const data = JSON.parse(notification.body);-->
+<!--                console.log("Received:", notification.body);-->
+<!--                toastr.info(data.content || "Thông báo mới", "Thông báo");-->
+<!--                setTimeout(function () {-->
+<!--                    location.reload();-->
+<!--                }, 3000);-->
+<!--            });-->
+<!--        });-->
+<!--    }-->
+
+<!--    // Chờ DOM load xong rồi mới connect-->
+<!--    document.addEventListener("DOMContentLoaded", function () {-->
+<!--        connect();-->
+<!--    });-->
+<!--</script>-->
+
+
 </body>
 
 </html>

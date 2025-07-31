@@ -1,232 +1,552 @@
-<html lang="en" xmlns:th="https://www.thymeleaf.org"
+<html lang="en" xmlns:th="https://www.thymeleaf.org" th:inline="javascript"
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Document</title>
+    <!-- Linear Icon css -->
+    <link rel="stylesheet" th:href="@{/Backend/assets/css/linearicon.css}">
+
+    <!-- fontawesome css -->
+    <link rel="stylesheet" type="text/css" th:href="@{/Backend/assets/css/vendors/font-awesome.css}">
+
+    <!-- Themify icon css-->
+    <link rel="stylesheet" type="text/css" th:href="@{/Backend/assets/css/vendors/themify.css}">
+
+    <!-- ratio css -->
+    <link rel="stylesheet" type="text/css" th:href="@{/Backend/assets/css/ratio.css}">
+
+    <!-- remixicon css -->
+    <link rel="stylesheet" type="text/css" th:href="@{/Backend/assets/css/remixicon.css}">
+
+    <!-- Feather icon css-->
+    <link rel="stylesheet" type="text/css" th:href="@{/Backend/assets/css/vendors/feather-icon.css}">
+
+    <!-- Plugins css -->
+    <link rel="stylesheet" type="text/css" th:href="@{/Backend/assets/css/vendors/scrollbar.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/Backend/assets/css/vendors/animate.css}">
+
+    <!-- Bootstrap css-->
+    <link rel="stylesheet" type="text/css" th:href="@{/Backend/assets/css/vendors/bootstrap.css}">
+
+    <style>
+
+        .notification-dropdown {
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .notification-dropdown.show {
+            display: block;
+        }
+
+        ul.notification-dropdown > li.notify-item {
+            background-color: #eaf2f8 !important;
+            border-bottom: 1px solid #ddd;
+            transition: background-color 0.3s ease;
+        }
+
+        ul.notification-dropdown > li.notify-item:hover {
+            background-color: #d1f1ec !important;
+            cursor: pointer;
+        }
+
+
+        .delete-notify{
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            background-color: transparent;
+            border: none;
+        }
+
+        .delete-notify .delete-icon{
+            font-size: 1rem;
+        }
+
+        .view-all-notify-btn:hover {
+            background: #19c1a1 !important;
+        }
+
+    </style>
 </head>
-<style>
 
-    .page-wrapper .page-header .header-wrapper .nav-right .sidebar-menu > li:hover > a{
-        margin: 0 -10px !important;
-        background-color: #f5f6fa !important;
-    }
-</style>
 <body>
-<div class="page-header" th:fragment="header">
-    <div class="header-wrapper m-0">
-        <div class="header-logo-wrapper p-0">
-            <div class="logo-wrapper">
-                <a th:href="@{/admin}">
-                    <img class="img-fluid main-logo" th:src="@{/Backend/assets/images/logo/1.png}" alt="logo">
-                    <img class="img-fluid white-logo" th:src="@{/Backend/assets/images/logo/1-white.png}" alt="logo">
-                </a>
-            </div>
-            <div class="toggle-sidebar">
-                <i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i>
-                <a th:href="@{/admin}">
-                    <img th:src="@{/Backend/assets/images/logo/1.png}" class="img-fluid" alt="">
-                </a>
-            </div>
-        </div>
-
-        <form class="form-inline search-full" action="javascript:void(0)" method="get">
-            <div class="form-group w-100">
-                <div class="Typeahead Typeahead--twitterUsers">
-                    <div class="u-posRelative">
-                        <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text"
-                               placeholder="Search Fastkart .." name="q" title="" autofocus>
-                        <i class="close-search" data-feather="x"></i>
-                        <div class="spinner-border Typeahead-spinner" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>
-                    </div>
-                    <div class="Typeahead-menu"></div>
+<div id="header" th:fragment="header">
+    <div class="page-header">
+        <div class="header-wrapper m-0">
+            <div class="header-logo-wrapper p-0">
+                <div class="logo-wrapper">
+                    <a th:href="@{/admin}">
+                        <img class="img-fluid main-logo" th:src="@{/Backend/assets/images/logo/1.png}" alt="logo">
+                        <img class="img-fluid white-logo" th:src="@{/Backend/assets/images/logo/1-white.png}" alt="logo">
+                    </a>
+                </div>
+                <div class="toggle-sidebar">
+                    <i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i>
+                    <a th:href="@{/admin}">
+                        <img th:src="@{/Backend/assets/images/logo/1.png}" class="img-fluid" alt="">
+                    </a>
                 </div>
             </div>
-        </form>
-        <div class="nav-right col-6 pull-right right-header p-0">
-            <ul class="nav-menus">
-                <li>
+
+            <form class="form-inline search-full" action="javascript:void(0)" method="get">
+                <div class="form-group w-100">
+                    <div class="Typeahead Typeahead--twitterUsers">
+                        <div class="u-posRelative">
+                            <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text"
+                                   placeholder="Search Fastkart .." name="q" title="" autofocus>
+                            <i class="close-search" data-feather="x"></i>
+                            <div class="spinner-border Typeahead-spinner" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="Typeahead-menu"></div>
+                    </div>
+                </div>
+            </form>
+            <div class="nav-right col-6 pull-right right-header p-0">
+                <ul class="nav-menus">
+                    <li>
                             <span class="header-search">
                                 <i class="ri-search-line"></i>
                             </span>
-                </li>
-                <li class="onhover-dropdown">
-                    <div class="notification-box">
-                        <i class="ri-notification-line"></i>
-                        <span class="badge rounded-pill badge-theme">4</span>
-                    </div>
-                    <ul class="notification-dropdown onhover-show-div">
-                        <li>
+                    </li>
+                    <!--                <li class="onhover-dropdown">-->
+                    <!--                    <div class="notification-box">-->
+                    <!--                        <i class="ri-notification-line"></i>-->
+                    <!--                        <span class="badge rounded-pill badge-theme">4</span>-->
+                    <!--                    </div>-->
+                    <!--                    <ul class="notification-dropdown onhover-show-div">-->
+                    <!--                        <li>-->
+                    <!--                            <i class="ri-notification-line"></i>-->
+                    <!--                            <h6 class="f-18 mb-0">Notitications</h6>-->
+                    <!--                        </li>-->
+                    <!--                        <li>-->
+                    <!--                            <p>-->
+                    <!--                                <i class="fa fa-circle me-2 font-primary"></i>Delivery processing <span-->
+                    <!--                                    class="pull-right">10 min.</span>-->
+                    <!--                            </p>-->
+                    <!--                        </li>-->
+                    <!--                        <li>-->
+                    <!--                            <p>-->
+                    <!--                                <i class="fa fa-circle me-2 font-success"></i>Order Complete<span-->
+                    <!--                                    class="pull-right">1 hr</span>-->
+                    <!--                            </p>-->
+                    <!--                        </li>-->
+                    <!--                        <li>-->
+                    <!--                            <p>-->
+                    <!--                                <i class="fa fa-circle me-2 font-info"></i>Tickets Generated<span-->
+                    <!--                                    class="pull-right">3 hr</span>-->
+                    <!--                            </p>-->
+                    <!--                        </li>-->
+                    <!--                        <li>-->
+                    <!--                            <p>-->
+                    <!--                                <i class="fa fa-circle me-2 font-danger"></i>Delivery Complete<span-->
+                    <!--                                    class="pull-right">6 hr</span>-->
+                    <!--                            </p>-->
+                    <!--                        </li>-->
+                    <!--                        <li>-->
+                    <!--                            <a class="btn btn-primary" href="javascript:void(0)">Check all notification</a>-->
+                    <!--                        </li>-->
+                    <!--                    </ul>-->
+                    <!--                </li>-->
+                    <!-- Biểu tượng chuông và badge số lượng -->
+                    <li class="notification-wrapper" style="position: relative; list-style: none;">
+                        <div class="notification-box" id="notificationToggle" style="cursor: pointer;">
                             <i class="ri-notification-line"></i>
-                            <h6 class="f-18 mb-0">Notitications</h6>
-                        </li>
-                        <li>
-                            <p>
-                                <i class="fa fa-circle me-2 font-primary"></i>Delivery processing <span
-                                    class="pull-right">10 min.</span>
-                            </p>
-                        </li>
-                        <li>
-                            <p>
-                                <i class="fa fa-circle me-2 font-success"></i>Order Complete<span
-                                    class="pull-right">1 hr</span>
-                            </p>
-                        </li>
-                        <li>
-                            <p>
-                                <i class="fa fa-circle me-2 font-info"></i>Tickets Generated<span
-                                    class="pull-right">3 hr</span>
-                            </p>
-                        </li>
-                        <li>
-                            <p>
-                                <i class="fa fa-circle me-2 font-danger"></i>Delivery Complete<span
-                                    class="pull-right">6 hr</span>
-                            </p>
-                        </li>
-                        <li>
-                            <a class="btn btn-primary" href="javascript:void(0)">Check all notification</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li>
-                    <div class="mode">
-                        <i class="ri-moon-line"></i>
-                    </div>
-                </li>
-                <!--
-                <li class="profile-nav onhover-dropdown pe-0 me-0">
-                    <div class="media profile-media">
-                        <div sec:authorize="isAuthenticated()">
-                            Welcome, <span sec:authentication="name"></span>
+                            <span class="badge rounded-pill badge-theme"
+                                  th:text="${unreadCount}"
+                                  th:if="${unreadCount > 0}">0</span>
                         </div>
-                        <img class="user-profile rounded-circle" th:src="@{/Backend/assets/images/users/4.jpg}" alt="">
-                        <div class="media-body">
-                            <span>Emay Walter</span>
-                            <p class="mb-0 font-roboto">Admin<i class="middle ri-arrow-down-s-line"></i></p>
+                        <input type="hidden" id="currentUserId" th:value="${session.accountAdmin.userID}"/>
+
+                        <!-- Dropdown thông báo -->
+                        <ul id="notificationDropdown" class="notification-dropdown"
+                            style="display: none; position: absolute; right: 0; top: 100%; background: white; width: 400px;
+        max-height: 450px; overflow: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 5px; padding: 20px 15px;">
+
+                            <li class="notification-title d-flex justify-content-between align-items-center">
+                                <h6 class="f-18 mb-0 fw-bold">Thông báo</h6>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="markAllAsRead()">Đánh dấu đã đọc tất cả</button>
+                            </li>
+
+
+                            <!-- Danh sách thông báo -->
+                            <li>
+                                <ul id="notificationList">
+                                    <li class="notify-item position-relative d-flex" th:id="'notification-' + ${notification.id}"
+                                        th:each="notification : ${notifications}"
+                                        style="margin: 0 -10px; padding: 10px;">
+                                        <a th:href="@{'/notifications/view/' + ${notification.id}}" style="text-decoration: none; width: 90%; text-align: start;">
+                                            <p th:class="${notification.status == 'UNSEEN'} ? 'fw-bold' : ''" style="margin-bottom: 8px;">
+                                                <i class="fa fa-circle me-2"
+                                                   th:classappend="${notification.status == 'UNSEEN'} ? 'font-primary' : 'text-muted'"></i>
+                                                <span th:text="${notification.title}">Title</span>
+                                                <span th:text="${notification.content}">Content</span>
+
+                                            </p>
+                                            <p class="d-flex gap-1 justify-content-start">
+                                                <i class="mdi mdi-clock-outline"></i>
+                                                <span class="pull-right"
+                                                      th:text="${#temporals.format(notification.createdAt, 'HH:mm')} + ' ngày ' + ${#temporals.format(notification.createdAt, 'dd/MM')}">time</span>
+                                                <!--                                            <span class="pull-right" th:text="">${new Date(notification.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ngày ${new Date(notification.createdAt).toLocaleDateString('vi-VN')}</span>-->
+                                            </p>
+                                        </a>
+                                        <button type="button"
+                                                class="delete-notify position-absolute"
+                                                style="top: 50%; right: 10px; transform: translateY(-50%); background: transparent; border: none;"
+                                                th:attr="data-id=${notification.id}"
+                                                onclick="archiveNotification(this)">
+                                            <i class="delete-icon fa fa-times-circle fs-6" aria-hidden="true"></i>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <!-- Không có thông báo -->
+                            <li th:if="${#lists.isEmpty(notifications)}">
+                                <p class="text-muted text-center">Không có thông báo nào</p>
+                            </li>
+
+                            <!-- Xem tất cả -->
+                            <li style="text-align: center; margin-top: 10px;">
+                                <a class="view-all-notify-btn btn btn-primary btn-sm" th:href="@{/notifications}">Xem tất cả</a>
+                            </li>
+                        </ul>
+                    </li>
+
+
+
+                    <li>
+                        <div class="mode">
+                            <i class="ri-moon-line"></i>
                         </div>
-                    </div>
-                    <ul class="profile-dropdown onhover-show-div">
-                        <li>
-                            <a th:href="@{/admin/user}">
-                                <i data-feather="users"></i>
-                                <span>Users</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a th:href="@{/admin/order}">
-                                <i data-feather="archive"></i>
-                                <span>Orders</span>
-                            </a>
-                        </li>
+                    </li>
+                    <!--
+                    <li class="profile-nav onhover-dropdown pe-0 me-0">
+                        <div class="media profile-media">
+                            <div sec:authorize="isAuthenticated()">
+                                Welcome, <span sec:authentication="name"></span>
+                            </div>
+                            <img class="user-profile rounded-circle" th:src="@{/Backend/assets/images/users/4.jpg}" alt="">
+                            <div class="media-body">
+                                <span>Emay Walter</span>
+                                <p class="mb-0 font-roboto">Admin<i class="middle ri-arrow-down-s-line"></i></p>
+                            </div>
+                        </div>
+                        <ul class="profile-dropdown onhover-show-div">
+                            <li>
+                                <a th:href="@{/admin/user}">
+                                    <i data-feather="users"></i>
+                                    <span>Users</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a th:href="@{/admin/order}">
+                                    <i data-feather="archive"></i>
+                                    <span>Orders</span>
+                                </a>
+                            </li>
 
-                        <li>
-                            <a th:href="@{/Backend/profile-setting.html}">
-                                <i data-feather="settings"></i>
-                                <span>Settings</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" href="">
-                                <i data-feather="log-out"></i>
-                                <span>Log out</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                -->
-                <li class="profile-nav onhover-dropdown pe-0 me-0" th:if="${session.accountAdmin != null}">
-                    <div class="media profile-media align-items-center">
-                        <!--                        th:src="@{'/admin/' + ${session.account.imageUrl}}"-->
-                        <img class="user-profile rounded-circle me-2"
-                             src="https://jbagy.me/wp-content/uploads/2025/03/Hinh-anh-avatar-nam-cute-2.jpg"
-                             alt="User Avatar"
-                             style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #e0e0e0;">
-                        <i class="middle ri-arrow-down-s-line"></i>
-                        <!--                        <div class="media-body">-->
-                        <!--&lt;!&ndash;                            <span class="fw-semibold" th:text="${session.account.email}">Username</span>&ndash;&gt;-->
-                        <!--                            <p class="mb-0 font-roboto text-muted text-capitalize">-->
-                        <!--&lt;!&ndash;                                <span th:text="${#authentication.authorities[0].authority.replace('ROLE_', '').toLowerCase()}">Role</span>&ndash;&gt;-->
-                        <!--                                <i class="middle ri-arrow-down-s-line"></i>-->
-                        <!--                            </p>-->
-                        <!--                        </div>-->
-                    </div>
+                            <li>
+                                <a th:href="@{/Backend/profile-setting.html}">
+                                    <i data-feather="settings"></i>
+                                    <span>Settings</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" href="">
+                                    <i data-feather="log-out"></i>
+                                    <span>Log out</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    -->
+                    <li class="profile-nav onhover-dropdown pe-0 me-0" th:if="${session.accountAdmin != null}">
+                        <div class="media profile-media align-items-center">
+                            <!--                        th:src="@{'/admin/' + ${session.account.imageUrl}}"-->
+                            <img class="user-profile rounded-circle me-2"
+                                 src="https://jbagy.me/wp-content/uploads/2025/03/Hinh-anh-avatar-nam-cute-2.jpg"
+                                 alt="User Avatar"
+                                 style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #e0e0e0;">
+                            <i class="middle ri-arrow-down-s-line"></i>
+                            <!--                        <div class="media-body">-->
+                            <!--&lt;!&ndash;                            <span class="fw-semibold" th:text="${session.account.email}">Username</span>&ndash;&gt;-->
+                            <!--                            <p class="mb-0 font-roboto text-muted text-capitalize">-->
+                            <!--&lt;!&ndash;                                <span th:text="${#authentication.authorities[0].authority.replace('ROLE_', '').toLowerCase()}">Role</span>&ndash;&gt;-->
+                            <!--                                <i class="middle ri-arrow-down-s-line"></i>-->
+                            <!--                            </p>-->
+                            <!--                        </div>-->
+                        </div>
 
-                    <ul class="profile-dropdown onhover-show-div sidebar-menu" style="border-radius: 15px;">
-                        <li class="profile-dropdown-item" style="display: flex;
+                        <ul class="profile-dropdown onhover-show-div sidebar-menu" style="border-radius: 15px;">
+                            <li class="profile-dropdown-item" style="display: flex;
                             align-items: center;
                             border-bottom: 1px solid #f3f3f3;
                             margin: 0 -10px;
                             background: #f3f3f3;">
-                            <img class="user-profile rounded-circle me-2"
-                                 src="https://jbagy.me/wp-content/uploads/2025/03/Hinh-anh-avatar-nam-cute-2.jpg"
-                                 alt="User Avatar"
-                                 style="width: 60px; object-fit: cover; border: 2px solid #e0e0e0;">
-                            <div class="d-inline-block">
-                                <a th:text="${session.accountAdmin.fullName}"></a>
-                                <small th:text="${session.accountAdmin.email}"></small>
-                            </div>
-                        </li>
-                        <li>
-                            <a th:href="@{/admin/users}">
-                                <i data-feather="users"></i>
-                                <span>Users</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a th:href="@{/admin/orders}">
-                                <i data-feather="archive"></i>
-                                <span>Orders</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a th:href="@{/admin/profile}">
-                                <i data-feather="user"></i>
-                                <span>My Profile</span>
-                            </a>
-                        </li>
-                        <!--
-                        <li>
-                            <a th:href="@{/admin/profile-setting}">
-                                <i data-feather="settings"></i>
-                                <span>Settings</span>
-                            </a>
-                        </li>
-                         -->
-                        <!--                        <li>-->
-                        <!--                            <form method="post" th:action="@{/logout}">-->
-                        <!--                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>-->
-                        <!--                                <i data-feather="log-out"></i>-->
-                        <!--                                <button class="log-out-btn" style="border: none; background: transparent;color: #2c323f;">Log out</button>-->
-                        <!--                            </form>-->
-                        <!--                        </li>-->
+                                <img class="user-profile rounded-circle me-2"
+                                     src="https://jbagy.me/wp-content/uploads/2025/03/Hinh-anh-avatar-nam-cute-2.jpg"
+                                     alt="User Avatar"
+                                     style="width: 60px; object-fit: cover; border: 2px solid #e0e0e0;">
+                                <div class="d-inline-block">
+                                    <a th:text="${session.accountAdmin.fullName}"></a>
+                                    <small th:text="${session.accountAdmin.email}"></small>
+                                </div>
+                            </li>
+                            <li>
+                                <a th:href="@{/admin/users}">
+                                    <i data-feather="users"></i>
+                                    <span>Users</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a th:href="@{/admin/orders}">
+                                    <i data-feather="archive"></i>
+                                    <span>Orders</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a th:href="@{/admin/profile}">
+                                    <i data-feather="user"></i>
+                                    <span>My Profile</span>
+                                </a>
+                            </li>
+                            <!--
+                            <li>
+                                <a th:href="@{/admin/profile-setting}">
+                                    <i data-feather="settings"></i>
+                                    <span>Settings</span>
+                                </a>
+                            </li>
+                             -->
+                            <!--                        <li>-->
+                            <!--                            <form method="post" th:action="@{/logout}">-->
+                            <!--                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>-->
+                            <!--                                <i data-feather="log-out"></i>-->
+                            <!--                                <button class="log-out-btn" style="border: none; background: transparent;color: #2c323f;">Log out</button>-->
+                            <!--                            </form>-->
+                            <!--                        </li>-->
 
-                        <li>
-                            <form method="get" action="/AgriculturalWarehouseManagementApplication/logoutUser">
-                                <!--                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>-->
-                                <i data-feather="log-out"></i>
-                                <button class="log-out-btn" style="border: none; background: transparent;color: #2c323f;">Log out</button>
-                            </form>
-                        </li>
-                    </ul>
-                </li>
+                            <li>
+                                <form method="get" action="/AgriculturalWarehouseManagementApplication/logoutUser">
+                                    <!--                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>-->
+                                    <i data-feather="log-out"></i>
+                                    <button class="log-out-btn" style="border: none; background: transparent;color: #2c323f;">Log out</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
 
-            </ul>
+                </ul>
+
+
+
+                <script>
+                    function initNotificationToggle() {
+                        feather.replace(); // reinit icon nếu có
+
+                        const toggleBtn = document.getElementById('notificationToggle');
+                        const dropdown = document.getElementById('notificationDropdown');
+
+                        if (!toggleBtn || !dropdown) return;
+
+                        let isOpen = false;
+
+                        toggleBtn.addEventListener('click', function (event) {
+                            event.stopPropagation(); // Ngăn lan sự kiện
+                            isOpen = !isOpen;
+                            dropdown.style.display = isOpen ? 'block' : 'none';
+                        });
+
+                        document.addEventListener('click', function () {
+                            if (isOpen) {
+                                dropdown.style.display = 'none';
+                                isOpen = false;
+                            }
+                        });
+
+                        dropdown.addEventListener('click', function (event) {
+                            event.stopPropagation(); // Ngăn dropdown tự ẩn khi click bên trong
+                        });
+                    }
+
+                    function markAllAsRead() {
+                        fetch('/AgriculturalWarehouseManagementApplication/notifications/markAllRead', { method: 'POST' })
+                            .then(() => {
+                                $("#header").load("/AgriculturalWarehouseManagementApplication/admin/loadHeader", function () {
+                                    initNotificationToggle();
+                                });
+                            });
+                    }
+
+                    function archiveNotification(element) {
+                        const id = element.getAttribute('data-id');
+                        if (!id) return;
+
+                        console.log("Archiving notification with id:", id);
+
+                        fetch(`/AgriculturalWarehouseManagementApplication/notifications/archive/${id}`, {
+                            method: 'POST'
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    const item = document.getElementById(`notification-${id}`);
+                                    if (item) item.remove();
+
+                                    // Sau khi xoá xong, kiểm tra nếu còn < 10 thì gọi API lấy thêm
+                                    const currentCount = document.querySelectorAll('.notify-item').length;
+                                    if (currentCount < 10) {
+                                        const userId = document.getElementById("currentUserId")?.value;
+                                        if (userId) {
+                                            fetch(`/AgriculturalWarehouseManagementApplication/notifications/user/${userId}`)
+                                                .then(res => res.json())
+                                                .then(data => {
+                                                    // Chỉ thêm nếu có dữ liệu mới
+                                                    if (data.length > currentCount) {
+                                                        const container = document.getElementById("notificationList");
+                                                        const newItem = data[currentCount]; // lấy bản ghi tiếp theo
+
+                                                        // Tùy bạn muốn render thêm như thế nào
+                                                        if (newItem) {
+                                                            const li = document.createElement("li");
+                                                            li.className = "notify-item position-relative d-flex";
+                                                            li.id = `notification-${newItem.id}`;
+                                                            li.innerHTML = `
+                                            <a href="/notifications/view/${newItem.id}" style="text-decoration: none; width: 90%; text-align: start">
+                                                <p class="${newItem.status === 'UNSEEN' ? 'fw-bold' : ''}" style="margin-bottom: 8px;">
+                                                    <i class="fa fa-circle me-2 ${newItem.status === 'UNSEEN' ? 'font-primary' : 'text-muted'}"></i>
+                                                    <span>${newItem.title}</span>
+                                                    <span>${newItem.content}</span>
+                                                </p>
+                                                <p class="d-flex gap-1 justify-content-start">
+                                                    <i class="mdi mdi-clock-outline"></i>
+                                                    <span class="pull-right">${new Date(newItem.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })} ngày ${new Date(newItem.createdAt).toLocaleDateString('vi-VN')}</span>
+                                                </p>
+                                            </a>
+                                            <button type="button"
+                                                    class="delete-notify position-absolute"
+                                                    style="top: 50%; right: 0; transform: translateY(-50%); background: transparent; border: none;"
+                                                    data-id="${newItem.id}"
+                                                    onclick="archiveNotification(this)">
+                                                <i class="delete-icon fa fa-times-circle fs-6" aria-hidden="true"></i>
+                                            </button>
+                                        `;
+                                                            container.appendChild(li);
+                                                        }
+                                                    }
+                                                });
+                                        }
+                                    }
+                                } else {
+                                    alert("Failed to archive notification");
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error:", error);
+                            });
+                    }
+
+
+                    // function archiveNotification(element) {
+                    //     const id = element.dataset.id;
+                    //     if (!id) return;
+                    //     console.log("Clicked notification id:", id);
+                    //     fetch(`/AgriculturalWarehouseManagementApplication/notifications/archive/${id}`, {
+                    //         method: 'POST'
+                    //     })
+                    //         .then(response => {
+                    //             if (response.ok) {
+                    //                 const item = document.getElementById(`notification-${id}`);
+                    //                 if (item) item.remove();
+                    //             } else {
+                    //                 alert("Failed to archive notification");
+                    //             }
+                    //         })
+                    //         .catch(error => {
+                    //             console.error("Error:", error);
+                    //         });
+                    // }
+
+
+                    document.addEventListener('DOMContentLoaded', function () {
+                        feather.replace();
+                        initNotificationToggle();
+
+                        // Kết nối WebSocket
+                        const socket = new SockJS('/AgriculturalWarehouseManagementApplication/ws');
+                        const stompClient = Stomp.over(socket);
+
+                        stompClient.connect({}, function () {
+                            stompClient.subscribe('/topic/notifications', function (notification) {
+                                const data = JSON.parse(notification.body);
+                                toastr.info(data.content || "Thông báo mới", "Thông báo");
+
+                                // Reload lại header
+                                const header = $("#header");
+                                header.load("/AgriculturalWarehouseManagementApplication/admin/loadHeader", function () {
+                                    initNotificationToggle();
+                                });
+                            });
+                        });
+                    });
+                </script>
+            </div>
+
         </div>
     </div>
 </div>
 
+<!-- latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- Bootstrap js -->
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+
+<!-- feather icon js -->
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+
+<!-- scrollbar simplebar js -->
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+
+<!-- Sidebar jquery -->
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+
+<!-- tooltip init js -->
+<script th:src="@{/Backend/assets/js/tooltip-init.js}"></script>
+
+<!-- Plugins JS -->
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+
+<!-- slick slider js -->
+<script th:src="@{/Backend/assets/js/slick.min.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-slick.js}"></script>
+
+<!-- customizer js -->
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+
+<!-- ratio js -->
+<script th:src="@{/Backend/assets/js/ratio.js}"></script>
+
+<!-- sidebar effect -->
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+
+<!-- Theme js -->
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+
+<!-- Script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 <script src="https://unpkg.com/feather-icons"></script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        feather.replace(); // tránh lỗi .toSvg
-    });
-</script>
-
 
 </body>
 </html>

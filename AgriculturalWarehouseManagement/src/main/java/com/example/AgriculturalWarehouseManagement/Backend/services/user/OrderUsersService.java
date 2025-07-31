@@ -4,6 +4,8 @@ import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.Ch
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.*;
 import com.example.AgriculturalWarehouseManagement.Backend.models.*;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.*;
+import com.example.AgriculturalWarehouseManagement.Backend.services.admin.NotificationService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.admin.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +50,15 @@ public class OrderUsersService {
     private WalletsRepository walletsRepository;
 
     @Autowired
+    private NotificationRepository notificationRepository;
+
+    @Autowired NotificationService notificationService;
+
+    @Autowired
     private jakarta.servlet.http.HttpSession session;
+    private UserService userService;
+    @Autowired
+    private RoleRepository roleRepository;
 
     public ResponseResult<CheckOutResponse> insertOrderAndOrderDetail(CheckOutRequest checkOutRequest, long orderCode, int accountId) {
 
@@ -82,6 +92,20 @@ public class OrderUsersService {
                 order.setUser(user.get());
                 order.setVoucher(null);
                 Order orderObject = orderRepository.save(order);
+
+                //
+                // 2. Tạo Notification
+                Notification notification = new Notification();
+                notification.setTitle("Đơn hàng mới");
+                notification.setContent("Người dùng " + user.get().getFullName() + " vừa đặt đơn hàng #" + orderCode);
+                notification.setStatus("UNSEEN");
+                notification.setUrl("/admin/orders/" + order.getId() + "/details");
+                notification.setReceiver(userRepository.findByRole(roleRepository.findByRoleName("ADMIN")).get(0)); // bạn cần lấy user admin ở đây
+                notificationRepository.save(notification);
+
+                // 3. Gửi WebSocket message cho admin
+                notificationService.sendNotificationToAdmin(notification);
+                //
 
                 List<CheckOutProductsResponse> checkOutProductsResponses = checkOutUserService.getCheckOutProductDetailByUserIDs(accountId);
                 for (CheckOutProductsResponse checkOutProductsResponse : checkOutProductsResponses) {
@@ -129,6 +153,20 @@ public class OrderUsersService {
                 order.setUser(user.get());
                 order.setVoucher(voucher);
                 Order orderObject = orderRepository.save(order);
+
+                //
+                // 2. Tạo Notification
+                Notification notification = new Notification();
+                notification.setTitle("Đơn hàng mới");
+                notification.setContent("Người dùng " + user.get().getFullName() + " vừa đặt đơn hàng #" + orderCode);
+                notification.setStatus("UNSEEN");
+                notification.setUrl("/admin/orders/" + order.getId() + "/details");
+                notification.setReceiver(userRepository.findByRole(roleRepository.findByRoleName("ADMIN")).get(0)); // bạn cần lấy user admin ở đây
+                notificationRepository.save(notification);
+
+                // 3. Gửi WebSocket message cho admin
+                notificationService.sendNotificationToAdmin(notification);
+                //
 
                 List<CheckOutProductsResponse> checkOutProductsResponses = checkOutUserService.getCheckOutProductDetailByUserIDs(accountId);
                 for (CheckOutProductsResponse checkOutProductsResponse : checkOutProductsResponses) {

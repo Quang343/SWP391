@@ -137,10 +137,10 @@
 
                                                         <!-- Email -->
                                                         <div class="mb-4 row align-items-center">
-                                                            <label class="col-lg-3 col-md-3 col-form-label form-label-title">Email</label>
+                                                            <label class="col-lg-3 col-md-3 col-form-label form-label-title">Email  <span style="color: red;">*</span></label>
                                                             <div class="col-md-9 col-lg-9">
                                                                 <input class="form-control" type="email"
-                                                                       th:field="*{email}">
+                                                                       th:field="*{email}" required>
                                                             </div>
                                                         </div>
 
@@ -200,18 +200,18 @@
                                                         </div>
 
                                                         <!-- Status -->
-                                                        <div class="mb-4 row align-items-center">
-                                                            <label class="col-lg-3 col-md-3 col-form-label form-label-title">
-                                                                Trạng thái <span style="color: red;">*</span></label>
-                                                            <div class="col-md-9 col-lg-9">
-                                                                <select class="form-select" th:field="*{status}"
-                                                                        required>
-                                                                    <option value="Active">Đang hoạt động</option>
-                                                                    <option value="Inactive">Ngừng hoạt động</option>
-                                                                    <!--                                                                    <option value="Ban">Ban</option>-->
-                                                                </select>
-                                                            </div>
-                                                        </div>
+                                                        <!--                                                        <div class="mb-4 row align-items-center">-->
+                                                        <!--                                                            <label class="col-lg-3 col-md-3 col-form-label form-label-title">-->
+                                                        <!--                                                                Trạng thái <span style="color: red;">*</span></label>-->
+                                                        <!--                                                            <div class="col-md-9 col-lg-9">-->
+                                                        <!--                                                                <select class="form-select" th:field="*{status}"-->
+                                                        <!--                                                                        required>-->
+                                                        <!--                                                                    <option value="Active">Đang hoạt động</option>-->
+                                                        <!--                                                                    <option value="Inactive">Ngừng hoạt động</option>-->
+                                                        <!--                                                                    &lt;!&ndash;                                                                    <option value="Ban">Ban</option>&ndash;&gt;-->
+                                                        <!--                                                                </select>-->
+                                                        <!--                                                            </div>-->
+                                                        <!--                                                        </div>-->
 
                                                         <!-- Password -->
                                                         <div class="mb-4 row align-items-center">
@@ -245,9 +245,10 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="card-submit-button">
-                                                            <button class="btn btn-animation ms-auto" type="submit">
-                                                                Lưu
+                                                        <div class="card-submit-button d-flex">
+                                                            <button class="btn btn-animation ms-auto" type="button" onclick="window.location.href='/AgriculturalWarehouseManagementApplication/admin/users'">Huỷ</button>
+                                                            <button class="btn btn-animation ms-4" type="submit">
+                                                                Tạo mới
                                                             </button>
                                                         </div>
                                                     </div>

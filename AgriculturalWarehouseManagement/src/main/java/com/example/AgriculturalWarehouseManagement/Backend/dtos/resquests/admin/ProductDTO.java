@@ -14,7 +14,7 @@ public class ProductDTO {
     @NotNull(message = "Category is required")
     private Long categoryId;
 
-    @NotBlank(message = "Product name id required")
+    @NotBlank(message = "Product name is required")
     private String name;
 
     @Size(max=500)
@@ -23,7 +23,7 @@ public class ProductDTO {
 //    @NotNull(message = "Warehouse is required")
 //    private Long warehouseId;
 
-    @NotNull
+//    @NotNull
     private String status;
 
     public ProductDTO() {
@@ -60,11 +60,11 @@ public class ProductDTO {
         this.description = description;
     }
 
-    public @NotNull String getStatus() {
-        return status;
-    }
+//    public @NotNull String getStatus() {
+//        return status;
+//    }
 
-    public void setStatus(@NotNull String status) {
-        this.status = status;
-    }
+//    public void setStatus(@NotNull String status) {
+//        this.status = status;
+//    }
 }
