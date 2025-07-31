@@ -72,6 +72,7 @@ public class CartUserController {
                 for (CartUserResponse cartUserReponse : cartUserReponses) {
                      totalCart += cartUserReponse.getTotalPrice();
                 }
+                System.out.println("cartUserReponses: " + cartUserReponses.toString());
                 model.addAttribute("totalCart", totalCart);
                 model.addAttribute("cartUserReponses", cartUserReponses);
                 return "FrontEnd/Home/cart";

@@ -1,5 +1,6 @@
 package com.example.AgriculturalWarehouseManagement.Backend.repositorys;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.OrderDetailDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.OrderDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -35,4 +36,8 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
             AND o.status IN ("PENDING", "CONFIRMED", "DELIVERED","CANCELLED","STOCKOUT","COMPLETED");
             """,nativeQuery = true)
     List<Map<String, Object>> rawGetOrderDetails(String orderCode);
+
+    @Query("SELECT NEW com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.OrderDetailDTO(od.order.id, od.productDetailId, od.quantity, od.price) " +
+            "FROM OrderDetail od JOIN od.order o WHERE o.status != :status AND od.productDetailId = :productDetailId")
+    List<OrderDetailDTO> findByProductDetailIdAndOrderStatusNot(Long productDetailId, String status);
 }

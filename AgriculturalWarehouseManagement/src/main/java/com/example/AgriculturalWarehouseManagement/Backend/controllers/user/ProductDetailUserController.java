@@ -3,6 +3,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.CommentProductUserRequest;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.*;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.*;
+import com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff.ProductBatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class ProductDetailUserController {
@@ -31,6 +33,9 @@ public class ProductDetailUserController {
 
     @Autowired
     private CartUserService cartUserService;
+
+    @Autowired
+    private ProductBatchService productBatchService;
 
     @Autowired
     private jakarta.servlet.http.HttpSession session;
@@ -89,9 +94,6 @@ public class ProductDetailUserController {
         String imageUrl = productDetailUserResponses.isEmpty() ? "" : galleryUserResponses.get(0).getImageUrl();
         String productName = shopDetailService.getProductNameUser(productId);
         model.addAttribute("imageUrl", imageUrl);
-        for (ProductDetailUserResponse productDetailUserResponse : productDetailUserResponses) {
-            System.out.println("hello2" + productDetailUserResponse);
-        }
         model.addAttribute("productName", productName);
         model.addAttribute("productId", productId);
 
@@ -103,7 +105,7 @@ public class ProductDetailUserController {
         if (productDetailUserResponses == null || productDetailUserResponses.isEmpty()) {
             model.addAttribute("emailSeller", "Chưa có người bán");
         } else {
-            if (productDetailId  == 0){
+            if (productDetailId == 0) {
                 int productDetailNewId = productDetailUserResponses.get(0).getProductDetailId();
                 ViewSellerResponse viewSellerResponse = productDetailUserService.getViewSellerProductDetailObject(productDetailNewId);
                 model.addAttribute("emailSeller", viewSellerResponse.getEmailSeller());
@@ -150,13 +152,39 @@ public class ProductDetailUserController {
             if (quantity > 0) {
                 ResponseResult<ProductDetailUserResponse> result = productDetailUserService.checkQuantityProduct(quantity, productDetailId);
                 if (result.isActive()) {
-                    session.removeAttribute("productId");
-                    session.removeAttribute("productDetailId");
 
-                    session.setAttribute("productDetailIdCart", productDetailId);
-                    session.setAttribute("quantityCart", quantity);
+                    List<Map<String, Object>> resultList = productBatchService.getTotalQuantityByProductDetailId((long) productDetailId);
 
-                    return "redirect:/cart";
+                    // TotalQuantity order
+                    int totalQuantity = resultList.stream()
+                            .filter(map -> ((Number) map.get("productDetailId")).longValue() == productDetailId)
+                            .mapToInt(map -> ((Number) map.get("totalQuantity")).intValue())
+                            .sum();
+
+                    if (result.getData().getRemainQuantity() - totalQuantity - quantity <= 0) {
+                        model.addAttribute("quantityError", "Sản phẩm đã hết vì người dùng đã đặt hàng, vui lòng chọn số lượng nhỏ hơn");
+                    } else {
+                        List<CartQuantityResponse> cartQuantityResponses = cartUserService.getCartQuantities(productDetailId);
+
+                        int totalQuantityCart = cartQuantityResponses.stream()
+                                .mapToInt(CartQuantityResponse::getQuantity)
+                                .sum();
+
+                        if (result.getData().getRemainQuantity() - totalQuantity - totalQuantityCart - quantity <= 0) {
+                            model.addAttribute("quantityError", "Sản phẩm đã hết vì ngươi dùng khác đã thêm giỏ hàng, vui lòng chọn số lượng nhỏ hơn");
+                        } else {
+
+                            session.removeAttribute("productId");
+                            session.removeAttribute("productDetailId");
+
+                            session.setAttribute("productDetailIdCart", productDetailId);
+                            session.setAttribute("quantityCart", quantity);
+
+                            return "redirect:/cart";
+                        }
+
+                    }
+
                 } else {
                     model.addAttribute("quantityError", result.getMessage());
                 }
