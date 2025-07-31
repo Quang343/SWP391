@@ -144,5 +144,20 @@ public class StockInController {
         return stockInService.getTotalSpentByMonth();
     }
 
+    @GetMapping("/total-quantity-by-month")
+    public ResponseEntity<List<Map<String, Object>>> getTotalQuantityByMonth() {
+        List<Map<String, Object>> result = stockInService.getTotalQuantityByMonth();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/top-suppliers")
+    public ResponseEntity<List<Map<String, Object>>> getTop4Suppliers() {
+        try {
+            List<Map<String, Object>> topSuppliers = stockInService.getTop4Suppliers();
+            return ResponseEntity.ok(topSuppliers);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null); // Return 500 with null body on error
+        }
+    }
 
 }

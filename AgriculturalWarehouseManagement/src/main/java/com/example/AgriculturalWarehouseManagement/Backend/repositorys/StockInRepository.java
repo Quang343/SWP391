@@ -10,4 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface StockInRepository extends JpaRepository<StockIn,Integer> {
     @Query("SELECT s FROM StockIn s ORDER BY s.id ASC")
     Page<StockIn> findPaginatedStockIn(Pageable pageable);
+
+
 }

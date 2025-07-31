@@ -29,4 +29,17 @@ public interface ProductBatchRepository extends CrudRepository<ProductBatch, Int
 """, nativeQuery = true)
     List<ProductBatch> findUnexpiredByProductDetailId(@Param("productDetailId") Long productDetailId);
 
+    @Query(value = """
+        SELECT 
+            b.BatchID,
+            b.ImportedQuantity,
+            b.ManufactureDate,
+            DATE_ADD(b.ManufactureDate, INTERVAL pd.Expiry MONTH) AS ExpiryDate
+        FROM ProductBatch b
+        JOIN ProductDetail pd ON b.ProductDetailID = pd.ProductDetailID
+        WHERE DATE_SUB(DATE_ADD(b.ManufactureDate, INTERVAL pd.Expiry MONTH), INTERVAL 5 DAY) >= CURDATE()
+        ORDER BY DATE_ADD(b.ManufactureDate, INTERVAL pd.Expiry MONTH) ASC
+        LIMIT 4
+    """, nativeQuery = true)
+    List<Object[]> findTop4ExpiringSoon();
 }

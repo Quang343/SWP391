@@ -161,4 +161,6 @@ public class StockInDetailService {
 
         return stockInDetailRepository.findByStockInID(stockIn).size();
     }
+
+
 }

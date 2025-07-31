@@ -30,6 +30,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -172,5 +173,11 @@ public class StockOutController {
     public ResponseEntity<Long> countStockOuts() {
         long count = stockOutRepository.count();
         return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("/total-quantity-by-month")
+    public ResponseEntity<List<Map<String, Object>>> getTotalQuantityByMonth() {
+        List<Map<String, Object>> result = stockOutService.getTotalQuantityByMonth();
+        return ResponseEntity.ok(result);
     }
 }

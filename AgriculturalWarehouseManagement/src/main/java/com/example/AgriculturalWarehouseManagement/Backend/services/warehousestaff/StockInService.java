@@ -178,4 +178,37 @@ public class StockInService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public List<Map<String, Object>> getTotalQuantityByMonth() {
+        List<Object[]> results = stockInDetailRepository.findTotalQuantityMonth();
+        return results.stream()
+                .map(result -> {
+                    Integer year = (Integer) result[0];
+                    Integer month = (Integer) result[1];
+                    Long totalQuantity = (Long) result[2];
+                    String formattedMonth = String.format("%d-%02d", year, month);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("month", formattedMonth);
+                    map.put("totalQuantity", totalQuantity);
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<Map<String, Object>> getTop4Suppliers() {
+        try {
+            Pageable top5 = PageRequest.of(0, 5);
+            List<Object[]> results = stockInDetailRepository.findTopSuppliers(top5);
+
+            return results.stream().map(obj -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("supplierID", obj[0]);
+                map.put("totalQuantity", obj[1]);
+                return map;
+            }).collect(Collectors.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
+    }
 }

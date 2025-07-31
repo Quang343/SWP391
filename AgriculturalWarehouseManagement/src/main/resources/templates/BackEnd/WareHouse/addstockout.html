@@ -32,17 +32,18 @@
                                 <div class="card-header-2">
                                     <h5>Danh sách Đơn hàng Chờ Xuất kho</h5>
                                 </div>
-                                <table class="table table-borderless">
+                                <table class="table table-borderless balanced-table">
                                     <thead>
                                     <tr>
-                                        <th>STT</th>
-                                        <th>Tên Đơn hàng</th>
-                                        <th>Hành động</th>
+                                        <th class="text-center">STT</th>
+                                        <th class="text-center">Tên Đơn hàng</th>
+                                        <th class="text-center">Thông tin</th>
+                                        <th class="text-center">Hành động</th>
                                     </tr>
                                     </thead>
                                     <tbody id="orderTableBody">
                                     <tr>
-                                        <td colspan="3">Đang tải dữ liệu...</td>
+                                        <td colspan="4" class="text-center">Đang tải dữ liệu...</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -97,6 +98,39 @@
     </div>
 </div>
 
+<!-- Order Details Modal -->
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderDetailsModalLabel">Thông tin Đơn hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="detailsOrderId">
+                <table class="table table-borderless">
+                    <thead>
+                    <tr>
+                        <th class="text-center">STT</th>
+                        <th class="text-center">Tên Chi tiết Sản phẩm</th>
+                        <th class="text-center">Số lượng</th>
+                        <th class="text-center">Giá</th>
+                    </tr>
+                    </thead>
+                    <tbody id="orderDetailsTableBody">
+                    <tr>
+                        <td colspan="4" class="text-center">Đang tải dữ liệu...</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Logout Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -132,6 +166,31 @@
 <script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
 <script th:src="@{/Backend/assets/js/script.js}"></script>
 
+<!-- Custom CSS for balancing the table -->
+<style>
+    .balanced-table {
+        width: 100%;
+        table-layout: fixed;
+    }
+    .balanced-table th, .balanced-table td {
+        text-align: center !important;
+        vertical-align: middle;
+        padding: 10px;
+    }
+    .balanced-table th:first-child, .balanced-table td:first-child {
+        width: 5%;
+    }
+    .balanced-table th:nth-child(2), .balanced-table td:nth-child(2) {
+        width: 50%;
+    }
+    .balanced-table th:nth-child(3), .balanced-table td:nth-child(3) {
+        width: 15%;
+    }
+    .balanced-table th:nth-child(4), .balanced-table td:nth-child(4) {
+        width: 30%;
+    }
+</style>
+
 <!-- Custom JavaScript -->
 <script>
     $(document).ready(function () {
@@ -145,18 +204,24 @@
         const modalNote = $('#modalNote');
         const modalSubmitButton = $('#modalSubmitButton');
         const stockOutModal = new bootstrap.Modal(document.getElementById('stockOutModal'));
+        const orderDetailsModal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+        const detailsOrderId = $('#detailsOrderId');
+        const orderDetailsTableBody = $('#orderDetailsTableBody');
 
         // Validate DOM elements
         console.log('[DEBUG] Validating DOM elements');
         if (!orderTableBody.length || !modalOrderId.length || !modalWarehouseId.length ||
-            !modalStockOutDate.length || !modalNote.length || !modalSubmitButton.length) {
+            !modalStockOutDate.length || !modalNote.length || !modalSubmitButton.length ||
+            !orderDetailsTableBody.length || !detailsOrderId.length) {
             console.error('[ERROR] Missing DOM elements:', {
                 orderTableBody: !!orderTableBody.length,
                 modalOrderId: !!modalOrderId.length,
                 modalWarehouseId: !!modalWarehouseId.length,
                 modalStockOutDate: !!modalStockOutDate.length,
                 modalNote: !!modalNote.length,
-                modalSubmitButton: !!modalSubmitButton.length
+                modalSubmitButton: !!modalSubmitButton.length,
+                orderDetailsTableBody: !!orderDetailsTableBody.length,
+                detailsOrderId: !!detailsOrderId.length
             });
             $.notify({ message: 'Lỗi giao diện, vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
             return;
@@ -234,9 +299,7 @@
             });
         }
 
-
         // Load Pending Orders
-
         function loadPendingOrders() {
             console.log('[DEBUG] Loading pending orders from /AgriculturalWarehouseManagementApplication/api/addstockout');
             const orderTableBody = $('#orderTableBody');
@@ -247,7 +310,7 @@
                 return;
             }
 
-            orderTableBody.html('<tr><td colspan="3">Đang tải dữ liệu...</td></tr>');
+            orderTableBody.html('<tr><td colspan="4" class="text-center">Đang tải dữ liệu...</td></tr>');
 
             $.ajax({
                 url: '/AgriculturalWarehouseManagementApplication/api/addstockout',
@@ -259,27 +322,39 @@
                     orderTableBody.empty();
 
                     if (!Array.isArray(data) || data.length === 0) {
-                        orderTableBody.append('<tr><td colspan="3">Không có đơn hàng chờ xuất kho.</td></tr>');
+                        orderTableBody.append('<tr><td colspan="4" class="text-center">Không có đơn hàng chờ xuất kho.</td></tr>');
                         return;
                     }
 
                     data.forEach((order, index) => {
                         const id = order.orderId;
-                        const orderCode = order.orderCode || `ORD${id}`;
+                        const orderCode = order.orderCode || `#ORD${id}`;
                         const stt = index + 1;
 
                         const row = `
                     <tr>
-                        <td>${stt}</td>
-                        <td>${orderCode}</td>
-                        <td>
-                            <button class="btn btn-sm btn-primary create-stockout-btn"
-                                    data-order-id="${id}"
-                                    data-order-code="${orderCode}"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#stockOutModal">Tạo Xuất kho</button>
-                        </td>
-                    </tr>
+    <td class="text-center">${stt}</td>
+    <td class="text-center">${orderCode}</td>
+    <td class="text-center">
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-sm btn-info view-details-btn"
+                    data-order-id="${id}"
+                    data-order-code="${orderCode}"
+                    data-bs-toggle="modal"
+                    data-bs-target="#orderDetailsModal">Xem</button>
+        </div>
+    </td>
+    <td class="text-center">
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-sm btn-primary create-stockout-btn"
+                    data-order-id="${id}"
+                    data-order-code="${orderCode}"
+                    data-bs-toggle="modal"
+                    data-bs-target="#stockOutModal">Tạo Xuất kho</button>
+        </div>
+    </td>
+</tr>
+
                 `;
                         orderTableBody.append(row);
                     });
@@ -296,15 +371,111 @@
                         error: error
                     });
                     orderTableBody.empty();
-                    orderTableBody.append('<tr><td colspan="3">Lỗi tải dữ liệu. Vui lòng thử lại.</td></tr>');
+                    orderTableBody.append('<tr><td colspan="4" class="text-center">Lỗi tải dữ liệu. Vui lòng thử lại.</td></tr>');
                     $.notify({ message: 'Lỗi tải dữ liệu đơn hàng. Vui lòng kiểm tra kết nối.' }, { type: 'danger', delay: 3000 });
                 }
             });
         }
 
+        // Load Order Details
+        function loadOrderDetails(orderId) {
+            console.log('[DEBUG] Loading order details from /AgriculturalWarehouseManagementApplication/' + orderId + '/details');
+            orderDetailsTableBody.html('<tr><td colspan="4" class="text-center">Đang tải dữ liệu...</td></tr>');
+
+            $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/' + orderId + '/details',
+                method: 'GET',
+                dataType: 'json',
+                timeout: 10000,
+                success: function(data) {
+                    console.log('[DEBUG] Response from /' + orderId + '/details:', JSON.stringify(data, null, 2));
+                    orderDetailsTableBody.empty();
+
+                    if (!Array.isArray(data) || data.length === 0) {
+                        orderDetailsTableBody.append('<tr><td colspan="4" class="text-center">Không có chi tiết đơn hàng.</td></tr>');
+                        return;
+                    }
+
+                    const detailPromises = data.map((item, index) => {
+                        return new Promise((resolve) => {
+                            const stt = index + 1;
+                            const quantity = item.quantity;
+                            const price = item.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                            const productDetailId = item.productDetailId;
+
+                            let productDetailName = 'N/A';
+
+                            // Load product detail to get detailName and productID
+                            $.ajax({
+                                url: `/AgriculturalWarehouseManagementApplication/api/product-details/${productDetailId}`,
+                                method: 'GET',
+                                success: function(productDetail) {
+                                    const detailName = productDetail.detailName || 'N/A';
+                                    const productId = productDetail.productID || productDetail.productId || 'N/A';
+                                    let productName = 'N/A';
+
+                                    if (productId !== 'N/A') {
+                                        $.ajax({
+                                            url: `/AgriculturalWarehouseManagementApplication/api/products/${productId}/name`,
+                                            method: 'GET',
+                                            success: function(name) {
+                                                productName = name || 'N/A';
+                                                productDetailName = `${productName} (${detailName})`;
+                                                console.log(`[DEBUG] Product detail name for productDetailId ${productDetailId}: ${productDetailName}`);
+                                                createRow();
+                                            },
+                                            error: function(xhr, status, error) {
+                                                console.error(`[ERROR] Lỗi khi lấy tên sản phẩm cho productId ${productId}:`, { status, error });
+                                                productDetailName = `N/A (${detailName})`;
+                                                createRow();
+                                            }
+                                        });
+                                    } else {
+                                        productDetailName = `N/A (${detailName})`;
+                                        createRow();
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error(`[ERROR] Lỗi khi lấy productDetail ${productDetailId}:`, { status, error });
+                                    createRow();
+                                }
+                            });
+
+                            function createRow() {
+                                const row = `
+                                    <tr>
+                                        <td class="text-center">${stt}</td>
+                                        <td class="text-center">${productDetailName}</td>
+                                        <td class="text-center">${quantity}</td>
+                                        <td class="text-center">${price}</td>
+                                    </tr>
+                                `;
+                                resolve(row);
+                            }
+                        });
+                    });
+
+                    Promise.all(detailPromises).then(rows => {
+                        rows.forEach(row => orderDetailsTableBody.append(row));
+                        console.log(`[DEBUG] Added ${rows.length} detail rows to modal table`);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('[ERROR] Failed to load order details:', {
+                        url: '/AgriculturalWarehouseManagementApplication/' + orderId + '/details',
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        response: xhr.responseText ? JSON.stringify(JSON.parse(xhr.responseText), null, 2) : 'No response body',
+                        error: error
+                    });
+                    orderDetailsTableBody.empty();
+                    orderDetailsTableBody.append('<tr><td colspan="4" class="text-center">Lỗi tải dữ liệu chi tiết. Vui lòng thử lại.</td></tr>');
+                    $.notify({ message: 'Lỗi tải dữ liệu chi tiết đơn hàng.' }, { type: 'danger', delay: 3000 });
+                }
+            });
+        }
 
         // Bind Table Actions
-
         function bindTableActions() {
             console.log('[DEBUG] Binding table actions');
             $('.create-stockout-btn').off('click').on('click', function() {
@@ -336,6 +507,23 @@
                 });
                 updateModalSubmitButtonState();
                 stockOutModal.show();
+            });
+
+            $('.view-details-btn').off('click').on('click', function() {
+                const orderID = parseInt($(this).data('order-id'));
+                const orderCode = $(this).data('order-code') || `ORD${orderID}`;
+
+                if (isNaN(orderID)) {
+                    console.error('[ERROR] Invalid order ID for details:', $(this).data('order-id'));
+                    $.notify({ message: 'Lỗi: ID đơn hàng không hợp lệ.' }, { type: 'danger', delay: 3000 });
+                    return;
+                }
+
+                console.log('[DEBUG] View Details button clicked for Order ID:', orderID, 'Order Code:', orderCode);
+                detailsOrderId.val(orderID);
+                $('#orderDetailsModalLabel').text(`Thông tin Đơn hàng ${orderCode}`);
+                loadOrderDetails(orderID);
+                orderDetailsModal.show();
             });
         }
 

@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -180,4 +181,41 @@ public class ProductBatchService {
                 .limit(4)
                 .collect(Collectors.toList());
     }
+
+    public Map<Integer, Integer> getTotalQuantityByProductDetail() {
+        List<ProductBatch> allBatches = (List<ProductBatch>) repository.findAll();
+        Map<Integer, Integer> totalQuantityMap = new HashMap<>();
+
+        for (ProductBatch batch : allBatches) {
+            Integer productDetailId = batch.getProductDetail().getProductDetailId(); // Assuming getProductDetailId() exists
+            ProductBatchDTO dto = mapToDTOWithAdjustments(batch);
+            int remainingQuantity = dto.getRemainingQuantity(); // Sử dụng getRemainingQuantity() từ DTO
+
+            totalQuantityMap.put(productDetailId, totalQuantityMap.getOrDefault(productDetailId, 0) + remainingQuantity);
+        }
+
+        return totalQuantityMap;
+    }
+
+    public List<Map<String, Object>> getTop4ExpiringSoonBatches() {
+        List<Object[]> results = repository.findTop4ExpiringSoon();
+        return results.stream()
+                .map(result -> {
+                    ProductBatch batch = repository.findById(((Number) result[0]).intValue())
+                            .orElseThrow(() -> new EntityNotFoundException("ProductBatch not found with ID: " + result[0]));
+                    ProductBatchDTO dto = mapToDTOWithAdjustments(batch);
+                    // Chuyển đổi java.sql.Date sang LocalDate cho expiryDate
+                    java.sql.Date sqlExpiryDate = (java.sql.Date) result[3];
+                    String expiryDateStr = sqlExpiryDate != null ? sqlExpiryDate.toLocalDate().toString() : null;
+                    // Tạo Map để trả về dữ liệu
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("batchID", dto.getBatchID());
+                    response.put("remainingQuantity", dto.getRemainingQuantity());
+                    response.put("manufactureDate", dto.getManufactureDate().toString());
+                    response.put("expiryDate", expiryDateStr);
+                    return response;
+                })
+                .collect(Collectors.toList());
+    }
+
 }
