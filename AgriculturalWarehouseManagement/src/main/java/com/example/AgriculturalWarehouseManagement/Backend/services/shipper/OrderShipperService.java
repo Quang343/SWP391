@@ -5,6 +5,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.models.Order;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.shipper.OrderShipperRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 //@author: Đào Huy Hoàng
@@ -15,7 +16,7 @@ public class OrderShipperService {
 
     private final OrderShipperRepository orderRepository;
 
-     //Lấy tất cả đơn hàng trạng thái STOCKOUT (đang chờ shipper giao)
+    //Lấy tất cả đơn hàng trạng thái STOCKOUT (đang chờ shipper giao)
     public List<Order_SellerDTO> getDeliveredOrdersForShipper() {
         List<Order> orders = orderRepository.findByStatus("STOCKOUT");
         return orders.stream()
@@ -23,8 +24,16 @@ public class OrderShipperService {
                 .toList();
     }
 
+    // lấy all
+    public List<Order_SellerDTO> getAllOrdersForShipper() {
+        List<Order> orders = orderRepository.findAll();  // Lấy tất cả đơn hàng, không phân biệt status
+        return orders.stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
 
-     // Lấy chi tiết một đơn hàng cụ thể theo ID
+
+    // Lấy chi tiết một đơn hàng cụ thể theo ID
     public Order_SellerDTO getOrderById(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng với ID: " + orderId));
@@ -32,7 +41,7 @@ public class OrderShipperService {
     }
 
 
-     //* Xác nhận đơn hàng đã giao thành công → STOCKOUT → DELIVERED
+    //* Xác nhận đơn hàng đã giao thành công → STOCKOUT → DELIVERED
     public void confirmDelivered(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
@@ -46,7 +55,7 @@ public class OrderShipperService {
     }
 
 
-     //* Huỷ đơn hàng (bom hàng) → giữ nguyên STOCKOUT
+    //* Huỷ đơn hàng (bom hàng) → chuyển trạng thái STOCKOUT → CANCELLED
     public void cancelDelivery(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
@@ -55,12 +64,13 @@ public class OrderShipperService {
             throw new IllegalStateException("Chỉ có thể huỷ đơn hàng đang ở trạng thái STOCKOUT");
         }
 
-        // Không thay đổi trạng thái, giữ nguyên STOCKOUT
+        // Chuyển trạng thái sang CANCELLED khi bom hàng
+        order.setStatus("CANCELLED");
         orderRepository.save(order);
     }
 
 
-     //* Chuyển Order entity sang DTO để trả về FE
+    //* Chuyển Order entity sang DTO để trả về FE
     private Order_SellerDTO convertToDTO(Order order) {
         Order_SellerDTO dto = new Order_SellerDTO();
         dto.setOrderId(order.getId());
@@ -74,11 +84,17 @@ public class OrderShipperService {
         return dto;
     }
 
+
+
+
     public long countStockoutOrders() {
         return orderRepository.countByStatus("STOCKOUT");
     }
 
     public long countDeliveredOrders() {
-        return orderRepository.countByStatus("DELIVERED");
+
+        long total = orderRepository.countByStatus("DELIVERED")
+                + orderRepository.countByStatus("COMPLETED");
+        return total;
     }
 }
