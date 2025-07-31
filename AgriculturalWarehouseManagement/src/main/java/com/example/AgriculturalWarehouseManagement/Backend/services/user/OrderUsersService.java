@@ -244,5 +244,15 @@ public class OrderUsersService {
 
         return new ResponseResult<>("SUCCESS", "", true);
     }
+
+    public ResponseResult<OrderUserResponse> completedOrder(String orderId) {
+        Optional<Order> orderOpt = orderRepository.findById(Long.parseLong(orderId));
+        if (orderOpt.isPresent()) {
+            Order order = orderOpt.get();
+            order.setStatus("COMPLETED");
+            orderRepository.save(order);
+        }
+        return new ResponseResult<>("SUCCESS", "", true);
+    }
 }
 

@@ -141,6 +141,44 @@ public class ProfileController {
 
     }
 
+    @GetMapping("addressProfileUser")
+    public String addressProfileUser(Model model) {
+
+        String token = (String) session.getAttribute("authToken");
+
+        if (token == null) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+
+        // Giải mã token
+        Claims claims = jwtTokenFilter.decodeToken(token);
+        if (claims == null) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+
+        Object account = session.getAttribute("account");
+        if (account == null) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+
+
+        // Lấy thông tin người dùng từ claims
+        String email = claims.getSubject();
+        User userEntity = userCustomerService.loadUserByEmail(email);
+
+        if (userEntity == null) {
+            session.invalidate();
+            return "redirect:/login";
+        } else {
+            return "redirect:/profileUser#pills-address";
+
+        }
+
+    }
+
     @PostMapping("/profileUserEdit")
     public String editProfileUser(@ModelAttribute ProfileRequest profileRequest) {
 
@@ -162,7 +200,7 @@ public class ProfileController {
         }
 
 
-        return "redirect:/profileUser";
+        return "redirect:/profileUser#pills-profile";
     }
 
     @GetMapping("/profileUserEdit/image")
@@ -278,6 +316,37 @@ public class ProfileController {
 //            System.out.println("hello" + orderId);
             ResponseResult<OrderUserResponse> orderUserResponseResponseResult = orderUsersService.cancelOrder((String) orderId, userEntity.getUserId());
             return "redirect:/profileUser";
+        }
+    }
+
+    @PostMapping("/completedOrder")
+    public String completedOrder(@RequestParam("orderId")  String orderId) {
+
+        String token = (String) session.getAttribute("authToken");
+
+        if (token == null) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+
+        // Giải mã token
+        Claims claims = jwtTokenFilter.decodeToken(token);
+        if (claims == null) {
+            session.invalidate();
+            return "redirect:/login";
+        }
+
+        // Lấy thông tin người dùng từ claims
+        String email = claims.getSubject();
+        User userEntity = userCustomerService.loadUserByEmail(email);
+
+        if (userEntity == null) {
+            session.invalidate();
+            return "redirect:/login";
+        } else {
+//            System.out.println("hello" + orderId);
+            ResponseResult<OrderUserResponse> orderUserResponseResponseResult = orderUsersService.completedOrder((String) orderId);
+            return "redirect:/profileUser#pills-order";
         }
     }
 

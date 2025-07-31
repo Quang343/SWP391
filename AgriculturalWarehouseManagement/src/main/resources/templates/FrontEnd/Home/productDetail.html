@@ -928,7 +928,7 @@
                     firstThreeItems.forEach((cart, index) => {
                         const liElement = document.createElement('li');
                         liElement.setAttribute('data-index', index);  // Gán data-index mới
-                        liElement.innerHTML = `<img src="${cart.imageUrl}" alt="Product Image ${index}">`;
+                        liElement.innerHTML = `<img src="${'seller/'+cart.imageUrl}" alt="Product Image ${index}">`;
                         ulElement.appendChild(liElement);
                     });
 
@@ -942,7 +942,7 @@
                 try {
                     let response = await axios.get(`http://localhost:8080/AgriculturalWarehouseManagementApplication/totalCart/${userId}`);
                     if (response.data.status === "SUCCESS") {
-                        document.getElementById(`total-cart`).innerText = `${response.data.data.totalCart.toLocaleString()}₫`;
+                        document.getElementById(`total-cart`).innerText = `${response.data.data.totalCart.toLocaleString('vi-VN')}₫`;
                     } else {
                         console.error("Không thể lấy tổng giỏ hàng");
                     }

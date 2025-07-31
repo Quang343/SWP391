@@ -76,7 +76,11 @@ public class CompareProductDetailController {
             }
         }
         if (exist) {
-            productDetailUserResponses.add(productDetailUserResponse);
+            if (productDetailUserResponse.getRemainQuantity() != 0) {
+                productDetailUserResponses.add(productDetailUserResponse);
+            } else {
+                model.addAttribute("errorCompare", "Sản phẩm chi tiết không còn hàng nên chưa thể so sánh");
+            }
         }
         model.addAttribute("productDetailUserResponses", productDetailUserResponses);
 
