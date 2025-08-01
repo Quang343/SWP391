@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
@@ -59,8 +60,6 @@
                                                     <!-- Dữ liệu sẽ được tải động bằng JavaScript -->
                                                     </tbody>
                                                     <tfoot>
-
-
                                                     <tr class="table-order">
                                                         <td colspan="4">
                                                             <h4 class="theme-color fw-bold">Tổng giá:</h4>
@@ -163,6 +162,8 @@
 <script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
 <script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
 <script th:src="@{/Backend/assets/js/script.js}"></script>
+<!-- Moment.js for date formatting -->
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
 
 <!-- Custom JavaScript -->
 <script>
@@ -197,6 +198,37 @@
             }
         }
 
+        // Hàm định dạng ngày thành DDMM
+        function formatDateToDDMM(dateString) {
+            if (!dateString || dateString === 'N/A') {
+                return '0000';
+            }
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    console.warn('[WARN] Invalid date:', dateString);
+                    return '0000';
+                }
+                return moment(date).format('DDMM');
+            } catch (error) {
+                console.error('[ERROR] Error formatting date to DDMM:', dateString, error);
+                return '0000';
+            }
+        }
+
+        // Hàm định dạng stockInId: IMP-[ID + 3000 ở Base36]-[DDMM]
+        function generateImpCode(stockInId, stockInDate) {
+            try {
+                const offsetID = parseInt(stockInId) + 3000;
+                const base36ID = offsetID.toString(36).toUpperCase();
+                const datePart = formatDateToDDMM(stockInDate);
+                return `IMP-${base36ID}-${datePart}`;
+            } catch (error) {
+                console.error('[ERROR] Lỗi định dạng stockInId:', stockInId, error);
+                return stockInId || 'N/A';
+            }
+        }
+
         // Kiểm tra stockInId từ URL
         const urlParams = new URLSearchParams(window.location.search);
         const stockInId = urlParams.get('stockInId');
@@ -208,9 +240,6 @@
             return;
         }
         console.log('Mã nhập kho từ URL:', stockInId);
-
-        // Hiển thị Mã nhập kho
-        $('#stockInId').text(stockInId);
 
         // Biến trạng thái chế độ chỉnh sửa
         let isEditMode = false;
@@ -333,25 +362,23 @@
             }
         });
 
-        // Tải ngày nhập kho
+        // Tải ngày nhập kho và hiển thị mã nhập kho
         $.ajax({
             url: `http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/${stockInId}`,
             method: 'GET',
             dataType: 'json',
             success: function(stockInData) {
                 console.log('Dữ liệu StockIn:', stockInData);
-                const stockInDate = stockInData.stockInDate ? new Date(stockInData.stockInDate).toLocaleDateString('vi-VN', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                }) : 'N/A';
+                const stockInDate = stockInData.stockInDate ? moment(stockInData.stockInDate).format('DD [tháng] MMMM, YYYY, HH:mm') : 'N/A';
                 $('#stockInDate').text(stockInDate);
+                // Hiển thị mã nhập kho với định dạng IMP-[ID + 3000 → base36]-[DDMM]
+                const formattedStockInId = generateImpCode(stockInId, stockInData.stockInDate);
+                $('#stockInId').text(formattedStockInId);
             },
             error: function(xhr, status, error) {
                 console.error('Lỗi khi tải StockIn:', { status, error, response: xhr.responseText });
                 $('#stockInDate').text('N/A');
+                $('#stockInId').text(stockInId); // Fallback to plain ID
             }
         });
 
@@ -417,13 +444,13 @@
                                                     async: false,
                                                     dataType: 'text',
                                                     success: function(response) {
-                                                        imageUrl = response && response.trim() !== '' ? `${response}` : '/seller/default.jpg';
+                                                        imageUrl = response && response.trim() !== '' ? `/seller/${response}` : '/seller/default.jpg';
                                                         console.log(`Sản phẩm ID: ${productId}, Ảnh: ${imageUrl}`);
                                                     },
-                                                    // error: function(xhr, status, error) {
-                                                    //     imageUrl = '/seller/default.jpg';
-                                                    //     console.error(`Lỗi khi lấy ảnh cho sản phẩm ID ${productId}:`, { status, error });
-                                                    // }
+                                                    error: function(xhr, status, error) {
+                                                        imageUrl = '/seller/default.jpg';
+                                                        console.error(`Lỗi khi lấy ảnh cho sản phẩm ID ${productId}:`, { status, error });
+                                                    }
                                                 });
                                             } else {
                                                 displayName = `N/A (${detailName})`;
@@ -449,8 +476,7 @@
                     <tr class="table-order" data-detail-id="${detail.id || index}" data-batch-id="${detail.batchID || ''}">
                         <td>
                             <a href="javascript:void(0)">
-                            <img src="http://localhost:8080/AgriculturalWarehouseManagementApplication/seller/${imageUrl}" />
-
+                                <img src="http://localhost:8080/AgriculturalWarehouseManagementApplication${imageUrl}" />
                             </a>
                         </td>
                         <td>
@@ -470,7 +496,7 @@
                             <h5>${formattedBatchID}</h5>
                         </td>
                     </tr>
-                `;
+                    `;
                     tbody.append(row);
                 });
 
@@ -628,7 +654,7 @@
 
                     // Cập nhật hàng trong bảng
                     const row = $(`#stockInDetailTable tr[data-detail-id="${detailId}"]`);
-                    row.find('td:eq(0) img').attr('src', imageUrl);
+                    row.find('td:eq(0) img').attr('src', `http://localhost:8080/AgriculturalWarehouseManagementApplication${imageUrl}`);
                     row.find('td:eq(1) h5').text(displayName);
                     row.find('td:eq(2) h5').text(response.quantity);
                     row.find('td:eq(3) h5').text(formatPrice(response.unitPrice));
@@ -646,14 +672,10 @@
                         totalAmount += qty * price;
                     });
 
-                    // Tính thuế GST (5% của tổng phụ)
-                    const gstTax = Math.round(totalAmount * 0.05);
-                    const totalWithShippingAndTax = totalAmount + 50000 + gstTax;
-
+                    // Cập nhật thông tin tổng quan
                     $('#totalAmount').text(formatPrice(totalAmount));
                     $('#subtotal').text(formatPrice(totalAmount));
-                    $('#gstTax').text(formatPrice(gstTax));
-                    $('#totalPrice').text(formatPrice(totalWithShippingAndTax));
+                    $('#totalPrice').text(formatPrice(totalAmount));
 
                     // Hiển thị thông báo thành công
                     $.notify({

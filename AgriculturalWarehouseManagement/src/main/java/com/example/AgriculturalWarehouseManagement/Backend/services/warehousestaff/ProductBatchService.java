@@ -1,11 +1,15 @@
 package com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.OrderDetailDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.AdjustmentDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.ProductBatchDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.mappers.ProductBatchMapper;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Adjustment;
+import com.example.AgriculturalWarehouseManagement.Backend.models.OrderDetail;
+import com.example.AgriculturalWarehouseManagement.Backend.models.OrderStatus;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductBatch;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.AdjustmentRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.OrderDetailRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductBatchRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductDetailRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -32,6 +36,9 @@ public class ProductBatchService {
 
     @Autowired
     private AdjustmentRepository adjustmentRepository;
+
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
 
     public Page<ProductBatchDTO> getPaginatedProductBatches(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -217,5 +224,22 @@ public class ProductBatchService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public List<Map<String, Object>> getTotalQuantityByProductDetailId(Long productDetailId) {
+        return orderDetailRepository.findByProductDetailIdAndOrderStatusNot(productDetailId, "CANCELLED")
+                .stream()
+                .collect(Collectors.groupingBy(
+                        OrderDetailDTO::getProductDetailId,
+                        Collectors.summingInt(OrderDetailDTO::getQuantity)))
+                .entrySet().stream()
+                .map(entry -> {
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("productDetailId", entry.getKey());
+                    result.put("totalQuantity", entry.getValue());
+                    return result;
+                })
+                .collect(Collectors.toList());
+    }
+
 
 }

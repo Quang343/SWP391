@@ -1,6 +1,7 @@
 package com.example.AgriculturalWarehouseManagement.Backend.repositorys;
 
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.OrderDetailDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Order;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     boolean existsByOrderCode(String orderCode);
 
     List<Order> findByStatus(String status);
+
+
 
     Optional<Order> findByOrderCode(String orderCode);
 
