@@ -10,9 +10,18 @@ public class AutoCancelScheduler {
     @Autowired
     private SellerApplicationService autoCancelService;
 
+    @Autowired
+    private SellerApplicationService sellerApplicationService;
+
     // Chạy mỗi ngày lúc 2:00 sáng
     @Scheduled(cron = "0 * * * * ?")
     public void runAutoCancel() {
         autoCancelService.autoCancelApplications();
     }
+
+    @Scheduled(cron = "0 * * * * ?") // chạy mỗi ngày lúc 2h sáng
+    public void scheduleSellerDowngrade() {
+        sellerApplicationService.autoDowngradeExpiredSellers();
+    }
+
 }

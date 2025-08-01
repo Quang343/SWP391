@@ -7,6 +7,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.models.Role;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.RoleService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.user.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.seller.User_SellerService;
 import com.example.AgriculturalWarehouseManagement.Backend.utils.PaginationUtils;
 import com.example.AgriculturalWarehouseManagement.Backend.utils.StoreFile;
 import jakarta.servlet.http.HttpSession;
@@ -51,21 +52,20 @@ public class UserController {
 
     @GetMapping("/admin/users")
     public String getAllUsers(Model model,
-                              @RequestParam("page") Optional<String> page){
+                              @RequestParam("page") Optional<String> page) {
 //        List<User> users = userService.findAll();
 //        List<User> users = userService.findByStatusIsNot("Ban");
         int pageNumber = 1;
-        try{
+        try {
             if (page.isPresent()) {
                 pageNumber = Integer.parseInt(page.get());
-                if(pageNumber < 1){
+                if (pageNumber < 1) {
                     pageNumber = 1;
                 }
-            }
-            else{
+            } else {
                 //pageNumber = 1
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             //pageNumber = 1
             //Handle exception
         }
@@ -116,8 +116,7 @@ public class UserController {
     @PostMapping("/admin/saveUser")
     public ResponseEntity<?> saveUser(@ModelAttribute("userDTO") @Valid UserDTO userDTO,
                                       BindingResult bindingResult,
-                                      @RequestPart("image") MultipartFile image
-    ){
+                                      @RequestPart(value = "image", required = false) MultipartFile image) {
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             bindingResult.getFieldErrors().forEach(error -> {
@@ -125,34 +124,42 @@ public class UserController {
             });
             return ResponseEntity.badRequest().body(errors);
         }
-        if(userService.existsByPhone(userDTO.getPhone())){
+
+        if (userService.existsByPhone(userDTO.getPhone())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("phone", "Phone number already exists"));
         }
-//        MultipartFile image = userDTO.getImage();
-        String fileName = null;
-        if (image != null && !image.isEmpty()) {
-            try {
-                fileName = storeFile.storeFile(image);
-                userDTO.setImageName(fileName);
-            }catch (Exception e){
-                return ResponseEntity.badRequest().body("Image upload failed");
-            }
-        }
+
         try {
+            // mã hóa mật khẩu
             String hashPassword = passwordEncoder.encode(userDTO.getPassword());
             userDTO.setPassword(hashPassword);
-            User user = userService.createUser(userDTO);
+            User user = userService.createUser(userDTO); // lưu user trước
+
+            // lưu ảnh sau khi có userId
+            if (image != null && !image.isEmpty()) {
+                try {
+                    userSellerService.saveAvatar((long) user.getUserId(), image);
+                    // Không cần set lại `image`, vì trong `saveAvatar()` bạn đã `user.setImage(...)` rồi và `userRepository.save(user)` rồi.
+                    userService.save(user); // cập nhật lại image sau khi upload
+                } catch (Exception e) {
+                    return ResponseEntity.badRequest().body("Image upload failed");
+                }
+            }
+
             return ResponseEntity.ok().body(Map.of("message", "User added successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
+
+    private final User_SellerService userSellerService;
+
     @PutMapping("/admin/update_user/{id}")
-    public ResponseEntity<?> updateRole(@PathVariable("id") Long id,
-                             @ModelAttribute UserDTO userDTO,
-                             BindingResult bindingResult,
-                             @RequestPart(value = "image", required = false) MultipartFile image){
+    public ResponseEntity<?> updateUser(@PathVariable("id") Long id,
+                                        @ModelAttribute UserDTO userDTO,
+                                        BindingResult bindingResult,
+                                        @RequestPart(value = "image", required = false) MultipartFile image) {
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             bindingResult.getFieldErrors().forEach(error -> {
@@ -160,43 +167,42 @@ public class UserController {
             });
             return ResponseEntity.badRequest().body(errors);
         }
+
         User user = userService.findById(id);
 
         String newFileName = null;
         if (image != null && !image.isEmpty()) {
-            String oldFileName = user.getImage();
-            if(oldFileName != null && !oldFileName.isBlank()){
-                deleteFile(oldFileName);
-            }
             try {
-                newFileName = storeFile.storeFile(image);
-                userDTO.setImageName(newFileName);
-            }catch (Exception e){
+                newFileName = userSellerService.saveAvatar(id, image);
+                userDTO.setImageName(newFileName.substring(newFileName.lastIndexOf("/") + 1));
+            } catch (Exception e) {
                 return ResponseEntity.badRequest().body("Image upload failed");
             }
-        }else userDTO.setImageName(user.getImage());
+        } else {
+            userDTO.setImageName(user.getImage());
+        }
 
         try {
-            String presentedPassword = userDTO.getPassword();
-            if(!presentedPassword.equals(user.getPassword())){
+            if (!userDTO.getPassword().equals(user.getPassword())) {
                 String hashPassword = passwordEncoder.encode(userDTO.getPassword());
                 userDTO.setPassword(hashPassword);
             }
             userService.updateUser(id, userDTO);
             return ResponseEntity.ok().body(Map.of("message", "User updated successfully"));
         } catch (Exception e) {
-            return ResponseEntity.ok().body(Map.of("message", "User updated failed!"));
+            return ResponseEntity.badRequest().body(Map.of("message", "User updated failed!"));
         }
     }
+
 
     @Value("${app.upload.product-dir}")
     private String uploadDir;
 
-    public void deleteFile(String fileName){
-        try{
+    public void deleteFile(String fileName) {
+        try {
             Path filePath = Paths.get(uploadDir, "Admin").resolve(fileName);
             Files.deleteIfExists(filePath);
-        }catch (Exception e){
+        } catch (Exception e) {
             System.err.println("Failed to delete old file: " + e.getMessage());
         }
     }
@@ -206,7 +212,7 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
 
         boolean isDeleted = userService.deleteUser(id);
-        if(isDeleted)
+        if (isDeleted)
             return ResponseEntity.ok().body(Map.of("message", "User deleted successfully"));
         else
             return ResponseEntity.badRequest().body(Map.of("message", "Delete user failed!"));
@@ -263,7 +269,7 @@ public class UserController {
             @RequestParam(value = "image", required = false) MultipartFile image
     ) {
         try {
-            UserResponse userResponse = (UserResponse)session.getAttribute("accountAdmin");
+            UserResponse userResponse = (UserResponse) session.getAttribute("accountAdmin");
             User user = userService.findById(userResponse.getUserID() * 1L);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -279,13 +285,13 @@ public class UserController {
             String newFileName = null;
             if (image != null && !image.isEmpty()) {
                 String oldFileName = user.getImage();
-                if(oldFileName != null && !oldFileName.isBlank()){
+                if (oldFileName != null && !oldFileName.isBlank()) {
                     deleteFile(oldFileName);
                 }
                 try {
                     newFileName = storeFile.storeFile(image);
                     user.setImage(newFileName);
-                }catch (Exception e){
+                } catch (Exception e) {
                     return ResponseEntity.badRequest().body("Image upload failed");
                 }
             }
@@ -331,9 +337,9 @@ public class UserController {
     public ResponseEntity<?> changePassword(@RequestParam String currentPassword,
                                             @RequestParam String newPassword,
                                             @RequestParam String confirmPassword,
-                                            HttpSession session){
-        Map<String,Object> response = new HashMap<>();
-        UserResponse userResponse = (UserResponse)session.getAttribute("accountAdmin");
+                                            HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        UserResponse userResponse = (UserResponse) session.getAttribute("accountAdmin");
         User user = userService.findByEmail(userResponse.getEmail());
         if (user == null) {
             Map<String, Object> errorResponse = new HashMap<>();
@@ -341,17 +347,17 @@ public class UserController {
             errorResponse.put("message", "User not found");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
-        if(!passwordEncoder.matches(currentPassword, user.getPassword())){
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             response.put("success", false);
             response.put("message", "Mật khẩu hiện tại không đúng!");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        if(newPassword == null || !newPassword.equals(confirmPassword)){
+        if (newPassword == null || !newPassword.equals(confirmPassword)) {
             response.put("success", false);
             response.put("message", "Mật khẩu xác nhận không khớp!");
             return ResponseEntity.badRequest().body(response);
         }
-        if(!passwordEncoder.matches(newPassword, user.getPassword())){
+        if (!passwordEncoder.matches(newPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.save(user);
         }
@@ -363,7 +369,7 @@ public class UserController {
     @PutMapping("/admin/users/{userId}/role")
     @ResponseBody
     public ResponseEntity<?> assignRoleForUser(@PathVariable("userId") Long id,
-                                               @RequestBody Map<String, String> info){
+                                               @RequestBody Map<String, String> info) {
 
         try {
             String roleKey = info.get("role");

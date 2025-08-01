@@ -61,6 +61,7 @@ public class UserService implements IUserService {
 
     private User mapDtoToUser(UserDTO dto, Role role) {
         return User.builder()
+//                .userId(dto.getUserId())
                 .userName(dto.getUsername())
                 .fullName(dto.getFullName())
                 .password(dto.getPassword())

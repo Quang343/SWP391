@@ -232,7 +232,7 @@
                                                                     <div id="preview-image-container">
                                                                         <img id="preview-image"
                                                                              th:if="${userDTO.getImageName() != null}"
-                                                                             th:src="@{'/admin/' + ${userDTO.getImageName()}}"
+                                                                             th:src="@{'/seller/' + ${userDTO.getUserId()} + '/' + ${userDTO.getImageName()}}"
                                                                              class="img-thumbnail" alt="Current Image"
                                                                              style="width: 150px; height: 150px; object-fit: cover;">
                                                                     </div>

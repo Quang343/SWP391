@@ -2,17 +2,25 @@ package com.example.AgriculturalWarehouseManagement.Backend.services.seller;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.requests.user.CheckOutRequest;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.seller.SellerApplicationResponseDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Role;
 import com.example.AgriculturalWarehouseManagement.Backend.models.SellerApplication;
 import com.example.AgriculturalWarehouseManagement.Backend.models.SellerApplicationStatus;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.UserRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.seller.SellerApplicationRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.services.admin.RoleService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.admin.user.UserService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.WalletsUsersService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -23,6 +31,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -32,6 +41,8 @@ public class SellerApplicationService {
     private final SellerApplicationRepository sellerApplicationRepository;
     private final UserRepository userRepository;
     private final WalletsUsersService walletsUsersService;
+    private final RoleService roleService;
+    private final UserService userService;
 
     @Value("${app.upload.product-dir}")
     private String uploadDir;
@@ -225,19 +236,23 @@ public class SellerApplicationService {
 
             System.out.println("Payment amount: " + finalTotal);
             CheckOutRequest payment = new CheckOutRequest();
-            payment.setTotalPrice(finalTotal.doubleValue()); // Full contract amount
+            payment.setTotalPrice(finalTotal.doubleValue());
             walletsUsersService.updateWalletAfterOrder(userId.intValue(), payment);
             System.out.println("Payment processed for user ID: " + userId);
 
+            // Cập nhật trạng thái và xoá ngày hết hạn
             app.setStatus(SellerApplicationStatus.PENDING);
             app.setCreatedAt(LocalDateTime.now());
+            app.setContractExpiryDate(null); // Xoá ngày hết hạn
             sellerApplicationRepository.save(app);
+
             System.out.println("Application ID: " + applicationId + " restored to PENDING, createdAt updated to: " + app.getCreatedAt());
         } catch (Exception e) {
             System.err.println("Error during restoration: " + e.getMessage());
             throw new RuntimeException("Lỗi khi xử lý khôi phục đơn: " + e.getMessage(), e);
         }
     }
+
 
     @Transactional
     public void autoCancelApplications() {
@@ -312,5 +327,63 @@ public class SellerApplicationService {
         return sellerApplicationRepository.save(application);
     }
 
+    @PutMapping("/api/user/upgrade-to-seller")
+    @ResponseBody
+    public ResponseEntity<?> upgradeToSeller(HttpSession session) {
+        Integer accountId = (Integer) session.getAttribute("accountId");
+        if (accountId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Bạn chưa đăng nhập"));
+        }
+
+        try {
+            User user = userService.findById(accountId.longValue());
+
+            // Đổi vai trò sang SELLER
+            Role sellerRole = roleService.findByName("SELLER");
+            user.setRole(sellerRole);
+            userService.save(user);
+
+            // Cập nhật trạng thái application từ APPROVED → COMPLETED
+            sellerApplicationRepository.findByUserAndStatus(user, SellerApplicationStatus.APPROVED)
+                    .ifPresent(application -> {
+                        application.setStatus(SellerApplicationStatus.COMPLETED);
+                        sellerApplicationRepository.save(application);
+                    });
+
+            return ResponseEntity.ok(Map.of("message", "Đổi vai trò sang NGƯỜI BÁN HÀNG thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Không thể đổi vai trò: " + e.getMessage()));
+        }
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void autoDowngradeExpiredSellers() {
+        LocalDate today = LocalDate.now();
+
+        // Lấy tất cả application đang COMPLETED
+        List<SellerApplication> completedApplications = sellerApplicationRepository.findAllByStatus(SellerApplicationStatus.COMPLETED);
+
+        for (SellerApplication app : completedApplications) {
+            LocalDate expiryDate = app.getContractExpiryDate();
+
+            // Nếu hết hạn
+            if (expiryDate != null && today.isAfter(expiryDate)) {
+                User user = app.getUser();
+
+                // Chuyển role về USER
+                Role userRole = roleService.findByName("USER");
+                user.setRole(userRole);
+                userService.save(user);
+
+                // Đổi trạng thái hồ sơ về EXPIRED
+                app.setStatus(SellerApplicationStatus.EXPIRED);
+                sellerApplicationRepository.save(app);
+
+                System.out.println("==> Hạ vai trò seller về user cho userID=" + user.getUserId());
+            }
+        }
+    }
 }
 

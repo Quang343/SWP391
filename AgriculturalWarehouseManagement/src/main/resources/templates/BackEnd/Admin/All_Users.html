@@ -205,7 +205,7 @@
                                             <td th:text="${user.getUserName()}"></td>
                                             <td>
                                                 <div class="user-img w-100">
-                                                    <img th:src="@{'/admin/' + ${user.getImage()}}"
+                                                    <img th:src="@{'/seller/' + ${user.getUserId()} + '/' + ${user.getImage()}}"
                                                          class="img-fluid rounded-circle avatar">
                                                 </div>
                                             </td>

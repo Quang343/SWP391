@@ -17,4 +17,5 @@ public interface SellerApplicationRepository extends JpaRepository<SellerApplica
     @Query("SELECT sa FROM SellerApplication sa WHERE sa.status = 'APPROVED'")
     List<SellerApplication> findAllApprovedApplications();
     Optional<SellerApplication> findByUserAndStatus(User user, SellerApplicationStatus status);
+    List<SellerApplication> findAllByStatus(SellerApplicationStatus status);
 }
