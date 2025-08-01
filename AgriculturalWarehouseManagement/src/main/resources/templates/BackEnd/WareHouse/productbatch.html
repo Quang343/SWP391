@@ -1564,7 +1564,7 @@
                         }
                     } else {
                         console.error(`[ERROR] API /AgriculturalWarehouseManagementApplication/api/stockindetails/quantity/${batchId} failed with status: ${stockInResponse.status}`);
-                        $.notify({ message: 'Lỗi khi kiểm tra số lượng nhập kho. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+                        $.notify({ message: 'Đơn hàng chưa được nhập kho, Vui lòng nhập kho trước' }, { type: 'danger', delay: 3000 });
                         return;
                     }
 
@@ -1577,7 +1577,7 @@
                     }
                 } catch (error) {
                     console.error(`[ERROR] Lỗi khi kiểm tra số lượng nhập kho cho batchID ${batchId}:`, error);
-                    $.notify({ message: 'Lỗi khi kiểm tra số lượng nhập kho. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+                    $.notify({ message: 'Đơn hàng chưa được nhập kho, Vui lòng nhập kho trước' }, { type: 'danger', delay: 3000 });
                     return;
                 }
 
@@ -1636,7 +1636,7 @@
                     headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.content }
                 })
                     .then(response => {
-                        if (!response.ok) throw new Error('Không thể xóa Lô Sản Phẩm');
+                        if (!response.ok) throw new Error('Không thể xóa Lô Sản Phẩm đã nhập kho');
                         $.notify({ message: 'Xóa Lô Sản Phẩm thành công!' }, { type: 'success', delay: 3000 });
                         setTimeout(() => {
                             bootstrap.Modal.getInstance(modal).hide();
@@ -1741,7 +1741,7 @@
                             }
                         } else {
                             console.error(`[ERROR] API /AgriculturalWarehouseManagementApplication/api/stockindetails/quantity/${batchId} failed with status: ${stockInResponse.status}`);
-                            $.notify({ message: 'Lỗi khi kiểm tra số lượng nhập kho. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+                            $.notify({ message: 'Đơn hàng chưa được nhập kho, Vui lòng nhập kho trước' }, { type: 'danger', delay: 3000 });
                             return;
                         }
 
@@ -1801,7 +1801,7 @@
                         });
                 } catch (error) {
                     console.error(`[ERROR] Lỗi khi kiểm tra số lượng cho batchID ${batchId}:`, error);
-                    $.notify({ message: 'Lỗi khi kiểm tra số lượng. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+                    $.notify({ message: 'Đơn hàng chưa được nhập kho, Vui lòng nhập kho trước' }, { type: 'danger', delay: 3000 });
                     return;
                 }
             });
@@ -1889,7 +1889,7 @@
                         });
                 } catch (error) {
                     console.error(`[ERROR] Lỗi khi kiểm tra số lượng cho batchID ${batchId}:`, error);
-                    $.notify({ message: 'Lỗi khi kiểm tra số lượng. Vui lòng kiểm tra console.' }, { type: 'danger', delay: 3000 });
+                    $.notify({ message: 'Đơn hàng chưa được nhập kho, Vui lòng nhập kho trước' }, { type: 'danger', delay: 3000 });
                     return;
                 }
             });

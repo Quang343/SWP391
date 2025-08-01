@@ -1,11 +1,13 @@
 package com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.OrderDetailDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.AdjustmentDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.warehousestaff.ProductBatchDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.mappers.ProductBatchMapper;
 import com.example.AgriculturalWarehouseManagement.Backend.models.Adjustment;
 import com.example.AgriculturalWarehouseManagement.Backend.models.ProductBatch;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.AdjustmentRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.repositorys.OrderDetailRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductBatchRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductDetailRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,6 +34,9 @@ public class ProductBatchService {
 
     @Autowired
     private AdjustmentRepository adjustmentRepository;
+
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
 
     public Page<ProductBatchDTO> getPaginatedProductBatches(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -178,6 +184,59 @@ public class ProductBatchService {
                 .map(ProductBatchMapper::productBatchToProductBatchDTO)
                 .sorted(Comparator.comparing(ProductBatchDTO::getRemainingQuantity).reversed())
                 .limit(4)
+                .collect(Collectors.toList());
+    }
+
+    public Map<Integer, Integer> getTotalQuantityByProductDetail() {
+        List<ProductBatch> allBatches = (List<ProductBatch>) repository.findAll();
+        Map<Integer, Integer> totalQuantityMap = new HashMap<>();
+
+        for (ProductBatch batch : allBatches) {
+            Integer productDetailId = batch.getProductDetail().getProductDetailId(); // Assuming getProductDetailId() exists
+            ProductBatchDTO dto = mapToDTOWithAdjustments(batch);
+            int remainingQuantity = dto.getRemainingQuantity(); // Sử dụng getRemainingQuantity() từ DTO
+
+            totalQuantityMap.put(productDetailId, totalQuantityMap.getOrDefault(productDetailId, 0) + remainingQuantity);
+        }
+
+        return totalQuantityMap;
+    }
+
+    public List<Map<String, Object>> getTop4ExpiringSoonBatches() {
+        List<Object[]> results = repository.findTop4ExpiringSoon();
+        return results.stream()
+                .map(result -> {
+                    ProductBatch batch = repository.findById(((Number) result[0]).intValue())
+                            .orElseThrow(() -> new EntityNotFoundException("ProductBatch not found with ID: " + result[0]));
+                    ProductBatchDTO dto = mapToDTOWithAdjustments(batch);
+                    // Chuyển đổi java.sql.Date sang LocalDate cho expiryDate
+                    java.sql.Date sqlExpiryDate = (java.sql.Date) result[3];
+                    String expiryDateStr = sqlExpiryDate != null ? sqlExpiryDate.toLocalDate().toString() : null;
+                    // Tạo Map để trả về dữ liệu
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("batchID", dto.getBatchID());
+                    response.put("remainingQuantity", dto.getRemainingQuantity());
+                    response.put("manufactureDate", dto.getManufactureDate().toString());
+                    response.put("expiryDate", expiryDateStr);
+                    return response;
+                })
+                .collect(Collectors.toList());
+    }
+
+
+    public List<Map<String, Object>> getTotalQuantityByProductDetailId(Long productDetailId) {
+        return orderDetailRepository.findByProductDetailIdAndOrderStatusNot(productDetailId, "CANCELLED")
+                .stream()
+                .collect(Collectors.groupingBy(
+                        OrderDetailDTO::getProductDetailId,
+                        Collectors.summingInt(OrderDetailDTO::getQuantity)))
+                .entrySet().stream()
+                .map(entry -> {
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("productDetailId", entry.getKey());
+                    result.put("totalQuantity", entry.getValue());
+                    return result;
+                })
                 .collect(Collectors.toList());
     }
 }

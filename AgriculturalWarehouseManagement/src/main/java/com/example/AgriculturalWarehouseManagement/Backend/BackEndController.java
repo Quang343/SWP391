@@ -103,7 +103,7 @@ public class BackEndController {
     @RequestMapping("/warehouse/addproductbatch")
     public String addproductbatch() {return "BackEnd/WareHouse/addproductbatch";}
 
-    @RequestMapping("/warehouse/adjustment")
+    @RequestMapping("/warehouse/adjustments")
     public String adjustment() {return "BackEnd/WareHouse/adjustment";}
 
     @RequestMapping("/warehouse/addadjustment")

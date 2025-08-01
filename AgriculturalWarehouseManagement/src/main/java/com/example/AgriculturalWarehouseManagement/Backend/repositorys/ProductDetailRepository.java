@@ -235,7 +235,8 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, In
                         cw.weight,
                         cw.unit,
                         ar.avgRating,
-                        ar.ratingCount;
+                        ar.ratingCount
+                        ORDER BY price DESC
             """, nativeQuery = true)
     List<Object[]> rawGetProductbyIds(Integer productId);
 

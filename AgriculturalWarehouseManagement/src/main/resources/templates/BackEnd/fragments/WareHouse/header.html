@@ -1,3 +1,4 @@
+
 <div class="page-header" th:fragment="header">
     <div class="header-wrapper m-0">
         <div class="header-logo-wrapper p-0">
@@ -60,7 +61,7 @@
                              th:src="@{/Backend/assets/images/avatar.png}"
                              class="user-profile rounded-circle" alt="more image"
                              accept=".jpg,.jpeg,.png,.gif,image/*">
-<!--                        <img class="user-profile rounded-circle" th:src="@{/Backend/assets/images/avatar.png}" alt="">-->
+                        <!--                        <img class="user-profile rounded-circle" th:src="@{/Backend/assets/images/avatar.png}" alt="">-->
                         <div class="user-name-hide media-body">
                             <span th:if="${session.accountWarehouse != null}"  th:text="${session.accountWarehouse.getUserName}">Tên Quản kho</span>
                             <p  th:if="${session.accountWarehouse != null}"  th:text="${session.accountWarehouse.getEmail}" class="mb-0 font-roboto">Email Quản Kho<i class="middle ri-arrow-down-s-line"></i></p>
@@ -69,32 +70,32 @@
                     <ul class="profile-dropdown onhover-show-div">
                         <li>
                             <a th:href="@{/warehouse/stockin}">
-                                <i data-feather="users"></i>
+                                <i class="ri-download-2-line"></i>
                                 <span>Nhập kho</span>
                             </a>
                         </li>
                         <li>
                             <a th:href="@{/warehouse/stockout}">
-                                <i data-feather="archive"></i>
+                                <i class="ri-upload-2-line"></i>
                                 <span>Xuất kho</span>
                             </a>
                         </li>
                         <li>
-                            <a th:href="@{/Backend/adjustment}">
-                                <i data-feather="phone"></i>
+                            <a th:href="@{/warehouse/adjustments}">
+                                <i class="ri-equalizer-line"></i>
                                 <span>Điều chỉnh</span>
                             </a>
                         </li>
                         <li>
-                            <a th:href="@{/Backend/productbacth}">
-                                <i data-feather="settings"></i>
+                            <a th:href="@{/warehouse/productbatch}">
+                                <i class="ri-barcode-box-line"></i>
                                 <span>Lô Hàng</span>
                             </a>
                         </li>
                         <li>
                             <a href="http://localhost:8080/AgriculturalWarehouseManagementApplication/logoutUser">
                                 <i data-feather="log-out"></i>
-                                <span>Log out</span>
+                                <span>  Log out</span>
                             </a>
                         </li>
                     </ul>

@@ -22,7 +22,8 @@ public class OrderTrackingShipperAPIController {
      */
     @GetMapping
     public ResponseEntity<List<Order_SellerDTO>> getAllDeliveredOrders() {
-        List<Order_SellerDTO> orders = shipperService.getDeliveredOrdersForShipper();
+//        List<Order_SellerDTO> orders = shipperService.getDeliveredOrdersForShipper();
+        List<Order_SellerDTO> orders = shipperService.getAllOrdersForShipper();
         return ResponseEntity.ok(orders);
     }
 

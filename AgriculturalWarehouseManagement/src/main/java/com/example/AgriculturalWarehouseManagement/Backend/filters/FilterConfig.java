@@ -2,6 +2,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.filters;
 
 import com.example.AgriculturalWarehouseManagement.Backend.filters.role.AdminRoleFilter;
 import com.example.AgriculturalWarehouseManagement.Backend.filters.role.SellerRoleFilter;
+import com.example.AgriculturalWarehouseManagement.Backend.filters.role.ShipperRoleFilter;
 import com.example.AgriculturalWarehouseManagement.Backend.filters.role.WareHouseRoleFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +35,18 @@ public class FilterConfig {
         registrationBean.setFilter(new WareHouseRoleFilter());
         registrationBean.addUrlPatterns("/warehouse/*");  // Chỉ áp dụng cho các URL của seller
         registrationBean.setOrder(3); // Đặt độ ưu tiên cho filter
+        return registrationBean;
+    }
+
+
+
+    // Hoàng thêm phân quyền
+    @Bean
+    public FilterRegistrationBean<ShipperRoleFilter> shipperRoleFilter() {
+        FilterRegistrationBean<ShipperRoleFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new ShipperRoleFilter());
+        registrationBean.addUrlPatterns("/shipper/*");
+        registrationBean.setOrder(4);
         return registrationBean;
     }
 }

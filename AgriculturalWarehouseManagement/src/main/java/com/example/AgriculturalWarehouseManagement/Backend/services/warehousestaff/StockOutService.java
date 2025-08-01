@@ -114,9 +114,9 @@ public class StockOutService {
         System.out.println("Debug - Created StockOutDetailDTOs: " + stockOutDetailDTOs.size());
         stockOutDetailService.saveStockOutDetails(stockOutDetailDTOs);
 
-        // Update Order status to STOCK_OUT
-        System.out.println("Debug - Updating Order ID: " + order.getId() + " status to STOCK_OUT");
-        order.setStatus("STOCK_OUT");
+        // Update Order status to STOCKOUT
+        System.out.println("Debug - Updating Order ID: " + order.getId() + " status to STOCKOUT");
+        order.setStatus("STOCKOUT");
         orderRepository.save(order);
         System.out.println("Debug - Order ID: " + order.getId() + " status updated to: " + order.getStatus());
 
@@ -212,6 +212,22 @@ public class StockOutService {
         stockOut.setStatus(StockOutStatus.RETURNED);
         StockOut updatedStockOut = stockOutRepository.save(stockOut);
         return stockOutMapper.toDTO(updatedStockOut);
+    }
+
+    public List<Map<String, Object>> getTotalQuantityByMonth() {
+        List<Object[]> results = stockOutRepository.findTotalQuantityMonth();
+        return results.stream()
+                .map(result -> {
+                    Integer year = (Integer) result[0];
+                    Integer month = (Integer) result[1];
+                    Long totalQuantity = (Long) result[2];
+                    String formattedMonth = String.format("%d-%02d", year, month);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("month", formattedMonth);
+                    map.put("totalQuantity", totalQuantity);
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
 
 }

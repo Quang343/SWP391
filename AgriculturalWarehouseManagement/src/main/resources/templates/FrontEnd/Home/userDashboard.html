@@ -378,7 +378,7 @@
                             <div class="dashboard-home">
                                 <div class="title">
                                     <h2>Trang tổng quan của tôi</h2>
-                                    <h5 class="glow-btn" style="margin-top: 25px; width: 170px; height: 37px"
+                                    <h5 class="glow-btn" style="margin-top: 25px; width: 290px; height: 37px"
                                         th:text="${'Ví tiền: ' + #numbers.formatInteger(walletsResponse.getBalance(), 0, 'POINT') + '₫'}"></h5>
                                     <div class="payment-container">
                                         <form th:action="@{/depositWalletProfile}" method="post">
@@ -470,11 +470,18 @@
                         <div class="tab-pane fade" id="pills-order" role="tabpanel">
                             <div class="dashboard-order">
                                 <div class="title">
-                                    <h2>Lịch sử đơn hàng của tôi</h2>
+
+                                    <h2>
+                                        <div class="order-icon" style="color: #0cf10c; display: inline">
+                                            <i data-feather="box"></i>
+                                        </div>
+                                        Lịch sử đơn hàng của tôi
+                                    </h2>
                                     <span style="margin-top: 10px">(Chỉ được hủy đơn hàng trong vòng 24 giờ sau khi đặt hàng, khi hủy sẽ hoàn tiền)</span>
                                 </div>
 
-                                <table id="orderTable" class="table table-bordered table-striped table-hover align-middle text-center">
+                                <table id="orderTable"
+                                       class="table table-bordered table-striped table-hover align-middle text-center">
                                     <thead class="table-light">
                                     <tr>
                                         <th>Mã đơn hàng</th>
@@ -494,10 +501,13 @@
                                         <td th:text="${order.totalQuantity}"></td>
                                         <td th:text="${#numbers.formatInteger(order.totalPrice, 0, 'POINT') + '₫'}"></td>
                                         <td>
-                                            <span th:if="${order.status == 'PENDING'}" class="badge bg-warning">Đang chờ</span>
+                                            <span th:if="${order.status == 'PENDING'}"
+                                                  class="badge bg-warning">Đang chờ</span>
                                             <span th:if="${order.status == 'CONFIRMED'}" class="badge bg-success">Đã xác nhận</span>
-                                            <span th:if="${order.status == 'DELIVERED'}" class="badge bg-info">Đang giao</span>
-                                            <span th:if="${order.status == 'CANCELLED'}" class="badge bg-danger">Đã hủy</span>
+                                            <span th:if="${order.status == 'DELIVERED'}"
+                                                  class="badge bg-info">Đã giao</span>
+                                            <span th:if="${order.status == 'CANCELLED'}"
+                                                  class="badge bg-danger">Đã hủy</span>
                                             <span th:if="${order.status == 'COMPLETED'}" class="badge bg-primary">Hoàn thành</span>
                                             <span th:if="${order.status == 'STOCKOUT'}" class="badge bg-secondary">Xuất kho</span>
                                         </td>
@@ -510,14 +520,22 @@
                                             <form th:if="${order.status == 'PENDING' and T(java.time.Duration).between(order.orderDate, T(java.time.LocalDateTime).now()).toHours() < 24}"
                                                   th:action="@{/cancellOrder}" method="post"
                                                   class="cancel-order-form" style="display:inline;">
-                                                <input type="hidden" name="orderId" th:value="${order.orderId}" />
-                                                <button type="submit" class="btn btn-sm btn-outline-danger btn-cancel-order">
+                                                <input type="hidden" name="orderId" th:value="${order.orderId}"/>
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger btn-cancel-order">
                                                     Hủy
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-danger btn-cancel-order" disabled>
+                                            </form>
+
+                                            <form th:if="${order.status == 'DELIVERED'}" th:action="@{/completedOrder}"
+                                                  method="post"
+                                                  style="display:inline;">
+                                                <input type="hidden" name="orderId" th:value="${order.orderId}"/>
+                                                <button type="submit" class="btn btn-sm btn-outline-success">
                                                     Đã nhận hàng
                                                 </button>
                                             </form>
+
                                         </td>
 
                                     </tr>
@@ -525,6 +543,18 @@
                                 </table>
                             </div>
                         </div>
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                const hash = window.location.hash;
+                                if (hash) {
+                                    const targetTab = document.querySelector(`button[data-bs-target="${hash}"]`);
+                                    if (targetTab) {
+                                        const tab = new bootstrap.Tab(targetTab);
+                                        tab.show();
+                                    }
+                                }
+                            });
+                        </script>
 
                         <div id="alert-message" class="alert alert-danger" style="display: none;">
                         </div>
@@ -1094,7 +1124,7 @@
         .catch(err => console.error("Lỗi khi fetch danh sách tỉnh:", err));
 
     // Lắng nghe sự kiện khi chọn tỉnh
-    document.getElementById('provinceSelect').addEventListener('change', function() {
+    document.getElementById('provinceSelect').addEventListener('change', function () {
         const provinceId = this.value;
         const provinceName = this.options[this.selectedIndex].text; // Lấy tên tỉnh
         updateAddressInput(); // Cập nhật lại trường địa chỉ
@@ -1118,7 +1148,7 @@
     });
 
     // Lắng nghe sự kiện khi chọn quận huyện
-    document.getElementById('districtSelect').addEventListener('change', function() {
+    document.getElementById('districtSelect').addEventListener('change', function () {
         const districtId = this.value;
         const districtName = this.options[this.selectedIndex].text; // Lấy tên quận
 
@@ -1143,7 +1173,7 @@
     });
 
     // Lắng nghe sự kiện khi chọn xã/phường
-    document.getElementById('wardSelect').addEventListener('change', function() {
+    document.getElementById('wardSelect').addEventListener('change', function () {
         const wardId = this.value;
         const wardName = this.options[this.selectedIndex].text; // Lấy tên xã/phường
 
@@ -1258,7 +1288,7 @@
         const provinceName = provinceSelect.options[provinceSelect.selectedIndex]?.text;
         if (provinceName.toLocaleLowerCase() === 'Chọn tỉnh'.toLocaleLowerCase()) {
             showAlert('error', 'Vui lòng chọn Tỉnh/Thành phố');
-            return ; // Dừng lại nếu không chọn tỉnh
+            return; // Dừng lại nếu không chọn tỉnh
         } else {
             $('#alert-message').hide();
         }
@@ -1280,7 +1310,6 @@
         } else {
             $('#alert-message').hide();
         }
-
 
 
         // Tạo đối tượng dữ liệu gửi lên server
@@ -1918,15 +1947,15 @@
                 infoEmpty: "Không có dữ liệu để hiển thị",
                 zeroRecords: "Không tìm thấy kết quả phù hợp",
                 paginate: {
-                    first: "<<",
-                    previous: "<",
-                    next: ">",
-                    last: ">>"
+                    first: "<i class='fa-solid fa-angles-left'></i>",
+                    previous: "<i class='fa-solid fa-angle-left'></i>",
+                    next: "<i class='fa-solid fa-angle-right'></i>",
+                    last: "<i class='fa-solid fa-angles-right'></i>"
                 },
             },
 
             columnDefs: [
-                { orderable: false, targets: [4, 6] } // 4 = Tổng giá, 6 = Thao tác
+                {orderable: false, targets: [4, 6]} // 4 = Tổng giá, 6 = Thao tác
             ]
         });
     });
@@ -2109,13 +2138,13 @@
 <script th:src="@{FrontEnd/assets/js/script.js}"></script>
 
 <!-- DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
 
 <!-- DataTables JS -->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 <!-- DataTables CSS + Bootstrap 5 integration -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- theme setting js -->

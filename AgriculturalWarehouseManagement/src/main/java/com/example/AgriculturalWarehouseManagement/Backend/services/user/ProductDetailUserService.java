@@ -255,6 +255,6 @@ public class ProductDetailUserService {
             return new ResponseResult<>("ERROR", "Số lượng bạn nhập không được lớn hơn số lượng của Shop", false);
         }
 
-        return new ResponseResult<>("SUCCESS", "Thêm vào giỏ hàng thành công", true);
+        return new ResponseResult<>("SUCCESS", "Thêm vào giỏ hàng thành công", true,productDetailUserResponse);
     }
 }

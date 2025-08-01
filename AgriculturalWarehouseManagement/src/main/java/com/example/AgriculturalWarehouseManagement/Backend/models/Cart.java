@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @Builder
@@ -31,4 +33,7 @@ public class Cart {
 
     @Column(name = "total")
     private double total;
+
+    @Column(name = "createdat")
+    private LocalDateTime createdAt;
 }

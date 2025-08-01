@@ -1,5 +1,8 @@
 package com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class CartUserResponse {
 
     private int cartId;
@@ -13,11 +16,13 @@ public class CartUserResponse {
     private double productPrice;
     private int quantity;
     private double totalPrice;
+    private LocalDateTime createdAt;
 
     public CartUserResponse() {
     }
 
-    public CartUserResponse(int cartId, int userId, int productId, int productDetailId, String imageUrl, String productName, String sellerName, String productWeight, double productPrice, int quantity, double totalPrice) {
+
+    public CartUserResponse(int cartId, int userId, int productId, int productDetailId, String imageUrl, String productName, String sellerName, String productWeight, double productPrice, int quantity, double totalPrice, LocalDateTime createdAt) {
         this.cartId = cartId;
         this.userId = userId;
         this.productId = productId;
@@ -29,6 +34,7 @@ public class CartUserResponse {
         this.productPrice = productPrice;
         this.quantity = quantity;
         this.totalPrice = totalPrice;
+        this.createdAt = createdAt;
     }
 
     public int getCartId() {
@@ -119,9 +125,25 @@ public class CartUserResponse {
         this.totalPrice = totalPrice;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String formatCreateAt() {
+        if (createdAt != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            return createdAt.format(formatter);  // Format without the "T"
+        }
+        return null;  // Return null if createAt is null
+    }
+
     @Override
     public String toString() {
-        return "CartUserReponse{" +
+        return "CartUserResponse{" +
                 "cartId=" + cartId +
                 ", userId=" + userId +
                 ", productId=" + productId +
@@ -133,6 +155,7 @@ public class CartUserResponse {
                 ", productPrice=" + productPrice +
                 ", quantity=" + quantity +
                 ", totalPrice=" + totalPrice +
+                ", createdAt=" + createdAt +
                 '}';
     }
 }

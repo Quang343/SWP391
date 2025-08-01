@@ -130,4 +130,20 @@ public class ProductBatchController {
     public ResponseEntity<List<ProductBatchDTO>> getTop4RemainingBatches() {
         return ResponseEntity.ok(productBatchService.getTop4RemainingBatches());
     }
+
+    @GetMapping("/total-quantity-by-product-detail")
+    public ResponseEntity<Map<Integer, Integer>> getTotalQuantityByProductDetail() {
+        try {
+            Map<Integer, Integer> totalQuantityMap = productBatchService.getTotalQuantityByProductDetail();
+            return ResponseEntity.ok(totalQuantityMap);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null); // Handle exception appropriately in production
+        }
+    }
+
+    @GetMapping("/expiring-soon")
+    public ResponseEntity<List<Map<String, Object>>> getTop4ExpiringSoonBatches() {
+        List<Map<String, Object>> batches = productBatchService.getTop4ExpiringSoonBatches();
+        return ResponseEntity.ok(batches);
+    }
 }

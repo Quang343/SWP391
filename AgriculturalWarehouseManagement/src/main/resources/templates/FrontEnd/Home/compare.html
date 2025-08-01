@@ -98,6 +98,25 @@
                 transform: scale(1.05);
             }
         }
+
+        .shake-alert {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 1px solid #f5c6cb;
+            animation: shake 0.5s infinite;
+            margin-bottom: 10px;
+            width: 500px;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
     </style>
 </head>
 
@@ -129,6 +148,7 @@
                 <div class="breadcrumb-contain">
                     <h2 class="mb-2">So sánh</h2>
                     <h6 class="glow-btn" style="margin-left: 10px" th:if="${productDetailUserResponses.isEmpty()}">Hãy chọn sản phẩm và so sánh </h6>
+
                     <nav>
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item">
@@ -141,6 +161,24 @@
                         </ol>
                     </nav>
                 </div>
+                <div id="errorCompareDiv" th:if="${errorCompare != null}" th:text="${errorCompare}" class="shake-alert"></div>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const alertDiv = document.getElementById("errorCompareDiv");
+                        if (alertDiv) {
+                            setTimeout(() => {
+                                alertDiv.style.animation = "none"; // Ngừng lắc
+                                alertDiv.style.transition = "opacity 0.5s ease";
+                                alertDiv.style.opacity = "0";
+
+                                setTimeout(() => {
+                                    alertDiv.style.display = "none"; // Ẩn luôn sau khi fade out
+                                }, 500);
+                            }, 10000); // 10 giây
+                        }
+                    });
+                </script>
+
             </div>
         </div>
     </div>

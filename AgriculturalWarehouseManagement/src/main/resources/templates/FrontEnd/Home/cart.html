@@ -116,6 +116,15 @@
                                          href="javascript:void(0)" style="margin-right: 80px"
                                          th:data-cartidremove="${cart.cartId}">Xóa
                                     </div>
+
+
+                                    <h4 class="table-title text-content">
+                                        <br/>
+                                        <p class="countdown-timer"
+                                           th:attr="data-created-at=${cart.formatCreateAt}, data-cart-id=${cart.cartId}">
+                                        </p>
+                                    </p></h4>
+
                                 </td>
 
                                 <script>
@@ -232,6 +241,76 @@
                                     document.querySelector('.remove').addEventListener('click', fetchDeleteCart);
 
                                 </script>
+
+
+                                <script>
+                                    function startCountdownForAll() {
+                                        const countdownElements = document.querySelectorAll(".countdown-timer");
+
+                                        countdownElements.forEach(el => {
+                                            const createdAtStr = el.getAttribute("data-created-at");
+                                            const cartId = el.getAttribute("data-cart-id");
+
+                                            if (!createdAtStr || !cartId) return;
+
+                                            const isoCreatedAt = createdAtStr.replace(" ", "T");
+                                            const createdAt = new Date(isoCreatedAt);
+                                            const now = new Date();
+                                            const elapsedMs = now - createdAt;
+                                            const remainingMs = (60 * 60 * 1000) - elapsedMs;
+
+                                            if (remainingMs <= 0) {
+                                                handleExpired(el, cartId);
+                                                return;
+                                            }
+
+                                            const timer = setInterval(async () => {
+                                                const now = new Date();
+                                                const elapsed = now - createdAt;
+                                                const remaining = (60 * 60 * 1000) - elapsed;
+
+                                                if (remaining <= 0) {
+                                                    clearInterval(timer);
+                                                    await handleExpired(el, cartId);
+                                                    return;
+                                                }
+
+                                                const minutes = Math.floor((remaining / (1000 * 60)) % 60);
+                                                const seconds = Math.floor((remaining / 1000) % 60);
+                                                el.textContent = `${minutes}m ${seconds}s`;
+                                                el.classList.add("text-danger");
+                                            }, 1000);
+                                        });
+                                    }
+
+                                    // ❗ Bây giờ là async vì ta cần await bên trong
+                                    async function handleExpired(el, cartId) {
+                                        el.textContent = "⏰ Hết hạn";
+                                        el.classList.remove("text-danger");
+                                        el.classList.add("text-muted");
+
+                                        try {
+                                            // ✅ Gọi API xóa cart trước
+                                            await axios.delete(`http://localhost:8080/AgriculturalWarehouseManagementApplication/deleteCart/${cartId}`);
+                                            console.log(`Cart ${cartId} đã được xóa`);
+
+                                            // ✅ Sau đó mới cập nhật lại tổng giỏ hàng
+                                            const userId = "[[${session.accountId}]]";  // đảm bảo giá trị đúng khi render
+                                            await updateTotalCart(userId);
+                                            await getSizeCartHead(userId);
+
+                                            // ✅ Xóa dòng khỏi bảng giao diện (nếu có)
+                                            const row = el.closest("tr");
+                                            if (row) row.remove();
+
+                                        } catch (err) {
+                                            console.error("Lỗi khi xóa cart hoặc cập nhật:", err);
+                                        }
+                                    }
+
+                                    document.addEventListener("DOMContentLoaded", startCountdownForAll);
+                                </script>
+
                             </tr>
 
 

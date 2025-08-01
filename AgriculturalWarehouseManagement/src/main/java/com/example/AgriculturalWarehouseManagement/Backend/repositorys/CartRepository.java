@@ -31,7 +31,8 @@ public interface CartRepository extends CrudRepository<Cart, Long> {
                         CONCAT(cw.weight, ' ', cw.unit) AS productWeight,
                     	 pd.price,
                          c.Quantity,
-                    	 c.total
+                    	 c.total,
+                         c.CreatedAt
                     FROM cart c
                     JOIN productdetail pd ON c.ProductDetailID = pd.ProductDetailID\s
                     JOIN categoryweight cw ON pd.CategoryWeightID = cw.CategoryWeightID
@@ -95,4 +96,13 @@ public interface CartRepository extends CrudRepository<Cart, Long> {
                        pd.price;
             """, nativeQuery = true)
     List<Object[]> rawGetCheckOutProductDetailByUserID(int userID);
+
+    @Query(value = """
+                   SELECT *,
+                          TIMESTAMPDIFF(MINUTE, NOW(), DATE_ADD(CreatedAt, INTERVAL 1 HOUR)) AS minutes_left
+                   FROM managerwarehouse.cart
+                   WHERE ProductDetailID = :productDetailId
+                     AND DATE_ADD(CreatedAt, INTERVAL 1 HOUR) >= NOW();
+            """, nativeQuery = true)
+    List<Object[]> rawGetCartQuantity(int productDetailId);
 }

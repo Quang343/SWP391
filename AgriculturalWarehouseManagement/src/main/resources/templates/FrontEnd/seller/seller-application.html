@@ -566,8 +566,10 @@
         `,
             didOpen: () => {
                 startCountdown(cancelDeadline, "swalCountdown");
+                audio.volume = 0.3; // Giảm âm lượng còn 50%
                 audio.play().catch(err => console.log("Không thể phát nhạc:", err));
             }
+
         }).then((result) => {
             if (result.isConfirmed) {
                 axios.put('/AgriculturalWarehouseManagementApplication/api/user/upgrade-to-seller', {}, {
@@ -635,7 +637,14 @@
         const fileInput = document.getElementById(`cvInput${applicationId}`);
         const file = fileInput.files[0];
 
-        if (!file) return;
+        if (!file) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Chưa chọn file',
+                text: 'Vui lòng chọn một file CV để tải lên.'
+            });
+            return;
+        }
 
         const formData = new FormData();
         formData.append("cvFile", file);
@@ -646,12 +655,20 @@
             }
         })
             .then(response => {
-                alert("Cập nhật CV thành công!");
-                // Reload lại bảng nếu cần
-                loadApplicationTable(); // hoặc tên hàm bạn đang dùng
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: 'Cập nhật CV thành công!'
+                }).then(() => {
+                    location.reload();
+                });
             })
             .catch(error => {
-                alert("Có lỗi khi cập nhật CV");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Có lỗi khi cập nhật CV. Vui lòng thử lại.'
+                });
                 console.error(error);
             });
     }

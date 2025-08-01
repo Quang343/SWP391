@@ -30,7 +30,8 @@ import java.util.Map;
 public class RoleController {
 
     private final UserService userService;
-    private final RoleService roleService;private final SellerApplicationService sellerApplicationRepository;
+    private final RoleService roleService;
+    private final SellerApplicationService sellerApplicationRepository;
 
     @RequestMapping("/admin/add_role")
     public String addRole(Model model) {
@@ -149,13 +150,12 @@ public class RoleController {
                         sellerApplicationRepository.save(application);
                     });
 
-            return ResponseEntity.ok(Map.of("message", "Đổi vai trò sang SELLER thành công"));
+            return ResponseEntity.ok(Map.of("message", "Đổi vai trò sang NGƯỜI BÁN HÀNG thành công"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Không thể đổi vai trò: " + e.getMessage()));
         }
     }
-
 
 
 }

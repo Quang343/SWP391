@@ -187,8 +187,8 @@
                                 </span>
                         </button>
                         <a th:href="@{/home}" class="web-logo nav-logo">
-<!--                            <img th:src="@{/FrontEnd/assets/images/logo/1.png}" class="img-fluid blur-up lazyload"-->
-<!--                                 alt="">-->
+                            <!--                            <img th:src="@{/FrontEnd/assets/images/logo/1.png}" class="img-fluid blur-up lazyload"-->
+                            <!--                                 alt="">-->
                             <img class="img-fluid main-logo" th:src="@{/Backend/assets/images/logo/1.png}" alt="logo">
                         </a>
 
@@ -200,7 +200,7 @@
                                         <i data-feather="package" class="text-content"></i>
                                     </div>
                                     <span class="locat-name">
-                                        <a href="orderTracking">  Order Tracking</a>
+                                        <a href="orderTracking">  Theo dõi đơn hàng</a>
                                     </span>
 
                                 </button>
@@ -283,7 +283,7 @@
                                             <li class="list-group-item p-0" style="width: 39%">
                                               <a href="http://localhost:8080/AgriculturalWarehouseManagementApplication/productDetail?productId=${p.productId}"
                                                  class="d-flex align-items-center gap-2 text-decoration-none text-dark px-2 py-1">
-                                                <img src="${'seller/'+p.imageUrlGallery}" alt="" style="width:40px;height:40px;object-fit:cover;">
+                                                <img src="${'seller/' + p.imageUrlGallery}" alt="" style="width:40px;height:40px;object-fit:cover;">
                                                 <span>${p.productName}</span>
                                                 <span class="ms-auto text-muted">${p.productPrice.toLocaleString('vi-VN')}₫</span>
                                               </a>
@@ -333,7 +333,8 @@
 
                                 <li th:if="${session.account != null}" class="right-side">
                                     <div class="onhover-dropdown header-badge">
-                                        <button onclick="location.href = 'cart';" class="btn p-0 position-relative header-wishlist">
+                                        <button onclick="location.href = 'cart';"
+                                                class="btn p-0 position-relative header-wishlist">
                                             <i data-feather="shopping-cart"></i>
                                             <div id="sizeCartHead" style="margin-bottom: 20px;
                                                                         background-color: #ff7272;
@@ -530,20 +531,19 @@
 
                                         <li class="nav-item dropdown">
                                             <a class="nav-link dropdown-toggle" href="javascript:void(0)"
-                                               data-bs-toggle="dropdown">Blog</a>
+                                               data-bs-toggle="dropdown">Bài đăng</a>
                                             <ul class="dropdown-menu">
+                                                <!--                                                <li>-->
+                                                <!--                                                    <a class="dropdown-item" href="blog-detail">Blog Detail</a>-->
+                                                <!--                                                </li>-->
                                                 <li>
-                                                    <a class="dropdown-item" href="blog-detail">Blog Detail</a>
+                                                    <a class="dropdown-item" href="blog-list">Danh sách bài đăng</a>
                                                 </li>
                                                 <li>
-                                                    <a class="dropdown-item" href="blog-grid">Blog Grid</a>
+                                                    <a class="dropdown-item" href="blog-grid">Bài đăng dạng lưới</a>
                                                 </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="blog-list">Blog List</a>
-                                                </li>
-
                                                 <li th:if="${session.account != null}">
-                                                    <a class="dropdown-item" href="my-blog" >Quản lý bài đăng</a>
+                                                    <a class="dropdown-item" href="my-blog">Quản lý bài đăng</a>
                                                 </li>
                                             </ul>
                                         </li>
@@ -551,8 +551,10 @@
 
                                         <li class="nav-item dropdown new-nav-item">
                                             <a class="nav-link dropdown-toggle" href="javascript:void(0)"
-                                               data-bs-toggle="dropdown">Trang <label
-                                                    class="new-dropdown">Mới</label></a>
+                                               data-bs-toggle="dropdown">Thêm
+                                                <label
+                                                    class="new-dropdown">Mới</label>
+                                            </a>
                                             <ul class="dropdown-menu">
 
                                                 <li>
@@ -567,16 +569,20 @@
                                             </ul>
                                         </li>
 
-                                        <li class="nav-item dropdown">
+                                        <li class="nav-item dropdown new-nav-item">
                                             <a class="nav-link dropdown-toggle" href="javascript:void(0)"
-                                               data-bs-toggle="dropdown">Người bán</a>
+                                               data-bs-toggle="dropdown">Người bán
+                                                <label
+                                                        class="new-dropdown">Mới</label>
+                                            </a>
                                             <ul class="dropdown-menu">
                                                 <li>
-                                                    <a class="dropdown-item" href="seller-become">Trở thành người bán hàng</a>
+                                                    <a class="dropdown-item" href="seller-become">Trở thành người bán
+                                                        hàng</a>
                                                 </li>
-<!--                                                <li>-->
-<!--                                                    <a class="dropdown-item" href="seller-dashboard.html">Dashboard người bán</a>-->
-<!--                                                </li>-->
+                                                <!--                                                <li>-->
+                                                <!--                                                    <a class="dropdown-item" href="seller-dashboard.html">Dashboard người bán</a>-->
+                                                <!--                                                </li>-->
                                             </ul>
                                         </li>
                                     </ul>

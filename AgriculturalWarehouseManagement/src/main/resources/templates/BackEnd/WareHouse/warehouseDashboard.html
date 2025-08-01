@@ -81,7 +81,9 @@
                                         </h4>
                                     </div>
                                     <div class="align-self-center text-center">
-                                        <i class="ri-shopping-bag-3-line"></i>
+                                        <a th:href="@{/warehouse/stockin}" style="color: inherit; text-decoration: none;">
+                                            <i class="ri-download-2-line"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -98,17 +100,16 @@
                                             <span id="totalBatchCount">...</span>
                                             <a th:href="@{warehouse/addproductbatch}" class="badge badge-light-secondary grow">Thêm Lô</a>
                                         </h4>
-
                                     </div>
                                     <div class="align-self-center text-center">
-                                        <i class="ri-chat-3-line"></i>
+                                        <a th:href="@{/warehouse/productbatch}" style="color: inherit; text-decoration: none;">
+                                            <i class="ri-barcode-box-line"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
 
                     <div class="col-sm-6 col-xxl-3 col-lg-6">
                         <div class="main-tiles border-5 card-hover border-0 card o-hidden">
@@ -123,181 +124,17 @@
                                             </a>
                                         </h4>
                                     </div>
-
                                     <div class="align-self-center text-center">
-                                        <i class="ri-user-add-line"></i>
+                                        <a th:href="@{/warehouse/stockout}" style="color: inherit; text-decoration: none;">
+                                            <i class="ri-upload-2-line"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-12">
-                        <div class="card o-hidden card-hover">
-                            <div class="card-header border-0 pb-1">
-                                <div class="card-header-title p-0">
-                                    <h4>Category</h4>
-                                </div>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="category-slider no-arrow">
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/vegetable.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Vegetables & Fruit</h6>
-                                            </a>
-                                        </div>
-                                    </div>
 
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/cup.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Beverages</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/meats.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Meats & Seafood</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/breakfast.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Breakfast</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/frozen.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Frozen Foods</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/milk.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Milk & Dairies</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/pet.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Pet Food</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/vegetable.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Vegetables & Fruit</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/cup.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Beverages</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/meats.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Meats & Seafood</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/breakfast.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Breakfast</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/frozen.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Frozen Foods</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/milk.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Milk & Dairies</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/pet.svg}" class="img-fluid" alt="">
-                                            </a>
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6>Pet Food</h6>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <!-- chart card section End -->
 
 
@@ -325,7 +162,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- Earning chart  end-->
 
 
@@ -336,17 +172,7 @@
                                 <div class="card-header-title">
                                     <h4>4 Lô Hàng Còn Tồn Nhiều Nhất</h4>
                                 </div>
-                                <div class="best-selling-box d-sm-flex d-none">
-                                    <span>Sắp Xếp Theo:</span>
-                                    <div class="dropdown">
-                                        <button class="btn p-0 dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" data-bs-auto-close="true">Hôm Nay</button>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                            <li><a class="dropdown-item" href="#">Action</a></li>
-                                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
+
                             </div>
                             <div class="card-body p-0">
                                 <div>
@@ -399,17 +225,7 @@
                                 <div class="card-header-title">
                                     <h4> 4 Đơn Xuất Kho Gần Đây</h4>
                                 </div>
-                                <div class="best-selling-box d-sm-flex d-none">
-                                    <span>Sắp Xếp Theo:</span>
-                                    <div class="dropdown">
-                                        <button class="btn p-0 dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" data-bs-auto-close="true">Hôm Nay</button>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                            <li><a class="dropdown-item" href="#">Action</a></li>
-                                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
+
                             </div>
                             <div class="card-body p-0">
                                 <div>
@@ -427,99 +243,55 @@
                     </div>
                     <!-- Top 4 Đơn Xuất Kho Gần Đây End -->
 
-                    <!-- Earning chart star-->
-                    <div class="col-xl-6">
-                        <div class="card o-hidden card-hover">
-                            <div class="card-header border-0 mb-0">
-                                <div class="card-header-title">
-                                    <h4>Earning</h4>
-                                </div>
-                            </div>
-                            <div class="card-body p-0">
-                                <div id="bar-chart-earning"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Earning chart end-->
+
 
                     <!-- Earning chart star-->
                     <div class="col-xl-6">
                         <div class="card o-hidden card-hover">
-                            <div class="card-header border-0 mb-0">
+                            <div class="card-header border-0 mb-0" style="display: flex; justify-content: space-between; align-items: center;">
                                 <div class="card-header-title">
-                                    <h4>Earning</h4>
+                                    <h4>Báo Cáo Nhập Xuất Kho</h4>
+                                </div>
+                                <div class="card-header-action">
+                                    <button class="btn btn-sm btn-outline-success" onclick="exportToExcel()">
+                                        <i class="fa fa-file-excel-o"></i> Xuất báo cáo Excel
+                                    </button>
                                 </div>
                             </div>
                             <div class="card-body p-0">
-                                <div id="bar-chart-earning2"></div>
+                                <div id="new-bar-chart"></div> <!-- New container ID -->
                             </div>
                         </div>
                     </div>
+
+                    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"></script>
+
                     <!-- Earning chart end-->
 
-                    <!-- Transactions start-->
-                    <div class="col-xxl-4 col-md-6">
+                    <!-- Top 4 Nhà Cung Cấp Nhiều Sản Phẩm Nhất Start -->
+                    <div class="col-xl-6 col-md-12">
                         <div class="card o-hidden card-hover">
-                            <div class="card-header border-0">
+                            <div class="card-header card-header-top card-header--2 px-0 pt-0">
                                 <div class="card-header-title">
-                                    <h4>Hoạt Động Gần Đây</h4>
+                                    <h4>Top 4 Nhà Cung Cấp Nhiều Sản Phẩm Nhất</h4>
                                 </div>
-                            </div>
 
-                            <div class="card-body pt-0">
+                            </div>
+                            <div class="card-body p-0">
                                 <div>
                                     <div class="table-responsive">
-                                        <table class="user-table transactions-table table border-0">
-                                            <tbody>
+                                        <table class="best-selling-table w-image table border-0">
+                                            <thead>
                                             <tr>
-                                                <td>
-                                                    <div class="transactions-icon">
-                                                        <i class="ri-download-2-line"></i>
-                                                    </div>
-                                                    <div class="transactions-name">
-                                                        <h6>Nhập kho</h6>
-                                                        <p>Lô SP-1034 từ Nhà cung cấp ABC</p>
-                                                    </div>
-                                                </td>
-                                                <td class="success">+1200kg</td>
+                                                <th>Mã NCC</th>
+                                                <th>Tên Nhà Cung Cấp</th>
+                                                <th>Tổng Số Lượng</th>
                                             </tr>
-                                            <tr>
-                                                <td class="td-color-1">
-                                                    <div class="transactions-icon">
-                                                        <i class="ri-upload-2-line"></i>
-                                                    </div>
-                                                    <div class="transactions-name">
-                                                        <h6>Xuất kho</h6>
-                                                        <p>Đơn hàng #ORD2981</p>
-                                                    </div>
-                                                </td>
-                                                <td class="lost">-800kg</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="td-color-2">
-                                                    <div class="transactions-icon">
-                                                        <i class="ri-loop-left-line"></i>
-                                                    </div>
-                                                    <div class="transactions-name">
-                                                        <h6>Trả hàng</h6>
-                                                        <p>Khách hoàn lô SP-087</p>
-                                                    </div>
-                                                </td>
-                                                <td class="success">+150kg</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="td-color-3">
-                                                    <div class="transactions-icon">
-                                                        <i class="ri-equalizer-line"></i>
-                                                    </div>
-                                                    <div class="transactions-name">
-                                                        <h6>Điều chỉnh tồn kho</h6>
-                                                        <p>Kiểm kê cuối tháng</p>
-                                                    </div>
-                                                </td>
-                                                <td class="lost">-30kg</td>
-                                            </tr>
-
+                                            </thead>
+                                            <tbody id="top-suppliers-tbody">
+                                            <!-- Data will be populated here via JavaScript -->
                                             </tbody>
                                         </table>
                                     </div>
@@ -527,96 +299,184 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Transactions end-->
+                    <!-- Top 4 Nhà Cung Cấp Nhiều Sản Phẩm Nhất End -->
 
-
-                    <!-- visitors chart start-->
-                    <div class="col-xxl-4 col-md-6">
-                        <div class="h-100">
+                    <div class="row g-3">
+                        <!-- Cột 1: Hoạt Động Gần Đây và 4 Lô Hàng Sắp Hết Hạn -->
+                        <div class="col-xl-4 col-md-12 d-flex flex-column gap-3">
+                            <!-- Hoạt Động Gần Đây -->
+                            <div class="card o-hidden card-hover">
+                                <div class="card-header border-0">
+                                    <div class="card-header-title">
+                                        <h4>Hoạt Động Gần Đây</h4>
+                                    </div>
+                                </div>
+                                <div class="card-body pt-0">
+                                    <div>
+                                        <div class="table-responsive">
+                                            <table class="user-table transactions-table table border-0">
+                                                <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div class="transactions-icon">
+                                                            <i class="ri-download-2-line"></i>
+                                                        </div>
+                                                        <div class="transactions-name">
+                                                            <h6>Nhập kho</h6>
+                                                            <p>Lô SP-1034 từ Nhà cung cấp ABC</p>
+                                                        </div>
+                                                    </td>
+                                                    <td class="success">+1200kg</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="td-color-1">
+                                                        <div class="transactions-icon">
+                                                            <i class="ri-upload-2-line"></i>
+                                                        </div>
+                                                        <div class="transactions-name">
+                                                            <h6>Xuất kho</h6>
+                                                            <p>Đơn hàng #ORD2981</p>
+                                                        </div>
+                                                    </td>
+                                                    <td class="lost">-800kg</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="td-color-2">
+                                                        <div class="transactions-icon">
+                                                            <i class="ri-loop-left-line"></i>
+                                                        </div>
+                                                        <div class="transactions-name">
+                                                            <h6>Trả hàng</h6>
+                                                            <p>Khách hoàn lô SP-087</p>
+                                                        </div>
+                                                    </td>
+                                                    <td class="success">+150kg</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="td-color-3">
+                                                        <div class="transactions-icon">
+                                                            <i class="ri-equalizer-line"></i>
+                                                        </div>
+                                                        <div class="transactions-name">
+                                                            <h6>Điều chỉnh tồn kho</h6>
+                                                            <p>Kiểm kê cuối tháng</p>
+                                                        </div>
+                                                    </td>
+                                                    <td class="lost">-30kg</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 4 Lô Hàng Sắp Hết Hạn -->
+                            <div class="card o-hidden card-hover">
+                                <div class="card-header card-header-top card-header--2 px-0 pt-0">
+                                    <div class="card-header-title">
+                                        <h4>4 Lô Hàng Sắp Hết Hạn</h4>
+                                    </div>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div>
+                                        <div class="table-responsive">
+                                            <table class="expiring-soon-table w-image table border-0">
+                                                <thead>
+                                                <tr>
+                                                    <th>Lô Hàng</th>
+                                                    <th>Số Lượng Còn Lại</th>
+                                                    <th>Ngày Sản Xuất</th>
+                                                    <th>Hạn Sử Dụng</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody id="expiring-soon-tbody">
+                                                <!-- Dữ liệu sẽ được điền động -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Cột 2: Biểu Đồ Số Lượng Sản Phẩm -->
+                        <div class="col-xl-4 col-md-6">
                             <div class="card o-hidden card-hover">
                                 <div class="card-header border-0">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="card-header-title">
-                                            <h4>Visitors</h4>
+                                            <h4>Số Lượng Sản Phẩm</h4>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="card-body pt-0">
                                     <div class="pie-chart">
-                                        <div id="pie-chart-visitors"></div>
+                                        <canvas id="pie-chart-visitors"></canvas>
+                                    </div>
+                                    <div class="text-center mt-2">
+                                        <h5>Biểu Đồ Số Lượng Sản Phẩm Trong Kho</h5>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- visitors chart end-->
-
-                    <!-- To Do List start -->
-                    <div class="col-md-4">
-                        <div class="card o-hidden card-hover">
-                            <div class="card-header border-0">
-                                <div class="card-header-title">
-                                    <h4>Danh sách việc cần làm</h4>
+                        <!-- Cột 3: Danh Sách Việc Cần Làm -->
+                        <div class="col-xl-4 col-md-6">
+                            <div class="card o-hidden card-hover">
+                                <div class="card-header border-0">
+                                    <div class="card-header-title">
+                                        <h4>Danh sách việc cần làm</h4>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="card-body pt-0">
-                                <ul class="to-do-list list-unstyled" id="todoList">
-                                    <li class="to-do-item">
-                                        <div class="form-check user-checkbox">
-                                            <input class="form-check-input check-it default-check" type="checkbox" data-index="-1" data-default-index="0">
+                                <div class="card-body pt-0">
+                                    <ul class="to-do-list list-unstyled" id="todoList">
+                                        <li class="to-do-item">
+                                            <div class="form-check user-checkbox">
+                                                <input class="form-check-input check-it default-check" type="checkbox" data-index="-1" data-default-index="0">
+                                            </div>
+                                            <div class="to-do-list-name">
+                                                <strong>Kiểm tra số lượng hàng tồn kho</strong>
+                                                <p>Hôm nay</p>
+                                            </div>
+                                        </li>
+                                        <li class="to-do-item">
+                                            <div class="form-check user-checkbox">
+                                                <input class="form-check-input check-it default-check" type="checkbox" data-index="-1" data-default-index="1">
+                                            </div>
+                                            <div class="to-do-list-name">
+                                                <strong>Tiếp nhận lô hàng mới từ nhà cung cấp</strong>
+                                                <p>Hôm nay</p>
+                                            </div>
+                                        </li>
+                                        <li class="to-do-item">
+                                            <div class="form-check user-checkbox">
+                                                <input class="form-check-input check-it default-check" type="checkbox" data-index="-1" data-default-index="2">
+                                            </div>
+                                            <div class="to-do-list-name">
+                                                <strong>Xuất kho theo đơn hàng</strong>
+                                                <p>Hôm nay</p>
+                                            </div>
+                                        </li>
+                                        <li class="to-do-item">
+                                            <div class="form-check user-checkbox">
+                                                <input class="form-check-input check-it default-check" type="checkbox" data-index="-1" data-default-index="3">
+                                            </div>
+                                            <div class="to-do-list-name">
+                                                <strong>Kiểm tra nhiệt độ bảo quản nông sản</strong>
+                                                <p>Hôm nay</p>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <form class="row g-2 mt-3" id="addTaskForm">
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="taskInput" placeholder="Thêm công việc" required>
                                         </div>
-                                        <div class="to-do-list-name">
-                                            <strong>Kiểm tra số lượng hàng tồn kho</strong>
-                                            <p>Hôm nay</p>
+                                        <div class="col-4">
+                                            <button type="submit" class="btn btn-primary w-100 h-100">Thêm mới</button>
                                         </div>
-                                    </li>
-                                    <li class="to-do-item">
-                                        <div class="form-check user-checkbox">
-                                            <input class="form-check-input check-it default-check" type="checkbox" data-index="-1" data-default-index="1">
-                                        </div>
-                                        <div class="to-do-list-name">
-                                            <strong>Tiếp nhận lô hàng mới từ nhà cung cấp</strong>
-                                            <p>Hôm nay</p>
-                                        </div>
-                                    </li>
-                                    <li class="to-do-item">
-                                        <div class="form-check user-checkbox">
-                                            <input class="form-check-input check-it default-check" type="checkbox" data-index="-1" data-default-index="2">
-                                        </div>
-                                        <div class="to-do-list-name">
-                                            <strong>Xuất kho theo đơn hàng</strong>
-                                            <p>Hôm nay</p>
-                                        </div>
-                                    </li>
-                                    <li class="to-do-item">
-                                        <div class="form-check user-checkbox">
-                                            <input class="form-check-input check-it default-check" type="checkbox" data-index="-1" data-default-index="3">
-                                        </div>
-                                        <div class="to-do-list-name">
-                                            <strong>Kiểm tra nhiệt độ bảo quản nông sản</strong>
-                                            <p>Hôm nay</p>
-                                        </div>
-                                    </li>
-                                </ul>
-
-                                <!-- Add Task Form (only one!) -->
-                                <form class="row g-2 mt-3" id="addTaskForm">
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="taskInput" placeholder="Thêm công việc" required>
-                                    </div>
-                                    <div class="col-4">
-                                        <button type="submit" class="btn btn-primary w-100 h-100">Thêm mới</button>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <!-- To Do List end -->
-
-
-
-
 
                 </div>
             </div>
@@ -2136,6 +1996,400 @@
 
         // Initial fetch
         fetchRecentTransactions();
+    });
+</script>
+
+<!-- Visitor JavaScript -->
+
+<script>
+    $(document).ready(function () {
+        const ctx = document.getElementById('pie-chart-visitors').getContext('2d');
+
+        let pieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: [],
+                datasets: [{
+                    data: [],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                const total = tooltipItem.dataset.data.reduce((acc, val) => acc + val, 0);
+                                const currentValue = tooltipItem.raw;
+                                const percentage = ((currentValue / total) * 100).toFixed(2);
+                                return `${tooltipItem.label}: ${currentValue} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        function loadProductDetailQuantities() {
+            $.ajax({
+                url: '/AgriculturalWarehouseManagementApplication/api/product-batches/total-quantity-by-product-detail',
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    if (data && Object.keys(data).length > 0) {
+                        const labels = [];
+                        const quantities = [];
+
+                        Object.keys(data).forEach(productDetailId => {
+                            const quantity = data[productDetailId];
+                            $.ajax({
+                                url: `/AgriculturalWarehouseManagementApplication/api/product-details/${productDetailId}`,
+                                method: 'GET',
+                                async: false,
+                                success: function(productDetail) {
+                                    const detailName = productDetail.detailName || `Chi Tiết Sản Phẩm ${productDetailId}`;
+                                    const productId = productDetail.productID || productDetail.productId || 'N/A';
+                                    let productName = 'N/A';
+                                    if (productId !== 'N/A') {
+                                        $.ajax({
+                                            url: `/AgriculturalWarehouseManagementApplication/api/products/${productId}/name`,
+                                            method: 'GET',
+                                            async: false,
+                                            success: function(name) {
+                                                productName = name || 'N/A';
+                                            }
+                                        });
+                                    }
+                                    labels.push(`${productName} (${detailName})`);
+                                    quantities.push(quantity);
+                                }
+                            });
+                        });
+
+                        pieChart.data.labels = labels;
+                        pieChart.data.datasets[0].data = quantities;
+                        pieChart.update();
+                    } else {
+                        pieChart.data.labels = ['Không Có Dữ Liệu'];
+                        pieChart.data.datasets[0].data = [100];
+                        pieChart.update();
+                    }
+                },
+                error: function() {
+                    $.notify({ message: 'Lỗi khi tải dữ liệu biểu đồ. Vui lòng thử lại.' }, { type: 'danger', delay: 3000 });
+                }
+            });
+        }
+
+        loadProductDetailQuantities();
+    });
+</script>
+
+<style>
+    /* Center the new chart container and ensure visibility */
+    #new-bar-chart {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin: 0 auto;
+        padding: 20px; /* Add padding to ensure labels are not cut off */
+    }
+    /* Ensure axis labels are visible */
+    .apexcharts-xaxis-label,
+    .apexcharts-yaxis-label {
+        fill: #333 !important; /* Dark color for visibility */
+        font-size: 12px !important;
+    }
+</style>
+
+<!-- In ọut JavaScript -->
+<script>
+    async function initChart() {
+        try {
+            const chartContainer = document.querySelector("#new-bar-chart");
+            if (!chartContainer) {
+                console.error('New chart container not found');
+                return;
+            }
+
+            // Clear the new container
+            chartContainer.innerHTML = '';
+            console.log('Clearing new chart container');
+
+            // Fetch data for stock in and stock out
+            const stockInResponse = await fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/total-quantity-by-month');
+            if (!stockInResponse.ok) throw new Error('Failed to fetch stockIn data');
+            const stockInData = await stockInResponse.json();
+            console.log('Fetched stockInData:', stockInData);
+
+            const stockOutResponse = await fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockouts/total-quantity-by-month');
+            if (!stockOutResponse.ok) throw new Error('Failed to fetch stockOut data');
+            const stockOutData = await stockOutResponse.json();
+            console.log('Fetched stockOutData:', stockOutData);
+
+            // Validate data
+            if (!Array.isArray(stockInData) || !Array.isArray(stockOutData)) {
+                console.error('Invalid data format:', { stockInData, stockOutData });
+                return;
+            }
+
+            // Get current date (July 31, 2025, 12:16 AM +07)
+            const now = new Date('2025-07-31T00:16:00+07:00');
+            const currentMonth = now.getMonth(); // 6 (July is 0-based)
+            const currentYear = now.getFullYear(); // 2025
+
+            // Generate the last 6 months dynamically
+            const months = [];
+            for (let i = 5; i >= 0; i--) {
+                const month = (currentMonth - i + 12) % 12;
+                const year = currentYear - Math.floor((currentMonth - i) / 12);
+                const formattedMonth = `${year}-${String(month + 1).padStart(2, '0')}`;
+                months.push(formattedMonth);
+            }
+            console.log('Generated months:', months);
+
+            // Create maps for quick lookup
+            const stockInMap = new Map(stockInData.map(d => [d.month, d.totalQuantity || 0]));
+            const stockOutMap = new Map(stockOutData.map(d => [d.month, d.totalQuantity || 0]));
+
+            // Prepare series data
+            const stockInSeries = months.map(m => stockInMap.get(m) || 0);
+            const stockOutSeries = months.map(m => stockOutMap.get(m) || 0);
+            console.log('stockInSeries:', stockInSeries);
+            console.log('stockOutSeries:', stockOutSeries);
+
+            // Determine the maximum value for y-axis
+            const maxValue = Math.max(...stockInSeries, ...stockOutSeries, 200);
+            const yAxisMax = Math.ceil(maxValue / 200) * 200;
+            console.log('yAxisMax:', yAxisMax);
+
+            // ApexCharts options for line chart
+            const options = {
+                series: [{
+                    name: 'Nhập Kho',
+                    data: stockInSeries
+                }, {
+                    name: 'Xuất Kho',
+                    data: stockOutSeries
+                }],
+                chart: {
+                    type: 'line',
+                    height: 400,
+                    toolbar: { show: true }
+                },
+                title: {
+                    text: 'Doanh thu',
+                    align: 'left',
+                    style: { fontSize: '18px', fontWeight: 'bold' }
+                },
+                subtitle: {
+                    text: 'Nhập Xuất Kho cho 6 tháng gần đây',
+                    align: 'left',
+                    style: { fontSize: '12px', color: '#666' }
+                },
+                xaxis: {
+                    categories: months,
+                    title: { text: 'Tháng', style: { fontSize: '14px', fontWeight: 'bold' } },
+                    labels: {
+                        show: true,
+                        style: { fontSize: '12px', colors: '#333' },
+                        formatter: function (value) {
+                            const [year, month] = value.split('-');
+                            return `${parseInt(month)}-${year}`;
+                        }
+                    },
+                    tickAmount: 6
+                },
+                yaxis: {
+                    title: { text: 'Số lượng', align: 'left', style: { fontSize: '14px', fontWeight: 'bold' } },
+                    opposite: false,
+                    min: 0,
+                    max: yAxisMax,
+                    tickAmount: Math.ceil(yAxisMax / 200),
+                    forceNiceScale: true,
+                    labels: {
+                        show: true,
+                        style: { fontSize: '12px', colors: '#333' },
+                        formatter: function (value) { return Math.round(value); }
+                    }
+                },
+                stroke: { curve: 'smooth', width: 2 },
+                colors: ['#1E90FF', '#32CD32'],
+                markers: {
+                    size: 5,
+                    colors: ['#1E90FF', '#32CD32'],
+                    strokeWidth: 2,
+                    strokeColors: '#fff',
+                    hover: { size: 7 }
+                },
+                dataLabels: { enabled: false },
+                legend: {
+                    position: 'top',
+                    horizontalAlign: 'right',
+                    fontSize: '14px',
+                    markers: { width: 12, height: 12, radius: 6 }
+                },
+                tooltip: {
+                    y: { formatter: function (val) { return Math.round(val); } }
+                },
+                grid: {
+                    row: { colors: ['#f3f3f3', 'transparent'], opacity: 0.5 },
+                    padding: { bottom: 20, left: 20, right: 20 }
+                }
+            };
+
+            // Render the new chart
+            const chart = new ApexCharts(chartContainer, options);
+            chart.render();
+            console.log('Rendering new dynamic chart');
+        } catch (error) {
+            console.error('Error fetching data or rendering chart:', error);
+        }
+    }
+
+    // Initialize the chart on page load
+    window.addEventListener('DOMContentLoaded', initChart);
+
+    // Function to export chart data to Excel
+    function exportToExcel() {
+        fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/total-quantity-by-month')
+            .then(res => res.json())
+            .then(stockInData => {
+                fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockouts/total-quantity-by-month')
+                    .then(res => res.json())
+                    .then(stockOutData => {
+                        const stockInMap = new Map(stockInData.map(d => [d.month, d.totalQuantity || 0]));
+                        const stockOutMap = new Map(stockOutData.map(d => [d.month, d.totalQuantity || 0]));
+
+                        const now = new Date('2025-07-31T00:16:00+07:00');
+                        const currentMonth = now.getMonth();
+                        const currentYear = now.getFullYear();
+                        const months = [];
+                        for (let i = 5; i >= 0; i--) {
+                            const month = (currentMonth - i + 12) % 12;
+                            const year = currentYear - Math.floor((currentMonth - i) / 12);
+                            const formattedMonth = `${parseInt(month + 1)}-${year}`;
+                            months.push(formattedMonth);
+                        }
+
+                        const exportData = months.map(month => {
+                            const fullMonth = `2025-${month.split('-')[0].padStart(2, '0')}`;
+                            return {
+                                'Tháng': month,
+                                'Nhập Kho': stockInMap.get(fullMonth) || 0,
+                                'Xuất Kho': stockOutMap.get(fullMonth) || 0
+                            };
+                        });
+
+                        const worksheet = XLSX.utils.json_to_sheet(exportData);
+                        const workbook = XLSX.utils.book_new();
+                        XLSX.utils.book_append_sheet(workbook, worksheet, 'Nhập Xuất Kho');
+                        XLSX.writeFile(workbook, 'BaoCaoNhapXuatKho.xlsx');
+                    })
+                    .catch(err => alert('Lỗi khi lấy dữ liệu xuất kho: ' + err.message));
+            })
+            .catch(err => alert('Lỗi khi lấy dữ liệu nhập kho: ' + err.message));
+    }
+</script>
+
+<!-- Topsuplier JavaScript -->
+<script>
+    // Fetch and populate top 4 suppliers
+    async function loadTopSuppliers() {
+        try {
+            const response = await fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/top-suppliers');
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const suppliers = await response.json();
+
+            const tbody = document.getElementById('top-suppliers-tbody');
+            tbody.innerHTML = ''; // Clear existing rows
+
+            suppliers.forEach(supplier => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${supplier.supplierID.supplierID}</td>
+                    <td>${supplier.supplierID.supplierName}</td>
+                    <td>${supplier.totalQuantity.toLocaleString('vi-VN')}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error loading top suppliers:', error);
+            const tbody = document.getElementById('top-suppliers-tbody');
+            tbody.innerHTML = '<tr><td colspan="3">Không tải được dữ liệu</td></tr>';
+        }
+    }
+
+    // Load data when the page is fully loaded
+    document.addEventListener('DOMContentLoaded', loadTopSuppliers);
+</script>
+
+<!-- Top4 Batch JavaScript -->
+<script>
+    $(document).ready(function() {
+        // Gọi API
+        $.ajax({
+            url: 'http://localhost:8080/AgriculturalWarehouseManagementApplication/api/product-batches/expiring-soon',
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                const tbody = $('#expiring-soon-tbody');
+                tbody.empty(); // Xóa nội dung cũ
+
+                data.forEach(batch => {
+                    // Định dạng mã lô hàng: BAT-[ID+1000 in Base36]-[MMdd]
+                    const batchId = batch.batchID;
+                    const base36Id = (batchId + 1000).toString(36).toUpperCase(); // ID+1000 chuyển sang Base36
+                    const manufactureDate = new Date(batch.manufactureDate);
+                    const month = ('0' + (manufactureDate.getMonth() + 1)).slice(-2); // MM
+                    const day = ('0' + manufactureDate.getDate()).slice(-2); // dd
+                    const formattedBatchId = `BAT-${base36Id}-${month}${day}`;
+
+                    // Định dạng ngày tháng: YYYY-MM-DD -> DD/MM/YYYY
+                    const formattedManufactureDate = batch.manufactureDate.split('-').reverse().join('/');
+                    const formattedExpiryDate = batch.expiryDate ? batch.expiryDate.split('-').reverse().join('/') : 'N/A';
+
+                    // Thêm dòng vào bảng
+                    tbody.append(`
+                    <tr>
+                        <td>${formattedBatchId}</td>
+                        <td>${batch.remainingQuantity}</td>
+                        <td>${formattedManufactureDate}</td>
+                        <td>${formattedExpiryDate}</td>
+                    </tr>
+                `);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Lỗi khi gọi API:', status, error);
+                $('#expiring-soon-tbody').append(`
+                <tr>
+                    <td colspan="4" class="text-center">Không thể tải dữ liệu</td>
+                </tr>
+            `);
+            }
+        });
     });
 </script>
 

@@ -7,11 +7,15 @@ import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.CartRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ProductDetailRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.UserRepository;
+import com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff.ProductBatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -28,6 +32,9 @@ public class CartUserService {
 
     @Autowired
     private ProductDetailUserService productDetailUserService;
+
+    @Autowired
+    private ProductBatchService productBatchService;
 
     @Autowired
     private jakarta.servlet.http.HttpSession session;
@@ -54,6 +61,7 @@ public class CartUserService {
         cart.setProductDetail(productDetail.get());
         cart.setQuantity(quantityCart);
         cart.setTotal(total);
+        cart.setCreatedAt(LocalDateTime.now());
 
         cartRepository.save(cart);
 
@@ -65,17 +73,18 @@ public class CartUserService {
         List<Object[]> raw = cartRepository.rawGetCartByUserID(accountId);
 
         List<CartUserResponse> list = raw.stream().map(row -> new CartUserResponse(
-                ((Number) row[0]).intValue(),                // cartId
-                ((Number) row[1]).intValue(),               // userId
-                ((Number) row[2]).intValue(),               // productId
-                ((Number) row[3]).intValue(),               // productDetailId
-                (String) row[4],                            // imageUrl
-                (String) row[5],                            // productName
-                (String) row[6],                            // sellerName
-                (String) row[7],                            // productWeight
-                ((Number) row[8]).doubleValue(),               // productPrice
-                ((Number) row[9]).intValue(),               // quantity
-                ((Number) row[10]).doubleValue()                // totalPrice
+                ((Number) row[0]).intValue(),            // cartId
+                ((Number) row[1]).intValue(),            // userId
+                ((Number) row[2]).intValue(),            // productId
+                ((Number) row[3]).intValue(),            // productDetailId
+                (String) row[4],                         // imageUrl
+                (String) row[5],                         // productName
+                (String) row[6],                         // sellerName
+                (String) row[7],                         // productWeight
+                ((Number) row[8]).doubleValue(),         // productPrice
+                ((Number) row[9]).intValue(),            // quantity
+                ((Number) row[10]).doubleValue(),        // totalPrice
+                row[11] != null ? ((Timestamp) row[11]).toLocalDateTime() : null  // ✅ createdAt
         )).toList();
         return list;
 
@@ -122,6 +131,7 @@ public class CartUserService {
 
         cart.setQuantity(quantity);
         cart.setTotal(total);
+        cart.setCreatedAt(LocalDateTime.now());
         cartRepository.save(cart);
 
         CartUserResponse cartUserReponse = new CartUserResponse();
@@ -217,7 +227,6 @@ public class CartUserService {
                 break;
             }
 
-            System.out.println("aptcart" + productDetailId);
 
             if (productDetailId == 0) {
                 if (statusMessageStatus.equals("")) {
@@ -227,26 +236,60 @@ public class CartUserService {
                 return new ResponseResult<>("ERROR", "Sản phẩm đã " + statusMessageStatus, false);
 
             } else {
+                ResponseResult<ProductDetailUserResponse> result = productDetailUserService.checkQuantityProduct(1, productDetailId);
+                if (result.isActive()) {
+                    List<Map<String, Object>> resultList = productBatchService.getTotalQuantityByProductDetailId((long) productDetailId);
 
-                Optional<User> user = userRepository.findByUserIdNative(userId);
-                Optional<ProductDetail> productDetail = productDetailRepository.findById(productDetailId);
-                double totalPrice = 1 * productDetail.get().getPrice();
+                    // TotalQuantity order
+                    final int finalProductDetailId = productDetailId;
+                    int totalQuantity = resultList.stream()
+                            .filter(map -> ((Number) map.get("productDetailId")).longValue() == finalProductDetailId)
+                            .mapToInt(map -> ((Number) map.get("totalQuantity")).intValue())
+                            .sum();
 
-                Cart cart = new Cart();
-                cart.setUser(user.get());
-                cart.setProductDetail(productDetail.get());
-                cart.setQuantity(1);
-                cart.setTotal(totalPrice);
+                    if (result.getData().getRemainQuantity() - totalQuantity - 1 <= 0) {
+                        return new ResponseResult<>("ERROR", "Sản phẩm đã hết vì người dùng đã đặt hàng, vui lòng chọn số lượng nhỏ hơn", false);
+                    } else {
+                        List<CartQuantityResponse> cartQuantityResponses = getCartQuantities(productDetailId);
 
-                cartRepository.save(cart);
+                        int totalQuantityCart = cartQuantityResponses.stream()
+                                .mapToInt(CartQuantityResponse::getQuantity)
+                                .sum();
 
-                CartTableUserResponse cartTableUserResponse = new CartTableUserResponse();
-                cartTableUserResponse.setUserId(userId);
-                cartTableUserResponse.setProductDetailId(productDetailId);
-                cartTableUserResponse.setQuantity(1);
-                cartTableUserResponse.setPrice(totalPrice);
+                        if (result.getData().getRemainQuantity() - totalQuantity - totalQuantityCart - 1 <= 0) {
+                            return new ResponseResult<>("ERROR",  "Sản phẩm đã hết vì ngươi dùng khác đã thêm giỏ hàng, vui lòng chọn số lượng nhỏ hơn", true);
+                        } else {
 
-                return new ResponseResult<>("SUCCESS", "Thêm sản phẩm vào giỏ hàng thành công", true, cartTableUserResponse);
+                            Optional<User> user = userRepository.findByUserIdNative(userId);
+                            Optional<ProductDetail> productDetail = productDetailRepository.findById(productDetailId);
+                            double totalPrice = 1 * productDetail.get().getPrice();
+
+                            Cart cart = new Cart();
+                            cart.setUser(user.get());
+                            cart.setProductDetail(productDetail.get());
+                            cart.setQuantity(1);
+                            cart.setTotal(totalPrice);
+                            cart.setCreatedAt(LocalDateTime.now());
+                            cartRepository.save(cart);
+
+                            CartTableUserResponse cartTableUserResponse = new CartTableUserResponse();
+                            cartTableUserResponse.setUserId(userId);
+                            cartTableUserResponse.setProductDetailId(productDetailId);
+                            cartTableUserResponse.setQuantity(1);
+                            cartTableUserResponse.setPrice(totalPrice);
+
+                            return new ResponseResult<>("SUCCESS", "Thêm sản phẩm vào giỏ hàng thành công", true, cartTableUserResponse);
+                        }
+
+                    }
+
+                } else {
+                    return new ResponseResult<>("ERROR", result.getMessage(), false);
+                }
+
+
+
+
             }
 
         }
@@ -290,26 +333,55 @@ public class CartUserService {
             return new ResponseResult<>("ERROR", "Không có sản phẩm chi tiết", false);
         } else {
 
-            Optional<User> user = userRepository.findByUserIdNative(userId);
-            Optional<ProductDetail> productDetail = productDetailRepository.findById(productDetailId);
-            double totalPrice = 1 * productDetail.get().getPrice();
+            ResponseResult<ProductDetailUserResponse> result = productDetailUserService.checkQuantityProduct(1, productDetailId);
+            if (result.isActive()) {
+                List<Map<String, Object>> resultList = productBatchService.getTotalQuantityByProductDetailId((long) productDetailId);
 
-            Cart cart = new Cart();
-            cart.setUser(user.get());
-            cart.setProductDetail(productDetail.get());
-            cart.setQuantity(1);
-            cart.setTotal(totalPrice);
+                // TotalQuantity order
+                int totalQuantity = resultList.stream()
+                        .filter(map -> ((Number) map.get("productDetailId")).longValue() == productDetailId)
+                        .mapToInt(map -> ((Number) map.get("totalQuantity")).intValue())
+                        .sum();
 
-            cartRepository.save(cart);
+                if (result.getData().getRemainQuantity() - totalQuantity - 1 <= 0) {
+                    return new ResponseResult<>("ERROR", "Sản phẩm đã hết vì người dùng đã đặt hàng, vui lòng chọn số lượng nhỏ hơn", false);
+                } else {
+                    List<CartQuantityResponse> cartQuantityResponses = getCartQuantities(productDetailId);
 
-            CartTableUserResponse cartTableUserResponse = new CartTableUserResponse();
-            cartTableUserResponse.setUserId(userId);
-            cartTableUserResponse.setProductDetailId(productDetailId);
-            cartTableUserResponse.setQuantity(1);
-            cartTableUserResponse.setPrice(totalPrice);
+                    int totalQuantityCart = cartQuantityResponses.stream()
+                            .mapToInt(CartQuantityResponse::getQuantity)
+                            .sum();
 
-            return new ResponseResult<>("SUCCESS", "Thêm sản phẩm vào giỏ hàng thành công", true, cartTableUserResponse);
+                    if (result.getData().getRemainQuantity() - totalQuantity - totalQuantityCart - 1 <= 0) {
+                        return new ResponseResult<>("ERROR",  "Sản phẩm đã hết vì ngươi dùng khác đã thêm giỏ hàng, vui lòng chọn số lượng nhỏ hơn", true);
+                    } else {
 
+                        Optional<User> user = userRepository.findByUserIdNative(userId);
+                        Optional<ProductDetail> productDetail = productDetailRepository.findById(productDetailId);
+                        double totalPrice = 1 * productDetail.get().getPrice();
+
+                        Cart cart = new Cart();
+                        cart.setUser(user.get());
+                        cart.setProductDetail(productDetail.get());
+                        cart.setQuantity(1);
+                        cart.setTotal(totalPrice);
+                        cart.setCreatedAt(LocalDateTime.now());
+                        cartRepository.save(cart);
+
+                        CartTableUserResponse cartTableUserResponse = new CartTableUserResponse();
+                        cartTableUserResponse.setUserId(userId);
+                        cartTableUserResponse.setProductDetailId(productDetailId);
+                        cartTableUserResponse.setQuantity(1);
+                        cartTableUserResponse.setPrice(totalPrice);
+
+                        return new ResponseResult<>("SUCCESS", "Thêm sản phẩm vào giỏ hàng thành công", true, cartTableUserResponse);
+                    }
+
+                }
+
+            } else {
+                return new ResponseResult<>("ERROR", result.getMessage(), false);
+            }
 
         }
 
@@ -324,6 +396,31 @@ public class CartUserService {
         } else {
             cartRepository.deleteById((long) cartId);
             return new ResponseResult<>("SUCCESS", "Xóa giỏ hàng thành công",true);
+        }
+
+    }
+
+    // Get cart quantity by check minus
+    public List<CartQuantityResponse> getCartQuantitiesDatabase(int productDetailId) {
+        List<Object[]> raw = cartRepository.rawGetCartQuantity(productDetailId);
+
+        List<CartQuantityResponse> list = raw.stream().map(row -> new CartQuantityResponse(
+                ((Number) row[0]).intValue(),                        // cartId
+                ((Number) row[1]).intValue(),                        // userId
+                ((Number) row[2]).intValue(),                        // productDetailId
+                ((Number) row[3]).intValue(),                        // qunatity
+                ((Number) row[4]).doubleValue(),                     // totalPrice
+                row[6] != null ? ((Timestamp) row[5]).toLocalDateTime() : null,  // createdAt
+                ((Number) row[6]).intValue()                         // minutes
+        )).toList();
+        return list;
+    }
+
+    public List<CartQuantityResponse> getCartQuantities(int productDetailId) {
+        if (getCartQuantitiesDatabase(productDetailId).isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            return getCartQuantitiesDatabase(productDetailId);
         }
 
     }
