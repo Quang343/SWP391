@@ -2,8 +2,11 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.admin;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.UserDTO;
+import com.example.AgriculturalWarehouseManagement.Backend.models.SellerApplication;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
+import com.example.AgriculturalWarehouseManagement.Backend.services.admin.NotificationService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.user.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.seller.SellerApplicationService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
@@ -11,13 +14,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
 public class AdminLoginController {
 
     private final UserService userService;
+
+    private final NotificationService notificationService;
+
+    private final SellerApplicationService sellerApplicationService;
 
     @GetMapping("/loginAdmin")
     public String getLoginPage(){
@@ -60,4 +70,6 @@ public class AdminLoginController {
     public void clearError(HttpSession session) {
         session.removeAttribute("error");
     }
+
+
 }

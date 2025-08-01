@@ -308,6 +308,11 @@ public class SellerApplicationService {
         return sellerApplicationRepository.findByUserAndStatus(user, status);
     }
 
+    ///
+    public Optional<SellerApplication> findSellerApplicationById(Long id){
+        return sellerApplicationRepository.findById(id);
+    }
+
     public SellerApplication save(SellerApplication application) {
         return sellerApplicationRepository.save(application);
     }

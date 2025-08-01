@@ -90,7 +90,7 @@ public class ProductImageController {
         //Thêm UUID vào trước để đảm bảo fileName là duy nhất
         String uniqueFileName = UUID.randomUUID().toString() + "." + fileName;
         //Đường dẫn đến thư mục mà bạn muốn lưu file
-        Path uploadPath = Paths.get(uploadDir, "Admin");
+        Path uploadPath = Paths.get(uploadDir, "Seller");
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }

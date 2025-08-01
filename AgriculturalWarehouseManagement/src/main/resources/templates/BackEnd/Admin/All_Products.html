@@ -34,7 +34,7 @@
         box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3); /* tùy chỉnh màu viền khi focus */
     }
 
-/* Canh giữa nội dung trong th */
+    /* Canh giữa nội dung trong th */
     table.dataTable thead th {
         text-align: center !important;
         vertical-align: middle;
@@ -97,7 +97,7 @@
 <!-- page-wrapper Start-->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
     <!-- Page Header Start-->
-    <div th:replace="BackEnd/fragments/Admin/header::header"></div>
+    <div id="header" th:replace="BackEnd/fragments/Admin/header::header"></div>
     <!-- Page Header Ends-->
 
     <!-- Page Body Start-->
@@ -188,11 +188,11 @@
 
                                                 <td>
                                                     <ul>
-<!--                                                        <li>-->
-<!--                                                            <a href="order-detail.html">-->
-<!--                                                                <i class="ri-eye-line"></i>-->
-<!--                                                            </a>-->
-<!--                                                        </li>-->
+                                                        <!--                                                        <li>-->
+                                                        <!--                                                            <a href="order-detail.html">-->
+                                                        <!--                                                                <i class="ri-eye-line"></i>-->
+                                                        <!--                                                            </a>-->
+                                                        <!--                                                        </li>-->
 
                                                         <li>
                                                             <a th:href="@{'/admin/edit_product/' + ${product.getId()}}">
@@ -373,6 +373,9 @@
 
 <!-- Theme js -->
 <script th:src="@{/Backend/assets/js/script.js}"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 
 <script>
     let selectedProductId = null;

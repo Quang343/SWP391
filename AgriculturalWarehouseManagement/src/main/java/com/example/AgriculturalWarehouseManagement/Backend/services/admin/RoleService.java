@@ -38,9 +38,10 @@ public class RoleService implements IRoleService{
     public Role createRole(RoleDTO roleDTO) {
         Role role = Role.builder()
                 .roleName(roleDTO.getName())
-                .status(roleDTO.getStatus())
+//                .status(roleDTO.getStatus())
                 .description(roleDTO.getDescription())
                 .build();
+        role.setStatus("ACTIVE");
         return roleRepository.save(role);
     }
 

@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 <!--<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">-->
-<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6" lang="">
 <head th:replace="BackEnd/fragments/Admin/head::head"></head>
 
 <style>
@@ -27,6 +27,7 @@
         padding-left: 16px !important;
         padding-right: 16px !important;
     }
+
 </style>
 <body>
 <!-- tap on top start -->
@@ -38,7 +39,8 @@
 <!-- page-wrapper Start-->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
     <!-- Page Header Start-->
-    <div th:replace="BackEnd/fragments/Admin/header::header"></div>
+    <div th:replace="BackEnd/fragments/Admin/header :: header"></div>
+
     <!-- Page Header Ends-->
 
     <!-- Page Body Start-->
@@ -143,9 +145,10 @@
                                 <div class="category-slider no-arrow">
                                     <div th:each="category : ${categories}">
                                         <div class="dashboard-category">
-                                            <a href="javascript:void(0)" class="category-image">
-                                                <img th:src="@{/Backend/assets/svg/vegetable.svg}" class="img-fluid" alt="">
-                                            </a>
+<!--                                            <a href="javascript:void(0)" class="category-image">-->
+<!--                                                <img th:src="@{'/seller/' + ${category.imageUrl}}" class="img-fluid" alt="">-->
+<!--                                            </a>-->
+                                            <img style="border-radius: 50%;width: 100%; height: 110px;" th:src="@{'/seller/' + ${category.imageUrl}}" class="img-fluid" alt="">
                                             <a href="javascript:void(0)" class="category-name">
                                                 <h6 th:text="${category.name}">Vegetables & Fruit</h6>
                                             </a>
@@ -182,19 +185,19 @@
                                     <h4>Best Selling Product</h4>
                                 </div>
 
-                                <div class="best-selling-box d-sm-flex d-none">
-                                    <span>Short By:</span>
-                                    <div class="dropdown">
-                                        <button class="btn p-0 dropdown-toggle" type="button"
-                                                id="dropdownMenuButton1" data-bs-toggle="dropdown"
-                                                data-bs-auto-close="true">Today</button>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                            <li><a class="dropdown-item" href="#">Action</a></li>
-                                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
+<!--                                <div class="best-selling-box d-sm-flex d-none">-->
+<!--                                    <span>Short By:</span>-->
+<!--                                    <div class="dropdown">-->
+<!--                                        <button class="btn p-0 dropdown-toggle" type="button"-->
+<!--                                                id="dropdownMenuButton1" data-bs-toggle="dropdown"-->
+<!--                                                data-bs-auto-close="true">Today</button>-->
+<!--                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">-->
+<!--                                            <li><a class="dropdown-item" href="#">Action</a></li>-->
+<!--                                            <li><a class="dropdown-item" href="#">Another action</a></li>-->
+<!--                                            <li><a class="dropdown-item" href="#">Something else here</a></li>-->
+<!--                                        </ul>-->
+<!--                                    </div>-->
+<!--                                </div>-->
                             </div>
 
                             <div class="card-body p-0">
@@ -208,7 +211,7 @@
                                                 <td>
                                                     <div class="best-product-box">
                                                         <div class="product-image">
-                                                            <img th:src="@{/Backend/assets/images/product/1.png}"
+                                                            <img th:src="@{'/seller/' + ${product.getImageUrl()}}"
                                                                  class="img-fluid" alt="Product">
                                                         </div>
                                                         <div class="product-name">
@@ -265,19 +268,19 @@
                                     <h4>Recent Orders</h4>
                                 </div>
 
-                                <div class="best-selling-box d-sm-flex d-none">
-                                    <span>Short By:</span>
-                                    <div class="dropdown">
-                                        <button class="btn p-0 dropdown-toggle" type="button"
-                                                id="dropdownMenuButton2" data-bs-toggle="dropdown"
-                                                data-bs-auto-close="true">Today</button>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                                            <li><a class="dropdown-item" href="#">Action</a></li>
-                                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
+<!--                                <div class="best-selling-box d-sm-flex d-none">-->
+<!--                                    <span>Short By:</span>-->
+<!--                                    <div class="dropdown">-->
+<!--                                        <button class="btn p-0 dropdown-toggle" type="button"-->
+<!--                                                id="dropdownMenuButton2" data-bs-toggle="dropdown"-->
+<!--                                                data-bs-auto-close="true">Today</button>-->
+<!--                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">-->
+<!--                                            <li><a class="dropdown-item" href="#">Action</a></li>-->
+<!--                                            <li><a class="dropdown-item" href="#">Another action</a></li>-->
+<!--                                            <li><a class="dropdown-item" href="#">Something else here</a></li>-->
+<!--                                        </ul>-->
+<!--                                    </div>-->
+<!--                                </div>-->
                             </div>
 
                             <div class="card-body p-0">
@@ -349,116 +352,116 @@
 
 
                     <!-- Transactions start-->
-                    <div class="col-xxl-4 col-md-6">
-                        <div class="card o-hidden card-hover">
-                            <div class="card-header border-0">
-                                <div class="card-header-title">
-                                    <h4>Transactions</h4>
-                                </div>
-                            </div>
+<!--                    <div class="col-xxl-4 col-md-6">-->
+<!--                        <div class="card o-hidden card-hover">-->
+<!--                            <div class="card-header border-0">-->
+<!--                                <div class="card-header-title">-->
+<!--                                    <h4>Transactions</h4>-->
+<!--                                </div>-->
+<!--                            </div>-->
 
-                            <div class="card-body pt-0">
-                                <div>
-                                    <div class="table-responsive">
-                                        <table class="user-table transactions-table table border-0">
-                                            <tbody>
-                                            <tr>
-                                                <td>
-                                                    <div class="transactions-icon">
-                                                        <i class="ri-shield-line"></i>
-                                                    </div>
-                                                    <div class="transactions-name">
-                                                        <h6>Wallets</h6>
-                                                        <p>Starbucks</p>
-                                                    </div>
-                                                </td>
+<!--                            <div class="card-body pt-0">-->
+<!--                                <div>-->
+<!--                                    <div class="table-responsive">-->
+<!--                                        <table class="user-table transactions-table table border-0">-->
+<!--                                            <tbody>-->
+<!--                                            <tr>-->
+<!--                                                <td>-->
+<!--                                                    <div class="transactions-icon">-->
+<!--                                                        <i class="ri-shield-line"></i>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="transactions-name">-->
+<!--                                                        <h6>Wallets</h6>-->
+<!--                                                        <p>Starbucks</p>-->
+<!--                                                    </div>-->
+<!--                                                </td>-->
 
-                                                <td class="lost">-$74</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="td-color-1">
-                                                    <div class="transactions-icon">
-                                                        <i class="ri-check-line"></i>
-                                                    </div>
-                                                    <div class="transactions-name">
-                                                        <h6>Bank Transfer</h6>
-                                                        <p>Add Money</p>
-                                                    </div>
-                                                </td>
+<!--                                                <td class="lost">-$74</td>-->
+<!--                                            </tr>-->
+<!--                                            <tr>-->
+<!--                                                <td class="td-color-1">-->
+<!--                                                    <div class="transactions-icon">-->
+<!--                                                        <i class="ri-check-line"></i>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="transactions-name">-->
+<!--                                                        <h6>Bank Transfer</h6>-->
+<!--                                                        <p>Add Money</p>-->
+<!--                                                    </div>-->
+<!--                                                </td>-->
 
-                                                <td class="success">+$125</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="td-color-2">
-                                                    <div class="transactions-icon">
-                                                        <i class="ri-exchange-dollar-line"></i>
-                                                    </div>
-                                                    <div class="transactions-name">
-                                                        <h6>Paypal</h6>
-                                                        <p>Add Money</p>
-                                                    </div>
-                                                </td>
+<!--                                                <td class="success">+$125</td>-->
+<!--                                            </tr>-->
+<!--                                            <tr>-->
+<!--                                                <td class="td-color-2">-->
+<!--                                                    <div class="transactions-icon">-->
+<!--                                                        <i class="ri-exchange-dollar-line"></i>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="transactions-name">-->
+<!--                                                        <h6>Paypal</h6>-->
+<!--                                                        <p>Add Money</p>-->
+<!--                                                    </div>-->
+<!--                                                </td>-->
 
-                                                <td class="lost">-$50</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="td-color-3">
-                                                    <div class="transactions-icon">
-                                                        <i class="ri-bank-card-line"></i>
-                                                    </div>
-                                                    <div class="transactions-name">
-                                                        <h6>Mastercard</h6>
-                                                        <p>Ordered Food</p>
-                                                    </div>
-                                                </td>
+<!--                                                <td class="lost">-$50</td>-->
+<!--                                            </tr>-->
+<!--                                            <tr>-->
+<!--                                                <td class="td-color-3">-->
+<!--                                                    <div class="transactions-icon">-->
+<!--                                                        <i class="ri-bank-card-line"></i>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="transactions-name">-->
+<!--                                                        <h6>Mastercard</h6>-->
+<!--                                                        <p>Ordered Food</p>-->
+<!--                                                    </div>-->
+<!--                                                </td>-->
 
-                                                <td class="lost">-$40</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="td-color-4 pb-0">
-                                                    <div class="transactions-icon">
-                                                        <i class="ri-bar-chart-grouped-line"></i>
-                                                    </div>
-                                                    <div class="transactions-name">
-                                                        <h6>Transfer</h6>
-                                                        <p>Refund</p>
-                                                    </div>
-                                                </td>
+<!--                                                <td class="lost">-$40</td>-->
+<!--                                            </tr>-->
+<!--                                            <tr>-->
+<!--                                                <td class="td-color-4 pb-0">-->
+<!--                                                    <div class="transactions-icon">-->
+<!--                                                        <i class="ri-bar-chart-grouped-line"></i>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="transactions-name">-->
+<!--                                                        <h6>Transfer</h6>-->
+<!--                                                        <p>Refund</p>-->
+<!--                                                    </div>-->
+<!--                                                </td>-->
 
-                                                <td class="success pb-0">+$90</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<!--                                                <td class="success pb-0">+$90</td>-->
+<!--                                            </tr>-->
+<!--                                            </tbody>-->
+<!--                                        </table>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
                     <!-- Transactions end-->
 
                     <!-- visitors chart start-->
-                    <div class="col-xxl-4 col-md-6">
-                        <div class="h-100">
-                            <div class="card o-hidden card-hover">
-                                <div class="card-header border-0">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <div class="card-header-title">
-                                            <h4>Visitors</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-body pt-0">
-                                    <div class="pie-chart">
-                                        <div id="pie-chart-visitors"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<!--                    <div class="col-xxl-4 col-md-6">-->
+<!--                        <div class="h-100">-->
+<!--                            <div class="card o-hidden card-hover">-->
+<!--                                <div class="card-header border-0">-->
+<!--                                    <div class="d-flex align-items-center justify-content-between">-->
+<!--                                        <div class="card-header-title">-->
+<!--                                            <h4>Visitors</h4>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="card-body pt-0">-->
+<!--                                    <div class="pie-chart">-->
+<!--                                        <div id="pie-chart-visitors"></div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
                     <!-- visitors chart end-->
 
 
-                    <!-- To Do List start-->
+                    <!-- To Do List start
                     <div class="col-xxl-4 col-md-6">
                         <div class="card o-hidden card-hover">
                             <div class="card-header border-0">
@@ -526,6 +529,7 @@
                             </div>
                         </div>
                     </div>
+                    -->
                     <!-- To Do List end-->
 
 
@@ -534,21 +538,14 @@
             <!-- Container-fluid Ends-->
 
             <!-- footer start-->
-            <div class="container-fluid">
-                <footer class="footer">
-                    <div class="row">
-                        <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2022 © Fastkart theme by pixelstrap</p>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+            <div th:replace="BackEnd/fragments/Admin/footer :: footer"></div>
             <!-- footer End-->
         </div>
         <!-- index body end -->
 
     </div>
     <!-- Page Body End -->
+
 </div>
 <!-- page-wrapper End-->
 
@@ -618,6 +615,127 @@
 
 <!-- Theme js -->
 <script th:src="@{/Backend/assets/js/script.js}"></script>
+
+<!-- Script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+<!-- Toastr CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<!-- Hidden messages -->
+<div th:if="${errorMessage}" id="errorMessage" th:data-msg="${errorMessage}" hidden></div>
+<div th:if="${successMessage}" id="successMessage" th:data-msg="${successMessage}" hidden></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Toastr configuration (set before showing message)
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "3000"
+        };
+
+        const errorDiv = document.getElementById("errorMessage");
+        const successDiv = document.getElementById("successMessage");
+
+        if (errorDiv && errorDiv.dataset.msg) {
+            toastr.error(errorDiv.dataset.msg, 'Error');
+        }
+
+        if (successDiv && successDiv.dataset.msg) {
+            toastr.success(successDiv.dataset.msg, 'Success');
+        }
+    });
+</script>
+
+
+<!--<script>-->
+<!--    document.addEventListener("DOMContentLoaded", function () {-->
+<!--        const toggle = document.getElementById("notificationToggle");-->
+<!--        if (toggle) {-->
+<!--            const socket = new SockJS('/AgriculturalWarehouseManagementApplication/ws');-->
+<!--            const stompClient = Stomp.over(socket);-->
+
+<!--            stompClient.connect({}, function () {-->
+<!--                stompClient.subscribe('/topic/notifications', function (notification) {-->
+<!--                    const data = JSON.parse(notification.body);-->
+<!--                    toastr.info(data.content || "Thông báo mới", "Thông báo");-->
+
+<!--                    // Load lại fragment header để cập nhật số lượng/thông báo-->
+<!--                    $("#header").load("/AgriculturalWarehouseManagementApplication/admin/loadHeader");-->
+<!--                });-->
+<!--            });-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
+
+<!-- Script để kết nối WebSocket nếu có notification toggle -->
+<!--<script>-->
+<!--    document.addEventListener("DOMContentLoaded", function () {-->
+<!--        const toggle = document.getElementById("notificationToggle");-->
+<!--        if (toggle) {-->
+<!--            const socket = new SockJS('/AgriculturalWarehouseManagementApplication/ws');-->
+<!--            const stompClient = Stomp.over(socket);-->
+
+<!--            stompClient.connect({}, function () {-->
+<!--                stompClient.subscribe('/topic/notifications', function (notification) {-->
+<!--                    const data = JSON.parse(notification.body);-->
+<!--                    toastr.info(data.content || "Thông báo mới", "Thông báo");-->
+
+<!--                    // Tải lại fragment header để cập nhật danh sách-->
+<!--                    $("#header").load("/AgriculturalWarehouseManagementApplication/admin/header");-->
+<!--                });-->
+<!--            });-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
+<!--<script>-->
+<!--    // Tùy chỉnh giao diện Toastr-->
+<!--    toastr.options = {-->
+<!--        closeButton: true,-->
+<!--        progressBar: true,-->
+<!--        positionClass: "toast-bottom-right",-->
+<!--        timeOut: "4000",-->
+<!--        preventDuplicates: true-->
+<!--    };-->
+
+<!--    let stompClient = null;-->
+
+<!--    function connect() {-->
+<!--        const socket = new SockJS('/AgriculturalWarehouseManagementApplication/ws');-->
+<!--        stompClient = Stomp.over(socket);-->
+
+
+<!--        stompClient.connect({}, function () {-->
+<!--            stompClient.subscribe('/topic/notifications', function (notification) {-->
+<!--                const data = JSON.parse(notification.body);-->
+<!--                console.log("Received:", notification.body);-->
+<!--                toastr.info(data.content || "Thông báo mới", "Thông báo");-->
+<!--                setTimeout(function () {-->
+<!--                    location.reload();-->
+<!--                }, 3000);-->
+<!--            });-->
+<!--        });-->
+<!--    }-->
+
+<!--    // Chờ DOM load xong rồi mới connect-->
+<!--    document.addEventListener("DOMContentLoaded", function () {-->
+<!--        connect();-->
+<!--    });-->
+<!--</script>-->
+
+
 </body>
 
 </html>

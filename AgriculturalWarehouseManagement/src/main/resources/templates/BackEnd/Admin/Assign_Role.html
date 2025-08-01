@@ -146,7 +146,7 @@
                                     <table class="table all-package theme-table" id="table_id">
                                         <thead>
                                         <tr>
-                                            <th>STT</th>
+                                            <th style="width: 50px;">STT</th>
                                             <th>Email đăng nhập</th>
                                             <th>Vai trò hiện tại</th>
                                             <th>Thao tác</th>
@@ -158,7 +158,7 @@
                                             <td th:text="${init.count}"></td>
                                             <td th:text="${user.email}"></td>
                                             <td th:text="${user.role.roleName}"></td>
-<!--                                            <td>[[${user.userId}]]</td>-->
+                                            <!--                                            <td>[[${user.userId}]]</td>-->
                                             <td>
                                                 <div class="custom-dropdown-wrapper">
                                                     <button class="btn btn-primary custom-dropdown-toggle">
@@ -167,8 +167,8 @@
                                                     <ul class="custom-dropdown-menu">
                                                         <li th:each="role : ${roles}">
                                                             <a href="#"
-                                                                th:attr="data-user-id=${user.userId}, data-role=${role.getRoleName()}"
-                                                                th:text="${role.getRoleName()}">
+                                                               th:attr="data-user-id=${user.userId}, data-role=${role.getRoleName()}"
+                                                               th:text="${role.getRoleName()}">
                                                             </a>
                                                         </li>
                                                     </ul>

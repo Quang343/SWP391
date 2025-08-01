@@ -27,8 +27,8 @@ public class UserService implements IUserService {
     private final ModelMapper modelMapper;
 
     @Override
-    public boolean existsByPhone(String phone) {
-        return userRepository.existsByPhone(phone);
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 
     @Override
@@ -47,8 +47,13 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public Optional<User> findUserById(Integer userId) {
+        return userRepository.findByUserId(userId);
+    }
+
+    @Override
     public User createUser(UserDTO userDTO) throws Exception {
-        String phone = userDTO.getPhone();
+//        String phone = userDTO.getPhone();
 //        if (userRepository.existsByPhone(phone)) {
 //            throw new Exception("Phone number already exists");
 //        }
@@ -68,7 +73,7 @@ public class UserService implements IUserService {
                 .phone(dto.getPhone())
                 .address(dto.getAddress())
                 .gender(dto.getGender())
-                .status(dto.getStatus())
+                .status("Active")
                 .dob(dto.getDob())
                 .role(role)
                 .build();
@@ -77,8 +82,8 @@ public class UserService implements IUserService {
     @Override
     public User updateUser(Long id, UserDTO userDTO) throws Exception {
         User user = findById(id);
-        Role role = roleRepository.findById(userDTO.getRoleId())
-                .orElseThrow(() -> new RuntimeException("Role Not Found"));
+//        Role role = roleRepository.findById(userDTO.getRoleId())
+//                .orElseThrow(() -> new RuntimeException("Role Not Found"));
 //        if (!user.getPhone().equals(userDTO.getPhone()) && userRepository.existsByPhone(userDTO.getPhone())) {
 //            throw new Exception("Phone number already exists");
 //        }
@@ -96,7 +101,6 @@ public class UserService implements IUserService {
         user.setStatus(userDTO.getStatus());
         user.setImage(userDTO.getImageName());
         user.setPassword(userDTO.getPassword());
-        user.setRole(role);
         return userRepository.save(user);
     }
 

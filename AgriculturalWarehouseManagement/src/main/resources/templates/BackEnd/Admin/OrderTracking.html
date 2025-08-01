@@ -102,11 +102,11 @@
                                                         <h5 th:switch="${order.status}">
                                                             <span th:case="'PENDING'" style="color: #FFA500;">Đơn hàng đang chờ xác nhận.</span>
                                                             <span th:case="'CONFIRMED'" style="color: #3498db;">Đơn hàng đã được xác nhận. Chờ xuất kho.</span>
-                                                            <span th:case="'STOCKOUT'" style="color: #16a085;">Đơn hàng đã được xuất kho. Chuẩn bị giao hàng.</span>
-                                                            <span th:case="'DELIVERED'" style="color: #8e44ad;">Đơn hàng đã được giao.</span>
-                                                            <span th:case="'COMPLETED'" style="color: #2ecc71;"> Cảm ơn bạn! Đơn hàng của bạn đã hoàn tất.</span>
+                                                            <span th:case="'STOCKOUT'" style="color: #8e44ad;">Đơn hàng đã được xuất kho. Chuẩn bị giao hàng.</span>
+                                                            <span th:case="'DELIVERED'" style="color: var(--theme-color);">Đơn hàng đã được giao.</span>
+                                                            <span th:case="'COMPLETED'" style="color: #27ae60;"> Cảm ơn bạn! Đơn hàng của bạn đã hoàn tất.</span>
                                                             <span th:case="'CANCELLED'" style="color: #e74c3c;">Đơn hàng đã bị huỷ.</span>
-                                                            <span th:case="__${null}__" style="color: #7f8c8d;">Trạng thái không xác định.</span>
+                                                            <span th:case="__${null}__" style="color: #7f8c8d;">Trạng thái đơn hàng không xác định.</span>
                                                         </h5>
 
 

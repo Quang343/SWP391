@@ -19,13 +19,15 @@ public class UserDTO {
     @NotNull(message = "Role is required")
     private Long roleId;
 
+    private int userId;
+
     @NotBlank(message = "Username is required")
     @Size(max = 100, message = "Username must be at most 100 characters")
     private String username;
 
 //    @NotBlank(message = "Full name is required")
-    @Size(max = 255)
-    private String fullName;
+@Size(max = 255)
+private String fullName;
 
     private MultipartFile image;
 
@@ -47,10 +49,9 @@ public class UserDTO {
 
     private String gender;
 
-    @NotBlank(message = "Status is required")
+    //    @NotBlank(message = "Status is required")
     private String status;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
-
 }

@@ -15,12 +15,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    boolean existsByPhone(String phone);
+    boolean existsByEmail(String email);
     Optional<User> findByPhone(String phone);
     List<User> findByStatusIsNot(String status);
     Optional<User> findByEmail(String email);
     List<User> findByRole(Role role);
     List<User> findByRoleIsNot(Role role);
+    Optional<User> findByUserId(Integer id);
 
     //
     @Query(value = "SELECT * FROM user WHERE email = :email", nativeQuery = true)

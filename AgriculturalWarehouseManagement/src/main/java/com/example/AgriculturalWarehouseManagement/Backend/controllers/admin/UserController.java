@@ -7,6 +7,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.models.Role;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.RoleService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.user.UserService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.seller.User_SellerService;
 import com.example.AgriculturalWarehouseManagement.Backend.utils.PaginationUtils;
 import com.example.AgriculturalWarehouseManagement.Backend.utils.StoreFile;
 import jakarta.servlet.http.HttpSession;
@@ -38,6 +39,7 @@ import java.nio.file.Paths;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
@@ -48,6 +50,7 @@ public class UserController {
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final StoreFile storeFile;
+    private final User_SellerService userSellerService;
 
     @GetMapping("/admin/users")
     public String getAllUsers(Model model,
@@ -84,6 +87,7 @@ public class UserController {
     @RequestMapping("/admin/add_user")
     public String showCreateForm(Model model) {
         List<Role> roles = roleService.findAll();
+        roles = roles.stream().filter(r -> !r.getRoleName().equalsIgnoreCase("ADMIN")).collect(Collectors.toList());
         model.addAttribute("roles", roles);
         model.addAttribute("userDTO", new UserDTO());
         return "BackEnd/Admin/Add_User";
@@ -102,12 +106,9 @@ public class UserController {
         UserDTO userDTO = config(user);
         userDTO.setImageName(user.getImage());
         List<Role> roles = roleService.findAll();
-//        if(userDTO.getDob() != null){
-//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//            String dobFormatted = userDTO.getDob().format(formatter);
-//            model.addAttribute("dobFormatted", dobFormatted);
-//        }
+        roles = roles.stream().filter(r -> !r.getRoleName().equals("ADMIN")).collect(Collectors.toList());
         model.addAttribute("roles", roles);
+        model.addAttribute("role", user.getRole().getRoleName());
         model.addAttribute("userDTO", userDTO);
         model.addAttribute("id", id);
         return "BackEnd/Admin/Edit_User";
@@ -116,7 +117,7 @@ public class UserController {
     @PostMapping("/admin/saveUser")
     public ResponseEntity<?> saveUser(@ModelAttribute("userDTO") @Valid UserDTO userDTO,
                                       BindingResult bindingResult,
-                                      @RequestPart("image") MultipartFile image
+                                      @RequestPart(value = "image", required = false) MultipartFile image
     ){
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
@@ -125,23 +126,28 @@ public class UserController {
             });
             return ResponseEntity.badRequest().body(errors);
         }
-        if(userService.existsByPhone(userDTO.getPhone())){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("phone", "Phone number already exists"));
+
+        if(userService.existsByEmail(userDTO.getEmail())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("email", "Email already exists"));
         }
 //        MultipartFile image = userDTO.getImage();
-        String fileName = null;
-        if (image != null && !image.isEmpty()) {
-            try {
-                fileName = storeFile.storeFile(image);
-                userDTO.setImageName(fileName);
-            }catch (Exception e){
-                return ResponseEntity.badRequest().body("Image upload failed");
-            }
-        }
         try {
+            // mã hóa mật khẩu
             String hashPassword = passwordEncoder.encode(userDTO.getPassword());
             userDTO.setPassword(hashPassword);
-            User user = userService.createUser(userDTO);
+            User user = userService.createUser(userDTO); // lưu user trước
+
+            // lưu ảnh sau khi có userId
+            if (image != null && !image.isEmpty()) {
+                try {
+                    userSellerService.saveAvatar((long) user.getUserId(), image);
+                    // Không cần set lại `image`, vì trong `saveAvatar()` bạn đã `user.setImage(...)` rồi và `userRepository.save(user)` rồi.
+                    userService.save(user); // cập nhật lại image sau khi upload
+                } catch (Exception e) {
+                    return ResponseEntity.badRequest().body("Image upload failed");
+                }
+            }
+
             return ResponseEntity.ok().body(Map.of("message", "User added successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -149,7 +155,7 @@ public class UserController {
     }
 
     @PutMapping("/admin/update_user/{id}")
-    public ResponseEntity<?> updateRole(@PathVariable("id") Long id,
+    public ResponseEntity<?> updateUser(@PathVariable("id") Long id,
                              @ModelAttribute UserDTO userDTO,
                              BindingResult bindingResult,
                              @RequestPart(value = "image", required = false) MultipartFile image){
@@ -164,17 +170,15 @@ public class UserController {
 
         String newFileName = null;
         if (image != null && !image.isEmpty()) {
-            String oldFileName = user.getImage();
-            if(oldFileName != null && !oldFileName.isBlank()){
-                deleteFile(oldFileName);
-            }
             try {
-                newFileName = storeFile.storeFile(image);
-                userDTO.setImageName(newFileName);
-            }catch (Exception e){
+                newFileName = userSellerService.saveAvatar(id, image);
+                userDTO.setImageName(newFileName.substring(newFileName.lastIndexOf("/") + 1));
+            } catch (Exception e) {
                 return ResponseEntity.badRequest().body("Image upload failed");
             }
-        }else userDTO.setImageName(user.getImage());
+        } else {
+            userDTO.setImageName(user.getImage());
+        }
 
         try {
             String presentedPassword = userDTO.getPassword();

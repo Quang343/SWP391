@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IUserService {
 
@@ -18,10 +19,12 @@ public interface IUserService {
     User findById(Long id);
     List<User> findAll();
     List<User> findByStatusIsNot(String status);
-    boolean existsByPhone(String phone);
+    boolean existsByEmail(String email);
 
     Page<User> findAll(Pageable pageable);
     User findByEmail(String email);
 
     List<User> findByRoleIsNot(Role role);
+
+    Optional<User> findUserById(Integer userId);
 }

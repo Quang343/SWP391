@@ -157,7 +157,7 @@ public class HomepageUserController {
 
     @PostMapping("/home")
     public String home(HttpSession session) {
-        UserResponse user = (UserResponse) session.getAttribute("account");
+        UserResponse user = (UserResponse) session.getAttribute("accountAdmin");
         if (user != null) {
             if(user.getRole().getRoleName().equalsIgnoreCase("ADMIN")){
                 return "redirect:/admin/orders";

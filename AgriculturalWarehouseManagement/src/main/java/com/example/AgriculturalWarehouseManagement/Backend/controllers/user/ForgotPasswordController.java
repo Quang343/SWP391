@@ -109,7 +109,9 @@ public class ForgotPasswordController {
     }
 
     @PostMapping("/changeForgotPassword")
-    public String changeForgotPasswordSubmit(@ModelAttribute("changePassword") String changePassword, Model model) {
+    public String changeForgotPasswordSubmit(@ModelAttribute("changePassword") String changePassword,
+                                             @ModelAttribute("retypePassword") String retypePassword,
+                                             Model model) {
         String email = (String) session.getAttribute("emailOtp");
         ResponseResult<User> messageChangePassword = userCustomerService.changePassword(email, changePassword);
 
@@ -117,6 +119,12 @@ public class ForgotPasswordController {
             model.addAttribute("errorChangePassword", "Không tìm thấy email");
             return "FrontEnd/Home/changeForgotPassword";
         } else {
+
+            if(!changePassword.equals(retypePassword)) {
+                model.addAttribute("errorChangePassword", "Mật khẩu không khớp!");
+                return "FrontEnd/Home/changeForgotPassword";
+            }
+
             if (!messageChangePassword.isActive()) {
                 model.addAttribute("errorChangePassword", messageChangePassword.getMessage());
                 return "FrontEnd/Home/changeForgotPassword";

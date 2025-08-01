@@ -1,60 +1,61 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-          content="Fastkart admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
-    <meta name="keywords"
-          content="admin template, Fastkart admin template, dashboard template, flat admin template, responsive admin template, web app">
-    <meta name="author" content="pixelstrap">
-<!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
-<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
-    <link rel="icon" th:href="@{/Backend/assets/images/favicon.png}" type="image/x-icon">
-    <link rel="shortcut icon" th:href="@{/Backend/assets/images/favicon.png}" type="image/x-icon">
-    <title>Fastkart - Coupon List</title>
+<!--<head>-->
+<!--    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">-->
+<!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <meta name="description"-->
+<!--          content="Fastkart admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">-->
+<!--    <meta name="keywords"-->
+<!--          content="admin template, Fastkart admin template, dashboard template, flat admin template, responsive admin template, web app">-->
+<!--    <meta name="author" content="pixelstrap">-->
+<!--&lt;!&ndash;    <meta name="_csrf" th:content="${_csrf.token}"/>&ndash;&gt;-->
+<!--&lt;!&ndash;    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>&ndash;&gt;-->
+<!--    <link rel="icon" th:href="@{/Backend/assets/images/favicon.png}" type="image/x-icon">-->
+<!--    <link rel="shortcut icon" th:href="@{/Backend/assets/images/favicon.png}" type="image/x-icon">-->
+<!--    <title>Fastkart - Coupon List</title>-->
 
-    <!-- Google font-->
-    <link
-            href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-            rel="stylesheet">
+<!--    &lt;!&ndash; Google font&ndash;&gt;-->
+<!--    <link-->
+<!--            href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"-->
+<!--            rel="stylesheet">-->
 
-    <!-- Fontawesome css -->
-    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/font-awesome.css}">
+<!--    &lt;!&ndash; Fontawesome css &ndash;&gt;-->
+<!--    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/font-awesome.css}">-->
 
-    <!-- Linear Icon css -->
-    <link rel="stylesheet" th:href="@{/BackEnd/assets/css/linearicon.css}">
+<!--    &lt;!&ndash; Linear Icon css &ndash;&gt;-->
+<!--    <link rel="stylesheet" th:href="@{/BackEnd/assets/css/linearicon.css}">-->
 
-    <!-- remixicon css -->
-    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/remixicon.css}">
+<!--    &lt;!&ndash; remixicon css &ndash;&gt;-->
+<!--    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/remixicon.css}">-->
 
-    <!-- Themify icon css-->
-    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/themify.css}">
+<!--    &lt;!&ndash; Themify icon css&ndash;&gt;-->
+<!--    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/themify.css}">-->
 
-    <!-- Data Table css -->
-<!--    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/datatables.css}">-->
+<!--    &lt;!&ndash; Data Table css &ndash;&gt;-->
+<!--&lt;!&ndash;    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/datatables.css}">&ndash;&gt;-->
 
-    <!-- Feather icon css -->
-    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/feather-icon.css}">
+<!--    &lt;!&ndash; Feather icon css &ndash;&gt;-->
+<!--    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/feather-icon.css}">-->
 
-    <!-- Plugins css -->
-    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/scrollbar.css}">
-    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/animate.css}">
+<!--    &lt;!&ndash; Plugins css &ndash;&gt;-->
+<!--    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/scrollbar.css}">-->
+<!--    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/animate.css}">-->
 
-    <!-- Bootstrap css -->
-    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/bootstrap.css}">
+<!--    &lt;!&ndash; Bootstrap css &ndash;&gt;-->
+<!--    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/vendors/bootstrap.css}">-->
 
-    <!-- App css -->
-    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/style.css}">
+<!--    &lt;!&ndash; App css &ndash;&gt;-->
+<!--    <link rel="stylesheet" type="text/css" th:href="@{/BackEnd/assets/css/style.css}">-->
 
-    <!-- DataTables CSS để hiển thị icon sort -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<!--    &lt;!&ndash; DataTables CSS để hiển thị icon sort &ndash;&gt;-->
+<!--    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">-->
 
-    <link href="https://cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css" rel="stylesheet" />
+<!--    <link href="https://cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css" rel="stylesheet" />-->
 
-</head>
+<!--</head>-->
+<head th:replace="BackEnd/fragments/Admin/head::head"></head>
 <style>
 
     li.page-item {
@@ -129,6 +130,12 @@
         font-size: 16px;
     }
 
+    .select-tag-custom{
+        width: 200px !important;
+        height: 40px;
+        margin-left: 20px;
+    }
+
 </style>
 
 <body>
@@ -173,6 +180,19 @@
                                 </div>
                                 <div>
                                     <div class="table-responsive">
+                                        <div>
+                                            <select id="filterByStatus" class="select-tag-custom form-select d-inline-block">
+                                                <option value="">Tất cả trạng thái</option>
+                                                <option value="Đang hoạt động">Đang hoạt động</option>
+                                                <option value="Ngừng hoạt động">Ngừng hoạt động</option>
+                                                <option value="Hết hạn">Hết hạn</option>
+                                            </select>
+                                            <select id="filterByDiscountType" class="select-tag-custom form-select d-inline-block">
+                                                <option value="">Tất cả loại giảm giá</option>
+                                                <option value="PERCENT">Phần trăm</option>
+                                                <option value="AMOUNT">Số tiền</option>
+                                            </select>
+                                        </div>
                                         <table class="table all-package coupon-list-table table-hover theme-table"
                                                id="table_id">
                                             <thead>
@@ -201,11 +221,11 @@
                                                         <i class="ri-lock-line me-1"></i> ĐÃ KHÓA
                                                     </span>
                                                     <span
-                                                        th:if="${!voucher.isLocked}"
-                                                        th:switch="${voucher.getStatus().name()}"
-                                                        th:class="${voucher.getStatus().name() == 'ACTIVE' ? 'success' : 'danger'}">
+                                                            th:if="${!voucher.isLocked}"
+                                                            th:switch="${voucher.getStatus().name()}"
+                                                            th:class="${voucher.getStatus().name() == 'ACTIVE' ? 'success' : 'danger'}">
                                                             <span th:case="'ACTIVE'">Đang hoạt động</span>
-                                                            <span th:case="'INACTIVE'">Ngừng hoạt động</span>
+                                                            <span th:case="'INACTIVE'">Ngưng hoạt động</span>
                                                             <span th:case="'EXPIRED'">Hết hạn</span>
                                                     </span>
                                                 </td>
@@ -496,6 +516,14 @@
                 search: "", // Xóa label cũ
                 searchPlaceholder: "Tìm kiếm..."
             }
+        });
+        $('#filterByStatus').appendTo('#table_id_filter').on('change', function () {
+            const value = $(this).val();
+            table.column(5).search(value).draw();
+        });
+        $('#filterByDiscountType').appendTo('#table_id_filter').on('change', function () {
+            const value = $(this).val();
+            table.column(2).search(value).draw();
         });
     });
 

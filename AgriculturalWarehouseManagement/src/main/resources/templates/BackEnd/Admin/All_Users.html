@@ -147,6 +147,12 @@
         border-color: red;
     }
 
+    .select-tag-custom{
+        width: 200px !important;
+        height: 40px;
+        margin-left: 20px;
+    }
+
 
 </style>
 <body>
@@ -186,10 +192,31 @@
                                 </div>
 
                                 <div class="table-responsive table-product">
+                                    <!-- Bộ lọc custom -->
+                                    <div>
+                                        <!-- Bộ lọc vai trò -->
+                                        <select id="filterRole" class="select-tag-custom form-select d-inline-block">
+                                            <option value="">Tất cả vai trò</option>
+                                            <option value="USER">USER</option>
+                                            <option value="SELLER">SELLER</option>
+                                            <option value="BLOGGER">BLOGGER</option>
+                                            <option value="WAREHOUSE">WAREHOUSE</option>
+                                        </select>
+
+                                        <!-- Bộ lọc trạng thái -->
+                                        <select id="filterStatus" class="select-tag-custom form-select d-inline-block">
+                                            <option value="">Tất cả trạng thái</option>
+                                            <option value="Đang hoạt động">Đang hoạt động</option>
+                                            <option value="Ngừng hoạt động">Ngừng hoạt động</option>
+                                        </select>
+
+                                        <!-- DataTables search box sẽ tự động nằm bên phải -->
+                                    </div>
+
                                     <table class="table all-package theme-table" id="table_id">
                                         <thead>
                                         <tr>
-                                            <th class="col-stt text-center">STT</th>
+                                            <th style="width: 50px !important;">STT</th>
                                             <th>Tên đăng nhập</th>
                                             <th>Ảnh đại diện</th>
                                             <th>Vai trò</th>
@@ -201,11 +228,11 @@
                                         <tbody>
                                         <tr th:each="user, iterStat : ${users}"
                                             th:id="'user-row-' + ${user.getUserId()}">
-                                            <td class="col-stt text-center" th:text="${iterStat.count}"></td>
+                                            <td style="width: 50px !important;" th:text="${iterStat.count}"></td>
                                             <td th:text="${user.getUserName()}"></td>
                                             <td>
                                                 <div class="user-img w-100">
-                                                    <img th:src="@{'/admin/' + ${user.getImage()}}"
+                                                    <img th:src="@{'/seller/' + ${user.getUserId()} + '/' + ${user.getImage()}}"
                                                          class="img-fluid rounded-circle avatar">
                                                 </div>
                                             </td>
@@ -596,25 +623,50 @@
 
     })
 </script>
-
 <script>
     $(document).ready(function () {
         if ($.fn.DataTable.isDataTable('#table_id')) {
-            $('#table_id').DataTable().destroy(); // huỷ trước nếu đã khởi tạo
+            $('#table_id').DataTable().destroy();
         }
+
         const table = $('#table_id').DataTable({
             paging: false,
             searching: true,
             ordering: true,
             info: false,
             language: {
-                search: "", // Xóa label cũ
+                search: "",
                 searchPlaceholder: "Tìm kiếm..."
             }
         });
+        // initComplete: function () {
+        //     // Lọc theo vai trò
+        //     $('#filterRole').on('change', function () {
+        //         const role = $(this).val();
+        //         table.column(3).search(role).draw();
+        //     });
+        //
+        //     // Lọc theo trạng thái
+        //     $('#filterStatus').on('change', function () {
+        //         const status = $(this).val();
+        //         table.column(4).search(status).draw();
+        //     });
+        // }
+        $('#filterRole').appendTo('#table_id_filter').on('change', function () {
+            const role = $(this).val();
+            table.column(3).search(role).draw();
+        });
+
+        // Lọc theo trạng thái
+        $('#filterStatus').appendTo('#table_id_filter').on('change', function () {
+            const status = $(this).val();
+            table.column(4).search(status).draw();
+        });
+        // });
     });
 
 </script>
+
 </body>
 
 </html>

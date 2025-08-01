@@ -1,15 +1,16 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.admin;
 
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductDTO;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.ProductImageDTO;
-import com.example.AgriculturalWarehouseManagement.Backend.models.Category;
-import com.example.AgriculturalWarehouseManagement.Backend.models.Gallery;
-import com.example.AgriculturalWarehouseManagement.Backend.models.Product;
-import com.example.AgriculturalWarehouseManagement.Backend.models.ProductStatus;
+import com.example.AgriculturalWarehouseManagement.Backend.models.*;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.CategoryService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.admin.NotificationService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.ProductImageService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.product.ProductService;
+import com.example.AgriculturalWarehouseManagement.Backend.services.admin.user.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -44,16 +45,19 @@ public class ProductController {
     @Value("${app.upload.product-dir}")
     private String uploadDir;
 
+    private final UserService userService;
     private final ProductService productService;
     private final CategoryService categoryService;
     private final ProductImageService productImageService;
     private final ModelMapper modelMapper;
+    private final NotificationService notificationService;
 
     @GetMapping("/admin/products")
     public String getAllProducts(Model model,
                                  @RequestParam("page") Optional<String> page,
                                  @RequestParam(required = false) Integer categoryId,
-                                 @RequestParam(required = false) String status
+                                 @RequestParam(required = false) String status,
+                                  HttpSession session
     ){
         int pageNumber = 1;
         try{
@@ -81,6 +85,7 @@ public class ProductController {
         model.addAttribute("status", status);
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("pageNumbers", generatePageNumbers(totalPages, pageNumber));
+
         return "BackEnd/Admin/All_Products";
     }
 

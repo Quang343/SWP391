@@ -260,6 +260,16 @@
 
         const code = document.querySelector('.tracking-input').value;
 
+        if (!code || code.trim() === '') {
+            customToast({
+                title: "Thất bại!",
+                message: "Vui lòng nhập mã đơn hàng!",
+                type: "error",
+                duration: 3000
+            });
+            return;
+        }
+
         fetch(`/AgriculturalWarehouseManagementApplication/admin/orders/order_tracking/${encodeURIComponent(code)}`, {
             method: "POST",
         })

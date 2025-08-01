@@ -127,6 +127,21 @@
         font-size: 16px;
     }
 
+    #filterByStatus{
+        height: 40px;
+        margin-left: 20px;
+        width: 225px !important;
+    }
+
+    .tippy-box[data-theme~='light'] {
+        background-color: #20c997; /* xanh lá */
+        color: white; /* chữ trắng cho dễ nhìn */
+    }
+
+    .tippy-box[data-theme~='light'] .tippy-arrow {
+        color: #20c997; /* mũi tên cũng xanh */
+    }
+
 </style>
 
 <body>
@@ -162,10 +177,23 @@
                                 </div>
                                 <div>
                                     <div class="table-responsive">
+                                        <div class="mb-3">
+                                            <select id="filterByStatus" class="form-select w-auto d-inline-block">
+                                                <option value="">Tất cả trạng thái</option>
+                                                <option value="PENDING">Đang chờ</option>
+                                                <option value="CONFIRMED">Đã xác nhận</option>
+                                                <option value="STOCKOUT">Đã xuất kho</option>
+<!--                                                <option value="DELIVER">Đang giao</option>-->
+                                                <option value="DELIVERED">Đã giao</option>
+                                                <option value="COMPLETED">Hoàn thành</option>
+                                                <option value="CANCELLED">Đã huỷ</option>
+                                            </select>
+                                        </div>
+
                                         <table class="table all-package order-table theme-table" id="table_id">
                                             <thead>
                                             <tr>
-                                                <th>STT</th>
+                                                <!--                                                <th>STT</th>-->
                                                 <th>Mã đơn hàng</th>
                                                 <th>Ngày đặt</th>
                                                 <th>Số điện thoại</th>
@@ -178,10 +206,11 @@
 
                                             <tbody>
                                             <tr data-bs-toggle="offcanvas"
-                                                th:each="order, init : ${orders}" th:attr="data-row-id=${order.getId()}">
-                                                <td th:text="${init.count}"></td>
+                                                th:each="order : ${orders}" th:attr="data-row-id=${order.getId()}">
+                                                <!--                                                <td th:text="${init.count}"></td>-->
                                                 <td th:text="${order.getOrderCode()}"></td>
-                                                <td th:text="${order.getOrderDate()}"></td>
+                                                <!--                                                <td th:text="${order.getOrderDate()}"></td>-->
+                                                <td th:text="${#temporals.format(order.orderDate, 'HH:mm')} + ' ngày ' + ${#temporals.format(order.orderDate, 'dd/MM')}"></td>
                                                 <td th:text="${order.getPhone()}"></td>
                                                 <td th:text="${order.getAddress()}"></td>
                                                 <td th:text="${order.getTotalAmount()}"></td>
@@ -194,30 +223,40 @@
                                                 <td>
                                                     <ul>
                                                         <!-- Xem chi tiết -->
+                                                        <!--                                                        <li class="custom-tooltip-wrapper">-->
+                                                        <!--                                                            <a th:href="@{/admin/orders/{orderId}/details(orderId=${order.getId()})}"-->
+                                                        <!--                                                               data-bs-toggle="tooltip"-->
+                                                        <!--                                                               data-bs-placement="top">-->
+                                                        <!--                                                                <i class="ri-eye-line"></i>-->
+                                                        <!--                                                                <span class="custom-tooltip-text">Xem</span>-->
+                                                        <!--                                                            </a>-->
+                                                        <!--                                                        </li>-->
                                                         <li>
-                                                            <a th:href="@{/admin/orders/{orderId}/details(orderId=${order.getId()})}">
+                                                            <a th:href="@{/admin/orders/{orderId}/details(orderId=${order.id})}"
+                                                               class="tippy-btn" data-tippy-content="Xem chi tiết">
                                                                 <i class="ri-eye-line"></i>
                                                             </a>
                                                         </li>
 
+
                                                         <!-- Chỉnh sửa (chỉ khi trạng thái là PENDING hoặc CONFIRMED) -->
                                                         <li>
-                                                            <a href="javascript:void(0)"
+                                                            <a href="javascript:void(0)" class="tippy-btn" data-tippy-content="Chỉnh sửa"
                                                                th:if="${order.status == 'PENDING' or order.status == 'CONFIRMED' or order.status == 'STOCKOUT' or order.status == 'DELIVERED'}"
                                                                th:attr="data-order-id=${order.getId()}, data-order-status=${order.getStatus()}"
                                                                onclick="openEditModal(this)">
-                                                                <i class="ri-pencil-line text-warning"></i>
+                                                       <i class="ri-pencil-line text-warning"></i>
                                                             </a>
                                                             <a th:if="${order.status == 'CANCELLED' or order.status == 'COMPLETED'}"
                                                                href="javascript:void(0)"
-                                                               style="pointer-events: none; opacity: 0.4;">
+                                                                        style="pointer-events: none; opacity: 0.4;">
                                                                 <i class="ri-pencil-line text-warning"></i>
                                                             </a>
                                                         </li>
 
                                                         <!-- Xoá đơn hàng (chỉ khi trạng thái là PENDING hoặc CONFIRMED) -->
                                                         <li>
-                                                            <a href="javascript:void(0)"
+                                                            <a href="javascript:void(0)" class="tippy-btn" data-tippy-content="Xoá"
                                                                th:if="${order.status == 'PENDING' or order.status == 'CONFIRMED'}"
                                                                th:attr="data-order-id=${order.getId()}"
                                                                onclick="confirmDelete(this)"
@@ -537,6 +576,17 @@
 <!-- all checkbox select js -->
 <script th:src="@{/Backend/assets/js/checkbox-all-check.js}"></script>
 
+<!-- JS thư viện -->
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+
+<script>
+    tippy('.tippy-btn', {
+        animation: 'fade', // hoặc scale, shift-away, etc.
+        delay: [100, 50],
+        theme: 'light',
+    });
+</script>
 <script>
     function getStatusBadgeClass(status) {
         switch (status) {
@@ -544,6 +594,8 @@
                 return "pending";
             case "CONFIRMED":
                 return "primary";
+            case "STOCKOUT":
+                return "stockout";
             case "DELIVERED":
                 return "success";
             case "COMPLETED":
@@ -571,7 +623,7 @@
         const nextStatus = {
             PENDING: "CONFIRMED",
             CONFIRMED: "STOCKOUT",
-            STOCKOUT : "DELIVERED",
+            DELIVER : "DELIVERED",
             DELIVERED : "COMPLETED"
         }[currentStatus] || null;
 
@@ -598,7 +650,7 @@
 
             dropdownButton.textContent = "Chọn trạng thái";
             dropdownButton.className = "btn btn-primary dropdown-toggle";
-            selectedStatusInput.value = nextStatus;
+            // selectedStatusInput.value = nextStatus;
         }
 
         orderIdInput.value = orderId;
@@ -710,11 +762,32 @@
                 searchPlaceholder: "Tìm kiếm...",
                 emptyTable: "Không có dữ liệu để hiển thị",
                 zeroRecords: "Không tìm thấy kết quả phù hợp"
+            },
+            // info: "Hiển thị _START_ đến _END_ trong _TOTAL_ bản ghi",
+            // paginate: {
+            //     first: "Đầu",
+            //     last: "Cuối",
+            //     next: "Sau",
+            //     previous: "Trước"
+            // }
+        });
+        $('#filterByStatus').appendTo('#table_id_filter').on('change', function () {
+            const value = $(this).val();
+            let regex = '';
+
+            if (value) {
+                // Khớp chính xác trạng thái (giữa toàn bộ chuỗi)
+                regex = '^' + value + '$';
             }
+
+            table.column(5).search(regex, true, false).draw(); // regex: true, smart: false
         });
     });
 
 </script>
+
+
+
 
 <!-- Bootstrap Bundle with Popper (rất quan trọng cho dropdown) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
