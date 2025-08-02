@@ -146,7 +146,7 @@
 
                                     <div class="p-3 d-flex justify-content-between align-items-center">
                                         <h4 class="mb-0">Báo cáo Chi tiêu <span id="total-spending"></span></h4>
-                                        <button class="btn btn-sm btn-outline-success" onclick="exportToExcel()">
+                                        <button class="btn btn-sm btn-outline-success" onclick="exportSpendingToExcel()">
                                             <i class="fa fa-file-excel-o"></i> Xuất báo cáo Excel
                                         </button>
                                     </div>
@@ -253,7 +253,7 @@
                                     <h4>Báo Cáo Nhập Xuất Kho</h4>
                                 </div>
                                 <div class="card-header-action">
-                                    <button class="btn btn-sm btn-outline-success" onclick="exportToExcel()">
+                                    <button class="btn btn-sm btn-outline-success" onclick="exportStockToExcel()()">
                                         <i class="fa fa-file-excel-o"></i> Xuất báo cáo Excel
                                     </button>
                                 </div>
@@ -1492,33 +1492,27 @@
         id: 'shadowLine',
         beforeDraw(chart) {
             const ctx = chart.ctx;
-
             chart.data.datasets.forEach((dataset, index) => {
                 const meta = chart.getDatasetMeta(index);
                 if (!meta || meta.type !== 'line') return;
 
                 const originalStroke = ctx.stroke;
                 ctx.save();
-
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';   // bóng đen mờ
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
                 ctx.shadowBlur = 6;
                 ctx.shadowOffsetX = 0;
                 ctx.shadowOffsetY = 6;
-
                 ctx.stroke = function () {
                     originalStroke.apply(this, arguments);
                 };
-
                 meta.dataset.draw(ctx);
-
                 ctx.stroke = originalStroke;
                 ctx.restore();
             });
         }
     };
 
-
-    async function fetchAndRenderChart() {
+    async function fetchAndRenderSpendingChart() {
         try {
             const response = await fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/monthly-spending', {
                 cache: 'no-store'
@@ -1527,16 +1521,43 @@
                 throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
             }
             const data = await response.json();
-
             if (!Array.isArray(data)) {
                 throw new Error('Định dạng dữ liệu không đúng: Yêu cầu một mảng');
             }
 
-            const recentMonths = data.slice(0, 6);
-            const labels = recentMonths.map(item => item.month.replace('2025-', '')).map(month => month.replace('-', '/2025'));
+            // Lấy tháng hiện tại (8/2025)
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth() + 1; // getMonth() trả về 0-11, nên +1
+
+            // Tạo danh sách 6 tháng gần nhất (từ tháng hiện tại trở về trước)
+            const monthsToShow = [];
+            for (let i = 0; i < 6; i++) {
+                let month = currentMonth - i;
+                let year = currentYear;
+                if (month <= 0) {
+                    month += 12;
+                    year -= 1;
+                }
+                monthsToShow.push(`${year}-${month.toString().padStart(2, '0')}`);
+            }
+            monthsToShow.reverse(); // Sắp xếp tăng dần: 3/2025, 4/2025, ..., 8/2025
+
+            // Lọc dữ liệu từ API chỉ lấy các tháng trong monthsToShow
+            const filteredData = data
+                .filter(item => monthsToShow.includes(item.month))
+                .sort((a, b) => a.month.localeCompare(b.month)); // Sắp xếp theo tháng
+
+            // Nếu không đủ 6 tháng, bổ sung tháng trống
+            const recentMonths = monthsToShow.map(month => {
+                const found = filteredData.find(item => item.month === month);
+                return found || { month, totalSpent: 0 };
+            });
+
+            const labels = recentMonths.map(item => item.month.replace(`${currentYear}-`, '').replace('-', '/2025'));
             const totals = recentMonths.map(item => Number(item.totalSpent));
 
-            const totalSpending = data.reduce((sum, item) => sum + Number(item.totalSpent), 0);
+            const totalSpending = totals.reduce((sum, val) => sum + val, 0);
             document.getElementById('total-spending').textContent = `(Tổng: ${totalSpending.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })})`;
 
             const ctx = document.getElementById('chart-canvas').getContext('2d');
@@ -1570,17 +1591,13 @@
                         backgroundColor: (ctx) => {
                             const chart = ctx.chart;
                             const { ctx: canvasCtx, chartArea, scales } = chart;
-
                             if (!chartArea) return;
-
                             const y5mil = scales.y.getPixelForValue(5000000);
                             const yMax = scales.y.max;
                             const yMaxPixel = scales.y.getPixelForValue(yMax);
-
                             const gradient = canvasCtx.createLinearGradient(0, y5mil, 0, yMaxPixel);
                             gradient.addColorStop(0, 'rgba(13, 164, 135, 0)');
                             gradient.addColorStop(1, 'rgba(13, 164, 135, 1)');
-
                             return gradient;
                         }
                     }]
@@ -1590,7 +1607,7 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            suggestedMax: Math.ceil(Math.max(...totals) / 5000000) * 5000000 + 5000000,
+                            suggestedMax: Math.ceil(Math.max(...totals, 0) / 5000000) * 5000000 + 5000000,
                             title: { display: true, text: 'Chi tiêu (VND)' },
                             ticks: {
                                 callback: value => value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }),
@@ -1608,25 +1625,21 @@
                         title: { display: true, text: 'Chi tiêu trong 6 tháng gần nhất' }
                     },
                     elements: {
-                        line: {
-                            borderJoinStyle: 'round'
-                        }
+                        line: { borderJoinStyle: 'round' }
                     }
                 },
                 plugins: [shadowLinePlugin]
             });
-
         } catch (error) {
-            console.error('Lỗi hiển thị biểu đồ:', error);
+            console.error('Lỗi hiển thị biểu đồ chi tiêu:', error);
             const errorDiv = document.getElementById('error-message');
             errorDiv.textContent = `Không tải được biểu đồ: ${error.message}`;
             errorDiv.style.display = 'block';
         }
     }
 
-    document.addEventListener('DOMContentLoaded', fetchAndRenderChart);
-
-    function exportToExcel() {
+    // Hàm xuất Excel cho chi tiêu
+    function exportSpendingToExcel() {
         fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/monthly-spending')
             .then(res => res.json())
             .then(data => {
@@ -1634,16 +1647,129 @@
                     'Tháng': item.month.replace('-', '/'),
                     'Tổng chi tiêu (VND)': Number(item.totalSpent)
                 }));
-
                 const worksheet = XLSX.utils.json_to_sheet(formatted);
                 const workbook = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(workbook, worksheet, 'Chi tiêu');
                 XLSX.writeFile(workbook, 'BaoCaoChiTieu.xlsx');
             })
             .catch(err => {
-                alert('Lỗi khi xuất Excel: ' + err.message);
+                alert('Lỗi khi xuất Excel chi tiêu: ' + err.message);
             });
     }
+
+    // Hàm xuất Excel cho báo cáo nhập xuất kho
+    function exportStockToExcel() {
+        fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/stock-report')
+            .then(res => res.json())
+            .then(data => {
+                const formatted = data.map(item => ({
+                    'Tháng': item.month.replace('-', '/'),
+                    'Tổng nhập xuất kho': Number(item.totalStock)
+                }));
+                const worksheet = XLSX.utils.json_to_sheet(formatted);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Nhập Xuất Kho');
+                XLSX.writeFile(workbook, 'BaoCaoNhapXuatKho.xlsx');
+            })
+            .catch(err => {
+                alert('Lỗi khi xuất Excel nhập xuất kho: ' + err.message);
+            });
+    }
+
+    // Hàm vẽ biểu đồ nhập xuất kho
+    async function fetchAndRenderStockChart() {
+        try {
+            const response = await fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/stock-report', {
+                cache: 'no-store'
+            });
+            if (!response.ok) {
+                throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
+            }
+            const data = await response.json();
+            if (!Array.isArray(data)) {
+                throw new Error('Định dạng dữ liệu không đúng: Yêu cầu một mảng');
+            }
+
+            // Lấy tháng hiện tại
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth() + 1;
+
+            // Tạo danh sách 6 tháng gần nhất
+            const monthsToShow = [];
+            for (let i = 0; i < 6; i++) {
+                let month = currentMonth - i;
+                let year = currentYear;
+                if (month <= 0) {
+                    month += 12;
+                    year -= 1;
+                }
+                monthsToShow.push(`${year}-${month.toString().padStart(2, '0')}`);
+            }
+            monthsToShow.reverse();
+
+            // Lọc và sắp xếp dữ liệu
+            const filteredData = data
+                .filter(item => monthsToShow.includes(item.month))
+                .sort((a, b) => a.month.localeCompare(b.month));
+
+            const recentMonths = monthsToShow.map(month => {
+                const found = filteredData.find(item => item.month === month);
+                return found || { month, totalStock: 0 };
+            });
+
+            const labels = recentMonths.map(item => item.month.replace(`${currentYear}-`, '').replace('-', '/2025'));
+            const stockData = recentMonths.map(item => Number(item.totalStock));
+
+            const ctx = document.getElementById('stock-chart-canvas').getContext('2d');
+            if (!ctx) {
+                throw new Error('Không tìm thấy phần tử canvas cho báo cáo nhập xuất kho');
+            }
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nhập Xuất Kho',
+                        data: stockData,
+                        backgroundColor: '#0DA487',
+                        borderColor: '#0DA487',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Số lượng' },
+                            ticks: { stepSize: 10 },
+                            grid: { display: false }
+                        },
+                        x: {
+                            title: { display: true, text: 'Tháng' },
+                            grid: { display: true, color: '#e9ecef' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true, position: 'top' },
+                        title: { display: true, text: 'Nhập Xuất Kho trong 6 tháng gần nhất' }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Lỗi hiển thị biểu đồ nhập xuất kho:', error);
+            const errorDiv = document.getElementById('stock-error-message');
+            errorDiv.textContent = `Không tải được biểu đồ: ${error.message}`;
+            errorDiv.style.display = 'block';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchAndRenderSpendingChart();
+        fetchAndRenderStockChart();
+    });
 </script>
 
 <!-- Transactions -->
@@ -2248,17 +2374,21 @@
                 return;
             }
 
-            // Clear the new container
+            // Clear the container
             chartContainer.innerHTML = '';
             console.log('Clearing new chart container');
 
             // Fetch data for stock in and stock out
-            const stockInResponse = await fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/total-quantity-by-month');
+            const stockInResponse = await fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/total-quantity-by-month', {
+                cache: 'no-store'
+            });
             if (!stockInResponse.ok) throw new Error('Failed to fetch stockIn data');
             const stockInData = await stockInResponse.json();
             console.log('Fetched stockInData:', stockInData);
 
-            const stockOutResponse = await fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockouts/total-quantity-by-month');
+            const stockOutResponse = await fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockouts/total-quantity-by-month', {
+                cache: 'no-store'
+            });
             if (!stockOutResponse.ok) throw new Error('Failed to fetch stockOut data');
             const stockOutData = await stockOutResponse.json();
             console.log('Fetched stockOutData:', stockOutData);
@@ -2269,20 +2399,24 @@
                 return;
             }
 
-            // Get current date (July 31, 2025, 12:16 AM +07)
-            const now = new Date('2025-07-31T00:16:00+07:00');
-            const currentMonth = now.getMonth(); // 6 (July is 0-based)
-            const currentYear = now.getFullYear(); // 2025
+            // Get current date (e.g., August 3, 2025)
+            const now = new Date();
+            const currentMonth = now.getMonth() + 1; // getMonth() returns 0-11, so +1
+            const currentYear = now.getFullYear();
 
             // Generate the last 6 months dynamically
             const months = [];
             for (let i = 5; i >= 0; i--) {
-                const month = (currentMonth - i + 12) % 12;
-                const year = currentYear - Math.floor((currentMonth - i) / 12);
-                const formattedMonth = `${year}-${String(month + 1).padStart(2, '0')}`;
+                let month = currentMonth - i;
+                let year = currentYear;
+                if (month <= 0) {
+                    month += 12;
+                    year -= 1;
+                }
+                const formattedMonth = `${year}-${month.toString().padStart(2, '0')}`;
                 months.push(formattedMonth);
             }
-            console.log('Generated months:', months);
+            console.log('Generated months:', months); // e.g., ["2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08"]
 
             // Create maps for quick lookup
             const stockInMap = new Map(stockInData.map(d => [d.month, d.totalQuantity || 0]));
@@ -2299,46 +2433,44 @@
             const yAxisMax = Math.ceil(maxValue / 200) * 200;
             console.log('yAxisMax:', yAxisMax);
 
+            // Format labels for display (e.g., "3/2025", "4/2025", ...)
+            const formattedLabels = months.map(m => {
+                const [year, month] = m.split('-');
+                return `${parseInt(month)}/${year}`;
+            });
+
             // ApexCharts options for line chart
             const options = {
-                series: [{
-                    name: 'Nhập Kho',
-                    data: stockInSeries
-                }, {
-                    name: 'Xuất Kho',
-                    data: stockOutSeries
-                }],
+                series: [
+                    { name: 'Nhập Kho', data: stockInSeries },
+                    { name: 'Xuất Kho', data: stockOutSeries }
+                ],
                 chart: {
                     type: 'line',
                     height: 400,
                     toolbar: { show: true }
                 },
                 title: {
-                    text: 'Doanh thu',
+                    text: 'Nhập Xuất Kho',
                     align: 'left',
                     style: { fontSize: '18px', fontWeight: 'bold' }
                 },
                 subtitle: {
-                    text: 'Nhập Xuất Kho cho 6 tháng gần đây',
+                    text: 'Nhập Xuất Kho trong 6 tháng gần nhất',
                     align: 'left',
                     style: { fontSize: '12px', color: '#666' }
                 },
                 xaxis: {
-                    categories: months,
+                    categories: formattedLabels,
                     title: { text: 'Tháng', style: { fontSize: '14px', fontWeight: 'bold' } },
                     labels: {
                         show: true,
-                        style: { fontSize: '12px', colors: '#333' },
-                        formatter: function (value) {
-                            const [year, month] = value.split('-');
-                            return `${parseInt(month)}-${year}`;
-                        }
+                        style: { fontSize: '12px', colors: '#333' }
                     },
                     tickAmount: 6
                 },
                 yaxis: {
-                    title: { text: 'Số lượng', align: 'left', style: { fontSize: '14px', fontWeight: 'bold' } },
-                    opposite: false,
+                    title: { text: 'Số lượng', style: { fontSize: '14px', fontWeight: 'bold' } },
                     min: 0,
                     max: yAxisMax,
                     tickAmount: Math.ceil(yAxisMax / 200),
@@ -2374,57 +2506,64 @@
                 }
             };
 
-            // Render the new chart
+            // Render the chart
             const chart = new ApexCharts(chartContainer, options);
             chart.render();
             console.log('Rendering new dynamic chart');
         } catch (error) {
             console.error('Error fetching data or rendering chart:', error);
+            const errorDiv = document.getElementById('stock-error-message');
+            if (errorDiv) {
+                errorDiv.textContent = `Không tải được biểu đồ: ${error.message}`;
+                errorDiv.style.display = 'block';
+            }
         }
     }
 
     // Initialize the chart on page load
-    window.addEventListener('DOMContentLoaded', initChart);
+    window.addEventListener('DOMContentLoaded', () => {
+        initChart();
+        // Gọi hàm từ mã Chart.js nếu cần
+        fetchAndRenderSpendingChart(); // Đảm bảo hàm này tồn tại từ mã Chart.js trước đó
+    });
 
     // Function to export chart data to Excel
-    function exportToExcel() {
-        fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/total-quantity-by-month')
-            .then(res => res.json())
-            .then(stockInData => {
-                fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockouts/total-quantity-by-month')
-                    .then(res => res.json())
-                    .then(stockOutData => {
-                        const stockInMap = new Map(stockInData.map(d => [d.month, d.totalQuantity || 0]));
-                        const stockOutMap = new Map(stockOutData.map(d => [d.month, d.totalQuantity || 0]));
+    function exportStockToExcel() {
+        Promise.all([
+            fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockins/total-quantity-by-month').then(res => res.json()),
+            fetch('http://localhost:8080/AgriculturalWarehouseManagementApplication/api/stockouts/total-quantity-by-month').then(res => res.json())
+        ])
+            .then(([stockInData, stockOutData]) => {
+                const stockInMap = new Map(stockInData.map(d => [d.month, d.totalQuantity || 0]));
+                const stockOutMap = new Map(stockOutData.map(d => [d.month, d.totalQuantity || 0]));
 
-                        const now = new Date('2025-07-31T00:16:00+07:00');
-                        const currentMonth = now.getMonth();
-                        const currentYear = now.getFullYear();
-                        const months = [];
-                        for (let i = 5; i >= 0; i--) {
-                            const month = (currentMonth - i + 12) % 12;
-                            const year = currentYear - Math.floor((currentMonth - i) / 12);
-                            const formattedMonth = `${parseInt(month + 1)}-${year}`;
-                            months.push(formattedMonth);
-                        }
+                const now = new Date();
+                const currentMonth = now.getMonth() + 1;
+                const currentYear = now.getFullYear();
+                const months = [];
+                for (let i = 5; i >= 0; i--) {
+                    let month = currentMonth - i;
+                    let year = currentYear;
+                    if (month <= 0) {
+                        month += 12;
+                        year -= 1;
+                    }
+                    const formattedMonth = `${month}/${year}`;
+                    months.push({ display: formattedMonth, full: `${year}-${month.toString().padStart(2, '0')}` });
+                }
 
-                        const exportData = months.map(month => {
-                            const fullMonth = `2025-${month.split('-')[0].padStart(2, '0')}`;
-                            return {
-                                'Tháng': month,
-                                'Nhập Kho': stockInMap.get(fullMonth) || 0,
-                                'Xuất Kho': stockOutMap.get(fullMonth) || 0
-                            };
-                        });
+                const exportData = months.map(({ display, full }) => ({
+                    'Tháng': display,
+                    'Nhập Kho': stockInMap.get(full) || 0,
+                    'Xuất Kho': stockOutMap.get(full) || 0
+                }));
 
-                        const worksheet = XLSX.utils.json_to_sheet(exportData);
-                        const workbook = XLSX.utils.book_new();
-                        XLSX.utils.book_append_sheet(workbook, worksheet, 'Nhập Xuất Kho');
-                        XLSX.writeFile(workbook, 'BaoCaoNhapXuatKho.xlsx');
-                    })
-                    .catch(err => alert('Lỗi khi lấy dữ liệu xuất kho: ' + err.message));
+                const worksheet = XLSX.utils.json_to_sheet(exportData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Nhập Xuất Kho');
+                XLSX.writeFile(workbook, 'BaoCaoNhapXuatKho.xlsx');
             })
-            .catch(err => alert('Lỗi khi lấy dữ liệu nhập kho: ' + err.message));
+            .catch(err => alert('Lỗi khi xuất Excel nhập xuất kho: ' + err.message));
     }
 </script>
 
