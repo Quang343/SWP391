@@ -153,7 +153,7 @@ public class ProductDetailUserController {
                 ResponseResult<ProductDetailUserResponse> result = productDetailUserService.checkQuantityProduct(quantity, productDetailId);
                 if (result.isActive()) {
 
-                    List<Map<String, Object>> resultList = productBatchService.getTotalQuantityByProductDetailId((long) productDetailId);
+                    List<Map<String, Object>> resultList = productBatchService.getTotalQuantityByProductDetailIdNew((long) productDetailId);
 
                     // TotalQuantity order
                     int totalQuantity = resultList.stream()
@@ -161,16 +161,19 @@ public class ProductDetailUserController {
                             .mapToInt(map -> ((Number) map.get("totalQuantity")).intValue())
                             .sum();
 
-                    if (result.getData().getRemainQuantity() - totalQuantity - quantity <= 0) {
+                    // Total quantity cart
+                    List<CartQuantityResponse> cartQuantityResponses = cartUserService.getCartQuantities(productDetailId);
+                    int totalQuantityCart = cartQuantityResponses.stream()
+                            .mapToInt(CartQuantityResponse::getQuantity)
+                            .sum();
+
+                    productDetailUserResponse.setRemainQuantity(result.getData().getRemainQuantity() - totalQuantity - totalQuantityCart);
+                    model.addAttribute("productDetailUserResponse", productDetailUserResponse);
+                    if (result.getData().getRemainQuantity() - totalQuantity - quantity < 0) {
                         model.addAttribute("quantityError", "Sản phẩm đã hết vì người dùng đã đặt hàng, vui lòng chọn số lượng nhỏ hơn");
                     } else {
-                        List<CartQuantityResponse> cartQuantityResponses = cartUserService.getCartQuantities(productDetailId);
 
-                        int totalQuantityCart = cartQuantityResponses.stream()
-                                .mapToInt(CartQuantityResponse::getQuantity)
-                                .sum();
-
-                        if (result.getData().getRemainQuantity() - totalQuantity - totalQuantityCart - quantity <= 0) {
+                        if (result.getData().getRemainQuantity() - totalQuantity - totalQuantityCart - quantity < 0) {
                             model.addAttribute("quantityError", "Sản phẩm đã hết vì ngươi dùng khác đã thêm giỏ hàng, vui lòng chọn số lượng nhỏ hơn");
                         } else {
 

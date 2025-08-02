@@ -70,17 +70,25 @@ public class CartUserController {
                 List<CartUserResponse> cartUserReponses = cartUserService.getCartByUserIds(accountId);
                 double totalCart = 0;
                 for (CartUserResponse cartUserReponse : cartUserReponses) {
-                     totalCart += cartUserReponse.getTotalPrice();
+                    totalCart += cartUserReponse.getTotalPrice();
                 }
                 System.out.println("cartUserReponses: " + cartUserReponses.toString());
                 model.addAttribute("totalCart", totalCart);
                 model.addAttribute("cartUserReponses", cartUserReponses);
+
+                // Message total quantities each product detail invalid
+                Object quantityErrorSubmitSession = session.getAttribute("quantityErrorSubmit");
+                if (quantityErrorSubmitSession != null) {
+                    System.out.println("hello"+quantityErrorSubmitSession.toString());
+                    model.addAttribute("quantityErrorSubmit", session.getAttribute("quantityErrorSubmit"));
+                }
+                session.removeAttribute("quantityErrorSubmit");
                 return "FrontEnd/Home/cart";
             }
 
             // Add to cart in product detail
-            ResponseResult<CartUserResponse> result =  cartUserService.insertCart(accountId,productDetailIdCart,quantityCart);
-            if (result.isActive()){
+            ResponseResult<CartUserResponse> result = cartUserService.insertCart(accountId, productDetailIdCart, quantityCart);
+            if (result.isActive()) {
                 List<CartUserResponse> cartUserReponses = cartUserService.getCartByUserIds(accountId);
                 double totalCart = 0;
                 for (CartUserResponse cartUserReponse : cartUserReponses) {

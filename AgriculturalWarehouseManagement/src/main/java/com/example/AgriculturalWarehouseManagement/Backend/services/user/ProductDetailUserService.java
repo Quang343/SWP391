@@ -242,17 +242,16 @@ public class ProductDetailUserService {
 
     public ResponseResult<ProductDetailUserResponse> checkQuantityProduct(int quantity, int productDetailId) {
         ProductDetailUserResponse productDetailUserResponse = getProductDetailUsers(productDetailId);
-        System.out.println("hello"+productDetailUserResponse.toString());
         if (productDetailUserResponse.getStatus() != null && productDetailUserResponse.getStatus().equals("Hết hàng")) {
-            return new ResponseResult<>("ERROR", "Sản phẩm này hiện không còn hàng. Vui lòng chọn sản phẩm khác.", false);
+            return new ResponseResult<>("ERROR", "Sản phẩm này hiện không còn hàng. Vui lòng chọn sản phẩm khác.", false,productDetailUserResponse);
         }
 
         if (productDetailUserResponse.getExpiryStatus() != null && productDetailUserResponse.getExpiryStatus().equals("Hết hạn")) {
-            return new ResponseResult<>("ERROR", "Sản phẩm này hiện hết hạn. Vui lòng chọn sản phẩm khác", false);
+            return new ResponseResult<>("ERROR", "Sản phẩm này hiện hết hạn. Vui lòng chọn sản phẩm khác", false, productDetailUserResponse);
         }
 
         if (quantity > productDetailUserResponse.getRemainQuantity()) {
-            return new ResponseResult<>("ERROR", "Số lượng bạn nhập không được lớn hơn số lượng của Shop", false);
+            return new ResponseResult<>("ERROR", "Số lượng bạn nhập không được lớn hơn số lượng của Shop", false,productDetailUserResponse);
         }
 
         return new ResponseResult<>("SUCCESS", "Thêm vào giỏ hàng thành công", true,productDetailUserResponse);

@@ -69,6 +69,25 @@
             content: none !important;
         }
 
+        .shake-alert {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 1px solid #f5c6cb;
+            animation: shake 0.5s infinite;
+            margin-bottom: 10px;
+            width: 500px;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
     </style>
 
     <div class="header-top">

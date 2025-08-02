@@ -125,6 +125,27 @@ public class CartUserService {
             return new ResponseResult<>("ERROR", "Số lượng sản phẩm trong shop không đủ", false);
         }
 
+        ResponseResult<ProductDetailUserResponse> result = productDetailUserService.checkQuantityProduct(quantity, productDetailId);
+        if (result.isActive()) {
+            List<Map<String, Object>> resultList = productBatchService.getTotalQuantityByProductDetailIdNew((long) productDetailId);
+
+            // TotalQuantity order
+            final int finalProductDetailId = productDetailId;
+            int totalQuantity = resultList.stream()
+                    .filter(map -> ((Number) map.get("productDetailId")).longValue() == finalProductDetailId)
+                    .mapToInt(map -> ((Number) map.get("totalQuantity")).intValue())
+                    .sum();
+
+            if (result.getData().getRemainQuantity() - totalQuantity - quantity < 0) {
+                return new ResponseResult<>("ERROR",  "Sản phẩm đã hết vì ngươi dùng khác đã thêm giỏ hàng, vui lòng chọn số lượng nhỏ hơn", true);
+            }
+
+        } else {
+            return new ResponseResult<>("ERROR", result.getMessage(), false);
+        }
+
+
+
         ProductDetail productDetail = productDetailRepository.findById(productDetailId).get();
         Cart cart = cartRepository.findById((long) cartId).get();
         double total = productDetail.getPrice() * quantity;
@@ -137,6 +158,8 @@ public class CartUserService {
         CartUserResponse cartUserReponse = new CartUserResponse();
         cartUserReponse.setTotalPrice(total);
         return new ResponseResult<>("SUCCESS", "Update số lượng sản phẩm thành công", true, cartUserReponse);
+
+
     }
 
     // Get data of table cart
@@ -238,7 +261,7 @@ public class CartUserService {
             } else {
                 ResponseResult<ProductDetailUserResponse> result = productDetailUserService.checkQuantityProduct(1, productDetailId);
                 if (result.isActive()) {
-                    List<Map<String, Object>> resultList = productBatchService.getTotalQuantityByProductDetailId((long) productDetailId);
+                    List<Map<String, Object>> resultList = productBatchService.getTotalQuantityByProductDetailIdNew((long) productDetailId);
 
                     // TotalQuantity order
                     final int finalProductDetailId = productDetailId;
@@ -247,7 +270,7 @@ public class CartUserService {
                             .mapToInt(map -> ((Number) map.get("totalQuantity")).intValue())
                             .sum();
 
-                    if (result.getData().getRemainQuantity() - totalQuantity - 1 <= 0) {
+                    if (result.getData().getRemainQuantity() - totalQuantity - 1 < 0) {
                         return new ResponseResult<>("ERROR", "Sản phẩm đã hết vì người dùng đã đặt hàng, vui lòng chọn số lượng nhỏ hơn", false);
                     } else {
                         List<CartQuantityResponse> cartQuantityResponses = getCartQuantities(productDetailId);
@@ -256,7 +279,7 @@ public class CartUserService {
                                 .mapToInt(CartQuantityResponse::getQuantity)
                                 .sum();
 
-                        if (result.getData().getRemainQuantity() - totalQuantity - totalQuantityCart - 1 <= 0) {
+                        if (result.getData().getRemainQuantity() - totalQuantity - totalQuantityCart - 1 < 0) {
                             return new ResponseResult<>("ERROR",  "Sản phẩm đã hết vì ngươi dùng khác đã thêm giỏ hàng, vui lòng chọn số lượng nhỏ hơn", true);
                         } else {
 
@@ -335,7 +358,7 @@ public class CartUserService {
 
             ResponseResult<ProductDetailUserResponse> result = productDetailUserService.checkQuantityProduct(1, productDetailId);
             if (result.isActive()) {
-                List<Map<String, Object>> resultList = productBatchService.getTotalQuantityByProductDetailId((long) productDetailId);
+                List<Map<String, Object>> resultList = productBatchService.getTotalQuantityByProductDetailIdNew((long) productDetailId);
 
                 // TotalQuantity order
                 int totalQuantity = resultList.stream()
@@ -343,7 +366,7 @@ public class CartUserService {
                         .mapToInt(map -> ((Number) map.get("totalQuantity")).intValue())
                         .sum();
 
-                if (result.getData().getRemainQuantity() - totalQuantity - 1 <= 0) {
+                if (result.getData().getRemainQuantity() - totalQuantity - 1 < 0) {
                     return new ResponseResult<>("ERROR", "Sản phẩm đã hết vì người dùng đã đặt hàng, vui lòng chọn số lượng nhỏ hơn", false);
                 } else {
                     List<CartQuantityResponse> cartQuantityResponses = getCartQuantities(productDetailId);
@@ -352,7 +375,7 @@ public class CartUserService {
                             .mapToInt(CartQuantityResponse::getQuantity)
                             .sum();
 
-                    if (result.getData().getRemainQuantity() - totalQuantity - totalQuantityCart - 1 <= 0) {
+                    if (result.getData().getRemainQuantity() - totalQuantity - totalQuantityCart - 1 < 0) {
                         return new ResponseResult<>("ERROR",  "Sản phẩm đã hết vì ngươi dùng khác đã thêm giỏ hàng, vui lòng chọn số lượng nhỏ hơn", true);
                     } else {
 

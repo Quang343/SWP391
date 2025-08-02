@@ -186,8 +186,10 @@ public class ProductBatchService {
                 .collect(Collectors.toList());
     }
 
-    public List<Map<String, Object>> getTotalQuantityByProductDetailId(Long productDetailId) {
-        return orderDetailRepository.findByProductDetailIdAndOrderStatusNot(productDetailId, "CANCELLED")
+    public List<Map<String, Object>> getTotalQuantityByProductDetailIdNew(Long productDetailId) {
+        List<String> excludedStatuses = Arrays.asList("CANCELLED", "STOCKOUT","DELIVERED","COMPLETED");
+
+        return orderDetailRepository.findByProductDetailIdAndOrderStatusNotIn(productDetailId, excludedStatuses)
                 .stream()
                 .collect(Collectors.groupingBy(
                         OrderDetailDTO::getProductDetailId,
@@ -201,4 +203,5 @@ public class ProductBatchService {
                 })
                 .collect(Collectors.toList());
     }
+
 }
