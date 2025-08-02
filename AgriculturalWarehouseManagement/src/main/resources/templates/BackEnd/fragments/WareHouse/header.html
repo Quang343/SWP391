@@ -47,14 +47,13 @@
                 <li class="profile-nav onhover-dropdown pe-0 me-0">
                     <div class="media profile-media">
                         <img th:if="${session.accountWarehouse.imageUrl != null and session.accountWarehouse.getImageUrl !='' and !#strings.startsWith(session.accountWarehouse.getImageUrl, 'https://lh3.googleusercontent.com/')}"
-                             th:src="${'seller/'+session.accountWarehouse.getUserID +'/'+session.accountWarehouse.imageUrl}"
+                             th:src="${'/AgriculturalWarehouseManagementApplication/seller/'+session.accountWarehouse.getUserID +'/'+session.accountWarehouse.imageUrl}"
                              class="user-profile rounded-circle" alt="more image"
                              accept=".jpg,.jpeg,.png,.gif,image/*">
 
                         <img th:if="${session.accountWarehouse.imageUrl != null and #strings.startsWith(session.accountWarehouse.imageUrl, 'https://lh3.googleusercontent.com/')}"
                              th:src="${session.accountWarehouse.imageUrl}"
-                             class="user-profile rounded-circle" alt="more image"
-                             accept=".jpg,.jpeg,.png,.gif,image/*">
+                             class="user-profile rounded-circle" alt="more image">
 
 
                         <img th:if="${session.accountWarehouse.imageUrl != null and session.accountWarehouse.getImageUrl == ''}"

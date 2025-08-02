@@ -510,7 +510,7 @@
                 console.log('[DEBUG] Order API response for orderId', orderId, ':', JSON.stringify(data, null, 2));
                 const orderCode = data && data.orderCode ? data.orderCode : 'N/A';
                 orderCache.set(orderId, orderCode); // Cache the result
-                return orderCode;
+                return  orderCode;
             }).catch(error => {
                 console.error('[ERROR] Failed to fetch order for orderId', orderId, ':', {
                     url,
