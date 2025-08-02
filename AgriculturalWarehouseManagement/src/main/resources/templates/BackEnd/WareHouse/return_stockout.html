@@ -37,6 +37,7 @@
                     <thead>
                     <tr>
                       <th class="text-center">STT</th>
+                      <th class="text-center">Mã Xuất kho</th>
                       <th class="text-center">Đơn hàng</th>
                       <th class="text-center">Trạng thái</th>
                       <th class="text-center">Thông tin</th>
@@ -45,7 +46,7 @@
                     </thead>
                     <tbody id="orderTableBody">
                     <tr>
-                      <td colspan="5" class="text-center">Đang tải dữ liệu...</td>
+                      <td colspan="6" class="text-center">Đang tải dữ liệu...</td>
                     </tr>
                     </tbody>
                   </table>
@@ -134,19 +135,22 @@
     padding: 10px;
   }
   .balanced-table th:first-child, .balanced-table td:first-child {
-    width: 5%;
+    width: 5%; /* STT */
   }
   .balanced-table th:nth-child(2), .balanced-table td:nth-child(2) {
-    width: 40%;
+    width: 20%; /* Mã Xuất kho */
   }
   .balanced-table th:nth-child(3), .balanced-table td:nth-child(3) {
-    width: 20%;
+    width: 30%; /* Đơn hàng */
   }
   .balanced-table th:nth-child(4), .balanced-table td:nth-child(4) {
-    width: 15%;
+    width: 15%; /* Trạng thái */
   }
   .balanced-table th:nth-child(5), .balanced-table td:nth-child(5) {
-    width: 20%;
+    width: 15%; /* Thông tin */
+  }
+  .balanced-table th:nth-child(6), .balanced-table td:nth-child(6) {
+    width: 15%; /* Hành động */
   }
   .balanced-table td button {
     display: block;
@@ -157,7 +161,6 @@
     color: #ff0000; /* Red for RETURNED */
     font-weight: bold;
   }
-
   .status-exported {
     color: #008000; /* Green for EXPORTED */
     font-weight: bold;
@@ -187,6 +190,45 @@
       return;
     }
     console.log('[DEBUG] All DOM elements found');
+
+    // Format date to DDMM (day and month only)
+    function formatDateToDDMM(isoDate) {
+      if (!isoDate) return '0000';
+      try {
+        const date = new Date(isoDate);
+        if (isNaN(date.getTime())) return '0000';
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        return `${day}${month}`;
+      } catch (error) {
+        return '0000';
+      }
+    }
+
+    // Convert number to base62
+    function toBase62(num) {
+      const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+      if (num === 0) return '0';
+      let result = '';
+      while (num > 0) {
+        result = chars[num % 62] + result;
+        num = Math.floor(num / 62);
+      }
+      return result || '0';
+    }
+
+    // Format stockOutId to EXP-[ID + 2000 in base62]-[DDMM]
+    function formatStockOutCode(stockOutId, stockOutDate) {
+      try {
+        const offsetID = parseInt(stockOutId) + 2000;
+        const base62ID = toBase62(offsetID);
+        const datePart = formatDateToDDMM(stockOutDate);
+        return `EXP-${base62ID}-${datePart}`;
+      } catch (error) {
+        console.error('[ERROR] Error formatting stockOutCode:', stockOutId, error);
+        return stockOutId || 'N/A';
+      }
+    }
 
     // Function to format status with color
     function formatStatus(status) {
@@ -220,6 +262,8 @@
                 const stockOutId = stockOut.id || 'N/A';
                 const orderId = stockOut.orderID || 'N/A';
                 const status = formatStatus(stockOut.status);
+                const stockOutDate = stockOut.stockOutDate || null;
+                const stockOutCode = formatStockOutCode(stockOutId, stockOutDate);
 
                 // Fetch orderCode
                 let orderCode = `ORD${orderId}`;
@@ -240,7 +284,8 @@
                   const stt = index + 1; // Tính STT từ index
                   const row = `
                 <tr>
-                  <td class="text-center">${stt}</td> <!-- Hiển thị STT thay vì stockOutId -->
+                  <td class="text-center">${stt}</td>
+                  <td class="text-center">${stockOutCode}</td>
                   <td class="text-center">${orderCode}</td>
                   <td class="text-center">${status}</td>
                   <td class="text-center">
@@ -270,13 +315,13 @@
               console.log(`[DEBUG] Added ${filteredRows.length} rows to table`);
 
               if (filteredRows.length === 0) {
-                orderTableBody.append('<tr><td colspan="5" class="text-center">Không có đơn hàng chờ nhập lại kho.</td></tr>');
+                orderTableBody.append('<tr><td colspan="6" class="text-center">Không có đơn hàng chờ nhập lại kho.</td></tr>');
               }
               bindTableActions();
             });
           } else {
             console.warn('[WARN] No stockouts found or invalid data:', data);
-            orderTableBody.append('<tr><td colspan="5" class="text-center">Không có đơn hàng chờ nhập lại kho.</td></tr>');
+            orderTableBody.append('<tr><td colspan="6" class="text-center">Không có đơn hàng chờ nhập lại kho.</td></tr>');
             bindTableActions();
           }
         },
@@ -288,7 +333,7 @@
             response: xhr.responseText ? JSON.stringify(JSON.parse(xhr.responseText), null, 2) : 'No response body',
             error: error
           });
-          orderTableBody.append('<tr><td colspan="5" class="text-center">Lỗi tải dữ liệu.</td></tr>');
+          orderTableBody.append('<tr><td colspan="6" class="text-center">Lỗi tải dữ liệu.</td></tr>');
         }
       });
     }

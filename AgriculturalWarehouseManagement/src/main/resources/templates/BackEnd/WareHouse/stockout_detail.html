@@ -32,7 +32,7 @@
                             <div class="card-body">
                                 <div class="title-header title-header-block package-card">
                                     <div>
-                                        <h5>StockOut #<span id="stockOutId"></span></h5>
+                                        <h5>Mã Xuất Kho #<span id="stockOutId"></span></h5>
                                     </div>
                                     <div class="card-order-section">
                                         <ul>
@@ -65,10 +65,10 @@
                                                 <div class="row g-4">
                                                     <h4>Thông tin tổng quan</h4>
                                                     <ul class="order-details">
-                                                        <li>StockOut ID: <span id="stockOutIdSummary"></span></li>
+                                                        <li>Mã Xuất Kho: <span id="stockOutIdSummary"></span></li>
                                                         <li>Ngày Xuất kho: <span id="stockOutDateSummary"></span></li>
-                                                        <li>Warehouse ID: <span id="warehouseIdSummary"></span></li>
-                                                        <li>Order ID: <span id="orderIdSummary"></span></li>
+                                                        <li>Tên Kho : <span id="warehouseIdSummary"></span></li>
+                                                        <li>Mã Đơn Hàng: <span id="orderIdSummary"></span></li>
                                                         <li>Số lượng mục: <span id="itemCountSummary"></span></li>
                                                     </ul>
 
@@ -151,15 +151,49 @@
             });
         }
 
-        // Format batchID: BAT + [First letter of supplier] + "-" + [ID + 1000 in Base36] + "-" + [Manufacture date as MMdd]
-        function formatBatchID(batchID, manufactureDate) {
+        // Format date to DDMM (day and month only)
+        function formatDateToDDMM(isoDate) {
+            if (!isoDate) return '0000';
+            const date = new Date(isoDate);
+            if (isNaN(date.getTime())) return '0000';
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            return `${day}${month}`;
+        }
+
+        // Convert number to base62
+        function toBase62(num) {
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+            if (num === 0) return '0';
+            let result = '';
+            while (num > 0) {
+                result = chars[num % 62] + result;
+                num = Math.floor(num / 62);
+            }
+            return result || '0';
+        }
+
+        // Format stockOutId to EXP-[ID + 2000 in base62]-[DDMM]
+        function formatStockOutCode(stockOutId, stockOutDate) {
             try {
+                const offsetID = parseInt(stockOutId) + 2000;
+                const base62ID = toBase62(offsetID);
+                const datePart = formatDateToDDMM(stockOutDate);
+                return `EXP-${base62ID}-${datePart}`;
+            } catch (error) {
+                console.error('[ERROR] Error formatting stockOutCode:', stockOutId, error);
+                return stockOutId || 'N/A';
+            }
+        }
 
-
+        // Format batchID: BAT + [First letter of supplier] + "-" + [ID + 1000 in Base36] + "-" + [Manufacture date as MMdd]
+        function formatBatchID(batchID, manufactureDate, supplierName) {
+            try {
+                // Use first letter of supplierName or 'U' if unknown
+                const supplierPrefix = supplierName && supplierName !== 'Unknown' ? supplierName.charAt(0).toUpperCase() : 'U';
                 // Convert ID + 1000 to Base36
                 const offsetID = parseInt(batchID) + 1000;
                 const base36ID = offsetID.toString(36).toUpperCase();
-
                 // Format manufacture date to MMdd
                 let datePart = '0000';
                 if (manufactureDate && manufactureDate !== 'N/A') {
@@ -170,8 +204,7 @@
                         datePart = `${month}${day}`;
                     }
                 }
-
-                return `BAT-${base36ID}-${datePart}`;
+                return `BAT${supplierPrefix}-${base36ID}-${datePart}`;
             } catch (error) {
                 console.error('[ERROR] Error formatting batchID:', batchID, error);
                 return batchID || 'N/A';
@@ -190,10 +223,6 @@
             return;
         }
         console.log('[DEBUG] StockOut ID from URL:', stockOutId);
-
-        // Display StockOut ID
-        $('#stockOutId').text(stockOutId);
-        $('#stockOutIdSummary').text(stockOutId);
 
         // Load StockOut and StockOutDetail data
         $.when(
@@ -215,16 +244,38 @@
 
             // Find warehouse name
             const warehouse = warehouses.find(w => w.id === stockOut.warehouseID || w.warehouseId === stockOut.warehouseID) || { warehouseName: 'N/A' };
+            const warehouseName = warehouse.warehouseName || warehouse.name || 'N/A';
+            console.log(`[DEBUG] Warehouse name for warehouseID ${stockOut.warehouseID}: ${warehouseName}`);
+
+            // Fetch orderCode from orderID
+            let orderCode = stockOut.orderID || 'N/A';
+            if (stockOut.orderID) {
+                $.ajax({
+                    url: `/AgriculturalWarehouseManagementApplication/api/orders/${stockOut.orderID}`,
+                    method: 'GET',
+                    async: false,
+                    success: function(order) {
+                        orderCode = order.orderCode || `ORD${stockOut.orderID}`;
+                        console.log(`[DEBUG] OrderCode for orderID ${stockOut.orderID}: ${orderCode}`);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(`[ERROR] Failed to fetch order for orderID ${stockOut.orderID}:`, { status, error });
+                    }
+                });
+            }
 
             // Populate StockOut summary
             const stockOutDate = formatDate(stockOut.stockOutDate);
+            const stockOutCode = formatStockOutCode(stockOutId, stockOut.stockOutDate);
+            $('#stockOutId').text(stockOutCode);
+            $('#stockOutIdSummary').text(stockOutCode);
             $('#stockOutDate').text(stockOutDate);
             $('#stockOutDateSummary').text(stockOutDate);
-            $('#warehouseIdSummary').text(stockOut.warehouseID || 'N/A');
-            $('#orderIdSummary').text(stockOut.orderID || 'N/A');
+            $('#warehouseIdSummary').text(warehouseName);
+            $('#orderIdSummary').text(orderCode);
             $('#itemCount').text(`${stockOutDetails.length} mục`);
             $('#itemCountSummary').text(stockOutDetails.length);
-            $('#warehouseName').text(warehouse.warehouseName || 'N/A');
+            $('#warehouseName').text(warehouseName);
 
             // Populate StockOutDetail table
             const tbody = $('#stockOutDetailTable');
@@ -306,26 +357,26 @@
                     }
 
                     const row = `
-                        <tr class="table-order">
-                            <td>
-                                <a href="javascript:void(0)">
-                                    <img src="http://localhost:8080/AgriculturalWarehouseManagementApplication/seller/${imageUrl}" class="img-fluid blur-up lazyload" alt="">
-                                </a>
-                            </td>
-                            <td>
-                                <p>Tên sản phẩm</p>
-                                <h5>${displayName}</h5>
-                            </td>
-                            <td>
-                                <p>Số lượng</p>
-                                <h5>${detail.quantity || 'N/A'}</h5>
-                            </td>
-                            <td>
-                                <p>Mã Lô</p>
-                                <h5>${formattedBatchID}</h5>
-                            </td>
-                        </tr>
-                    `;
+                    <tr class="table-order">
+                        <td>
+                            <a href="javascript:void(0)">
+                                <img src="http://localhost:8080/AgriculturalWarehouseManagementApplication/seller/${imageUrl}" class="img-fluid blur-up lazyload" alt="">
+                            </a>
+                        </td>
+                        <td>
+                            <p>Tên sản phẩm</p>
+                            <h5>${displayName}</h5>
+                        </td>
+                        <td>
+                            <p>Số lượng</p>
+                            <h5>${detail.quantity || 'N/A'}</h5>
+                        </td>
+                        <td>
+                            <p>Mã Lô</p>
+                            <h5>${formattedBatchID}</h5>
+                        </td>
+                    </tr>
+                `;
                     tbody.append(row);
                 });
             } else {
@@ -347,6 +398,21 @@
     /* Optional: Style for returned status */
     .returned {
         background-color: #f8d7da !important;
+    }
+    .order-details {
+        list-style: none; /* Remove default bullets */
+        padding: 0;
+        margin: 0;
+    }
+
+    .order-details li {
+        margin-top: 5px;
+        margin-bottom: 8px;
+        /* Small space between list items */
+    }
+
+    .order-details li span {
+        font-weight: bold; /* Make values stand out */
     }
 </style>
 

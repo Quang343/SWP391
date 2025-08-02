@@ -146,4 +146,9 @@ public class ProductBatchController {
         List<Map<String, Object>> batches = productBatchService.getTop4ExpiringSoonBatches();
         return ResponseEntity.ok(batches);
     }
+
+    @GetMapping("/total-quantity/{productDetailId}")
+    public ResponseEntity<List<Map<String, Object>>> getTotalQuantityByProductDetailId(@PathVariable Long productDetailId) {
+        return ResponseEntity.ok(productBatchService.getTotalQuantityByProductDetailId(productDetailId));
+    }
 }

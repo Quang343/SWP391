@@ -216,8 +216,11 @@
                                         <h5>Danh sách Xuất kho</h5>
                                     </div>
 
-                                    <!-- Dòng 2: Add new StockOut và Search -->
+                                    <!-- Dòng 2: Export Excel, Add new StockOut và Search -->
                                     <div class="second-line" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                                        <button id="exportExcelBtn" class="align-items-center btn btn-theme d-flex">
+                                            <i data-feather="download"></i> Xuất Excel
+                                        </button>
                                         <a th:href="@{/warehouse/addstockout}" class="align-items-center btn btn-theme d-flex">
                                             <i data-feather="plus"></i> Thêm Xuất kho
                                         </a>
@@ -296,6 +299,8 @@
 <script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
 <script th:src="@{/Backend/assets/js/script.js}"></script>
 <script th:src="@{/Backend/assets/js/checkbox-all-check.js}"></script>
+<!-- SheetJS for Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <!-- Custom JavaScript -->
 <script>
@@ -306,11 +311,13 @@
         const stockOutTableBody = $('#stockOutTableBody');
         const searchInputStockOut = $('#searchInputStockOut');
         const tableContainer = $('#table-container');
+        const exportExcelBtn = $('#exportExcelBtn');
         let allStockOuts = [];
         let orderCache = new Map(); // Cache for orderCode by orderId
+        let allWarehouses = [];
         let currentPage = 0;
         let totalPages = 1;
-        const pageSize = 2;
+        const pageSize = 5;
         let searchTerm = '';
         let sortColumn = 'stockOutId';
         let sortDirection = 'asc';
@@ -318,7 +325,7 @@
 
         // Validate DOM elements
         console.log('[DEBUG] Validating DOM elements');
-        if (!stockOutTableBody.length || !tableContainer.length || !searchInputStockOut.length) {
+        if (!stockOutTableBody.length || !tableContainer.length || !searchInputStockOut.length || !exportExcelBtn.length) {
             console.error('[ERROR] Missing critical DOM elements');
             $.notify({ message: 'Không tìm thấy các phần tử giao diện cần thiết. Vui lòng kiểm tra HTML.' }, { type: 'danger', delay: 5000 });
             return;
@@ -371,6 +378,62 @@
                     return `<span class="status-exported">Đã xuất kho</span>`;
                 default:
                     return status;
+            }
+        }
+
+        // Format date to DDMM (day and month only)
+        function formatDateToDDMM(isoDate) {
+            if (!isoDate) return '0000';
+            try {
+                const date = new Date(isoDate);
+                if (isNaN(date.getTime())) return '0000';
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                return `${day}${month}`;
+            } catch (error) {
+                return '0000';
+            }
+        }
+
+        // Convert number to base62
+        function toBase62(num) {
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+            if (num === 0) return '0';
+            let result = '';
+            while (num > 0) {
+                result = chars[num % 62] + result;
+                num = Math.floor(num / 62);
+            }
+            return result || '0';
+        }
+
+        // Format stockOutId to EXP-[ID + 2000 in base62]-[DDMM]
+        function formatStockOutCode(stockOutId, stockOutDate) {
+            try {
+                const offsetID = parseInt(stockOutId) + 2000;
+                const base62ID = toBase62(offsetID);
+                const datePart = formatDateToDDMM(stockOutDate);
+                return `EXP-${base62ID}-${datePart}`;
+            } catch (error) {
+                console.error('[ERROR] Error formatting stockOutCode:', stockOutId, error);
+                return stockOutId || 'N/A';
+            }
+        }
+
+        // Load Warehouses into memory
+        async function loadWarehouses() {
+            try {
+                const data = await $.ajax({
+                    url: '/AgriculturalWarehouseManagementApplication/api/warehouses',
+                    method: 'GET',
+                    dataType: 'json'
+                });
+                allWarehouses = data || [];
+                console.log('[DEBUG] Loaded warehouses:', allWarehouses.length);
+            } catch (error) {
+                console.error('[ERROR] Lỗi khi tải kho:', error);
+                allWarehouses = [];
+                $.notify({ message: 'Lỗi khi tải danh sách kho.' }, { type: 'danger', delay: 3000 });
             }
         }
 
@@ -468,27 +531,32 @@
 
         // Sort StockOuts
         async function sortStockOuts(stockOuts) {
-            // Create a copy of stockOuts with resolved orderCodes
-            const stockOutsWithOrderCodes = await Promise.all(stockOuts.map(async stockOut => {
+            // Create a copy of stockOuts with resolved orderCodes and warehouseNames
+            const stockOutsWithResolves = await Promise.all(stockOuts.map(async stockOut => {
                 const orderCode = await getOrderCode(stockOut.orderID);
-                return { ...stockOut, resolvedOrderCode: orderCode };
+                const warehouse = allWarehouses.find(w => w.id === stockOut.warehouseID || w.warehouseId === stockOut.warehouseID) || { warehouseName: 'N/A' };
+                const warehouseName = warehouse.warehouseName || warehouse.name || 'N/A';
+                const stockOutCode = formatStockOutCode(stockOut.id, stockOut.stockOutDate);
+                return { ...stockOut, resolvedOrderCode: orderCode, resolvedWarehouseName: warehouseName, resolvedStockOutCode: stockOutCode };
             }));
 
-            return stockOutsWithOrderCodes.sort((a, b) => {
+            return stockOutsWithResolves.sort((a, b) => {
                 let valueA, valueB;
-                const warehouseNameA = a.warehouseID ? (a.warehouseID.warehouseName || 'N/A') : 'N/A';
-                const warehouseNameB = b.warehouseID ? (b.warehouseID.warehouseName || 'N/A') : 'N/A';
+                const warehouseNameA = a.resolvedWarehouseName.toLowerCase();
+                const warehouseNameB = b.resolvedWarehouseName.toLowerCase();
                 const orderCodeA = a.resolvedOrderCode || 'N/A';
                 const orderCodeB = b.resolvedOrderCode || 'N/A';
+                const stockOutCodeA = a.resolvedStockOutCode || 'N/A';
+                const stockOutCodeB = b.resolvedStockOutCode || 'N/A';
 
                 switch (sortColumn) {
                     case 'stockOutId':
-                        valueA = a.id || 'N/A';
-                        valueB = b.id || 'N/A';
+                        valueA = stockOutCodeA.toLowerCase();
+                        valueB = stockOutCodeB.toLowerCase();
                         break;
                     case 'warehouseName':
-                        valueA = warehouseNameA.toLowerCase();
-                        valueB = warehouseNameB.toLowerCase();
+                        valueA = warehouseNameA;
+                        valueB = warehouseNameB;
                         break;
                     case 'orderCode':
                         valueA = orderCodeA.toLowerCase();
@@ -527,19 +595,23 @@
             tableBody.empty();
             if (stockOuts.length > 0) {
                 noDataRow.hide();
-                // Fetch order codes for all stockouts in the current page
-                const stockOutsWithOrderCodes = await Promise.all(stockOuts.map(async stockOut => {
+                // Fetch order codes and warehouse names for all stockouts in the current page
+                const stockOutsWithResolves = await Promise.all(stockOuts.map(async stockOut => {
                     const orderCode = await getOrderCode(stockOut.orderID);
-                    return { ...stockOut, resolvedOrderCode: orderCode };
+                    const warehouse = allWarehouses.find(w => w.id === stockOut.warehouseID || w.warehouseId === stockOut.warehouseID) || { warehouseName: 'N/A' };
+                    const warehouseName = warehouse.warehouseName || warehouse.name || 'N/A';
+                    const stockOutCode = formatStockOutCode(stockOut.id, stockOut.stockOutDate);
+                    return { ...stockOut, resolvedOrderCode: orderCode, resolvedWarehouseName: warehouseName, resolvedStockOutCode: stockOutCode };
                 }));
 
-                stockOutsWithOrderCodes.forEach(stockOut => {
-                    const warehouseName = stockOut.warehouseID ? (stockOut.warehouseID.warehouseName || 'N/A') : 'N/A';
+                stockOutsWithResolves.forEach(stockOut => {
+                    const warehouseName = stockOut.resolvedWarehouseName;
                     const orderCode = stockOut.resolvedOrderCode || 'N/A';
+                    const stockOutCode = stockOut.resolvedStockOutCode;
                     const row = `
                     <tr>
-                        <td>${stockOut.id || 'N/A'}</td>
-                        <td>Kho Trung Tâm</td>
+                        <td>${stockOutCode}</td>
+                        <td>${warehouseName}</td>
                         <td>${orderCode}</td>
                         <td>${formatDateToVietnamese(stockOut.stockOutDate)}</td>
                         <td>${stockOut.note || 'N/A'}</td>
@@ -549,10 +621,82 @@
                 `;
                     tableBody.append(row);
                 });
-                console.log('[DEBUG] Table rendered with', stockOutsWithOrderCodes.length, 'rows');
+                console.log('[DEBUG] Table rendered with', stockOutsWithResolves.length, 'rows');
             } else {
                 noDataRow.show();
                 console.log('[DEBUG] No data to display, showing no-data-row');
+            }
+        }
+
+        // Export table to Excel
+        async function exportToExcel() {
+            try {
+                // Fetch all stockouts (not paginated)
+                const filteredStockOuts = await Promise.all(allStockOuts.map(async stockOut => {
+                    const orderCode = await getOrderCode(stockOut.orderID);
+                    const warehouse = allWarehouses.find(w => w.id === stockOut.warehouseID || w.warehouseId === stockOut.warehouseID) || { warehouseName: 'N/A' };
+                    const warehouseName = warehouse.warehouseName || warehouse.name || 'N/A';
+                    const stockOutCode = formatStockOutCode(stockOut.id, stockOut.stockOutDate);
+                    return { ...stockOut, resolvedOrderCode: orderCode, resolvedWarehouseName: warehouseName, resolvedStockOutCode: stockOutCode };
+                }));
+
+                // Apply search filter
+                const filteredResults = filteredStockOuts.filter(stockOut => {
+                    if (!searchTerm) return true;
+                    const stockOutCode = stockOut.resolvedStockOutCode || 'N/A';
+                    const orderCode = stockOut.resolvedOrderCode || 'N/A';
+                    const stockOutDate = stockOut.stockOutDate ? formatDateToVietnamese(stockOut.stockOutDate) : 'N/A';
+                    const note = stockOut.note || 'N/A';
+                    const searchLower = searchTerm.toLowerCase();
+                    return (
+                        stockOutCode.toLowerCase().includes(searchLower) ||
+                        orderCode.toLowerCase().includes(searchLower) ||
+                        stockOutDate.toLowerCase().includes(searchLower) ||
+                        note.toLowerCase().includes(searchLower)
+                    );
+                });
+
+                // Sort filtered results
+                const sortedStockOuts = await sortStockOuts(filteredResults);
+
+                // Prepare data for Excel
+                const data = sortedStockOuts.map(stockOut => ({
+                    'Mã Xuất kho': stockOut.resolvedStockOutCode,
+                    'Kho hàng': stockOut.resolvedWarehouseName,
+                    'Đơn hàng': stockOut.resolvedOrderCode || 'N/A',
+                    'Ngày Xuất kho': formatDateToVietnamese(stockOut.stockOutDate),
+                    'Ghi chú': stockOut.note || 'N/A',
+                    'Trạng thái': stockOut.status ? (stockOut.status.toUpperCase() === 'RETURNED' ? 'Đã trả hàng' : stockOut.status.toUpperCase() === 'EXPORTED' ? 'Đã xuất kho' : stockOut.status) : 'N/A'
+                }));
+
+                // Create workbook and worksheet
+                const ws = XLSX.utils.json_to_sheet(data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'StockOuts');
+
+                // Auto-size columns (approximation)
+                const colWidths = [
+                    { wch: 20 }, // Mã Xuất kho
+                    { wch: 30 }, // Kho hàng
+                    { wch: 20 }, // Đơn hàng
+                    { wch: 25 }, // Ngày Xuất kho
+                    { wch: 40 }, // Ghi chú
+                    { wch: 15 }  // Trạng thái
+                ];
+                ws['!cols'] = colWidths;
+
+                // Generate filename with timestamp
+                const now = new Date();
+                const timestamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+                const filename = `DanhSachXuatKho_${timestamp}.xlsx`;
+
+                // Write file and trigger download
+                XLSX.writeFile(wb, filename);
+                console.log('[DEBUG] Excel file generated:', filename);
+                $.notify({ message: 'Xuất file Excel thành công!' }, { type: 'success', delay: 3000 });
+            } catch (error) {
+                console.error('[ERROR] Failed to export Excel:', error);
+                $.notify({ message: 'Lỗi khi xuất file Excel. Vui lòng thử lại.' }, { type: 'danger', delay: 5000 });
             }
         }
 
@@ -574,6 +718,8 @@
             console.log('[DEBUG] Fetching stockouts for page:', currentPage, 'search:', searchTerm, 'sortColumn:', sortColumn, 'sortDirection:', sortDirection, 'isPaginationClick:', isPaginationClick);
 
             tableContainer.addClass('loading');
+
+            await loadWarehouses();
 
             const url = `/AgriculturalWarehouseManagementApplication/api/stockouts/paginatedStockOut?page=0&size=1000`;
             try {
@@ -604,16 +750,19 @@
                 // Filter stockouts based on search term
                 const filteredStockOuts = await Promise.all(allStockOuts.map(async stockOut => {
                     const orderCode = await getOrderCode(stockOut.orderID);
-                    return { ...stockOut, resolvedOrderCode: orderCode };
+                    const stockOutCode = formatStockOutCode(stockOut.id, stockOut.stockOutDate);
+                    return { ...stockOut, resolvedOrderCode: orderCode, resolvedStockOutCode: stockOutCode };
                 }));
 
                 const filteredResults = filteredStockOuts.filter(stockOut => {
                     if (!searchTerm) return true;
+                    const stockOutCode = stockOut.resolvedStockOutCode || 'N/A';
                     const orderCode = stockOut.resolvedOrderCode || 'N/A';
                     const stockOutDate = stockOut.stockOutDate ? formatDateToVietnamese(stockOut.stockOutDate) : 'N/A';
                     const note = stockOut.note || 'N/A';
                     const searchLower = searchTerm.toLowerCase();
                     return (
+                        stockOutCode.toLowerCase().includes(searchLower) ||
                         orderCode.toLowerCase().includes(searchLower) ||
                         stockOutDate.toLowerCase().includes(searchLower) ||
                         note.toLowerCase().includes(searchLower)
@@ -659,7 +808,7 @@
             }
         }
 
-        // Pagination rendering (unchanged)
+        // Pagination rendering
         function renderPagination(totalPagesInput, currentPageInput) {
             const paginationControls = $('#pagination-controls');
             paginationControls.empty();
@@ -765,6 +914,12 @@
 
         searchInputStockOut.on('input', function () {
             debouncedSearch($(this).val().trim());
+        });
+
+        // Export Excel button click handler
+        exportExcelBtn.on('click', function () {
+            console.log('[DEBUG] Export Excel button clicked');
+            exportToExcel();
         });
 
         // Initial fetch with URL parameters

@@ -19,6 +19,4 @@ public class StockOutDTO {
     private LocalDateTime stockOutDate;
     private String note;
     private StockOutStatus status;
-
-
 }
