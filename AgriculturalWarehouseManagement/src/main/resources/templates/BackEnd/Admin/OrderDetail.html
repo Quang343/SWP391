@@ -74,7 +74,7 @@
                                                 </thead>
                                                 <tbody>
                                                 <tr class="row-order-detail" th:each="item : ${orderDetailUserResponses}">
-                                                    <td><img th:src="${item.imageUrl}" class="img-fluid img-thumbnail" style="max-width: 100px;" /></td>
+                                                    <td><img th:src="@{'/seller/' + ${item.imageUrl}}" class="img-fluid img-thumbnail" style="width: 100px;height: 100px;" /></td>
                                                     <td th:text="${item.productName}"></td>
                                                     <td th:text="${item.quantity}"></td>
                                                     <td th:text="${#numbers.formatInteger(item.productPrice, 0, 'POINT')} + '₫'"></td>
@@ -111,8 +111,8 @@
                                         </div>
                                         <div class="p-3 border rounded shadow-sm" style="margin-top: 15px; padding-bottom: 2rem !important;">
                                             <h5 class="title-css"><i class="bi bi-credit-card"></i> Phương Thức Thanh Toán</h5>
-                                            <p style="margin-top: 10px">Pay on Delivery (Cash/Card).</p>
-                                            <p>Cash on delivery (COD) available.</p>
+                                            <p style="margin-top: 10px">Payment Method: QR Code</p>
+                                            <p>Paid via QR code.</p>
                                             <a class="order-tracking" th:href="@{'/admin/orders/order_tracking/' + ${order.orderCode}}">Tracking Order</a>
                                         </div>
                                     </div>

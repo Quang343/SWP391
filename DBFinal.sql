@@ -17,6 +17,8 @@
 
 --
 -- Table structure for table `adjustment`
+
+-- create database managerwarehouse
 --
 
 DROP TABLE IF EXISTS `adjustment`;

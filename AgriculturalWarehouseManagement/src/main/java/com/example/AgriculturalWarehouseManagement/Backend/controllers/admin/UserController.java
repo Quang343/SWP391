@@ -1,5 +1,6 @@
 package com.example.AgriculturalWarehouseManagement.Backend.controllers.admin;
 
+import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.ResponseResult;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.UserResponse;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.UpdateProfileRequest;
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.UserDTO;
@@ -350,15 +351,59 @@ public class UserController {
             response.put("message", "Mật khẩu hiện tại không đúng!");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+        if(currentPassword.equals(newPassword)){
+            response.put("success", false);
+            response.put("message", "Mật khẩu mới không được giống với mật khẩu cũ!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
         if(newPassword == null || !newPassword.equals(confirmPassword)){
             response.put("success", false);
             response.put("message", "Mật khẩu xác nhận không khớp!");
             return ResponseEntity.badRequest().body(response);
         }
-        if(!passwordEncoder.matches(newPassword, user.getPassword())){
-            user.setPassword(passwordEncoder.encode(newPassword));
-            userService.save(user);
+
+        if (newPassword.length() < 9) {
+            response.put("success", false);
+            response.put("message", "Mật khẩu không được ít hơn 9 ký tự");
+            return ResponseEntity.badRequest().body(response);
+        } else {
+//                .: Đại diện cho một ký tự bất kỳ, ngoại trừ ký tự new line (dấu xuống dòng).
+//                *: Có nghĩa là lặp lại 0 hoặc nhiều lần ký tự trước đó
+            if (!newPassword.matches(".*[a-zA-Z].*") || !newPassword.matches(".*\\d.*")) {
+                response.put("success", false);
+                response.put("message", "Mật khẩu phải chứa ít nhất một chữ cái và một số");
+                return ResponseEntity.badRequest().body(response);
+            } else {
+                if (newPassword.matches(".*\\s.*")) {
+                    response.put("success", false);
+                    response.put("message", "Mật khẩu không được chứa khoảng trắng");
+                    return ResponseEntity.badRequest().body(response);
+                } else {
+
+                    if (!newPassword.matches(".*[A-Z].*")) {
+                        response.put("success", false);
+                        response.put("message", "Mật khẩu phải chứa ít nhất một chữ cái viết hoa");
+                        return ResponseEntity.badRequest().body(response);
+                    }
+
+                    if (!newPassword.matches(".*[a-z].*")) {
+                        response.put("success", false);
+                        response.put("message", "Mật khẩu phải chứa ít nhất một chữ cái thường");
+                        return ResponseEntity.badRequest().body(response);
+                    }
+
+                    if (!newPassword.matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
+                        response.put("success", false);
+                        response.put("message", "Mật khẩu phải chứa ít nhất một ký tự đặc biệt");
+                        return ResponseEntity.badRequest().body(response);
+                    }
+//                    return new ResponseResult<>("SUCCESS", "Đã đổi mật khẩu thành công !!!", true);
+                }
+            }
         }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userService.save(user);
         response.put("success", true);
         response.put("message", "Đổi mật khẩu thành công");
         return ResponseEntity.ok().body(response);

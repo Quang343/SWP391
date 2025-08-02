@@ -28,6 +28,19 @@
         padding-right: 16px !important;
     }
 
+    .category-slider::after {
+        content: "";
+        display: block;
+        height: 3px;
+        background-color: #f5f5f5;
+        margin-top: 10px;
+    }
+
+    .dashboard-category {
+        border-bottom: 7px solid #f5f5f5;
+        padding-bottom: 15px;
+    }
+
 </style>
 <body>
 <!-- tap on top start -->
@@ -59,7 +72,7 @@
                             <div class="custome-1-bg b-r-4 card-body">
                                 <div class="media align-items-center static-top-widget">
                                     <div class="media-body p-0">
-                                        <span class="m-0">Total Revenue</span>
+                                        <span class="m-0">Tổng doanh thu</span>
                                         <h4 class="mb-0 counter" th:text="${#numbers.formatInteger(totalRevenue, 0, 'POINT')} + '₫'">
                                             <span class="badge badge-light-primary grow">
                                                     <i data-feather="trending-up"></i>8.5%</span>
@@ -78,7 +91,7 @@
                             <div class="custome-2-bg b-r-4 card-body">
                                 <div class="media static-top-widget">
                                     <div class="media-body p-0">
-                                        <span class="m-0">Total Orders</span>
+                                        <span class="m-0">Tổng số đơn hàng</span>
                                         <h4 class="mb-0 counter" th:text="${numberOfOrders}">
                                             <span class="badge badge-light-danger grow">
                                                     <i data-feather="trending-down"></i>8.5%</span>
@@ -97,7 +110,7 @@
                             <div class="custome-3-bg b-r-4 card-body">
                                 <div class="media static-top-widget">
                                     <div class="media-body p-0">
-                                        <span class="m-0">Total Products</span>
+                                        <span class="m-0">Tổng số sản phẩm</span>
                                         <h4 class="mb-0 counter" th:text="${numberOfProducts}">
                                             <a th:href="@{/admin/add_product}" class="badge badge-light-secondary grow">
                                                 ADD NEW</a>
@@ -117,7 +130,7 @@
                             <div class="custome-4-bg b-r-4 card-body">
                                 <div class="media static-top-widget">
                                     <div class="media-body p-0">
-                                        <span class="m-0">Total Customers</span>
+                                        <span class="m-0">Tổng khách hàng</span>
                                         <h4 class="mb-0 counter" th:text="${numberOfUsers}">
                                             <span class="badge badge-light-success grow">
                                                     <i data-feather="trending-down"></i>8.5%</span>
@@ -134,25 +147,20 @@
                         </div>
                     </div>
 
-                    <div class="col-12">
+                    <div class="col-12 col-lg-12 col-md-12">
                         <div class="card o-hidden card-hover">
                             <div class="card-header border-0 pb-1">
                                 <div class="card-header-title p-0">
-                                    <h4>Category</h4>
+                                    <h4>Danh mục</h4>
                                 </div>
                             </div>
                             <div class="card-body p-0">
-                                <div class="category-slider no-arrow">
-                                    <div th:each="category : ${categories}">
-                                        <div class="dashboard-category">
-<!--                                            <a href="javascript:void(0)" class="category-image">-->
-<!--                                                <img th:src="@{'/seller/' + ${category.imageUrl}}" class="img-fluid" alt="">-->
-<!--                                            </a>-->
-                                            <img style="border-radius: 50%;width: 100%; height: 110px;" th:src="@{'/seller/' + ${category.imageUrl}}" class="img-fluid" alt="">
-                                            <a href="javascript:void(0)" class="category-name">
-                                                <h6 th:text="${category.name}">Vegetables & Fruit</h6>
-                                            </a>
-                                        </div>
+                                <div class="category-slider d-flex flex-nowrap overflow-auto gap-3">
+                                    <div th:each="category : ${categories}" class="dashboard-category text-center">
+                                        <img style="border-radius: 50%; width: 110px; height: 110px;" th:src="@{'/seller/' + ${category.imageUrl}}" class="img-fluid" alt="">
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6 th:text="${category.name}">Vegetables & Fruit</h6>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -166,7 +174,7 @@
                         <div class="card o-hidden card-hover">
                             <div class="card-header border-0 pb-1">
                                 <div class="card-header-title">
-                                    <h4>Revenue Report</h4>
+                                    <h4>Báo cáo doanh thu</h4>
                                 </div>
                             </div>
                             <div class="card-body p-0">
@@ -182,7 +190,7 @@
                         <div class="card o-hidden card-hover">
                             <div class="card-header card-header-top card-header--2 px-0 pt-0">
                                 <div class="card-header-title">
-                                    <h4>Best Selling Product</h4>
+                                    <h4>Sản phẩm bán chạy nhất</h4>
                                 </div>
 
 <!--                                <div class="best-selling-box d-sm-flex d-none">-->
@@ -223,21 +231,21 @@
 
                                                 <td>
                                                     <div class="product-detail-box">
-                                                        <h6>Price</h6>
-                                                        <h5 th:text="${product.getPrice()}">$29.00</h5>
+                                                        <h6>Giá bán (VNĐ)</h6>
+                                                        <h5 th:text="${#numbers.formatInteger(product.price, 0, 'POINT')} + '₫'">$29.00</h5>
                                                     </div>
                                                 </td>
 
                                                 <td>
                                                     <div class="product-detail-box">
-                                                        <h6>Orders</h6>
+                                                        <h6>Số lượng đã bán</h6>
                                                         <h5 th:text="${product.getTotalSold()}">62</h5>
                                                     </div>
                                                 </td>
 
                                                 <td>
                                                     <div class="product-detail-box">
-                                                        <h6>Stock</h6>
+                                                        <h6>Số lượng tồn</h6>
                                                         <h5 th:text="${product.getTotalInStock()}">510</h5>
                                                     </div>
                                                 </td>
@@ -265,7 +273,7 @@
                         <div class="card o-hidden card-hover">
                             <div class="card-header card-header-top card-header--2 px-0 pt-0">
                                 <div class="card-header-title">
-                                    <h4>Recent Orders</h4>
+                                    <h4>Đơn hàng gần đây</h4>
                                 </div>
 
 <!--                                <div class="best-selling-box d-sm-flex d-none">-->
@@ -307,14 +315,14 @@
 
                                                 <td>
                                                     <div class="product-detail-box">
-                                                        <h6>Phone</h6>
+                                                        <h6>Số điện thoại</h6>
                                                         <h5 th:text="${order.phone}"></h5>
                                                     </div>
                                                 </td>
 
                                                 <td>
                                                     <div class="product-detail-box">
-                                                        <h6>Order Status</h6>
+                                                        <h6>Trạng thái</h6>
                                                         <h5 th:text="${order.getStatus()}"></h5>
                                                     </div>
                                                 </td>

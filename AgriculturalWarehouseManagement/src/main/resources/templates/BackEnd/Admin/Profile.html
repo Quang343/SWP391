@@ -209,6 +209,10 @@
             font-weight: 600;
         }
 
+        .validate-msg p{
+            font-size: 14px;
+        }
+
     </style>
 </head>
 
@@ -438,6 +442,20 @@
                                                                    placeholder="Nhập lại mật khẩu mới" required>
                                                         </div>
                                                     </div>
+
+                                                    <div class="validate-msg" style="margin-top: 15px; font-weight: 700;">
+                                                        <p style="color: red; font-style: italic; margin-bottom: 10px;">
+                                                            <span style="color: red; margin-right: 4px; font-size: 1.2rem;">*</span>
+                                                            Mật khẩu mới cần:
+                                                        </p>
+                                                        <ul style="padding-left: 20px; margin: 0; font-weight: 400;">
+                                                            <li>Khác mật khẩu cũ</li>
+                                                            <li>Tối thiểu 9 ký tự, không chứa khoảng trắng</li>
+                                                            <li>Chứa chữ cái (hoa & thường), số và ký tự đặc biệt</li>
+                                                        </ul>
+                                                    </div>
+
+
                                                     <!-- Thông báo -->
                                                     <div class="mt-3">
                                                         <div id="changePasswordMessage" class="alert d-none"
