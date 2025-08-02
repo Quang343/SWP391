@@ -30,6 +30,23 @@
                     <div class="table-responsive-xl">
                         <table class="table">
                             <tbody>
+                            <div id="quantityErrorSubmit" th:if="${quantityErrorSubmit != null}" th:text="${quantityErrorSubmit}" class="shake-alert"></div>
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    const alertDiv = document.getElementById("quantityErrorSubmit");
+                                    if (alertDiv) {
+                                        setTimeout(() => {
+                                            alertDiv.style.animation = "none"; // Ngừng lắc
+                                            alertDiv.style.transition = "opacity 0.5s ease";
+                                            alertDiv.style.opacity = "0";
+
+                                            setTimeout(() => {
+                                                alertDiv.style.display = "none"; // Ẩn luôn sau khi fade out
+                                            }, 500);
+                                        }, 10000); // 10 giây
+                                    }
+                                });
+                            </script>
                             <tr th:each="cart : ${cartUserReponses}" class="product-box-contain">
                                 <td class="product-detail">
                                     <div class="product border-0">

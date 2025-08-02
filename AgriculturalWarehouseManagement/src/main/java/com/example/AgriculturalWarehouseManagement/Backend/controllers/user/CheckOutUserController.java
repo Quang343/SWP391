@@ -2,8 +2,11 @@ package com.example.AgriculturalWarehouseManagement.Backend.controllers.user;
 
 import com.example.AgriculturalWarehouseManagement.Backend.dtos.responses.user.*;
 import com.example.AgriculturalWarehouseManagement.Backend.filters.JwtTokenFilter;
+import com.example.AgriculturalWarehouseManagement.Backend.models.Cart;
+import com.example.AgriculturalWarehouseManagement.Backend.models.ProductDetail;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.services.user.*;
+import com.example.AgriculturalWarehouseManagement.Backend.services.warehousestaff.ProductBatchService;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,8 +15,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class CheckOutUserController {
@@ -39,8 +46,14 @@ public class CheckOutUserController {
     @Autowired
     private VoucherUsersService voucherUsersService;
 
+    @Autowired
+    private ProductDetailUserService productDetailUserService;
+
+    @Autowired
+    private ProductBatchService productBatchService;
+
     @GetMapping("/checkOut")
-    public String checkOut(@RequestParam(name = "voucherId", required = false,defaultValue = "0") int voucherId,
+    public String checkOut(@RequestParam(name = "voucherId", required = false, defaultValue = "0") int voucherId,
                            Model model) {
 
         String token = (String) session.getAttribute("authToken");
@@ -78,6 +91,43 @@ public class CheckOutUserController {
                 return "redirect:/cart";
             }
 
+            // Check total quantities each product detail invalid
+            Map<Integer, Integer> productDetailIdToTotalQuantity = result.getData().stream()
+                    .collect(Collectors.groupingBy(
+                            CartUserResponse::getProductDetailId,                      // nhóm theo productDetailId
+                            Collectors.summingInt(CartUserResponse::getQuantity)       // tính tổng quantity
+                    ));
+            for (Map.Entry<Integer, Integer> entry : productDetailIdToTotalQuantity.entrySet()) {
+                Integer productDetailId = entry.getKey();
+                int totalQuantity = entry.getValue();
+
+                String productName = result.getData().stream()
+                        .filter(item -> item.getProductDetailId() == productDetailId)
+                        .map(CartUserResponse::getProductName)
+                        .findFirst()
+                        .orElse("Không xác định");
+
+                ResponseResult<ProductDetailUserResponse> resultCheckProduct = productDetailUserService.checkQuantityProduct(totalQuantity, productDetailId);
+                if (resultCheckProduct.isActive()) {
+                    List<Map<String, Object>> resultList = productBatchService.getTotalQuantityByProductDetailIdNew((long) productDetailId);
+                    final int finalProductDetailId = productDetailId;
+                    int totalQuantityOrder = resultList.stream()
+                            .filter(map -> ((Number) map.get("productDetailId")).longValue() == finalProductDetailId)
+                            .mapToInt(map -> ((Number) map.get("totalQuantity")).intValue())
+                            .sum();
+
+                    if (resultCheckProduct.getData().getRemainQuantity() - totalQuantityOrder - totalQuantity < 0) {
+                        session.setAttribute("quantityErrorSubmit", "Sản phẩm \"" + productName + "\" đã hết do thêm giỏ hàng quá số lượng, vui lòng kiểm tra lại.");
+                        return "redirect:/cart";
+                    }
+
+                } else {
+                    session.setAttribute("quantityErrorSubmit","Sản phẩm "+productName + ", " + resultCheckProduct.getMessage());
+                    return "redirect:/cart";
+                }
+            }
+
+
             // View list address
             List<AddressBookResponse> addressBookResponses = addressBookService.getAddressBookByUserId((long) userEntity.getUserId());
             model.addAttribute("addressBookResponses", addressBookResponses);
@@ -98,7 +148,7 @@ public class CheckOutUserController {
                     if (voucherUsersResponse.getDiscountType().equalsIgnoreCase("PERCENT")) {
                         double percentDiscount = (totalPrice * voucherUsersResponse.getDiscountValue()) / 100;
                         System.out.printf("hello" + percentDiscount);
-                        if (percentDiscount <= 200000){
+                        if (percentDiscount <= 200000) {
                             checkVoucherUserResponse.add(voucherUsersResponse);
                         }
                     } else if (voucherUsersResponse.getDiscountType().equalsIgnoreCase("AMOUNT")) {
@@ -120,8 +170,8 @@ public class CheckOutUserController {
 
 
             if (isCheckedOut) {
-                for(VoucherUsersResponse voucherUsersResponse : checkVoucherUserResponse){
-                    if (voucherUsersResponse.getVoucherUserId() == voucherId){
+                for (VoucherUsersResponse voucherUsersResponse : checkVoucherUserResponse) {
+                    if (voucherUsersResponse.getVoucherUserId() == voucherId) {
                         if (voucherUsersResponse.getDiscountType().equalsIgnoreCase("PERCENT")) {
                             double percentDiscount = (totalPrice * voucherUsersResponse.getDiscountValue()) / 100;
                             model.addAttribute("subTotal", totalPrice);
@@ -161,7 +211,7 @@ public class CheckOutUserController {
 
     @PostMapping("/addVoucherUser")
     public String addVoucherUser(@RequestParam(name = "voucherId") int voucherId,
-            Model model) {
+                                 Model model) {
         String token = (String) session.getAttribute("authToken");
 
         if (token == null) {

@@ -40,4 +40,10 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
     @Query("SELECT NEW com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.OrderDetailDTO(od.order.id, od.productDetailId, od.quantity, od.price) " +
             "FROM OrderDetail od JOIN od.order o WHERE o.status != :status AND od.productDetailId = :productDetailId")
     List<OrderDetailDTO> findByProductDetailIdAndOrderStatusNot(Long productDetailId, String status);
+
+    @Query("SELECT NEW com.example.AgriculturalWarehouseManagement.Backend.dtos.resquests.admin.OrderDetailDTO(od.order.id, od.productDetailId, od.quantity, od.price) " +
+            "FROM OrderDetail od JOIN od.order o " +
+            "WHERE o.status NOT IN :statuses AND od.productDetailId = :productDetailId")
+    List<OrderDetailDTO> findByProductDetailIdAndOrderStatusNotIn(Long productDetailId, List<String> statuses);
+
 }

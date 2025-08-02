@@ -4,6 +4,7 @@ import com.example.AgriculturalWarehouseManagement.Backend.models.Cart;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -105,4 +106,7 @@ public interface CartRepository extends CrudRepository<Cart, Long> {
                      AND DATE_ADD(CreatedAt, INTERVAL 1 HOUR) >= NOW();
             """, nativeQuery = true)
     List<Object[]> rawGetCartQuantity(int productDetailId);
+
+    List<Cart> findByCreatedAtBefore(LocalDateTime time);
+
 }

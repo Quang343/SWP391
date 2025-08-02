@@ -153,7 +153,21 @@ public class SellerApplicationController {
         }
 
         try {
+            SellerApplication created = sellerApplicationService.findSellerApplicationById(applicationId).get();
             sellerApplicationService.restorePendingApplication(accountId.longValue(), applicationId);
+            // 2. Tạo Notification
+            // Sau khi user gửi đơn trở thành seller
+            Optional<User> requestingUser = userRepository.findByUserId(accountId.intValue()); // user gửi yêu cầu
+            User adminUser = userRepository.findByRole(roleRepository.findByRoleName("ADMIN")).get(0); // lấy admin đầu tiên
+
+            if (requestingUser.isPresent() && adminUser != null) {
+                Notification notification = getNotification(requestingUser, adminUser);
+                notification.setUrl("/admin/seller-applications/" + created.getId() + "/details");
+                notificationRepository.save(notification);
+
+                // 3. Gửi WebSocket message cho admin
+                notificationService.sendNotificationToAdmin(notification);
+            }
             return ResponseEntity.ok(Map.of("message", "Khôi phục đơn thành công. Hệ thống đã trừ tiền trong ví của bạn."));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

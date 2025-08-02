@@ -239,4 +239,22 @@ public class ProductBatchService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public List<Map<String, Object>> getTotalQuantityByProductDetailIdNew(Long productDetailId) {
+        List<String> excludedStatuses = Arrays.asList("CANCELLED", "STOCKOUT","DELIVERED","COMPLETED");
+
+        return orderDetailRepository.findByProductDetailIdAndOrderStatusNotIn(productDetailId, excludedStatuses)
+                .stream()
+                .collect(Collectors.groupingBy(
+                        OrderDetailDTO::getProductDetailId,
+                        Collectors.summingInt(OrderDetailDTO::getQuantity)))
+                .entrySet().stream()
+                .map(entry -> {
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("productDetailId", entry.getKey());
+                    result.put("totalQuantity", entry.getValue());
+                    return result;
+                })
+                .collect(Collectors.toList());
+    }
 }
