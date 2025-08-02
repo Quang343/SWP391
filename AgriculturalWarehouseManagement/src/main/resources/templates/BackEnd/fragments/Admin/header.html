@@ -40,18 +40,6 @@
             display: block;
         }
 
-        ul.notification-dropdown > li.notify-item {
-            background-color: #eaf2f8 !important;
-            border-bottom: 1px solid #ddd;
-            transition: background-color 0.3s ease;
-        }
-
-        ul.notification-dropdown > li.notify-item:hover {
-            background-color: #d1f1ec !important;
-            cursor: pointer;
-        }
-
-
         .delete-notify{
             top: 50%;
             right: 10px;
@@ -66,6 +54,10 @@
 
         .view-all-notify-btn:hover {
             background: #19c1a1 !important;
+        }
+
+        .page-wrapper .page-header .header-wrapper .nav-right .notification-dropdown > li #notificationList li:hover {
+            background: #f5f5f5 !important;
         }
 
     </style>
@@ -95,7 +87,7 @@
                     <div class="Typeahead Typeahead--twitterUsers">
                         <div class="u-posRelative">
                             <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text"
-                                   placeholder="Search Fastkart .." name="q" title="" autofocus>
+                                   placeholder="Tìm kiếm .." name="q" title="" autofocus>
                             <i class="close-search" data-feather="x"></i>
                             <div class="spinner-border Typeahead-spinner" role="status">
                                 <span class="sr-only">Loading...</span>
@@ -176,8 +168,9 @@
                             <li>
                                 <ul id="notificationList">
                                     <li class="notify-item position-relative d-flex" th:id="'notification-' + ${notification.id}"
-                                        th:each="notification : ${notifications}"
-                                        style="margin: 0 -10px; padding: 10px;">
+                                        th:each="notification : ${notifications}" onmouseover="this.style.backgroundColor='#f5f5f5'"
+                                        onmouseout="this.style.backgroundColor='transparent'"
+                                        style="margin: 0 -10px; padding: 10px; min-height: 120px;transition: background-color 0.3s ease">
                                         <a th:href="@{'/notifications/view/' + ${notification.id}}" style="text-decoration: none; width: 90%; text-align: start;">
                                             <p th:class="${notification.status == 'UNSEEN'} ? 'fw-bold' : ''" style="margin-bottom: 8px;">
                                                 <i class="fa fa-circle me-2"
@@ -210,9 +203,9 @@
                             </li>
 
                             <!-- Xem tất cả -->
-<!--                            <li style="text-align: center; margin-top: 10px;">-->
-<!--                                <a class="view-all-notify-btn btn btn-primary btn-sm" th:href="@{/notifications}">Xem tất cả</a>-->
-<!--                            </li>-->
+                            <!--                            <li style="text-align: center; margin-top: 10px;">-->
+                            <!--                                <a class="view-all-notify-btn btn btn-primary btn-sm" th:href="@{/notifications}">Xem tất cả</a>-->
+                            <!--                            </li>-->
                         </ul>
                     </li>
 
@@ -299,19 +292,19 @@
                             <li>
                                 <a th:href="@{/admin/users}">
                                     <i data-feather="users"></i>
-                                    <span>Users</span>
+                                    <span>Người dùng</span>
                                 </a>
                             </li>
                             <li>
                                 <a th:href="@{/admin/orders}">
                                     <i data-feather="archive"></i>
-                                    <span>Orders</span>
+                                    <span>Đơn hàng</span>
                                 </a>
                             </li>
                             <li>
                                 <a th:href="@{/admin/profile}">
                                     <i data-feather="user"></i>
-                                    <span>My Profile</span>
+                                    <span>Trang cá nhân</span>
                                 </a>
                             </li>
                             <!--
@@ -334,7 +327,7 @@
                                 <form method="get" action="/AgriculturalWarehouseManagementApplication/logoutUser">
                                     <!--                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>-->
                                     <i data-feather="log-out"></i>
-                                    <button class="log-out-btn" style="border: none; background: transparent;color: #2c323f;">Log out</button>
+                                    <button class="log-out-btn" style="border: none; background: transparent;color: #2c323f;">Đăng xuất</button>
                                 </form>
                             </li>
                         </ul>

@@ -282,8 +282,7 @@
 
                                     <img th:if="${session.account.imageUrl != null and #strings.startsWith(session.account.imageUrl, 'https://lh3.googleusercontent.com/')}"
                                          th:src="${session.account.imageUrl}"
-                                         class="blur-up lazyload update_img" alt="more image"
-                                         accept=".jpg,.jpeg,.png,.gif,image/*">
+                                         class="update_img" alt="more image">
 
 
                                     <img th:if="${session.account.imageUrl != null and session.account.getImageUrl == ''}"
