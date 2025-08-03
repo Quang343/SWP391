@@ -163,6 +163,20 @@
 <script th:src="@{/Backend/assets/js/script.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function getStatusLabelVi(status) {
+        switch (status) {
+            case 'ACTIVE': return 'Đang hoạt động';
+            case 'INACTIVE': return 'Ngừng hoạt động';
+            case 'DRAFT': return 'Bản nháp';
+            case 'DELETED': return 'Đã xoá';
+            case 'PENDING': return 'Đang chờ';
+            case 'PUBLISHED': return 'Đã đăng';
+            default: return 'Không xác định';
+        }
+    }
+
+</script>
 
 <script>
     const CONTEXT_PATH = '/AgriculturalWarehouseManagementApplication';
@@ -172,8 +186,10 @@
                 const select = document.getElementById('input-status');
                 select.innerHTML = '';
                 res.data.forEach(st => {
-                    select.innerHTML += `<option value="${st.name}">${st.label || st.name}</option>`;
+                    const labelVi = getStatusLabelVi(st.name); // ánh xạ sang tiếng Việt
+                    select.innerHTML += `<option value="${st.name}">${labelVi}</option>`;
                 });
+
             })
             .catch(err => {
                 console.error("Lỗi load status:", err);

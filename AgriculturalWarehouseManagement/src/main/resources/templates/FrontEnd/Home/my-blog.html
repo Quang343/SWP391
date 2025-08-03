@@ -418,11 +418,15 @@
                         <textarea class="form-control" id="input-content" rows="3" required></textarea>
                     </div>
 
-                    <!--                    // tac gia se duoc lay session-->
+                    <!-- Trường tác giả: cho phép người dùng nhập hoặc để trống -->
                     <div class="mb-3">
                         <label for="input-author" class="form-label">Tác giả</label>
-                        <input type="text" class="form-control" id="input-author" required>
+                        <input type="text" class="form-control" id="input-author" placeholder="để trống nếu bạn muốn ẩn danh ... ">
                     </div>
+
+                    <!-- Hidden: giữ tên đầy đủ từ session -->
+                    <input type="hidden" id="current-user-fullname" th:value="${session.fullname}">
+
 
                     <div class="mb-3">
                         <label for="input-category" class="form-label">Danh mục</label>
@@ -534,7 +538,20 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+    function getStatusLabelVi(status) {
+        switch (status) {
+            case 'ACTIVE': return 'Đang hoạt động';
+            case 'INACTIVE': return 'Ngừng hoạt động';
+            case 'DRAFT': return 'Bản nháp';
+            case 'DELETED': return 'Đã xoá';
+            case 'PENDING': return 'Đang chờ';
+            case 'PUBLISHED': return 'Đã đăng';
+            default: return 'Không xác định';
+        }
+    }
 
+</script>
 <script>
     const pageSize = 3;
     const CONTEXT_PATH = "/AgriculturalWarehouseManagementApplication";
@@ -569,7 +586,7 @@
             <td>${blog.content && blog.content.length > 40 ? blog.content.substring(0, 40) + '...' : blog.content || ''}</td>
             <td>${blog.title || ""}</td>
              <td> <b><i>${blog.author || ""}</i></b></td>
-            <td><span style="font-weight:bold;color:${color}">${blog.status}</span></td>
+            <td><span style="font-weight:bold;color:${color}">${getStatusLabelVi(blog.status)}</span></td>
             <td>${formatDate(blog.createdAt)}</td>
           <td>
                   <a href="javascript:void(0)" onclick="openEditBlogModal(${blog.blogID})"><i data-feather="edit"></i></a>
@@ -684,8 +701,10 @@
                 const select = document.getElementById('input-status');
                 select.innerHTML = '';
                 res.data.forEach(st => {
-                    select.innerHTML += `<option value="${st.name}">${st.name}</option>`;
+                    const labelVi = getStatusLabelVi(st.name); // ánh xạ sang tiếng Việt
+                    select.innerHTML += `<option value="${st.name}">${labelVi}</option>`;
                 });
+
             })
             .catch(err => {
                 console.error("Lỗi load status:", err);
@@ -707,7 +726,11 @@
     function addBlogJS() {
         const title = document.getElementById('input-title').value;
         const content = document.getElementById('input-content').value;
-        const author = document.getElementById('input-author').value; // Lấy giá trị tác giả
+        let author = document.getElementById('input-author').value.trim();
+        if (!author) {
+            author = document.getElementById('current-user-fullname').value || "Người dùng ẩn danh";
+        }
+
         const blogCategoryID = document.getElementById('input-category').value;
         const status = document.getElementById('input-status').value;
         const thumbnailFile = document.getElementById('input-thumbnail').files[0];
@@ -847,8 +870,10 @@
                 const select = document.getElementById('edit-status');
                 select.innerHTML = '';
                 res.data.forEach(st => {
-                    select.innerHTML += `<option value="${st.name}">${st.name}</option>`;
+                    const labelVi = getStatusLabelVi(st.name); // ánh xạ sang tiếng Việt
+                    select.innerHTML += `<option value="${st.name}">${labelVi}</option>`;
                 });
+
                 if (selectedValue) select.value = selectedValue;
             });
     }

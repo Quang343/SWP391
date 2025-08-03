@@ -2,9 +2,7 @@ package com.example.AgriculturalWarehouseManagement.Backend.services.admin;
 
 import com.example.AgriculturalWarehouseManagement.Backend.models.Notification;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.NotificationRepository;
-import com.example.AgriculturalWarehouseManagement.Backend.services.admin.INotificationService;
 import jakarta.transaction.Transactional;
-import org.hibernate.sql.exec.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
