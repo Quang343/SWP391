@@ -329,7 +329,7 @@
         <div class="card-header"><i class="fa-solid fa-paperclip"></i> CV đính kèm</div>
         <div class="card-body text-center">
 <!--            th:src="@{${sa.cvImage}}"-->
-            <img  src="https://gamek.mediacdn.vn/133514250583805952/2022/3/22/akaza-1647924122430178285552.png"
+            <img th:src="@{'/seller/' + ${sa.getUser().getUserId()} + '/' + ${sa.cvImage}}"
                  alt="CV Image"
                  class="img-fluid rounded border cv-preview">
         </div>

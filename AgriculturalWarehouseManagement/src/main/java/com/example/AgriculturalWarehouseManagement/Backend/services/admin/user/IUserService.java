@@ -27,4 +27,5 @@ public interface IUserService {
     List<User> findByRoleIsNot(Role role);
 
     Optional<User> findUserById(Integer userId);
+    Page<User> findAllByRoleIsNot(Role role,  Pageable pageable);
 }

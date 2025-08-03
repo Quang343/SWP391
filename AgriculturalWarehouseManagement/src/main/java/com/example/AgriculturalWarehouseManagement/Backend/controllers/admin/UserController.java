@@ -74,9 +74,9 @@ public class UserController {
             //Handle exception
         }
         Pageable pageable = PageRequest.of(pageNumber - 1, 5);
-        Page<User> pageUser = userService.findAll(pageable);
+        Role adminRole = roleService.findByName("ADMIN");
+        Page<User> pageUser = userService.findAllByRoleIsNot(adminRole, pageable);
         List<User> users = pageUser.getContent();
-        users = users.stream().filter(user -> !user.getRole().getRoleName().equalsIgnoreCase("Admin")).toList();
         int totalPages = pageUser.getTotalPages();
         model.addAttribute("users", users);
         model.addAttribute("currentPage", pageNumber);

@@ -8,9 +8,12 @@ import com.example.AgriculturalWarehouseManagement.Backend.models.ContactUsUser;
 import com.example.AgriculturalWarehouseManagement.Backend.models.User;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.ContactUsUserRepository;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -66,5 +69,20 @@ public class ContactUserService {
         contactUsUserResponse.setMessage(contactUsUser.getMessage());
 
         return new ResponseResult<>("SUCCESS", "Bạn đã liên hệ thành công ", true);
+    }
+
+
+    public List<ContactUsUser> getAllContactUsers(){
+        return contactUsUserRepository.findAll();
+    }
+
+    @Transactional
+    public void deleteUserContact(Integer id){
+        Optional<ContactUsUser> optional = contactUsUserRepository.findByContactusid(id);
+        if (optional.isPresent()) {
+            contactUsUserRepository.deleteContactUsUserByContactusid(id);
+        } else {
+            throw new EntityNotFoundException("User not found");
+        }
     }
 }

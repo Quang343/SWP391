@@ -42,6 +42,11 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public Page<User> findAllByRoleIsNot(Role role, Pageable pageable) {
+        return userRepository.findAllByRoleIsNot(role, pageable);
+    }
+
+    @Override
     public List<User> findByRoleIsNot(Role role) {
         return userRepository.findByRoleIsNot(role);
     }

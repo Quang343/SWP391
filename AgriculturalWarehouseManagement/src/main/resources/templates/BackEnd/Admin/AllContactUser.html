@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="BackEnd/fragments/Admin/head::head"></head>
+
+<style>
+  /* Canh giữa nội dung trong th */
+  table.dataTable thead th {
+    text-align: center !important;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  /* Canh giữa icon sort */
+  table.dataTable thead .sorting:after,
+  table.dataTable thead .sorting_asc:after,
+  table.dataTable thead .sorting_desc:after {
+    margin-left: 5px;
+    float: none;
+    position: relative;
+    top: 1px;
+  }
+
+  div.dataTables_filter {
+    float: right !important; /* Đẩy sang trái */
+    margin-bottom: 1rem;
+  }
+
+  .table-product .table tbody tr td {
+    text-align: center;
+  }
+
+  .dataTables_wrapper .dataTables_filter input {
+    padding: 7px;
+    font-size: 16px;
+  }
+
+  .dataTables_length {
+    float: left !important;
+  }
+
+  .dataTables_filter {
+    float: right !important;
+    text-align: right !important;
+  }
+</style>
+<body>
+<!-- tap on top start -->
+<div class="tap-top">
+  <span class="lnr lnr-chevron-up"></span>
+</div>
+<!-- tap on tap end -->
+
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+  <!-- Page Header Start-->
+  <div th:replace="BackEnd/fragments/Admin/header::header"></div>
+  <!-- Page Header Ends-->
+
+  <!-- Page Body Start -->
+  <div class="page-body-wrapper">
+    <!-- Page Sidebar Start-->
+    <div th:replace="BackEnd/fragments/Admin/sidebar::sidebar"></div>
+    <!-- Page Sidebar Ends-->
+
+    <!-- Container-fluid starts-->
+    <div class="page-body">
+      <!-- All User Table Start -->
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="card card-table">
+              <div class="card-body">
+                <div class="title-header option-title">
+                  <h5>Danh sách liên hệ từ người dùng</h5>
+                </div>
+
+                <!-- Bộ lọc -->
+                <!--                                <div class="mb-3 d-flex gap-3">-->
+                <!--                                    <select id="filterRole" class="form-select w-auto">-->
+                <!--                                        <option value="">Tất cả vai trò</option>-->
+                <!--                                        <option value="USER">USER</option>-->
+                <!--                                        <option value="SELLER">SELLER</option>-->
+                <!--                                        <option value="BLOGGER">BLOGGER</option>-->
+                <!--                                        <option value="WAREHOUSE">WAREHOUSE</option>-->
+                <!--                                    </select>-->
+
+                <!--                                    <select id="filterStatus" class="form-select w-auto">-->
+                <!--                                        <option value="">Tất cả trạng thái</option>-->
+                <!--                                        <option value="Đang hoạt động">Đang hoạt động</option>-->
+                <!--                                        <option value="Ngừng hoạt động">Ngừng hoạt động</option>-->
+                <!--                                    </select>-->
+                <!--                                </div>-->
+
+                <div class="table-responsive table-product">
+                  <table class="table all-package theme-table" id="table_id">
+                    <thead>
+                    <tr>
+                      <!--                                            <th style="width: 50px !important;">STT</th>-->
+                      <th>Họ và tên</th>
+                      <th>Số điện thoại</th>
+                      <th>Email</th>
+                      <th>Tin nhắn</th>
+                      <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user, iterStat : ${contactUsers}">
+                      <!--                                            <td th:text="${iterStat.count}"></td>-->
+                      <td th:text="${user.fullName}"></td>
+                      <td th:text="${user.phone}"></td>
+                      <td th:text="${user.email}"></td>
+                      <td th:text="${user.message}"></td>
+                      <td>
+                        <ul>
+                          <!--                                                    <li>-->
+                          <!--                                                        <a href="javascript:void(0)" class="view-user" title="Xem chi tiết">-->
+                          <!--                                                            <i class="ri-eye-line"></i>-->
+                          <!--                                                        </a>-->
+                          <!--                                                    </li>-->
+                          <!--                                                    <li>-->
+                          <!--                                                        <a th:href="@{'/admin/edit_user/' + ${user.contactusid}}"-->
+                          <!--                                                           title="Ví">-->
+                          <!--                                                            <i class="ri-wallet-fill"></i>-->
+                          <!--                                                        </a>-->
+                          <!--                                                    </li>-->
+                          <li>
+                            <a href="javascript:void(0)"
+                               th:attr="data-id=${user.contactusid}"
+                               data-bs-toggle="modal"
+                               data-bs-target="#ModalToggle1"
+                               title="Xóa liên hệ">
+                              <i class="ri-delete-bin-line" style="color: red"></i>
+                            </a>
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div> <!-- table responsive -->
+              </div> <!-- card-body -->
+            </div> <!-- card -->
+          </div> <!-- col -->
+        </div> <!-- row -->
+      </div>
+
+
+      <!-- All User Table Ends-->
+
+      <!-- Pagination Start -->
+      <!--            <nav th:if="${totalPages > 1}" aria-label="Page navigation" style="margin-bottom: 5% !important;">-->
+      <!--                <ul class="pagination justify-content-center">-->
+      <!--                    <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">-->
+      <!--                        <a class="page-link is-active" th:href="@{'/admin/users?page=' + ${currentPage - 1}}"-->
+      <!--                           aria-label="Previous">-->
+      <!--                            <span aria-hidden="true">Previous</span>-->
+      <!--                        </a>-->
+      <!--                    </li>-->
+
+      <!--                    <li class="page-item" th:each="pageNumber : ${pageNumbers}"-->
+      <!--                        th:classappend="${pageNumber == currentPage.toString()} ? 'is-active'">-->
+      <!--                        <span style="padding: .375rem .75rem; border: 3px solid transparent;"-->
+      <!--                              th:if="${pageNumber == '...'}">...</span>-->
+      <!--                        <a class="page-link" th:if="${pageNumber != '...'}"-->
+      <!--                           th:href="@{'/admin/users?page=' + ${pageNumber}}"-->
+      <!--                           th:text="${pageNumber}">-->
+      <!--                        </a>-->
+      <!--                    </li>-->
+
+      <!--                    <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">-->
+      <!--                        <a class="page-link is-active" th:href="@{'/admin/users?page=' + ${currentPage + 1}}"-->
+      <!--                           aria-label="Next">-->
+      <!--                            <span aria-hidden="true">Next</span>-->
+      <!--                        </a>-->
+      <!--                    </li>-->
+      <!--                </ul>-->
+      <!--            </nav>-->
+      <!-- Pagination End -->
+
+      <!-- footer start-->
+      <div th:replace="BackEnd/fragments/Admin/footer::footer"></div>
+      <!-- footer end-->
+    </div>
+    <!-- Container-fluid end -->
+  </div>
+  <!-- Page Body End -->
+
+  <!-- Modal Start -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog  modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body justify-content-center">
+          <h5 class="modal-title"  id="staticBackdropLabel">Logging Out</h5>
+          <p>Are you sure you want to log out?</p>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <div class="button-box">
+            <button type="button" class="btn btn--no" data-bs-dismiss="modal">No</button>
+            <button type="button" class="btn btn--yes btn-primary">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal End -->
+
+  <!-- Delete Modal Box Start -->
+  <div class="modal fade theme-modal remove-coupon" id="ModalToggle1" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header d-block text-center">
+          <h5 class="modal-title w-100" id="exampleModalLabel22">Xoá liên hệ</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="firstModalMessage" class="remove-box">
+            <p>Message</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-animation btn-md fw-bold" data-bs-dismiss="modal">Huỷ bỏ</button>
+          <button type="button" class="btn btn-animation btn-md fw-bold"
+                  data-bs-dismiss="modal" onclick="confirmDelete()">Xác nhận
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade theme-modal remove-coupon" id="resultModal" aria-hidden="true" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-center" id="resultModalTitle">Hoàn tất</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="remove-box text-center">
+            <div id="resultModalIcon" class="wrapper">
+              <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+              </svg>
+            </div>
+            <h4 id="resultModalMessage" class="text-content">Xoá liên hệ thành công</h4>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-dismiss="modal">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Delete Modal Box End -->
+
+</div>
+
+<!-- latest js -->
+<script th:src="@{/Backend/assets/js/jquery-3.6.0.min.js}"></script>
+
+<!-- Bootstrap js -->
+<script th:src="@{/Backend/assets/js/bootstrap/bootstrap.bundle.min.js}"></script>
+
+<!-- feather icon js -->
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather.min.js}"></script>
+<script th:src="@{/Backend/assets/js/icons/feather-icon/feather-icon.js}"></script>
+
+<!-- scrollbar simplebar js -->
+<script th:src="@{/Backend/assets/js/scrollbar/simplebar.js}"></script>
+<script th:src="@{/Backend/assets/js/scrollbar/custom.js}"></script>
+
+<!-- Sidebar js -->
+<script th:src="@{/Backend/assets/js/config.js}"></script>
+
+<!-- customizer js -->
+<script th:src="@{/Backend/assets/js/customizer.js}"></script>
+
+<!-- Plugins js -->
+<script th:src="@{/Backend/assets/js/sidebar-menu.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/bootstrap-notify.min.js}"></script>
+<script th:src="@{/Backend/assets/js/notify/index.js}"></script>
+
+<!-- Data table js -->
+<script th:src="@{/Backend/assets/js/jquery.dataTables.js}"></script>
+<script th:src="@{/Backend/assets/js/custom-data-table.js}"></script>
+
+<!-- all checkbox select js -->
+<script th:src="@{/Backend/assets/js/checkbox-all-check.js}"></script>
+
+<!-- sidebar effect -->
+<script th:src="@{/Backend/assets/js/sidebareffect.js}"></script>
+
+<!-- Theme js -->
+<script th:src="@{/Backend/assets/js/script.js}"></script>
+
+<script>
+  let selectedUserId = null;
+
+  const deleteModal = document.getElementById('ModalToggle1');
+  deleteModal.addEventListener('show.bs.modal', function (event) {
+    const firstModalMessage = document.getElementById('firstModalMessage');
+    firstModalMessage.innerHTML = `<p style="font-size: 1rem;">Bạn có chắc chắn muốn xoá liên hệ này không?</p>`
+
+    const triggerElement = event.relatedTarget;
+    selectedUserId = triggerElement.getAttribute('data-id');
+  });
+
+  function confirmDelete() {
+    if (!selectedUserId) return;
+
+    fetch(`/AgriculturalWarehouseManagementApplication/admin/contact_users/delete/${selectedUserId}`, {
+      method: 'DELETE',
+    })
+            .then(async (response) => {
+              if (response.ok) {
+                const data = await response.json();
+                document.getElementById('resultModalMessage').innerText = data.message;
+                const resultModalElement = document.getElementById('resultModal');
+                const resultModal = new bootstrap.Modal(resultModalElement);
+                resultModal.show();
+
+                selectedUserId = null;
+
+                setTimeout(() => {
+                  resultModal.hide();
+                  location.reload();
+                }, 1500);
+              } else {
+                const errorText = await response.text();
+                throw new Error(errorText);
+              }
+            })
+            .catch(error => {
+              alert("Lỗi khi xoá liên hệ: " + error);
+            })
+  }
+</script>
+
+<script>
+  $(document).ready(function () {
+    if ($.fn.DataTable.isDataTable('#table_id')) {
+      $('#table_id').DataTable().destroy();
+    }
+
+    const table = $('#table_id').DataTable({
+      paging: true,
+      searching: true,
+      ordering: true,
+      info: true,
+      lengthMenu: [ [5, 10, 20, 50], [5, 10, 20, 50] ],
+      language: {
+        search: "",
+        searchPlaceholder: "Tìm kiếm...",
+        lengthMenu: "Hiển thị _MENU_ mục",
+        zeroRecords: "Không tìm thấy dữ liệu",
+        info: "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+        infoEmpty: "Không có dữ liệu",
+        paginate: {
+          previous: "Trước",
+          next: "Sau"
+        }
+      },
+      initComplete: function () {
+        // Lọc theo vai trò
+        $('#filterRole').on('change', function () {
+          const role = $(this).val();
+          table.column(3).search(role).draw();
+        });
+
+        // Lọc theo trạng thái
+        $('#filterStatus').on('change', function () {
+          const status = $(this).val();
+          table.column(4).search(status).draw();
+        });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

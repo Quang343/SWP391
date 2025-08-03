@@ -6,6 +6,8 @@ import com.example.AgriculturalWarehouseManagement.Backend.models.*;
 import com.example.AgriculturalWarehouseManagement.Backend.repositorys.*;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.NotificationService;
 import com.example.AgriculturalWarehouseManagement.Backend.services.admin.user.UserService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -292,5 +294,6 @@ public class OrderUsersService {
         }
         return new ResponseResult<>("SUCCESS", "", true);
     }
+
 }
 

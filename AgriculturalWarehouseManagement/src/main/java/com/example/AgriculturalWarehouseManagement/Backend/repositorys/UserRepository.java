@@ -28,6 +28,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User FindByEmail(@Param("email") String email);
     //
 
+    Page<User> findAllByRoleIsNot(Role role,  Pageable pageable);
+
     @Query("SELECT count(u) from User u")
     long countAllUsers();
 
