@@ -3,6 +3,8 @@
 
 <head th:replace="FrontEnd/fragments/head::head">
 
+    <!--    myblog.html-->
+
 </head>
 
 <style>
@@ -530,6 +532,8 @@
 <!-- theme setting js -->
 <script th:src="@{/Frontend/assets/js/theme-setting.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 <script>
     const pageSize = 3;
@@ -747,7 +751,14 @@
             })
             .then(res => {
                 loadTotalBlogs();
-                alert("🎉 Thêm blog thành công!");
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: '🎉 Thêm blog thành công!',
+                    showConfirmButton: false,
+                    timer: 1600,
+                    timerProgressBar: true
+                });
                 loadBlogPage(1);
                 $('#addProductModal').modal('hide');
                 document.getElementById('addBlogForm').reset();
@@ -757,7 +768,13 @@
                 if (err.response && err.response.data) {
                     alert("Lỗi khi thêm blog: " + JSON.stringify(err.response.data));
                 } else {
-                    alert("Lỗi không xác định khi thêm blog!");
+                    // alert("Lỗi không xác định khi thêm blog!");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: 'Lỗi không xác định khi thêm blog!...',
+                        showConfirmButton: true
+                    });
                 }
             });
     }
@@ -859,12 +876,25 @@
 
             axios.put(`${CONTEXT_PATH}/api/my-blog/edit_blog/${currentEditBlogId}`, blog)
                 .then(res => {
-                    alert("Cập nhật thành công!");
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: 'Cập nhật thành công!',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        timerProgressBar: true
+                    });
                     $('#editBlogModal').modal('hide');
                     loadBlogPage(1); // hoặc load lại page hiện tại
                 })
                 .catch(err => {
-                    alert("Lỗi cập nhật: " + JSON.stringify(err));
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: 'Thông điệp lỗi...',
+                        showConfirmButton: true
+                    });
+
                 });
         }
 
@@ -900,17 +930,27 @@
     }
 
     function deleteBlog(blogID) {
-        if (!confirm("Bạn có chắc chắn muốn xoá blog này không?")) return;
-
-        axios.delete(`${CONTEXT_PATH}/api/my-blog/delete_blog/${blogID}`)
-            .then(res => {
-                alert("🗑️ Blog đã được xoá!");
-                loadBlogPage(1); // hoặc reload lại trang hiện tại
-            })
-            .catch(err => {
-                alert("Lỗi xoá blog: " + (err.response?.data || "Không rõ nguyên nhân"));
-            });
+        Swal.fire({
+            title: 'Bạn có chắc chắn?',
+            text: "Blog sẽ được ẩn!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Xoá ngay',
+            cancelButtonText: 'Huỷ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`${CONTEXT_PATH}/api/my-blog/delete_blog/${blogID}`)
+                    .then(res => {
+                        Swal.fire('🗑️ Đã xoá!', 'Blog đã được xoá!', 'success');
+                        loadBlogPage(1);
+                    })
+                    .catch(err => {
+                        Swal.fire('Lỗi', 'Không thể xoá blog này.', 'error');
+                    });
+            }
+        });
     }
+
 
     // dem
     function loadTotalBlogs() {

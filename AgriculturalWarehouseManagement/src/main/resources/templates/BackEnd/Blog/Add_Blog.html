@@ -162,6 +162,7 @@
 <!-- Theme js -->
 <script th:src="@{/Backend/assets/js/script.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     const CONTEXT_PATH = '/AgriculturalWarehouseManagementApplication';
@@ -210,8 +211,14 @@
         console.log("hee"+blogCategoryID)
         // Nếu không chọn ảnh thì vẫn cho thêm blog (tuỳ yêu cầu), ở đây báo lỗi:
         if (!thumbnailFile) {
-            alert("Vui lòng chọn ảnh thumbnail!");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Thiếu ảnh!',
+                text: 'Vui lòng chọn ảnh thumbnail!',
+                showConfirmButton: true
+            });
             return;
+
         }
 
         const formData = new FormData();
@@ -239,15 +246,34 @@
                 return axios.post(`${CONTEXT_PATH}/api/admin/blog/add_blog`, blog);
             })
             .then(res => {
-                alert("🎉 Thêm blog thành công!");
-                window.location.href = CONTEXT_PATH + "/admin/blog";
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: '🎉 Thêm blog thành công!',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    timerProgressBar: true
+                }).then(() => {
+                    window.location.href = CONTEXT_PATH + "/admin/blog";
+                });
+
             })
             .catch(err => {
                 console.error("Chi tiết lỗi từ server:", err);
                 if (err.response && err.response.data) {
-                    alert("Lỗi khi thêm blog: " + JSON.stringify(err.response.data));
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: "Lỗi khi thêm blog: " + JSON.stringify(err.response.data),
+                        showConfirmButton: true
+                    });
                 } else {
-                    alert("Lỗi không xác định khi thêm blog!");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: "Lỗi không xác định khi thêm blog!",
+                        showConfirmButton: true
+                    });
                 }
             });
     }

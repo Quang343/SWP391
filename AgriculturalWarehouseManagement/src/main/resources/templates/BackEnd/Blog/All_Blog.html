@@ -95,11 +95,11 @@
                         <div class="card card-table">
                             <div class="card-body">
                                 <div class="title-header option-title d-sm-flex d-block">
-                                    <h5>Danh sách bài đăng</h5>
+                                    <h5>Blogs List</h5>
                                     <div class="right-options">
                                         <ul>
                                             <li>
-                                                <a class="btn btn-solid" th:href="@{/admin/add_blog}">Thêm bài đăng</a>
+                                                <a class="btn btn-solid" th:href="@{/admin/add_blog}">Add Blog</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -112,8 +112,8 @@
                                 <div class="search-box">
                                     <!--                                    <label>Search:<input type="search" class="" placeholder="" aria-controls="table_id"></label>-->
                                     <label>
-                                        Tìm kiếm:
-                                        <input type="search" class="" placeholder="Tìm kiếm theo tác giả, tiêu đề, nội dung..."
+                                        Search:
+                                        <input type="search" class="" placeholder="Search by Author, Title, Content..."
                                                aria-controls="table_id" id="searchInput" onkeyup="searchBlogs()" oninput="searchBlogs()">
                                     </label>
                                 </div>
@@ -325,6 +325,7 @@
 
 <!-- Theme js -->
 <script th:src="@{/Backend/assets/js/script.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     setTimeout(function () {
         const alertNode = document.getElementById('autoDismissAlert');
@@ -482,7 +483,13 @@
                 $('#editBlogModal').modal('show');
             })
             .catch(err => {
-                alert("Lỗi tải blog: " + JSON.stringify(err));
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi tải blog!',
+                    text: JSON.stringify(err),
+                    confirmButtonText: 'Đóng'
+                });
+
             });
     }
 
@@ -535,12 +542,26 @@
 
             axios.put(`${CONTEXT_PATH}/api/admin/blog/edit_blog/${currentEditBlogId}`, blog)
                 .then(res => {
-                    alert("🎉 Cập nhật blog thành công!");
-                    $('#editBlogModal').modal('hide');
-                    loadAdminBlogPage(1);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: '🎉 Cập nhật blog thành công!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        $('#editBlogModal').modal('hide');
+                        loadAdminBlogPage(1);
+                    });
+
                 })
                 .catch(err => {
-                    alert("Lỗi cập nhật: " + JSON.stringify(err));
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi cập nhật!',
+                        text: JSON.stringify(err),
+                        confirmButtonText: 'Đóng'
+                    });
+
                 });
         }
 
@@ -552,7 +573,13 @@
             }).then(res => {
                 doUpdate(res.data); // res.data là tên file mới
             }).catch(err => {
-                alert("Lỗi upload ảnh: " + JSON.stringify(err));
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi upload ảnh!',
+                    text: JSON.stringify(err),
+                    confirmButtonText: 'Đóng'
+                });
+
             });
         } else {
             const imgSrc = document.getElementById('edit-preview-thumbnail').src;
@@ -577,19 +604,41 @@
     // model deleted
     // Hàm gọi API để chuyển trạng thái blog về DELETED
     function deleteBlog(blogID) {
-        if (confirm("Bạn có chắc chắn muốn xóa blog này?")) {
-            // Gửi PUT request tới API để chuyển trạng thái blog về DELETED
-            axios.put(`${CONTEXT_PATH}/api/admin/blog/delete_blog/${blogID}`)
-                .then(res => {
-                    alert(res.data);  // Hiển thị thông báo thành công
-                    loadAdminBlogPage(1);  // Tải lại trang danh sách blog
-                })
-                .catch(err => {
-                    console.error('Lỗi khi chuyển trạng thái blog:', err);
-                    alert("Lỗi khi xóa blog");
-                });
-        }
+        Swal.fire({
+            title: 'Xác nhận xoá?',
+            text: 'Bạn có chắc chắn muốn xoá blog này không?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xoá',
+            cancelButtonText: 'Huỷ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.put(`${CONTEXT_PATH}/api/admin/blog/delete_blog/${blogID}`)
+                    .then(res => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Đã xoá!',
+                            text: res.data || "Blog đã được xoá.",
+                            timer: 1200,
+                            showConfirmButton: false
+                        });
+                        loadAdminBlogPage(1);
+                    })
+                    .catch(err => {
+                        console.error('Lỗi khi chuyển trạng thái blog:', err);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi xoá!',
+                            text: 'Lỗi khi xoá blog',
+                            confirmButtonText: 'Đóng'
+                        });
+                    });
+            }
+        });
     }
+
     /// =================== Search ===============
 
     function searchBlogs() {
