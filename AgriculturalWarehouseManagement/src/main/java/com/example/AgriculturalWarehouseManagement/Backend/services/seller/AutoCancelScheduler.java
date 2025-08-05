@@ -19,7 +19,7 @@ public class AutoCancelScheduler {
         autoCancelService.autoCancelApplications();
     }
 
-    @Scheduled(cron = "0 * * * * ?") // chạy mỗi ngày lúc 2h sáng
+    @Scheduled(cron = "*/10 * * * * ?") // chạy mỗi ngày lúc 2h sáng
     public void scheduleSellerDowngrade() {
         sellerApplicationService.autoDowngradeExpiredSellers();
     }

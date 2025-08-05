@@ -95,7 +95,7 @@
                                                                     <select class="form-control" id="batchID_0" required onchange="resetNewBatchFields(0); updateUsedBatchIds(); refreshBatchDropdowns();">
                                                                         <option value="">Không chọn</option>
                                                                     </select>
-                                                                    <button type="button" class="btn btn-primary" id="addNewBatch_0" onclick="toggleNewBatch(0)">Thêm Batch Mới</button>
+                                                                    <button type="button" class="btn btn-primary" id="addNewBatch_0" onclick="toggleNewBatch(0)">Thêm Lô Hàng Mới</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -589,7 +589,7 @@
                         <select class="form-control" id="batchID_${detailRowCount}" required onchange="resetNewBatchFields(${detailRowCount}); updateUsedBatchIds(); refreshBatchDropdowns();">
                             <option value="">Không chọn</option>
                         </select>
-                        <button type="button" class="btn btn-primary" id="addNewBatch_${detailRowCount}" onclick="toggleNewBatch(${detailRowCount})">Thêm Batch Mới</button>
+                        <button type="button" class="btn btn-primary" id="addNewBatch_${detailRowCount}" onclick="toggleNewBatch(${detailRowCount})">Thêm Lô Hàng Mới</button>
                     </div>
                 </div>
             </div>
@@ -681,7 +681,7 @@
                 fields2.hide();
                 batchIdSelect.prop('disabled', false);
                 batchIdSelect.prop('required', true);
-                $('#addNewBatch_' + rowIndex).text('Thêm Batch Mới');
+                $('#addNewBatch_' + rowIndex).text('Thêm Lô Hàng Mới');
                 updateUsedBatchIds();
                 refreshBatchDropdowns();
             } else {
@@ -690,7 +690,7 @@
                 batchIdSelect.prop('disabled', true);
                 batchIdSelect.val("");
                 batchIdSelect.prop('required', false);
-                $('#addNewBatch_' + rowIndex).text('Hủy Thêm Batch');
+                $('#addNewBatch_' + rowIndex).text('Hủy Thêm Lô Hàng');
                 updateUsedBatchIds();
                 refreshBatchDropdowns();
             }
@@ -890,7 +890,7 @@
                                 <select class="form-control" id="batchID_0" required onchange="resetNewBatchFields(0); updateUsedBatchIds(); refreshBatchDropdowns();">
                                     <option value="">Không chọn</option>
                                 </select>
-                                <button type="button" class="btn btn-primary" id="addNewBatch_0" onclick="toggleNewBatch(0)">Thêm Batch Mới</button>
+                                <button type="button" class="btn btn-primary" id="addNewBatch_0" onclick="toggleNewBatch(0)">Thêm Lô Hàng Mới</button>
                             </div>
                         </div>
                     </div>

@@ -64,7 +64,7 @@ public class CompareProductDetailController {
 
     @PostMapping("/compareProductDetail")
     public String compareProductDetail(@RequestParam(name = "productId") Integer productId,
-                                       @RequestParam(name = "productDetailId") Integer productDetailId,
+                                       @RequestParam(name = "productDetailId", defaultValue = "-1", required = false) Integer productDetailId,
                                        Model model) {
 
         ProductDetailUserResponse productDetailUserResponse = productDetailUserService.getProductDetailUsers(productDetailId);
@@ -76,10 +76,15 @@ public class CompareProductDetailController {
             }
         }
         if (exist) {
-            if (productDetailUserResponse.getRemainQuantity() != 0) {
-                productDetailUserResponses.add(productDetailUserResponse);
+            if (productDetailId < 1) {
+                model.addAttribute("errorCompare", "Sản phẩm chi tiết không có nên chưa thể so sánh");
             } else {
-                model.addAttribute("errorCompare", "Sản phẩm chi tiết không còn hàng nên chưa thể so sánh");
+
+                if (productDetailUserResponse.getRemainQuantity() != 0) {
+                    productDetailUserResponses.add(productDetailUserResponse);
+                } else {
+                    model.addAttribute("errorCompare", "Sản phẩm chi tiết không còn hàng nên chưa thể so sánh");
+                }
             }
         }
         model.addAttribute("productDetailUserResponses", productDetailUserResponses);

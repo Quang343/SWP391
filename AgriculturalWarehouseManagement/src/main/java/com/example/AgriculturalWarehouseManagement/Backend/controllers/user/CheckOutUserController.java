@@ -97,6 +97,7 @@ public class CheckOutUserController {
                             CartUserResponse::getProductDetailId,                      // nhóm theo productDetailId
                             Collectors.summingInt(CartUserResponse::getQuantity)       // tính tổng quantity
                     ));
+            List<String> productNamesOutOfStock = new ArrayList<>();
             for (Map.Entry<Integer, Integer> entry : productDetailIdToTotalQuantity.entrySet()) {
                 Integer productDetailId = entry.getKey();
                 int totalQuantity = entry.getValue();
@@ -117,14 +118,18 @@ public class CheckOutUserController {
                             .sum();
 
                     if (resultCheckProduct.getData().getRemainQuantity() - totalQuantityOrder - totalQuantity < 0) {
-                        session.setAttribute("quantityErrorSubmit", "Sản phẩm \"" + productName + "\" đã hết do thêm giỏ hàng quá số lượng, vui lòng kiểm tra lại.");
-                        return "redirect:/cart";
+                        productNamesOutOfStock.add("\"" + productName + "\"");
                     }
 
                 } else {
-                    session.setAttribute("quantityErrorSubmit","Sản phẩm "+productName + ", " + resultCheckProduct.getMessage());
-                    return "redirect:/cart";
+                    productNamesOutOfStock.add("\"" + productName + "\"");
                 }
+            }
+            // Sau vòng lặp: nếu có ít nhất 1 sản phẩm hết hàng
+            if (!productNamesOutOfStock.isEmpty()) {
+                String joinedNames = String.join(", ", productNamesOutOfStock);
+                session.setAttribute("quantityErrorSubmit", "Các sản phẩm " + joinedNames + " đã hết do thêm giỏ hàng quá số lượng, vui lòng kiểm tra lại.");
+                return "redirect:/cart";
             }
 
 
